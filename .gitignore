@@ -2,6 +2,7 @@
 config.yml
 1.local
 tmp
+bin
 
 # files marked for deletion
 z.*
