@@ -59,12 +59,14 @@ class CommandFile {
         if(!class_exists($classname)){
             throw new DistribException("Invalid key 'command' in step '$stepStr' : class $classname does not exist");
         }
-        // TODO check that class implements command
-echo "$classname\n"; exit;
-        
-echo "\n<pre>"; print_r($step); echo "</pre>\n"; exit;
+        // TODO check that class implements Command
+        //$class = new \ReflectionClass($classname);
+        $method = new \ReflectionMethod("$classname::execute");
+        // method parameters = current step except 'command' entry
+        array_shift($step);
+        $method->invoke(null, $step);
     }
     
-    
+                                                                                                                                          
     
 }// end class
