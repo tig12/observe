@@ -65,7 +65,6 @@ class ComputeAstro implements Command {
         if(!is_dir($dir)){
             throw new DistribException("Create directory '$dir' and try again");
         }
-//echo "\n"; print_r($actions); echo "\n"; exit;
         //
         //  sweph
         //
