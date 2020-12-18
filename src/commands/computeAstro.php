@@ -7,6 +7,7 @@
 namespace distrib\commands;
 
 use distrib\Distrib;
+use distrib\Config;
 use distrib\patterns\Command;
 use distrib\DistribException;
 use tiglib\arrays\csvAssociative;
@@ -21,18 +22,17 @@ class ComputeAstro implements Command {
         as found in journal "Correlation" (vol 30.2 2016)
     **/
     const SWEPH_IAA = [
-        SolarSystemConstants::SUN           => 'SO',
-        SolarSystemConstants::MOON          => 'MO',
-        SolarSystemConstants::MERCURY       => 'ME',
-        SolarSystemConstants::VENUS         => 'VE',
-        SolarSystemConstants::MARS          => 'MA',
-        SolarSystemConstants::JUPITER       => 'JU',
-        SolarSystemConstants::SATURN        => 'SA',
-        SolarSystemConstants::URANUS        => 'UR',
-        SolarSystemConstants::NEPTUNE       => 'NE',
-        SolarSystemConstants::PLUTO         => 'PL',
-        SolarSystemConstants::NORTH_NODE    => 'NN',
-        SolarSystemConstants::SOUTH_NODE    => 'SN',
+        SolarSystemConstants::SUN               => 'SO',
+        SolarSystemConstants::MOON              => 'MO',
+        SolarSystemConstants::MERCURY           => 'ME',
+        SolarSystemConstants::VENUS             => 'VE',
+        SolarSystemConstants::MARS              => 'MA',
+        SolarSystemConstants::JUPITER           => 'JU',
+        SolarSystemConstants::SATURN            => 'SA',
+        SolarSystemConstants::URANUS            => 'UR',
+        SolarSystemConstants::NEPTUNE           => 'NE',
+        SolarSystemConstants::PLUTO             => 'PL',
+        SolarSystemConstants::MEAN_LUNAR_NODE   => 'NN',
     ];
     
     private static $IAA_SWEPH;
@@ -65,39 +65,46 @@ class ComputeAstro implements Command {
         if(!is_dir($dir)){
             throw new DistribException("Create directory '$dir' and try again");
         }
+//echo "\n"; print_r($actions); echo "\n"; exit;
         //
-        //  execute
+        //  sweph
         //
-echo "\n"; print_r($actions); echo "\n";
-exit;
+        self::$IAA_SWEPH = array_flip(self::SWEPH_IAA);
+        Sweph::init(Config::$data['swetest']['bin'], Config::$data['swetest']['dir']);
+        //
+        //  buld output columns
+        //
         $outcols = [];
         foreach($actions as $action){
-            $outcols[] = $action['out-col'];
+            foreach($action['astro'] as $planetCode){
+                $outcols[] = $action['in-col'] . '-' . $planetCode;
+            }
         }
+        //
+        //  execute
         //
         $res = implode(Distrib::CSV_SEP, $outcols) . "\n";
         $in = csvAssociative::compute($infile);
         //
-        $Nactions = count($actions);
         $N =0;
+        $t1 = microtime(true);
         foreach($in as $old){
             $new = array_fill_keys($outcols, '');
-            for($i=0; $i < $Nactions; $i++){
-                $new = array_merge(
-                    $new,
-                    $actions[$i]['method']->invoke(
-                        null,
-                        $old,
-                        $actions[$i]['in-col'],
-                        $actions[$i]['out-col'],
-                ));
+            foreach($actions as $action){
+                $date = $old[$action['in-col']];
+                $coords = $action['method']->invoke(null, $date, $action['astro']);
+                foreach($coords as $planetCode => $coord){
+                    $new[$action['in-col'] . '-' . $planetCode] = $coord;
+                }
             }
             $res .= implode(Distrib::CSV_SEP, $new) . "\n";
             $N++;
-            if($N % 100000 == 0) echo "$N\n";
+            if($N % 1000 == 0) echo "$N\n";
         }
+        $t2 = microtime(true);
+        $dt = round($t2 - $t1, 3);
         file_put_contents($outfile, $res);
-        echo "Wrote $N lines in $outfile\n";
+        echo "Wrote $N lines in $outfile ($dt s)\n";
     }
     
     /**
@@ -133,7 +140,21 @@ exit;
     
     /** 
     **/
-    private static function planets($inLine, $inCols, $outCol){
+    private static function planets($date, $planetCodes){
+        $sweDay = substr($date, 8, 2) . '.' . substr($date, 5, 2) . '.' . substr($date, 0, 4);
+        $sweTime = '12:00:00';// TODO compute also time
+        $sweCodes = array_map(function($code){ return self::$IAA_SWEPH[$code];}, $planetCodes);
+        $params = [
+            'day'       => $sweDay,
+            'time'      => $sweTime,
+            'planets'   => $sweCodes,
+        ];
+        $coords = Sweph::ephem($params);
+        $res = [];
+        foreach($coords['planets'] as $code => $coord){
+            $res[self::SWEPH_IAA[$code]] = $coord;
+        }
+        return $res;
     }
     
 }// end class

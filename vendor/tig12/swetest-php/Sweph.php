@@ -31,7 +31,7 @@ class Sweph {
     private static $SWEBIN;
     
     /** Path to directory containing sweph data files **/
-    private static $SWEPATH;
+    private static $SWEDIR;
     
     /**
         Correspondance between domification constants
@@ -155,11 +155,10 @@ class Sweph {
 
     // ******************************************************
     /** static initializer **/
-    public static function init($sweBin, $swePath){
-        Sweph::$SWEPATH = $swePath;
+    public static function init($sweBin, $sweDir){
         Sweph::$SWEBIN = $sweBin;
+        Sweph::$SWEDIR = $sweDir;
     }
-    
     
     //***************************************************
     /**
@@ -209,7 +208,7 @@ class Sweph {
             $args .= ' -house' . $P['lg'] . ',' . $P['lat'] . ',' . $domificationSystem; // ex -house12.05,49.50,P
         }
         // ephemeris dir
-        $args .= ' -edir' . Sweph::$SWEPATH;
+        $args .= ' -edir' . Sweph::$SWEDIR;
         // output
         $args .= ' -head'; // no header
         $args .= ' -fPl'; // echo name and longitude
@@ -278,7 +277,7 @@ class Sweph {
         // rise / set parameters
         $args .= ' -rise -geopos' . $P['lg'] . ',' . $P['lat'] . ',' . $P['altitude']; // ex -rise -geopos12.05,49.50,250
         // ephemeris dir
-        $args .= ' -edir' . Sweph::$SWEPATH;
+        $args .= ' -edir' . Sweph::$SWEDIR;
         // output
         $args .= ' -head'; // no header -- comment this line for easier debug of $output
         //
@@ -363,7 +362,7 @@ class Sweph {
         // rise / set parameters
         $args .= ' -rise -geopos' . $P['lg'] . ',' . $P['lat'] . ',' . $P['altitude']; // ex -rise -geopos12.05,49.50,250
         // ephemeris dir
-        $args .= ' -edir' . Sweph::$SWEPATH;
+        $args .= ' -edir' . Sweph::$SWEDIR;
         // -n2 : compute for 3 consecutive days
         $args .= ' -n3';
         // output

@@ -99,7 +99,12 @@ class convertFile implements Command {
                 $action['in-col'][] = trim($tmp2[$i]);
             }
             // add reflection method to action
-            $method = new \ReflectionMethod(__CLASS__ . '::' . $action['method-name']);
+            try{
+                $method = new \ReflectionMethod(__CLASS__ . '::' . $action['method-name']);
+            }
+            catch(\ReflectionException $e){
+                throw new DistribException("Invalid method name '{$action['method-name']}' in line : $line");
+            }
             $method->setAccessible(true);
             $action['method'] = $method;
             $res[] = $action;
