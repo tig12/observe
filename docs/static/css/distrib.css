@@ -1,0 +1,101 @@
+/** 
+    CSS specific to <mysite.org> site
+    Contains site layout
+    
+    @history    2018-11-25 23:39:21+01:00, Thierry Graff : Creation ; copy flex from index.html
+    @history    2019-02-22 09:41:28+01:00, Thierry Graff : New flex layout
+**/
+
+@import url("style.css");
+@import url("default.css");
+
+body{
+    padding:0 0 .5rem 0;
+}
+
+/* ================ Site layout ================ */
+html{height:100%;}
+
+body{
+    display:flex;
+    flex-direction:column;
+    height:100%;
+    padding:0 1rem;
+}
+
+/* container and footer = direct children of body */
+.container{
+   flex: 1 0 auto;
+   display:flex;
+   flex-flow:row wrap;
+}
+footer{
+   flex: 0 0 auto;
+}
+
+/* main and right = direct children of container */
+.main{
+    flex:1 1 85%;
+}
+.right{
+    flex:1 1 15%;
+}
+
+
+/* ================ Main elements ================ */
+/* .content{
+    padding:0 0.5rem;
+} */
+.main{
+    padding-right:.5rem;
+    padding-left:.5rem;
+    padding-bottom:1rem;
+}
+
+.right{
+    padding-top:3rem;
+    padding-left:.4rem;
+    border-left:1px solid grey;
+    background:lightgoldenrodyellow;
+}
+.right ul{padding-left:0.3rem; list-style:none;}
+.right .title{font-weight:bold; font-size:1.1em;}
+
+footer{
+    width:100%;
+    text-align:center;
+}
+footer>div{background:black;}
+footer a{
+    display:inline-block;
+    padding: 0 2em;
+    color:lightgray;
+}                                                 
+
+/* ================ Index page ================ */
+.index h1{margin:.5rem;}
+.mainlinks{
+    display:grid;
+    grid-gap:0;
+    grid-template-columns:repeat(3, 1fr);
+    justify-items:center;
+}
+.mainlinks .item{
+    min-height:4rem;
+    font-size:.8rem;
+    padding-bottom:1rem;
+}
+.mainlinks .item div.mainitem{
+    font-size:1.5rem;
+}
+.mainlinks .item div~div{
+    padding-left:1rem;
+}
+
+
+/* ================ Particular elements ================ */
+
+/* ================ Semantic ================ */
+
+
+

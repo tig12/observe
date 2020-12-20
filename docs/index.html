@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr" lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Distrib documentation</title>
+    <link href="static/css/distrib.css" rel="stylesheet" type="text/css">
+    <meta name="description" content="">
+    <meta name="robots" content="index,follow">
+    <link rel="schema.dcterms" href="http://purl.org/dc/terms/">
+    <meta name="dcterms.rights" content="Creative commons by-sa 4.0">
+    <meta name="dcterms.rightsHolder" content="Thierry Graff">
+    <meta name="dcterms.dateCopyrighted" content="2020">
+</head>
+
+<body>
+
+<header>
+<h1>Distrib documentation</h1>
+<div class="intro">
+Distrib program was written to build distributions from datafiles, applying a serie of transformations on the input file(s).
+</div>
+</header>
+
+<article>
+
+This software has been developed and tested under Linux. A priori, it should also work under Windows and Macintosh.
+<br>It is used through the command line.
+
+<!-- ********************************************************************************* -->
+<h2>Installation</h2>
+
+<ol class="spaced">
+    <li>
+        Open a terminal and clone the repository on your local machine :
+        <pre>git clone https://github.com/tig12/distrib</pre>
+        (or <a href="https://github.com/tig12/distrib/archive/master.zip">download the code</a>).
+    </li>
+    
+    <li>
+        Install php (version 8.0 or higher) on your machine.
+    </li>
+    
+    <li>
+        Install PECL extension "yaml".
+        <br>On debian-based systems :
+        <pre>sudo apt install php-yaml</pre>
+        For other systems, see <a href="https://www.php.net/manual/en/install.pecl.php">php manual</a>.
+    </li>
+</ol>   
+
+<!-- ************************************* -->
+<h3><a name="1-2-directory-structure">Directory structure</a></h3>
+The important files and directories are :
+<pre>
+distrib/
+    ├── <b>commands/</b>
+    ├── docs/
+    ├── src/
+    ├── vendor/
+    ├── <b>config.yml.dist</b>
+    └── <b>run-distrib.php</b>
+</pre>
+
+In the rest of this doc, directory <code>distrib/</code> is called the <b><i>root directory</i></b>.
+<br>All the commands issued to run the program are done from the root directory.
+<br>
+<br>The files you need to know about are :
+<ul class="simple">
+    <li><code><b>run-distrib.php</b></code> is the entry point to use the program.</li>
+    <li><code><b>commands/</b></code> contains the the commands that you need to edit.</li>
+    <li><code><b>config.yml.dist</b></code> needs to be copied (see below).</li>
+</ul>
+
+<!-- ************************************* -->
+<h3>Configuration</h3>
+Create a file <code>config.yml</code> by copying <code>config.yml.dist</code> :
+<pre>cp config.yml.dist config.yml</pre>
+Configuration is only needed for some steps.
+
+
+<!-- ********************************************************************************* -->
+<h2>Usage</h2>
+To check that the program works, open a terminal, go to distrib root directory and type :
+<pre>php run-distrib.php</pre>
+If an error message is displayed, it means that the installation was OK.
+
+<!-- ************************************* -->
+<h3>Command files</h3>
+Program usage is based on <b>command files</b>
+<br>They are created by users ; they are used to describe what the program should do.
+<br>They are located in directory <code>commands/</code>.
+<br>They are written using YAML syntax.
+
+<br><br>Each command file contains the description of <b>steps</b>.
+<br>One run of the program permits to execute one step ; usage of the program is then
+<pre>php run-distrib.php &lt;command> &lt;step></pre>
+
+
+<br>Each command file contains a serie of <b>steps</b>, which are the main keys of the command file.
+
+<br><br>Example of the command file located in <code>commands/sample/test1.yml</code>:
+<pre>
+convert:
+  command: convertFile
+  input-file: data/a00.csv
+  actions:
+    - ymd2iso anais00 mnais00 jnais00 -> C
+    - ymd2iso ANAISM MNAISM JNAISM    -> M
+    - ymd2iso ANAISP MNAISP JNAISP    -> F
+  output-file: tmp/a00-ymd.csv
+
+planets:
+  command: computeAstro
+  input-file: tmp/a00-ymd.csv
+  actions:
+    - planets C SO MO ME VE MA JU SA UR NE PL NN
+    - planets M SO MO ME VE MA JU SA UR NE PL NN
+    - planets F SO MO ME VE MA JU SA UR NE PL NN
+  output-file: tmp/a00-coords.csv
+
+aspects:
+  command: aspects
+  input-file: tmp/a00-coords.csv
+  actions:
+    - C-* M-*
+    - C-* F-*
+    - M-* F-*
+  output-file: tmp/a00-aspects.csv
+
+group:
+  command: groupByNumber
+  input-file: tmp/a00-aspects.csv
+  range: 360
+  output-dir: tmp/a00-aspects
+</pre>
+
+This command file contains 4 steps : <code>convert</code>, <code>planets</code>, <code>aspects</code>, <code>group</code>.
+
+
+<!-- ********************************************************************************* -->
+<h2>convertFile</h2>
+
+
+<!-- ********************************************************************************* -->
+<h2>computeAstro</h2>
+
+
+<!-- ********************************************************************************* -->
+<h2>aspects</h2>
+
+
+<!-- ********************************************************************************* -->
+<h2>groupByNumber</h2>
+
+
+<!-- ********************************************************************************* -->
+<h2>About</h2>
+Program started in 2020 by Thierry Graff
+</article>
+</body>
+</html>
