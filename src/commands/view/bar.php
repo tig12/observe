@@ -2,8 +2,11 @@
 /******************************************************************************
     Generates SVG horizontal chart bar from the column of a file
     
-    TODO add 'in-data' parameter ; in-data|(input-file & col)
-    TODO add 'out-data' parameter ; out-data|(ouput-file)
+    If 
+    
+    
+    TODO add 'input-data' parameter ; input-data|(input-file & col)
+    TODO add 'output-data' parameter ; output-data|(ouput-file)
     
     @license    GPL
     @history    2020-12-20 18:48:55+01:00, Thierry Graff : Creation
@@ -16,7 +19,7 @@ use distrib\DistribException;
 use tiglib\arrays\csvAssociative;
 use tiglib\arrays\csvRegular;
 
-class Bar implements Command {
+class bar implements Command {
     
     public static function execute($params=[]){
         //
@@ -26,7 +29,6 @@ class Bar implements Command {
         if(!isset($params['input-file'])){
             throw new DistribException("$classname needs a parameter 'input-file'");
         }
-        //
         $infile = $params['input-file'];
         if(!is_file($infile)){
             throw new DistribException("File not found : $infile");
@@ -39,16 +41,19 @@ class Bar implements Command {
         if(!isset($params['assoc'])){
             throw new DistribException("$classname needs a parameter 'assoc'");
         }
-        //
-        if(!isset($params['output-file'])){
-            // Default
-            // TODO  : dirname + DS + basename
-            $params['output-file'] = basename($params['input-file']) . '.svg';
+        // output
+        if(isset($params['output-file']) && isset($params['output-data'])){
+            throw new DistribException("$classname can't have both parameters 'output-data' and 'output-file'");
         }
-        $outfile = $params['output-file'];
-        $outdir = dirname($outfile);
-        if(!is_dir($outdir)){
-            throw new DistribException("output directory does not exist: $outdir");
+        if(!isset($params['output-file']) && !isset($params['output-data'])){
+            throw new DistribException("$classname needs either parameter 'output-data' or 'output-file'");
+        }
+        if(isset($params['output-file'])){
+            $outfile = $params['output-file'];
+            $outdir = dirname($outfile);
+            if(!is_dir($outdir)){
+                throw new DistribException("output directory does not exist: $outdir");
+            }
         }
         //
         //  execute
@@ -110,6 +115,7 @@ class Bar implements Command {
             $res .= "<line x1=\"$x\" y1=\"$y1\" x2=\"$x\" y2=\"$y2\" style=\"$barStyle\" />\n";
         }
         // legend
+        // TODO clean $legendW+10
         [$x, $y] = [$xBegin - $legendW+10, $yBegin];
         $res .= "<text x=\"$x\" y=\"$y\" style=\"text-anchor: middle\">$min</text>\n";
         [$x, $y] = [$xBegin - $legendW+10, $vgap + $legendH];
@@ -119,8 +125,13 @@ class Bar implements Command {
         //
         // write output
         //
-        file_put_contents($outfile, $res);
-        echo "Wrote $outfile\n";
+        if(isset($params['output-file'])){
+            file_put_contents($outfile, $res);
+            echo "Wrote $outfile\n";
+        }
+        else {
+            return $res;
+        }
     }
     
 }// end class

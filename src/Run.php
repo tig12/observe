@@ -37,8 +37,6 @@ class Run{
         return $res;
     }
     
-    
-    
     /**  Returns the directory containing the commands **/
     public static function commandsDir(){
         return dirname(__DIR__) . DS . 'commands';
