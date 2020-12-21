@@ -87,8 +87,6 @@ class Bar implements Command {
         //
         $w = $xBegin + $hgap + $N*$barW + ($N-1)*$barGap;
         //
-// echo "\n"; print_r([$min, $max]); echo "\n";
-// exit;
         $svgStyle = 'background-color:white;'; // TODO does not work
         $res .= "<svg width=\"$w\" height=\"$h\" style=\"$svgStyle\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\">\n";
         $res .= "<rect width=\"100%\" height=\"100%\" fill=\"lightyellow\" />\n"; // hack for bg color 
@@ -99,8 +97,8 @@ class Bar implements Command {
         //[$x2, $y2] = [$xBegin, $h - $yBegin];
         //$res .= "<line x1=\"$x1\" y1=\"$y1\" x2=\"$x2\" y2=\"$y2\" style=\"$axisStyle\" />\n";
         // horizontal
-        [$x1, $y1] = [$xBegin, $yBegin];
-        [$x2, $y2] = [$w - $hgap, $yBegin];
+        [$x1, $y1] = [$xBegin - $barW, $yBegin];
+        [$x2, $y2] = [$w - $hgap - $barW, $yBegin];
         $res .= "<line x1=\"$x1\" y1=\"$y1\" x2=\"$x2\" y2=\"$y2\" style=\"$axisStyle\" />\n";
         // bars
         for($i=0; $i < $N; $i++){
@@ -112,6 +110,10 @@ class Bar implements Command {
             $res .= "<line x1=\"$x\" y1=\"$y1\" x2=\"$x\" y2=\"$y2\" style=\"$barStyle\" />\n";
         }
         // legend
+        [$x, $y] = [$xBegin - $legendW+10, $yBegin];
+        $res .= "<text x=\"$x\" y=\"$y\" style=\"text-anchor: middle\">$min</text>\n";
+        [$x, $y] = [$xBegin - $legendW+10, $vgap + $legendH];
+        $res .= "<text x=\"$x\" y=\"$y\" style=\"text-anchor: middle\">$max</text>\n";
         // TODO 
         $res .= "</svg>\n";
         //
