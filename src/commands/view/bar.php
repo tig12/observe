@@ -78,13 +78,14 @@ class bar implements Command {
         //
         $barW = 2; // px
         $barGap = 1; // px
+        $barDelta = $barW + $barGap;
         $barStyle = "stroke:blue;stroke-width:$barW;";
         //
-        [$hgap, $vgap] = [5, 5];
-        [$legendW, $legendH] = [30, 10];
+        [$hgap, $vgap] = [15, 15];
+        [$legendW, $legendH] = [30, 20];
         [$legendRightGap, $legendTopGap] = [5, 2];
         //
-        $h = 200;
+        $h = 250;
         //
         $xBegin = $hgap + $legendW + $legendRightGap;
         $yBegin = $h - $vgap - $legendH - $legendTopGap;
@@ -114,13 +115,23 @@ class bar implements Command {
             $y2 = $yBegin - $y;
             $res .= "<line x1=\"$x\" y1=\"$y1\" x2=\"$x\" y2=\"$y2\" style=\"$barStyle\" />\n";
         }
-        // legend
+        // legend vertival
         // TODO clean $legendW+10
-        [$x, $y] = [$xBegin - $legendW+10, $yBegin];
+        [$x, $y] = [$xBegin - $legendW, $yBegin];
         $res .= "<text x=\"$x\" y=\"$y\" style=\"text-anchor: middle\">$min</text>\n";
-        [$x, $y] = [$xBegin - $legendW+10, $vgap + $legendH];
+        [$x, $y] = [$xBegin - $legendW, $vgap + $legendH];
         $res .= "<text x=\"$x\" y=\"$y\" style=\"text-anchor: middle\">$max</text>\n";
-        // TODO 
+        // legend horizontal
+        // TODO absolute draft - put the legend in parameter
+        [$x, $y] = [$xBegin, $yBegin + $legendH];
+        $res .= "<text x=\"$x\" y=\"$y\" style=\"text-anchor: middle\">0</text>\n";
+        [$x, $y] = [$xBegin + 90*$barDelta, $yBegin + $legendH];
+        $res .= "<text x=\"$x\" y=\"$y\" style=\"text-anchor: middle\">90</text>\n";
+        [$x, $y] = [$xBegin + 180*$barDelta, $yBegin + $legendH];
+        $res .= "<text x=\"$x\" y=\"$y\" style=\"text-anchor: middle\">180</text>\n";
+        [$x, $y] = [$xBegin + 270*$barDelta, $yBegin + $legendH];
+        $res .= "<text x=\"$x\" y=\"$y\" style=\"text-anchor: middle\">270</text>\n";
+        //
         $res .= "</svg>\n";
         //
         // write output

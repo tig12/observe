@@ -61,25 +61,25 @@ class pages implements Command {
         for($i=0; $i < count($params['pages']); $i++){
             $page = $params['pages'][$i];
             if(!isset($page['title'])){
-                throw new DistribException("Page " + ($i+1) + "  needs a parameter 'title'");
+                throw new DistribException("Page " . ($i+1) . "  needs a parameter 'title'");
             }
             if(!isset($page['input-files'])){
-                throw new DistribException("Page " + ($i+1) + "  needs a parameter 'input-files'");
+                throw new DistribException("Page " . ($i+1) . "  needs a parameter 'input-files'");
             }
             if(!isset($page['subtitle-template'])){
-                throw new DistribException("Page " + ($i+1) + "  needs a parameter 'subtitle-template'");
+//                throw new DistribException("Page " . ($i+1) . "  needs a parameter 'subtitle-template'");
             }
             if(!isset($page['output-file'])){
-                throw new DistribException("Page " + ($i+1) + "  needs a parameter 'output-file'");
+                throw new DistribException("Page " . ($i+1) . "  needs a parameter 'output-file'");
             }
         }
-        
         //
         //  execute
         //
         foreach($params['pages'] as $page){
             $res = '';
             $res .= self::pageHeader($page['title']);
+            $res .= "<h1>{$page['title']}</h1>";
             $infiles = glob($indir . DS . $page['input-files']);
             $res .= self::pageToc($infiles);
             if(count($infiles) == 0){
@@ -89,16 +89,15 @@ class pages implements Command {
                 // compute SVG image
                 $viewParams = $viewDefaultParams;
                 $viewParams['input-file'] = $infile;
-                $viewParams['output-data'] = true;
+                $viewParams['output-data'] = true;                                                                                                       
                 $svg = $viewMethod->invoke(null, $viewParams);
-//echo $svg;
-exit;
+                $anchor = self::anchor($infile);
+                $label = $anchor; // TODO change
+                $res .= "<h2><a name=\"$anchor\">$label</a></h2>\n";
+                $res .= $svg;
             }
             $res .= "</body>\n</html>\n";
-
-
-exit;
-            
+            $outfile = $outdir . DS . $page['output-file'];
             file_put_contents($outfile, $res);
             echo "Wrote $outfile\n";
         }
@@ -107,15 +106,21 @@ exit;
     // ******************************************************
     /** Builds page's table of contents **/
     private static function pageToc($infiles){
+        $res = "<nav class=\"toc\">\n";
         foreach($infiles as $infile){
-echo "$infile\n";
-            $pathinfo = pathinfo($infile);
-            $anchor = str_replace('.' . $pathinfo['extension'], '', $pathinfo['basename']);
-echo "\n"; print_r($pathinfo); echo "\n";
-echo "$anchor\n";
-exit;
+            $anchor = self::anchor($infile);
+            $label = $anchor; // TODO change
+            $res .= "<div><a href=\"#$anchor\">$label</a></div>\n";
         }
+        $res .= '</nav>' . "\n";
+        return $res;
+    }
     
+    // ******************************************************
+    /** Builds page's table of contents **/
+    private static function anchor($infile){
+        $pathinfo = pathinfo($infile);
+        return str_replace('.' . $pathinfo['extension'], '', $pathinfo['basename']);
     }
     
     // ******************************************************
@@ -126,6 +131,29 @@ exit;
 <head>
     <meta charset="utf-8" />
     <title>$title</title>
+    <style>
+        body{
+            padding:0.5rem;
+            background:#eee;
+            font-family:Arial,Helvetica,sans-serif;
+        }
+        h1{
+            width:100%;
+            margin:auto;
+            text-align:center;
+            padding:0.3rem;
+            margin:1rem 0;
+        }
+        .toc div{
+            display:inline-block;
+            padding-right:2rem;
+        }
+        svg{
+            margin:1rem;
+            background:lightyellow;
+            border:1px solid grey;
+        }
+    </style>
 </head>
 <body>
 
