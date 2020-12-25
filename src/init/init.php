@@ -5,7 +5,7 @@
 
 require_once __DIR__ . DS . 'autoload.php';
 
-use distrib\Config;
+use observe\Config;
 
 Config::init();
 

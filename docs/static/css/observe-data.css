@@ -7,7 +7,6 @@
 **/
 
 @import url("style.css");
-@import url("default.css");
 
 body{
     padding:0 0 .5rem 0;
@@ -20,48 +19,47 @@ body{
     display:flex;
     flex-direction:column;
     height:100%;
-    padding:0 1rem;
 }
 
 /* container and footer = direct children of body */
 .container{
-   flex: 1 0 auto;
-   display:flex;
+   flex:1 0 auto;
+   display:flex;   
    flex-flow:row wrap;
 }
-footer{
-   flex: 0 0 auto;
-}
+/* in the html, write .left sidebar after .main area */
+.container :nth-child(2) { order: 1; }
+.container :nth-child(1) { order: 2; }
 
-/* main and right = direct children of container */
+/* left and main = direct children of container */
 .main{
     flex:1 1 85%;
+    padding:1rem .5rem 2rem 1rem;
 }
-.right{
+
+aside li{list-style:none;}
+.left{
     flex:1 1 15%;
 }
-
-
-/* ================ Main elements ================ */
-/* .content{
-    padding:0 0.5rem;
-} */
-.main{
-    padding-right:.5rem;
-    padding-left:.5rem;
-    padding-bottom:1rem;
-}
-
-.right{
-    padding-top:3rem;
-    padding-left:.4rem;
+.left{
+    padding-top:5rem;
     border-left:1px solid grey;
     background:lightgoldenrodyellow;
+    font-size:.9rem;
+    border-right:1px solid grey;
 }
-.right ul{padding-left:0.3rem; list-style:none;}
-.right .title{font-weight:bold; font-size:1.1em;}
+.left ul{
+    padding-left:1rem;
+}
+.left>ul{
+    padding-left:0.5rem;
+}
+.left>ul>li{
+    padding-bottom:0.3rem;
+}
 
 footer{
+   flex: 0 0 auto;
     width:100%;
     text-align:center;
 }
@@ -71,6 +69,32 @@ footer a{
     padding: 0 2em;
     color:lightgray;
 }                                                 
+
+* ================ Navigation ================ */
+.prevnext{
+    font-family:DejaVu,serif;
+    position:fixed; top:0px; left:0px;
+    margin:0;
+    width:15%; height:4rem;
+    background:lightgoldenrodyellow;
+    border-right:1px solid grey;
+}
+.prevnext a{
+    display:inline-block;
+    position:fixed;
+    width:40px; height:40px;
+    text-decoration:none;
+    font-weight:bolder;
+    font-size:2rem;
+}
+.prevnext a.index{top:0px; left:50px; font-size:0.5rem;}
+.prevnext a.top{top:0px; left:80px;}
+.prevnext a.prev{top:25px; left:45px;}
+.prevnext a.next{top:25px; left:110px;}
+.prevnext a.topage{
+    top:15px; left:82px; color:#black; font-size:1.1rem;
+    transform:rotate(-90deg);
+}
 
 /* ================ Index page ================ */
 .index h1{margin:.5rem;}
@@ -96,6 +120,3 @@ footer a{
 /* ================ Particular elements ================ */
 
 /* ================ Semantic ================ */
-
-
-

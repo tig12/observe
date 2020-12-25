@@ -1,7 +1,7 @@
 <?php
 /** 
     Unique autoload code to include
-    Contains PSR-4 autoload for namespace "distrib"
+    Contains PSR-4 autoload for namespace "observe"
     and inclusion of autoload for vendor code.
     
     @history    2020-12-15 21:39:47+01:00, Thierry Graff : Creation 
@@ -13,11 +13,11 @@ require_once implode(DS, [$rootdir, 'vendor', 'tig12', 'tiglib', 'autoload.php']
 require_once implode(DS, [$rootdir, 'vendor', 'tig12', 'swetest-php', 'autoload.php']);
 
 /** 
-    Autoload for distrib namespace
+    Autoload for observe namespace
 **/
 spl_autoload_register(
     function ($full_classname){
-        $namespace = 'distrib';
+        $namespace = 'observe';
         if(strpos($full_classname, $namespace) !== 0){
             return; // not managed by this autoload
         }

@@ -8,11 +8,11 @@
     @license    GPL
     @history    2020-12-21 13:02:28+01:00, Thierry Graff : Creation
 ********************************************************************************/
-namespace distrib\commands\view;
+namespace observe\commands\view;
 
-use distrib\Distrib;
-use distrib\patterns\Command;
-use distrib\DistribException;
+use observe\Observe;
+use observe\patterns\Command;
+use observe\ObserveException;
 use tiglib\arrays\csvAssociative;
 use tiglib\arrays\csvRegular;
 
@@ -24,53 +24,53 @@ class pages implements Command {
         //
         $classname = 'pages'; // TODO copute by reflection
         if(!isset($params['input-dir'])){
-            throw new DistribException("$classname needs a parameter 'input-dir'");
+            throw new ObserveException("$classname needs a parameter 'input-dir'");
         }
         $indir = $params['input-dir'];
         if(!is_dir($indir)){
-            throw new DistribException("Input directory does not exist : $indir");
+            throw new ObserveException("Input directory does not exist : $indir");
         }
         //
         if(!isset($params['output-dir'])){
-            throw new DistribException("$classname needs a parameter 'output-dir'");
+            throw new ObserveException("$classname needs a parameter 'output-dir'");
         }
         $outdir = $params['output-dir'];
         if(!is_dir($outdir)){
-            throw new DistribException("Input directory does not exist : $outdir");
+            throw new ObserveException("Input directory does not exist : $outdir");
         }
         //
         if(!isset($params['view'])){
-            throw new DistribException("$classname needs a parameter 'view'");
+            throw new ObserveException("$classname needs a parameter 'view'");
         }
         // view details
         if(!isset($params['view']['command'])){
-            throw new DistribException("$classname - 'view' needs a parameter 'command'");
+            throw new ObserveException("$classname - 'view' needs a parameter 'command'");
         }
-        $viewClassname = 'distrib\\commands\\' . $params['view']['command'];
+        $viewClassname = 'observe\\commands\\' . $params['view']['command'];
         if(!class_exists($viewClassname)){
-            throw new DistribException("Invalid key 'command' in step '$stepStr' : class $viewClassname does not exist");
+            throw new ObserveException("Invalid key 'command' in step '$stepStr' : class $viewClassname does not exist");
         }
         $viewMethod = new \ReflectionMethod("$viewClassname::execute");
         $viewDefaultParams = $params['view'];
         unset($viewDefaultParams['command']);
         //
         if(!isset($params['pages'])){
-            throw new DistribException("$classname needs a parameter 'pages'");
+            throw new ObserveException("$classname needs a parameter 'pages'");
         }
         // pages details
         for($i=0; $i < count($params['pages']); $i++){
             $page = $params['pages'][$i];
             if(!isset($page['title'])){
-                throw new DistribException("Page " . ($i+1) . "  needs a parameter 'title'");
+                throw new ObserveException("Page " . ($i+1) . "  needs a parameter 'title'");
             }
             if(!isset($page['input-files'])){
-                throw new DistribException("Page " . ($i+1) . "  needs a parameter 'input-files'");
+                throw new ObserveException("Page " . ($i+1) . "  needs a parameter 'input-files'");
             }
             if(!isset($page['subtitle-template'])){
-//                throw new DistribException("Page " . ($i+1) . "  needs a parameter 'subtitle-template'");
+//                throw new ObserveException("Page " . ($i+1) . "  needs a parameter 'subtitle-template'");
             }
             if(!isset($page['output-file'])){
-                throw new DistribException("Page " . ($i+1) . "  needs a parameter 'output-file'");
+                throw new ObserveException("Page " . ($i+1) . "  needs a parameter 'output-file'");
             }
         }
         //
@@ -83,7 +83,7 @@ class pages implements Command {
             $infiles = glob($indir . DS . $page['input-files']);
             $res .= self::pageToc($infiles);
             if(count($infiles) == 0){
-                throw new DistribException("Pattern {$page['input-files']}  does not correspond to existing files");
+                throw new ObserveException("Pattern {$page['input-files']}  does not correspond to existing files");
             }
             foreach($infiles as $infile){
                 // compute SVG image

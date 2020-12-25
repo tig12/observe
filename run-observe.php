@@ -1,8 +1,8 @@
 <?php
 /********************************************************************************
-    CLI (command line interface) of Distrib program
+    CLI (command line interface) of Observe program
     
-    usage : php run-distrib.php
+    usage : php run-observe.php
     and follow error message
     
     @license    GPL
@@ -12,11 +12,12 @@
 
 define('DS', DIRECTORY_SEPARATOR);
 
-require_once __DIR__ . DS . 'src' . DS . 'init' . DS . 'init.php';
+//require_once __DIR__ . DS . 'src' . DS . 'init' . DS . 'init.php';
+require_once implode(DS, [__DIR__, 'src', 'init', 'init.php']);
 
-use distrib\Run;
-use distrib\DistribException;
-use distrib\CommandFile;
+use observe\Run;
+use observe\ObserveException;
+use observe\CommandFile;
 
 //
 // parameter checking
@@ -36,7 +37,7 @@ USAGE;
 
 // check arg1
 if($argc < 3){
-    echo "WRONG USAGE - run-distrib.php needs at least 2 arguments\n";
+    echo "WRONG USAGE - run-observes.php needs at least 2 arguments\n";
     echo $USAGE;
     echo "Possible values for argument1 : $cmmands_str\n";
     exit;
@@ -69,7 +70,7 @@ if(!$cmd->stepExists($argv[2])){
 try{
     $cmd-> executeStep($argv[2]);
 }
-catch(DistribException $e){
+catch(ObserveException $e){
     echo "ERROR: " . $e->getMessage() . "\n";
 }
 catch(Exception $e){

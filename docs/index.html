@@ -2,8 +2,8 @@
 <html lang="fr" lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Distrib documentation</title>
-    <link href="static/css/distrib.css" rel="stylesheet" type="text/css">
+    <title></title>
+    <link href="static/css/observe-data.css" rel="stylesheet" type="text/css">
     <meta name="description" content="">
     <meta name="robots" content="index,follow">
     <link rel="schema.dcterms" href="http://purl.org/dc/terms/">
@@ -13,11 +13,18 @@
 </head>
 
 <body>
+<div class="container">
+
+<div class="main">
 
 <header>
-<h1>Distrib documentation</h1>
+<h1>
+observe documentation
+<div class="subtitle">Program to observe and analyze data</div>
+</h1>
+
 <div class="intro">
-Distrib program was written to build distributions from datafiles, applying a serie of transformations on the input file(s).
+Observe program was written to build distributions from datafiles, applying a serie of transformations on the input file(s).
 </div>
 </header>
 
@@ -32,8 +39,8 @@ This software has been developed and tested under Linux. A priori, it should als
 <ol class="spaced">
     <li>
         Open a terminal and clone the repository on your local machine :
-        <pre>git clone https://github.com/tig12/distrib</pre>
-        (or <a href="https://github.com/tig12/distrib/archive/master.zip">download the code</a>).
+        <pre>git clone https://github.com/tig12/observe</pre>
+        (or <a href="https://github.com/tig12/observe/archive/master.zip">download the code</a>).
     </li>
     
     <li>
@@ -52,21 +59,21 @@ This software has been developed and tested under Linux. A priori, it should als
 <h3><a name="1-2-directory-structure">Directory structure</a></h3>
 The important files and directories are :
 <pre>
-distrib/
+observe/
     ├── <b>commands/</b>
     ├── docs/
     ├── src/
     ├── vendor/
     ├── <b>config.yml.dist</b>
-    └── <b>run-distrib.php</b>
+    └── <b>run-observe.php</b>
 </pre>
 
-In the rest of this doc, directory <code>distrib/</code> is called the <b><i>root directory</i></b>.
+In the rest of this doc, directory <code>observe/</code> is called the <b><i>root directory</i></b>.
 <br>All the commands issued to run the program are done from the root directory.
 <br>
 <br>The files you need to know about are :
 <ul class="simple">
-    <li><code><b>run-distrib.php</b></code> is the entry point to use the program.</li>
+    <li><code><b>run-observe.php</b></code> is the entry point to use the program.</li>
     <li><code><b>commands/</b></code> contains the the commands that you need to edit.</li>
     <li><code><b>config.yml.dist</b></code> needs to be copied (see below).</li>
 </ul>
@@ -80,8 +87,8 @@ Configuration is only needed for some steps.
 
 <!-- ********************************************************************************* -->
 <h2>Usage</h2>
-To check that the program works, open a terminal, go to distrib root directory and type :
-<pre>php run-distrib.php</pre>
+To check that the program works, open a terminal, go to observe root directory and type :
+<pre>php run-observe.php</pre>
 If an error message is displayed, it means that the installation was OK.
 
 <!-- ************************************* -->
@@ -93,7 +100,7 @@ Program usage is based on <b>command files</b>
 
 <br><br>Each command file contains the description of <b>steps</b>.
 <br>One run of the program permits to execute one step ; usage of the program is then
-<pre>php run-distrib.php &lt;command> &lt;step></pre>
+<pre>php run-observe.php &lt;command> &lt;step></pre>
 
 
 <br>Each command file contains a serie of <b>steps</b>, which are the main keys of the command file.
@@ -138,24 +145,46 @@ This command file contains 4 steps : <code>convert</code>, <code>planets</code>,
 
 
 <!-- ********************************************************************************* -->
-<h2>convertFile</h2>
-
-
-<!-- ********************************************************************************* -->
-<h2>computeAstro</h2>
-
-
-<!-- ********************************************************************************* -->
-<h2>aspects</h2>
-
-
-<!-- ********************************************************************************* -->
-<h2>groupByNumber</h2>
-
-
-<!-- ********************************************************************************* -->
 <h2>About</h2>
-Program started in 2020 by Thierry Graff
+Program started in december 2020 by Thierry Graff
+
 </article>
+</div><!-- end class="main" -->
+
+
+<!-- ************************************* -->
+<aside class="left">
+<a name="topage"></a>
+<!-- TODO see why font-family:DejaVu,serif; not inherited from .prevnext -->
+<nav class="prevnext" style="font-family:DejaVu,serif;">
+    <a class="topage" rel="" href="#topage">&#10148;</a>
+    <a class="top" href="index.html">&uarr;</a>
+    <a class="prev" rel="prev" href="check.html">&larr;</a>
+    <a class="next" rel="next" href=".html">&rarr;</a>
+</nav>
+
+<ul>
+    <li class="bold big2"><a href="index.html">Home</a></li>
+    
+    <li>
+        <div class="bold big1 padding-top05">Commands</div>
+        <ul>
+            <li><a href="cmd-groupByNumber.html">groupByNumber</a></li>
+        </ul>
+    </li>
+    
+    <li>
+        <div class="bold big1 padding-top05">Learn</div>
+        <ul>
+            <li><a href="learn-a00.html">a00.csv</a></li>
+        </ul>
+    </li>
+    
+    <li class="bold big1 margin-top"><a href="https://github.com/tig12/observe-data">Code repository</a></li>
+</ul>
+</aside>
+
+</div><!-- end class="container" -->
+
 </body>
 </html>

@@ -4,11 +4,11 @@
     @license    GPL
     @history    2020-12-16 18:17:02+01:00, Thierry Graff : Creation
 ********************************************************************************/
-namespace distrib\commands;
+namespace observe\commands;
 
-use distrib\Distrib;
-use distrib\patterns\Command;
-use distrib\DistribException;
+use observe\Observe;
+use observe\patterns\Command;
+use observe\ObserveException;
 use tiglib\arrays\csvAssociative;
 
 class aspects implements Command {
@@ -19,25 +19,25 @@ class aspects implements Command {
         //
         $classname = 'computeAspects'; // TODO copute by reflection
         if(!isset($params['input-file'])){
-            throw new DistribException("$classname needs a parameter 'input-file'");
+            throw new ObserveException("$classname needs a parameter 'input-file'");
         }
         //
         $infile = $params['input-file'];
         if(!is_file($infile)){
-            throw new DistribException("File not found : $infile");
+            throw new ObserveException("File not found : $infile");
         }
         //
         if(!isset($params['actions'])){
-            throw new DistribException("$classname needs a parameter 'actions'");
+            throw new ObserveException("$classname needs a parameter 'actions'");
         }
         //
         if(!isset($params['output-file'])){
-            throw new DistribException("$classname needs a parameter 'output-file'");
+            throw new ObserveException("$classname needs a parameter 'output-file'");
         }
         $outfile = $params['output-file'];
         $dir = dirname($outfile);
         if(!is_dir($dir)){
-            throw new DistribException("Create directory '$dir' and try again");
+            throw new ObserveException("Create directory '$dir' and try again");
         }
         //
         //  execute
@@ -52,7 +52,7 @@ class aspects implements Command {
         foreach($params['actions'] as $action){
             $parts = preg_split($pSpaces, $action);
             if(count($parts) != 2){
-                throw new DistribException("Invalid line : $action");
+                throw new ObserveException("Invalid line : $action");
             }
             [$p1, $p2] = $parts;
             $elts1 = $elts2 = [];
@@ -77,14 +77,14 @@ class aspects implements Command {
             $outcols[] = $pair[0] . $SEP . $pair[1];
         }
         // build res
-        $res = implode(Distrib::CSV_SEP, $outcols) . "\n";
+        $res = implode(Observe::CSV_SEP, $outcols) . "\n";
         $N = 0;
         foreach($in as $old){
             $new = [];
             foreach($pairs as $pair){
                 $new[] = self::mod360(round($old[$pair[1]] - $old[$pair[0]], 1));
             }
-            $res .= implode(Distrib::CSV_SEP, $new) . "\n";
+            $res .= implode(Observe::CSV_SEP, $new) . "\n";
             $N++;
             if($N % 100000 == 0) echo "$N\n";
         }

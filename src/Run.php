@@ -1,11 +1,11 @@
 <?php
 /********************************************************************************
-    Auxiliary code for run-distrib.php, distrib CLI frontend.
+    Auxiliary code for run-observe.php, observe CLI frontend.
     
     @license    GPL
     @history    2020-12-15 21:42:03+01:00, Thierry Graff : creation
 ********************************************************************************/
-namespace distrib;
+namespace observe;
 
 use tiglib\filesystem\globRecursive;
 
@@ -23,7 +23,7 @@ class Run{
                 [0] => titi
                 [1] => test/toto
             )
-        This gives the list of possible strings which can be used as first argument to run-distrib.php
+        This gives the list of possible strings which can be used as first argument to run-observe.php
     **/
     public static function getCommands(){
         $res = [];

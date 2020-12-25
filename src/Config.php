@@ -7,7 +7,7 @@
     @license    GPL
     @history    2020-12-15 21:21:43+01:00, Thierry Graff : Creation
 ********************************************************************************/
-namespace distrib;
+namespace observe;
 
 class Config{
     

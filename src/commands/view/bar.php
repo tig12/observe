@@ -11,11 +11,11 @@
     @license    GPL
     @history    2020-12-20 18:48:55+01:00, Thierry Graff : Creation
 ********************************************************************************/
-namespace distrib\commands\view;
+namespace observe\commands\view;
 
-use distrib\Distrib;
-use distrib\patterns\Command;
-use distrib\DistribException;
+use observe\Observe;
+use observe\patterns\Command;
+use observe\ObserveException;
 use tiglib\arrays\csvAssociative;
 use tiglib\arrays\csvRegular;
 
@@ -27,32 +27,32 @@ class bar implements Command {
         //
         $classname = 'bar'; // TODO copute by reflection
         if(!isset($params['input-file'])){
-            throw new DistribException("$classname needs a parameter 'input-file'");
+            throw new ObserveException("$classname needs a parameter 'input-file'");
         }
         $infile = $params['input-file'];
         if(!is_file($infile)){
-            throw new DistribException("File not found : $infile");
+            throw new ObserveException("File not found : $infile");
         }
         //
         if(!isset($params['col'])){
-            throw new DistribException("$classname needs a parameter 'col'");
+            throw new ObserveException("$classname needs a parameter 'col'");
         }
         //
         if(!isset($params['assoc'])){
-            throw new DistribException("$classname needs a parameter 'assoc'");
+            throw new ObserveException("$classname needs a parameter 'assoc'");
         }
         // output
         if(isset($params['output-file']) && isset($params['output-data'])){
-            throw new DistribException("$classname can't have both parameters 'output-data' and 'output-file'");
+            throw new ObserveException("$classname can't have both parameters 'output-data' and 'output-file'");
         }
         if(!isset($params['output-file']) && !isset($params['output-data'])){
-            throw new DistribException("$classname needs either parameter 'output-data' or 'output-file'");
+            throw new ObserveException("$classname needs either parameter 'output-data' or 'output-file'");
         }
         if(isset($params['output-file'])){
             $outfile = $params['output-file'];
             $outdir = dirname($outfile);
             if(!is_dir($outdir)){
-                throw new DistribException("output directory does not exist: $outdir");
+                throw new ObserveException("output directory does not exist: $outdir");
             }
         }
         //
@@ -122,15 +122,11 @@ class bar implements Command {
         [$x, $y] = [$xBegin - $legendW, $vgap + $legendH];
         $res .= "<text x=\"$x\" y=\"$y\" style=\"text-anchor: middle\">$max</text>\n";
         // legend horizontal
-        // TODO absolute draft - put the legend in parameter
-        [$x, $y] = [$xBegin, $yBegin + $legendH];
-        $res .= "<text x=\"$x\" y=\"$y\" style=\"text-anchor: middle\">0</text>\n";
-        [$x, $y] = [$xBegin + 90*$barDelta, $yBegin + $legendH];
-        $res .= "<text x=\"$x\" y=\"$y\" style=\"text-anchor: middle\">90</text>\n";
-        [$x, $y] = [$xBegin + 180*$barDelta, $yBegin + $legendH];
-        $res .= "<text x=\"$x\" y=\"$y\" style=\"text-anchor: middle\">180</text>\n";
-        [$x, $y] = [$xBegin + 270*$barDelta, $yBegin + $legendH];
-        $res .= "<text x=\"$x\" y=\"$y\" style=\"text-anchor: middle\">270</text>\n";
+        // TODO absolute draft - pass the legend in parameter
+        foreach([0, 90, 120, 180, 240, 270] as $i){
+            [$x, $y] = [$xBegin + $i*$barDelta, $yBegin + $legendH];
+            $res .= "<text x=\"$x\" y=\"$y\" style=\"text-anchor: middle\">$i</text>\n";
+        }
         //
         $res .= "</svg>\n";
         //

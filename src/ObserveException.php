@@ -4,6 +4,6 @@
     @license    GPL
     @history    , Thierry Graff : Creation
 ********************************************************************************/
-namespace distrib;
+namespace observe;
 
-class DistribException extends \Exception {}
+class ObserveException extends \Exception {}

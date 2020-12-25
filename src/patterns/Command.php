@@ -5,7 +5,7 @@
     @license    GPL
     @history    2020-12-16 18:16:31+01:00, Thierry Graff : Creation
 ********************************************************************************/
-namespace distrib\patterns;
+namespace observe\patterns;
 
 interface Command {
     
