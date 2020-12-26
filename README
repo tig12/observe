@@ -1,5 +1,22 @@
 
-Tool to build distributions from data files.
+Draft tool to generate graphics on https://g5.tig12.net/observe/a00/a00-html/
 
+Observe program is a small generic tool to execute commands.
+Based on command files, containing the command and its parameter. 
 
+Developed to observe a file containing all births in France of year 2000 (N = 591 936).
+
+Each line contains untimed birth days of mother, father, child.
+
+Current commands implemented :
+- convertFile   : clean the input and have standard formats
+                  Start with 3 columns
+- computeAstro  : compute the ecliptic longitudes of the planets at mother, father, child birth day (takes 12:00 UT)
+                  (11 planets => 33 columns)
+- aspects       : For each couple (Mother Child, Father Child, Mother Father), compute angular distance between planets.
+                  Ex : compute distance between mother's sun and child's sun.
+                  This makes 11 x 11 x 3 = 363 columns
+- group         : Group the angular distances by degree (0 - 360)
+- view.pages    : Generate html pages containing svg bar charts
+                  3 pages with 121 drawings.
 
