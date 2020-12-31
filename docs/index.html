@@ -2,7 +2,7 @@
 <html lang="fr" lang="en">
 <head>
     <meta charset="utf-8">
-    <title></title>
+    <title>Observe | Documentation</title>
     <link href="static/css/observe-data.css" rel="stylesheet" type="text/css">
     <meta name="description" content="">
     <meta name="robots" content="index,follow">
@@ -19,12 +19,37 @@
 
 <header>
 <h1>
-observe documentation
+Observe documentation
 <div class="subtitle">Program to observe and analyze data</div>
 </h1>
 
 <div class="intro">
-Observe program was written to build distributions from datafiles, applying a serie of transformations on the input file(s).
+<pre class="normal">
+Draft tool to generate the graphics of
+<a href="https://g5.tig12.net/observe/a00/a00-html/">https://g5.tig12.net/observe/a00/a00-html/</a>
+
+Observe program is a small generic tool to execute commands.
+Based on command files, containing the command and its parameter. 
+
+Developed to observe a file containing all births in France of year 2000
+N = 591 936
+
+Each line contains untimed birth days of mother, father, child, mariage.
+
+Current commands implemented :
+- convertFile   : clean the input and have standard formats
+                  Start with 3 columns (Mother Father Child)
+- computeAstro  : compute the ecliptic longitudes of the planets at mother,
+                  father, child birth day (takes 12:00 UT)
+                  (11 planets => 33 columns)
+- aspects       : For each couple (Mother Child, Father Child, Mother Father),
+                  compute angular distance between planets.
+                  Ex : compute distance between mother's sun and child's sun.
+                  This makes 11 x 11 x 3 = 363 columns
+- group         : Group the angular distances by degree (0 - 360)
+- view.pages    : Generate html pages containing svg bar charts
+                  3 pages with 121 drawings.
+</pre>
 </div>
 </header>
 
@@ -105,7 +130,7 @@ Program usage is based on <b>command files</b>
 
 <br>Each command file contains a serie of <b>steps</b>, which are the main keys of the command file.
 
-<br><br>Example of the command file located in <code>commands/sample/test1.yml</code>:
+<br><br>Example of a command file located in <code>commands/sample/a00.yml</code>:
 <pre>
 convert:
   command: convertFile
@@ -142,6 +167,9 @@ group:
 </pre>
 
 This command file contains 4 steps : <code>convert</code>, <code>planets</code>, <code>aspects</code>, <code>group</code>.
+
+<br><br>Example of command to issue :
+<pre><b>php run-observe.php sample/a00 convert</b></pre>
 
 
 <!-- ********************************************************************************* -->

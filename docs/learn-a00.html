@@ -33,7 +33,70 @@ For all 500 000 child born in France in 2000, contains days of birth of mother, 
 
 
 <!-- ********************************************************************************* -->
-<h2>General informations</h2>
+<h2>Command file</h2>
+
+used to generate intermediate files and drawings
+
+<pre>
+convert:
+  command: convertFile
+  input-file: data/a00.csv
+  actions:
+    - ymd2iso anais00 mnais00 jnais00 -> C
+    - ymd2iso ANAISM MNAISM JNAISM    -> M
+    - ymd2iso ANAISP MNAISP JNAISP    -> F
+  output-file: tmp/a00-ymd.csv
+
+planets:
+  command: computeAstro
+  input-file: tmp/a00/a00-ymd.csv
+  actions:
+    - planets C SO MO ME VE MA JU SA UR NE PL NN
+    - planets M SO MO ME VE MA JU SA UR NE PL NN
+    - planets F SO MO ME VE MA JU SA UR NE PL NN
+  output-file: tmp/a00/a00-coords.csv
+
+aspects:
+  command: aspects
+  input-file: tmp/a00/a00-coords.csv
+  actions:
+    - C-* M-*
+    - C-* F-*
+    - M-* F-*
+  output-file: tmp/a00/a00-aspects.csv
+
+group:
+  command: groupByNumber
+  input-file: tmp/a00/a00-aspects.csv
+  cols: '*'
+  range: 360
+  output-dir: tmp/a00/a00-aspects
+
+view:
+    command: view\pages
+    input-dir: tmp/a00/a00-aspects
+    output-dir: tmp/a00/a00-html
+    view:
+      command: view\bar
+      assoc: false
+      col: 1
+    pages:
+      -
+        title: a00 Mother Child aspects
+        input-files: C-*--M-*.csv
+        #subtitle-template: '{IAA($1)} child - {IAA($2)} mother'
+        output-file: mother-child.html
+      -
+        title: a00 Father Child aspects
+        input-files: C-*--F-*.csv
+        #subtitle-template: '{IAA($1)} child - {IAA($2)} father'
+        output-file: father-child.html
+      -
+        title: a00 Mother Father aspects
+        input-files: M-*--F-*.csv
+        #subtitle-template: '{IAA($1)} mother - {IAA($2)} father'
+        output-file: mother-father.html
+</pre>
 
 
 

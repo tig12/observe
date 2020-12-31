@@ -13,6 +13,7 @@ namespace observe\commands\view;
 use observe\Observe;
 use observe\patterns\Command;
 use observe\ObserveException;
+use observe\model\approach\astro\IAA;
 use tiglib\arrays\csvAssociative;
 use tiglib\arrays\csvRegular;
 
@@ -42,6 +43,7 @@ class pages implements Command {
         if(!isset($params['view'])){
             throw new ObserveException("$classname needs a parameter 'view'");
         }
+        //
         // view details
         if(!isset($params['view']['command'])){
             throw new ObserveException("$classname - 'view' needs a parameter 'command'");
@@ -57,6 +59,7 @@ class pages implements Command {
         if(!isset($params['pages'])){
             throw new ObserveException("$classname needs a parameter 'pages'");
         }
+        //
         // pages details
         for($i=0; $i < count($params['pages']); $i++){
             $page = $params['pages'][$i];
@@ -81,6 +84,7 @@ class pages implements Command {
             $res .= self::pageHeader($page['title']);
             $res .= "<h1>{$page['title']}</h1>";
             $infiles = glob($indir . DS . $page['input-files']);
+            $res .= self::planetList();
             $res .= self::pageToc($infiles);
             if(count($infiles) == 0){
                 throw new ObserveException("Pattern {$page['input-files']}  does not correspond to existing files");
@@ -104,15 +108,26 @@ class pages implements Command {
     }
     
     // ******************************************************
-    /** Builds page's table of contents **/
-    private static function pageToc($infiles){
-        $res = "<nav class=\"toc\">\n";
-        foreach($infiles as $infile){
-            $anchor = self::anchor($infile);
-            $label = $anchor; // TODO change
-            $res .= "<div><a href=\"#$anchor\">$label</a></div>\n";
+    /**
+        TODO Externalize
+    **/
+    private static function planetList(){
+        $res = '';
+        $res .= "<table class=\"planets\">\n";
+        $res .= "<tr>\n";
+        $res .= "<td>\n";
+        $i = 0;
+        foreach(IAA::PLANET_NAMES as $code => $label){
+            if (in_array($i, [3, 6, 9])){
+                $res .= "</td>\n";
+                $res .= "<td>\n";
+            }
+            $res.= "<div>$code $label</div>\n";
+            $i++;
         }
-        $res .= '</nav>' . "\n";
+        $res .= "</td>\n";
+        $res .= "</tr>\n";
+        $res .= "</table>\n";
         return $res;
     }
     
@@ -121,6 +136,31 @@ class pages implements Command {
     private static function anchor($infile){
         $pathinfo = pathinfo($infile);
         return str_replace('.' . $pathinfo['extension'], '', $pathinfo['basename']);
+    }
+    
+    // ******************************************************
+    /**
+        Builds page's table of contents
+        WARNING: code not generic, adapted to planet interaspects
+    **/
+    private static function pageToc($infiles){
+        $res = '';
+        $res .= "<nav class=\"toc\">\n";
+        $i = 0;
+        $res .= "<div>\n";
+        foreach($infiles as $infile){
+            if ($i % 11 == 0){
+                $res .= "</div>\n";
+                $res .= "<div>\n";
+            }
+            $anchor = self::anchor($infile);
+            $label = $anchor; // TODO change
+            $res .= "<div><a href=\"#$anchor\">$label</a></div>\n";
+            $i++;
+        }
+        $res .= "</div>\n";
+        $res .= '</nav>' . "\n";
+        return $res;
     }
     
     // ******************************************************
@@ -144,14 +184,29 @@ class pages implements Command {
             padding:0.3rem;
             margin:1rem 0;
         }
-        .toc div{
-            display:inline-block;
-            padding-right:2rem;
+        a{
+            text-decoration:none;
         }
         svg{
             margin:1rem;
             background:lightyellow;
             border:1px solid grey;
+        }
+        .planets{
+            margin:1rem;
+        }
+        .planets td{
+            vertical-align:top;
+            padding-right:4rem;
+        }
+/* 
+        .toc div{
+            display:inline-block;
+            padding-right:2rem;
+        }
+*/
+        .toc>div{
+            display:inline-block;padding-right:1rem;
         }
     </style>
 </head>
