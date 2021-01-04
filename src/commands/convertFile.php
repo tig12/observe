@@ -14,6 +14,7 @@ use tiglib\arrays\csvAssociative;
 class convertFile implements Command {
     
     public static function execute($params=[]){
+die("\n<br>die here " . __FILE__ . ' - line ' . __LINE__ . "\n");
         //
         // check parameters
         //
