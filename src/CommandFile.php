@@ -13,58 +13,65 @@ class CommandFile {
     private $data;
     
     /** String corresponding to this command file **/
-    private $commandString;
+    private $commandFileString;
     
     /** 
         Builds a new Command object
-        @param $cmdStr String like 'test/toto'
+        @param $cmdFileStr String designating a command file.
+               Ex: $cmdFileStr = 'test/toto' (corresponds to command file commands/test/toto.yml)
     **/
-    public function __construct($cmdStr){
-        $file = Run::command2file($cmdStr);
+    public function __construct($cmdFileStr){
+        $file = Run::command2file($cmdFileStr);
         if(!\file_exists($file)){
-            throw new ObserveException("The command '$cmdStr' does not correspond to an existing file");
+            throw new ObserveException("The command '$cmdFileStr' does not correspond to an existing file");
         }
-        $this->commandString = $cmdStr;
+        $this->commandFileString = $cmdFileStr;
         // TODO  check if parse ok
         $this->data = \yaml_parse(file_get_contents($file));
     }
     
     /**
-        Checks if a string corresponds to a valid step
+        Checks if a string corresponds to a valid command
     **/
-    public function stepExists($str){
+    public function commandExists($str){
         return isset($this->data[$str]);
     }
     
     /**
-        Returns an array of all steps of this command file
+        Returns an array of all commands of this command file
+        = all main keys of command file, except "variables"
     **/
-    public function getAllSteps(){
-        return array_keys($this->data);
+    public function getAllCommands(){
+        $tmp = array_keys($this->data);
+        if (($key = array_search("variables", $tmp)) !== false) {
+            unset($tmp[$key]);
+        }
+        return $tmp;
     }
     
     /**
-        Executes one step
+        Executes one command
     **/
-    public function executeStep($stepStr){
-        if(!$this->stepExists($stepStr)){
-            throw new ObserveException("The step '$stepStr' does not exist in command " . $this->commandString);
+    public function executeCommand($commandStr){
+        if(!$this->commandExists($commandStr)){
+            throw new ObserveException("The command '$commandStr' does not exist in command file " . $this->$commandFileString . '.');
         }
-        $step =& $this->data[$stepStr];
-        if(!isset($step['command'])){
-            throw new ObserveException("Invalid step '$stepStr': key 'command' is missing");
+        $command =& $this->data[$commandStr];
+        if(!isset($command['command'])){
+            throw new ObserveException("Invalid command '$commandStr': key 'command' is missing.");
         }
         // build class implementing Command
-        $classname = 'observe\\commands\\' . $step['command'];
+        // classname : "3p.prepare' gives "observe\commands\3p\prepare"
+        $classname = 'observe\\commands\\' . str_replace('.', '\\', $command['command']);
         if(!class_exists($classname)){
-            throw new ObserveException("Invalid key 'command' in step '$stepStr' : class $classname does not exist");
+            throw new ObserveException("Invalid key 'command' in command '$commandStr' : class $classname does not exist.");
         }
         // TODO check that class implements Command
         //$class = new \ReflectionClass($classname);
         $method = new \ReflectionMethod("$classname::execute");
-        // method parameters = current step except 'command' entry
-        array_shift($step);
-        $method->invoke(null, $step);
+        // method parameters = current command except 'command' entry
+        array_shift($command);
+        $method->invoke(null, $command);
     }
     
                                                                                                                                           

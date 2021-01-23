@@ -22,8 +22,8 @@ use observe\CommandFile;
 //
 // parameter checking
 //
-$cmmands = Run::getCommands();
-$cmmands_str = implode(", ", $cmmands);
+$commandFiles = Run::getCommandFiles();
+$commandFiles_str = implode(", ", $commandFiles);
 
 $USAGE = <<<USAGE
 -------                                                                                               
@@ -35,42 +35,45 @@ Example :
 
 USAGE;
 
-// check arg1
+//
+// --- $argv[1] : command file ---
+//
 if($argc < 3){
     echo "WRONG USAGE - run-observes.php needs at least 2 arguments\n";
     echo $USAGE;
-    echo "Possible values for argument1 : $cmmands_str\n";
+    echo "Possible values for argument1 : $commandFiles_str\n";
     exit;
 }
 else{
-    if(!in_array($argv[1], $cmmands)){
+    if(!in_array($argv[1], $commandFiles)){
         echo "WRONG USAGE - INVALID COMMAND : {$argv[1]}\n";
         echo $USAGE;
-        echo "Possible values for argument1 : $cmmands_str\n";
+        echo "Possible values for argument1 : $commandFiles_str\n";
         exit;
     }
 }
-
 // here, $argv[1] is valid
-$cmd = new CommandFile($argv[1]);
+$cmdFile = new CommandFile($argv[1]);
 
-// check arg2
-if(!$cmd->stepExists($argv[2])){
+//
+// --- $argv[2] : command ---
+//
+if(!$cmdFile->commandExists($argv[2])){
     
-    echo "WRONG USAGE - INVALID STEP : {$argv[2]}\n";
+    echo "WRONG USAGE - INVALID COMMAND : {$argv[2]}\n";
     echo $USAGE;
-    echo "Possible values for argument2 : " . implode(', ', $cmd->getAllSteps())  . "\n";
+    echo "Possible values for argument2 : " . implode(', ', $cmdFile->getAllCommands())  . "\n";
     exit;
 }
-
 // here, $argv[2] is valid
+
 //
-// run
+// --- run ---
 //
 try{
-    $cmd-> executeStep($argv[2]);
+    $cmdFile-> executeCommand($argv[2]);
 }
-catch(ObserveException $e){
+catch(observe\ObserveException $e){
     echo "ERROR: " . $e->getMessage() . "\n";
 }
 catch(Exception $e){

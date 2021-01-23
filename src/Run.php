@@ -12,7 +12,7 @@ use tiglib\filesystem\globRecursive;
 class Run{
     
     /** 
-        Returns the available commands = relative paths of YAML files located in commands/
+        Returns the available command files = relative paths of YAML files located in commands/
         Ex : if commands/ contains
             commands
                 ├── test
@@ -25,7 +25,7 @@ class Run{
             )
         This gives the list of possible strings which can be used as first argument to run-observe.php
     **/
-    public static function getCommands(){
+    public static function getCommandFiles(){
         $res = [];
         $tmp = globRecursive::execute(self::commandsDir() . DS . '*.yml');
         foreach($tmp as $elt){
@@ -37,7 +37,7 @@ class Run{
         return $res;
     }
     
-    /**  Returns the directory containing the commands **/
+    /**  Returns the directory containing the command filess **/
     public static function commandsDir(){
         return dirname(__DIR__) . DS . 'commands';
     }
