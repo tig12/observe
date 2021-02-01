@@ -1,5 +1,5 @@
 
-Draft tool to generate graphics on https://g5.tig12.net/observe/a00/a00-html/
+Draft tool to generate graphics on https://g5.tig12.net/observe
 
 Observe program is a small generic tool to execute commands.
 Based on command files, containing the command and its parameter. 

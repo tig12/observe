@@ -96,7 +96,7 @@ HTML;
             //$v = MFC::$k;
             $res .= <<<HTML
         <li>
-            <b>$v</b>
+            <b>$k - $v</b>
             <ul>
                 <li>
                     <b>Birth</b>
@@ -121,7 +121,7 @@ HTML;
         $v = "Wedding";
         $res .= <<<HTML
         <li>
-            <b>$v</b>
+            <b>$k - $v</b>
             <ul>
                 <li>
                     <a href="#$k-proportion">Proportion</a>
@@ -143,7 +143,7 @@ HTML;
         $v = "Child";
         $res .= <<<HTML
         <li>
-            <b>$v</b>
+            <b>$k - $v</b>
             <ul>
                 <li>
                     <b>Date</b>
@@ -160,7 +160,7 @@ HTML;
 HTML;
         $res .= <<<HTML
         <li class="padding-top">
-            <div><b>Relations</b></div>
+            <div><b>Inter-aspects</b></div>
 HTML;
         foreach(['MF', 'MW', 'MC', 'FW', 'FC', 'WC', ] as $k){
             $v = $k[0] . '-' . $k[1];
@@ -174,6 +174,15 @@ HTML;
         $res .= <<<HTML
     </ul>
 </div>
+
+<!-- ************************************* -->
+<h3>-- PROTOTYPE --</h3>
+<ul>
+    <li>Each links points to curve(s) with the distribution(s).</li>
+    <li>These curves contains original and random data.</li>
+    <li>For each curve : min, max, mean, median</li>
+</ul>
+
 
 </article>
 
