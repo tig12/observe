@@ -2,8 +2,8 @@
 <html lang="fr" lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Mother Father Child | Observe software</title>
-    <link href="static/css/observe-data.css" rel="stylesheet" type="text/css">
+    <title>a00 - Births in France in 2000 | Observe software</title>
+    <link href="../static/css/observe-data.css" rel="stylesheet" type="text/css">
     <meta name="description" content="">
     <meta name="robots" content="index,follow">
     <link rel="schema.dcterms" href="http://purl.org/dc/terms/">
@@ -20,26 +20,20 @@
 <a name="topage"></a>
 <header>
 <h1>
-Mother Father Child
+a00.csv - Births of 2000 in France
 </h1>
 <div class="intro">
-This page describes experiences done on files containing birth dates of mother, father, child.
+Contains all births in France of year 2000
+<br><div class="big bold">N = 591 936</div>
+Each line contains untimed birth days of mother, father and child, date of mariage.
+<!-- <br>Working directory is <a href="https://g5.tig12.net/observe/insee/a00">https://g5.tig12.net/observe/insee/a00</a> -->
+<br>Generated graphics are in <a href="https://g5.tig12.net/observe/insee/a00/">https://g5.tig12.net/observe/insee/a00/</a>
 </div>
 </header>
 
 <article>
 
-
-<!-- ********************************************************************************* -->
-<h2>a00.csv - Births of 2000 in France</h2>
-
-Contains all births in France of year 2000
-<br><div class="big bold">N = 591 936</div>
-Each line contains untimed birth days of mother, father and child, date of mariage.
-<br>Working directory is <a href="https://g5.tig12.net/observe/a00">https://g5.tig12.net/observe/a00</a>
-<br>Genrated graphics are in <a href="https://g5.tig12.net/observe/a00/a00-html/">https://g5.tig12.net/observe/a00/a00-html/</a>
-
-<br><br>Commands to execute all steps :
+Commands to execute all steps :
 <pre>
 php run-observe.php insee/a00 convert
 php run-observe.php insee/a00 planets
@@ -48,8 +42,8 @@ php run-observe.php insee/a00 group
 php run-observe.php insee/a00 view
 </pre>
 
-<!-- ************************************* -->
-<h3>Command file</h3>
+<!-- ********************************************************************************* -->
+<h2>Command file</h2>
 The command file is <code>commands/insee/a00.yml</code>
 
 <pre>
@@ -113,47 +107,6 @@ view:
         output-file: mother-father.html
 </pre>
 
-<!-- ********************************************************************************* -->
-<h2>Gauquelin heredity data</h2>
-
-The file used comes from <a href="https://newalchemypress.com/gauquelin/research7.php">newalchemypress.com</a> :
-<br><a href="https://newalchemypress.com/gauquelin/gauquelin_docs/mom_dad_kid_final20916_3a-m_column_first.pdf">https://newalchemypress.com/gauquelin/gauquelin_docs/mom_dad_kid_final20916_3a-m_column_first.pdf</a>
-
-<br><br>Contains Gauquelin heredity data
-<br><div class="big bold">N = 20 916</div>
-
-The pdf was first converted to a csv :
-
-<ul class="spaced margin-top">
-    <li>
-        Convert the PDF to text :
-        <pre>pdftotext -layout mom_dad_kid_final20916_3a-m_column_first.pdf tmp1.txt</pre>
-    </li>
-    <li>
-        Edit <code>tmp1.txt</code>, and manually find and replace : one special character is replaced by nothing.
-        <br>Also had to correct ~20 lines not formatted correctly (newlines and some months and years not separated by space).
-    </li>
-    <li>The following command generates the csv :
-        <br>- Remove white lines
-        <br>- Remove useless lines (footer containing the url of the file)
-        <br>- Change strings like '48N 5' to '48N05'
-        <br>- Convert multiple spaces to one space
-        <br>- Convert spaces to semicolon (;)
-        <br>- Generate a csv file :
-        <pre>
-grep -v -e '^$' tmp1.txt | \
-grep -v 'file:///' | \
-sed -e 's#\([0-9][NSEW]\) \([0-9]\)#\10\2#g' | \
-tr -s '[:space:]' | \
-sed -e 's/^ //g' | \
-sed -e 's/ /;/g' \
-> 20916-mfc-newalch.csv</pre>
-    </li>
-</ul>
-
-
-
-
 
 </article>
 </div><!-- end class="main" -->
@@ -165,7 +118,7 @@ sed -e 's/ /;/g' \
 <!-- TODO see why font-family:DejaVu,serif; not inherited from .prevnext -->
 <nav class="prevnext" style="font-family:DejaVu,serif;">
     <a class="topage" rel="" href="#topage">&#10148;</a>
-    <a class="top" href="index.html">&uarr;</a>
+    <a class="top" href="../index.html">&uarr;</a>
     <!-- 
     <a class="prev" rel="prev" href=".html">&larr;</a>
     <a class="next" rel="next" href=".html">&rarr;</a>
@@ -173,19 +126,21 @@ sed -e 's/ /;/g' \
 </nav>
 
 <ul>
-    <li class="bold big2"><a href="index.html">Home</a></li>
+    <li class="bold big2"><a href="../index.html">Home</a></li>
     
     <li>
         <div class="bold big1 padding-top05">Commands</div>
         <ul>
-            <li><a href="cmd-groupByNumber.html">groupByNumber</a></li>
+            <li><a href="../commands/convertFile.html">convertFile</a></li>
+            <li><a href="../commands/groupByNumber.html">groupByNumber</a></li>
         </ul>
     </li>
     
     <li>
         <div class="bold big1 padding-top05">Experiences</div>
         <ul>
-            <li><a href="exp-mfc.html">Mother Father Child</a></li>
+            <li><a href="../experiences/a00.html">a00 - birth in France in 2000</a></li>
+            <li><a href="../experiences/gauquelin.html">Gauquelin heredity data</a></li>
         </ul>
     </li>
     

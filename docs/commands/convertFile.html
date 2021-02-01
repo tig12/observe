@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr" lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>convertFile command | Observe software</title>
+    <link href="../static/css/observe-data.css" rel="stylesheet" type="text/css">
+    <meta name="description" content="">
+    <meta name="robots" content="index,follow">
+    <link rel="schema.dcterms" href="http://purl.org/dc/terms/">
+    <meta name="dcterms.rights" content="Creative commons by-sa 4.0">
+    <meta name="dcterms.rightsHolder" content="Thierry Graff">
+    <meta name="dcterms.dateCopyrighted" content="2020">
+</head>
+
+<body>
+<div class="container">
+
+<div class="main">
+
+<a name="topage"></a>
+<header>
+<h1>convertFile</h1>
+<div class="intro">
+Command <code>convertFile</code> is used to "clean" input files.
+<br>It takes a csv file in input and generates a csv file.
+</div>
+</header>
+
+<article>
+
+Example of use :
+<pre>
+convert:
+  command: convertFile
+  input-file: data/insee/a00.csv
+  output-file: tmp/insee/a00/a00-ymd.csv
+  actions:
+    - ymd2iso anais00 mnais00 jnais00 -> C
+    - ymd2iso ANAISM MNAISM JNAISM    -> M
+    - ymd2iso ANAISP MNAISP JNAISP    -> F
+    - ymd2iso AMAR MMAR JMAR          -> W
+    - copy    rangmar00               -> WRANK
+</pre>
+
+<!-- ********************************************************************************* -->
+<h2>input-file</h2>
+Absolute or relative path to the csv file to transform.
+
+<!-- ********************************************************************************* -->
+<h2>output-file</h2>
+Absolute or relative path to the generated csv file.
+
+<!-- ********************************************************************************* -->
+<h2>actions</h2>
+Describe the transformations done to convert the file.
+<br>The program executes all the actions on each line of the input file to generate one line of the output file.
+<br>The syntax is :
+<pre>&lt;action to execute> &lt;input column(s)> -> &lt;generated column></pre>
+
+For example :
+<pre>ymd2iso anais00 mnais00 jnais00 -> C</pre>
+
+means : "execute action <code>ymd2iso</code>, using input columns <code>anais00</code>, <code>mnais00</code>, <code>jnais00</code>, and generate column <code>C</code> in the output file".
+
+<br><br>For csv files without header (a first line containing the names of the fields), column indexes (starting with 0) are used.
+<pre>- ymdhms2iso 13 12 11 14 15 16  -> F_DATE</pre>
+
+<br>Supported actions are :
+
+<!-- ************************************* -->
+<h3>ymd2iso</h3>
+Takes 3 column names in input (containing year, month, day) to generate a column containing a <code>YYYY-MM-DD</code> date.
+
+<!-- ************************************* -->
+<h3>ymdhms2iso</h3>
+Takes 6 column names in input (containing year, month, day, hour, minute, seconds) to generate a column containing a <code>YYYY-MM-DD HH:MM:SS</code> date and time.
+
+<!-- ************************************* -->
+<h3>copy</h3>
+Takes one column name in input to generate a column containing a copy of the value.
+
+
+</article>
+</div><!-- end class="main" -->
+
+
+<!-- ************************************* -->
+<aside class="left">
+<a name="topage"></a>
+<!-- TODO see why font-family:DejaVu,serif; not inherited from .prevnext -->
+<nav class="prevnext" style="font-family:DejaVu,serif;">
+    <a class="topage" rel="" href="#topage">&#10148;</a>
+    <a class="top" href="../index.html">&uarr;</a>
+    <!-- 
+    <a class="prev" rel="prev" href="check.html">&larr;</a>
+    <a class="next" rel="next" href=".html">&rarr;</a>
+    -->
+</nav>
+
+<ul>
+    <li class="bold big2"><a href="../index.html">Home</a></li>
+    
+    <li>
+        <div class="bold big1 padding-top05">Commands</div>
+        <ul>
+            <li><a href="../commands/convertFile.html">convertFile</a></li>
+            <li><a href="../commands/groupByNumber.html">groupByNumber</a></li>
+        </ul>
+    </li>
+    
+    <li>
+        <div class="bold big1 padding-top05">Experiences</div>
+        <ul>
+            <li><a href="../experiences/a00.html">a00 - birth in France in 2000</a></li>
+            <li><a href="../experiences/gauquelin.html">Gauquelin heredity data</a></li>
+        </ul>
+    </li>
+    
+    <li class="bold big1 margin-top"><a href="https://github.com/tig12/observe-data">Code repository</a></li>
+</ul>
+</aside>
+
+</div><!-- end class="container" -->
+
+</body>
+</html>

@@ -1,0 +1,3 @@
+
+Directory widgets/ contains code that can be used by several commands.
+Either code to generate parts of html pages, or auxiliary files that can be copied by commands.

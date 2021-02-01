@@ -14,11 +14,10 @@ use tiglib\arrays\csvAssociative;
 class convertFile implements Command {
     
     public static function execute($params=[]){
-die("\n<br>die here " . __FILE__ . ' - line ' . __LINE__ . "\n");
         //
         // check parameters
         //
-        $classname = 'convertFile'; // TODO copute by reflection
+        $classname = __CLASS__;
         if(!isset($params['input-file'])){
             throw new ObserveException("$classname needs a parameter 'input-file'");
         }

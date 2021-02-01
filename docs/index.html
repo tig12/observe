@@ -17,6 +17,7 @@
 
 <div class="main">
 
+<a name="topage"></a>
 <header>
 <h1>
 Observe documentation
@@ -24,10 +25,28 @@ Observe documentation
 </h1>
 
 <div class="intro">
-<pre class="normal">
-Draft tool to generate the graphics of
-<a href="https://g5.tig12.net/observe/a00/a00-html/">https://g5.tig12.net/observe/a00/a00-html/</a>
+Tool developed to assist persons who perform statistical tests on astrology.
+<br>Used to generate the graphics of <a href="https://g5.tig12.net/observe">https://g5.tig12.net/observe</a>
+<br>Status : absolute draft, under development.
+</div>
+</header>
 
+<article>
+This software has been developed and tested under Linux. A priori, it should also work under Windows and Macintosh.
+
+<!-- ********************************************************************************* -->
+<h2>Overview</h2>
+Observe is based on a small generic mechanism which permits to invoke <b>commands</b>.
+<br>Commands are specified in YAML <b>command files</b>, located in directory <code>commands/</code>.
+<br>A command file contains the specifications of one or more commands.
+<br>Observe is used through the console, and takes 2 parameters :
+<pre>php run-observe.php &lt;command file> &lt;command></pre>
+Ex: 
+<pre>php run-observe.php insee/a00 prepare</pre>
+will execute the command <code>prepare</code> described in file <code>commands/insee/a00.yml</code>
+
+
+<!-- 
 Observe program is a small generic tool to execute commands.
 Based on command files, containing the command and its parameter. 
 
@@ -49,14 +68,8 @@ Current commands implemented :
 - group         : Group the angular distances by degree (0 - 360)
 - view.pages    : Generate html pages containing svg bar charts
                   3 pages with 121 drawings.
-</pre>
-</div>
-</header>
+-->
 
-<article>
-
-This software has been developed and tested under Linux. A priori, it should also work under Windows and Macintosh.
-<br>It is used through the command line.
 
 <!-- ********************************************************************************* -->
 <h2>Installation</h2>
@@ -107,31 +120,43 @@ In the rest of this doc, directory <code>observe/</code> is called the <b><i>roo
 <h3>Configuration</h3>
 Create a file <code>config.yml</code> by copying <code>config.yml.dist</code> :
 <pre>cp config.yml.dist config.yml</pre>
-Configuration is only needed for some steps.
+Configuration is only needed for some commands.
 
 
 <!-- ********************************************************************************* -->
 <h2>Usage</h2>
 To check that the program works, open a terminal, go to observe root directory and type :
 <pre>php run-observe.php</pre>
-If an error message is displayed, it means that the installation was OK.
+<pre>
+WRONG USAGE - run-observes.php needs 2 arguments
+-------                                                                                               
+Usage : 
+    php run-observe.php <command> <step>
+Example :
+    php run-observe.php test/toto command1
+-------
+Possible values for argument1 : insee/a00, gauquelin/heredity
+</pre>
+If a similar error message is displayed, it means that the installation was OK.
 
-<!-- ************************************* -->
-<h3>Command files</h3>
+
+<!-- ********************************************************************************* -->
+<h2>Command files</h2>
 Program usage is based on <b>command files</b>
 <br>They are created by users ; they are used to describe what the program should do.
 <br>They are located in directory <code>commands/</code>.
 <br>They are written using YAML syntax.
 
-<br><br>Each command file contains the description of <b>steps</b>.
-<br>One run of the program permits to execute one step ; usage of the program is then
-<pre>php run-observe.php &lt;command> &lt;step></pre>
+<br><br>Each command file contains description of commands.
+<br>One run of the program permits to execute one command ; usage of the program is then
+<pre>php run-observe.php &lt;command file> &lt;command></pre>
 
 <!-- ************************************* -->
+<!-- 
 <h3>Example</h3>
 <div class="big3">See example <a href="exp-mfc.html">file insee/a00.csv</a></div>
 
-<br>Each command file contains a serie of <b>steps</b>, which are the main keys of the command file.
+<br>Each command file contains a serie of commands, which are the main keys of the command file.
 
 <br><br>Example of file a00 command file :
 <pre>
@@ -178,7 +203,7 @@ Each step has one compulsory parameter : <code>command</code>, which is the full
 <br>All other parameters are transmitted to the command class and are specific to a given command.
 
 <br><br>Commands written so far have input and output file of directory as parameters.
-<br>TODO add parameters input-data and output-data, to be able to chain the commands.
+-->
 
 <!-- ********************************************************************************* -->
 <h2>About</h2>
@@ -190,29 +215,32 @@ Program started in december 2020 by Thierry Graff
 
 <!-- ************************************* -->
 <aside class="left">
-<a name="topage"></a>
 <!-- TODO see why font-family:DejaVu,serif; not inherited from .prevnext -->
 <nav class="prevnext" style="font-family:DejaVu,serif;">
     <a class="topage" rel="" href="#topage">&#10148;</a>
+    <!-- 
     <a class="top" href="index.html">&uarr;</a>
     <a class="prev" rel="prev" href="check.html">&larr;</a>
     <a class="next" rel="next" href=".html">&rarr;</a>
+    -->
 </nav>
 
 <ul>
-    <li class="bold big2"><a href="index.html">Home</a></li>
+    <li class="bold big2"><a href="./index.html">Home</a></li>
     
     <li>
         <div class="bold big1 padding-top05">Commands</div>
         <ul>
-            <li><a href="cmd-groupByNumber.html">groupByNumber</a></li>
+            <li><a href="./commands/convertFile.html">convertFile</a></li>
+            <li><a href="./commands/groupByNumber.html">groupByNumber</a></li>
         </ul>
     </li>
     
     <li>
         <div class="bold big1 padding-top05">Experiences</div>
         <ul>
-            <li><a href="exp-mfc.html">Mother Father Child</a></li>
+            <li><a href="./experiences/a00.html">a00 - birth in France in 2000</a></li>
+            <li><a href="./experiences/gauquelin.html">Gauquelin heredity data</a></li>
         </ul>
     </li>
     

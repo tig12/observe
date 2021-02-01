@@ -2,8 +2,8 @@
 <html lang="fr" lang="en">
 <head>
     <meta charset="utf-8">
-    <title> | Observe software</title>
-    <link href="static/css/observe-data.css" rel="stylesheet" type="text/css">
+    <title>Gauquelin heredity data | Observe software</title>
+    <link href="../static/css/observe-data.css" rel="stylesheet" type="text/css">
     <meta name="description" content="">
     <meta name="robots" content="index,follow">
     <link rel="schema.dcterms" href="http://purl.org/dc/terms/">
@@ -19,13 +19,49 @@
 
 <a name="topage"></a>
 <header>
-<h1></h1>
+<h1>
+Gauquelin heredity data
+</h1>
 <div class="intro">
 </div>
 </header>
 
 <article>
 
+The file used comes from <a href="https://newalchemypress.com/gauquelin/research7.php">newalchemypress.com</a> :
+<br><a href="https://newalchemypress.com/gauquelin/gauquelin_docs/mom_dad_kid_final20916_3a-m_column_first.pdf">https://newalchemypress.com/gauquelin/gauquelin_docs/mom_dad_kid_final20916_3a-m_column_first.pdf</a>
+
+<br><br>Contains Gauquelin heredity data
+<br><div class="big bold">N = 20 916</div>
+
+The pdf was first converted to a csv :
+
+<ul class="spaced margin-top">
+    <li>
+        Convert the PDF to text :
+        <pre>pdftotext -layout mom_dad_kid_final20916_3a-m_column_first.pdf tmp1.txt</pre>
+    </li>
+    <li>
+        Edit <code>tmp1.txt</code>, and manually find and replace : one special character is replaced by nothing.
+        <br>Also had to correct ~20 lines not formatted correctly (newlines and some months and years not separated by space).
+    </li>
+    <li>The following command generates the csv :
+        <br>- Remove white lines
+        <br>- Remove useless lines (footer containing the url of the file)
+        <br>- Change strings like '48N 5' to '48N05'
+        <br>- Convert multiple spaces to one space
+        <br>- Convert spaces to semicolon (;)
+        <br>- Generate a csv file :
+        <pre>
+grep -v -e '^$' tmp1.txt | \
+grep -v 'file:///' | \
+sed -e 's#\([0-9][NSEW]\) \([0-9]\)#\10\2#g' | \
+tr -s '[:space:]' | \
+sed -e 's/^ //g' | \
+sed -e 's/ /;/g' \
+> 20916-mfc-newalch.csv</pre>
+    </li>
+</ul>
 
 </article>
 </div><!-- end class="main" -->
@@ -37,9 +73,11 @@
 <!-- TODO see why font-family:DejaVu,serif; not inherited from .prevnext -->
 <nav class="prevnext" style="font-family:DejaVu,serif;">
     <a class="topage" rel="" href="#topage">&#10148;</a>
-    <a class="top" href="index.html">&uarr;</a>
-    <a class="prev" rel="prev" href="check.html">&larr;</a>
+    <a class="top" href="../index.html">&uarr;</a>
+    <!-- 
+    <a class="prev" rel="prev" href=".html">&larr;</a>
     <a class="next" rel="next" href=".html">&rarr;</a>
+    -->
 </nav>
 
 <ul>

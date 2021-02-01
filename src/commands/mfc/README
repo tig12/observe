@@ -1,0 +1,5 @@
+
+MFC = Mother Father Child
+W = Wedding
+
+Directory mfc/ handles commands to display analysis of data containing birth days of M, F, C, and optionally wedding date.
