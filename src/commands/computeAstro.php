@@ -11,32 +11,11 @@ use observe\Config;
 use observe\patterns\Command;
 use observe\ObserveException;
 use tiglib\arrays\csvAssociative;
-use swetest\Sweph;
-use swetest\SolarSystemConstants;
+use tigeph\ephem\swetest\Swetest;
+use tigeph\ephem\meeus1\Meeus1;
+use tigeph\model\SysolC;
 
 class ComputeAstro implements Command {
-    
-    /** 
-        Match between constants used by swetest and
-        International Astrological Abbreviations (IAA) for planets,
-        as found in journal "Correlation" (vol 30.2 2016)
-    **/
-    const SWEPH_IAA = [
-        SolarSystemConstants::SUN               => 'SO',
-        SolarSystemConstants::MOON              => 'MO',
-        SolarSystemConstants::MERCURY           => 'ME',
-        SolarSystemConstants::VENUS             => 'VE',
-        SolarSystemConstants::MARS              => 'MA',
-        SolarSystemConstants::JUPITER           => 'JU',
-        SolarSystemConstants::SATURN            => 'SA',
-        SolarSystemConstants::URANUS            => 'UR',
-        SolarSystemConstants::NEPTUNE           => 'NE',
-        SolarSystemConstants::PLUTO             => 'PL',
-        SolarSystemConstants::MEAN_LUNAR_NODE   => 'NN',
-    ];
-    
-    private static $IAA_SWEPH;
-    
     
     public static function execute($params=[]){
         //
@@ -51,6 +30,15 @@ class ComputeAstro implements Command {
         if(!is_file($infile)){
             throw new ObserveException("File not found : $infile");
         }
+        //
+        $engines = ['meeus1', 'swetest'];
+        if(!isset($params['engine'])){
+            throw new ObserveException("$classname needs a parameter 'engine' ; supported values: " . implode(', ', $engines);
+        }
+        if(!in_array($params['engine'], $engines)){
+            throw new ObserveException("Invalid parameter 'engine' ({$params['engine']}); supported values: " . implode(', ', $engines);
+        }
+exit;
         //
         if(!isset($params['actions'])){
             throw new ObserveException("$classname needs a parameter 'actions'");

@@ -11,7 +11,7 @@
     @license    GPL
     @history    2020-12-20 18:48:55+01:00, Thierry Graff : Creation
 ********************************************************************************/
-namespace observe\widgets\draw;
+namespace observe\parts\draw;
 
 use observe\Observe;
 use observe\patterns\Command;

@@ -62,9 +62,10 @@ For example :
 
 means : "execute action <code>ymd2iso</code>, using input columns <code>anais00</code>, <code>mnais00</code>, <code>jnais00</code>, and generate column <code>C</code> in the output file".
 
-<br><br>For csv files without header (a first line containing the names of the fields), column indexes (starting with 0) are used.
+<br><br>For csv files without header (a first line containing the names of the columns), column indexes (starting with 0) are used.
 <pre>- ymdhms2iso 13 12 11 14 15 16  -> F_DATE</pre>
 
+<br>The actions are methods of class <code>observe\commands\convertFile</code>
 <br>Supported actions are :
 
 <!-- ************************************* -->
@@ -106,6 +107,7 @@ Takes one column name in input to generate a column containing a copy of the val
         <div class="bold big1 padding-top05">Commands</div>
         <ul>
             <li><a href="../commands/convertFile.html">convertFile</a></li>
+            <li><a href="../commands/computeAstro.html">computeAstro</a></li>
             <li><a href="../commands/groupByNumber.html">groupByNumber</a></li>
         </ul>
     </li>

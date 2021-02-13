@@ -41,15 +41,19 @@ class convertFile implements Command {
             throw new ObserveException("Create directory '$dir' and try again");
         }
         //
-        //  execute
+        //  compute actions
         //
         $outcols = [];
         foreach($actions as $action){
             $outcols[] = $action['out-col'];
         }
         //
+        // load input file
+        //
         $res = implode(Observe::CSV_SEP, $outcols) . "\n";
         $in = csvAssociative::compute($infile);
+        //
+        // execute actions
         //
         $Nactions = count($actions);
         $N =0;
@@ -69,6 +73,9 @@ class convertFile implements Command {
             $N++;
             if($N % 100000 == 0) echo "$N\n";
         }
+        //
+        // write output file
+        //
         file_put_contents($outfile, $res);
         echo "Wrote $N lines in $outfile\n";
     }
@@ -112,13 +119,36 @@ class convertFile implements Command {
         return $res;
     }
     
-    /** 
+    // ====================================================================================
+    // Implementation of actions
+    // All actions have the same parameters :
+    //      $inline Assoc array containing the full input line
+    //              keys = column names
+    //              values = column values
+    //      $inCols Array containing the names of the columns to use in $inLine
+    //      $outCol Name of the generated column
+    //
+    // They all return a key value pair : name of the output column => value
+    // ====================================================================================
+    
+    /**
+        Converts the content of 3 columns containing year, month, day
+        To a column containing a YYYY-MM-DD string
     **/
     private static function ymd2iso($inLine, $inCols, $outCol){
         return [$outCol => $inLine[$inCols[0]] . '-' . $inLine[$inCols[1]] . '-' . $inLine[$inCols[2]]];
     }
     
+    /**
+        Converts the content of 6 columns containing year, month, day, hour, minute, second
+        To a column containing a YYYY-MM-DD HH:MM:SS string
+    **/
+    private static function ymdhms2iso($inLine, $inCols, $outCol){
+        return [$outCol => $inLine[$inCols[0]] . '-' . $inLine[$inCols[1]] . '-' . $inLine[$inCols[2]]];
+    }
+    
     /** 
+        Copies the content of a column to resulting column.
     **/
     private static function copy($inLine, $inCols, $outCol){
         return [$outCol => $inLine[$inCols[0]]];

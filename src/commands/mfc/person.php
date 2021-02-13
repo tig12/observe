@@ -1,10 +1,9 @@
 <?php
 /******************************************************************************
-    First step of report generation for a MFC group
-    Generates index.html and copies CSS files to ouptut directory.
+    Builds the page of a person in a MFCW (mother, father, child, mariage) context
     
     @license    GPL
-    @history    2020-12-16 18:17:02+01:00, Thierry Graff : Creation
+    @history    2021-02-08 15:38:31+01:00, Thierry Graff : Creation
 ********************************************************************************/
 namespace observe\commands\mfc;
 
@@ -12,8 +11,9 @@ use observe\Observe;
 use observe\patterns\Command;
 use observe\ObserveException;
 use tiglib\arrays\csvAssociative;
-
-class prepare implements Command {
+use observe\parts\person\pageHeader;
+    
+class person implements Command {
     
     /** Parameters passed to execute() **/
     private static $params;
@@ -69,50 +69,36 @@ class prepare implements Command {
         Computes the beginning of index.html
     **/
     private static function indexBegin(){
-        $desc = self::$params['description'] ?? '';
-        $title = self::$params['title'] ?? '';
         $intro = self::$params['intro'] ?? '';
         $intro = nl2br(trim($intro), false);
-        $res = <<<HTML
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <title>$title</title>
-    <meta name="description" content="$desc">
-    <link rel="stylesheet" href="static/observe.css" type="text/css">
-</head>
-
-<body class="index">
-
-<header>
-<h1>$title</h1>
-</header>
-
-<article>
-<table><tr>
-<td class="vertical-align-top padding-right2">
-    <ul>
-HTML;
+        $res = '';
+        $res .= pageHeader::execute(
+            desc: self::$params['description'] ?? '',
+            title: = self::$params['title'] ?? '',
+            intro: $intro,
+            //intro: nl2br(trim(self::$params['intro'] ?? ''), false),
+        );
         foreach(['M', 'F'] as $k){
             $v = constant("observe\commands\mfc\MFC::$k");
-            $page = strtolower($v) . '.html';
+            // $const =  new \ReflectionClassConstant('MFC' , $k);
+            //$v = eval("MFC::$k");
+            //$v = MFC::$k;
             $res .= <<<HTML
         <li>
-            <b><a href="$page">$k - $v</a></b>
+            <b>$k - $v</b>
             <ul>
                 <li>
                     <b>Birth</b>
-                    <span class="padding-left"><a href="$page#birthyear">years</a>
-                    <span class="padding-left"><a href="$page#birthday">days</a>
+                    <span class="padding-left"><a href="#$k-birthyear">years</a>
+                    <span class="padding-left"><a href="#$k-birthday">days</a>
                 </li>
                 <li>
                     <b>Age</b>
-                    <span class="padding-left"><a href="$page#age-C.html">at child birth</a>
-                    <span class="padding-left"><a href="$page#age-W.html">at wedding</a>
+                    <span class="padding-left"><a href="$k-age-C.html">at child</a>
+                    <span class="padding-left"><a href="$k-age-W.html">at wedding</a>
                 </li>
                 <li>
-                    <b><a href="$page#planets">Planets</a></b>
+                    <b><a href="$k-planets.html">Planets</a></b>
                 </li>
             </ul>
         </li>
@@ -120,56 +106,49 @@ HTML;
         } // end M F
         $k = 'W';
         $v = "Wedding";
-        $page = strtolower($v) . '.html';
         $res .= <<<HTML
         <li>
-            <b><a href="$page">$k - $v</a></b>
+            <b>$k - $v</b>
             <ul>
                 <li>
-                    <a href="$page#proportion">Proportion</a>
+                    <a href="#$k-proportion">Proportion</a>
                 </li>
                 <li>
                     <b>Date</b>
-                    <span class="padding-left"><a href="$page#year">years</a>
-                    <span class="padding-left"><a href="$page#day">days</a>
+                    <span class="padding-left"><a href="#$k-year">years</a>
+                    <span class="padding-left"><a href="#$k-hday">days</a>
                 </li>
                 <li>
-                    <b><a href="$page#planets">Planets</a></b>
+                    <b><a href="$k-planets.html">Planets</a></b>
                 </li>
             </ul>
         </li>
 HTML;                                                                                                                                      
         $k = 'C';
         $v = "Child";
-        $page = strtolower($v) . '.html';
         $res .= <<<HTML
         <li>
-            <b><a href="$page">$k - $v</a></b>
+            <b>$k - $v</b>
             <ul>
                 <li>
                     <b>Date</b>
-                    <span class="padding-left"><a href="$page#birthday">days</a>
+                    <span class="padding-left"><a href="#$k-year">years</a>
+                    <span class="padding-left"><a href="#$k-hday">days</a>
                 </li>
                 <li>
-                    <b><a href="$page#planets">Planets</a></b>
+                    <b><a href="$k-planets.html">Planets</a></b>
                 </li>
             </ul>
         </li>
-    </ul>
 HTML;
         $res .= <<<HTML
-</td>
-<td class="vertical-align-top border-left">
-    <ul>
-        <li>
+        <li class="padding-top">
             <div><b>Inter-aspects</b></div>
 HTML;
         foreach(['MF', 'MW', 'MC', 'FW', 'FC', 'WC', ] as $k){
-            $v0 = constant('observe\commands\mfc\MFC::' . $k[0]);
-            $v1 = constant('observe\commands\mfc\MFC::' . $k[1]);
-            $page = strtolower($v0) . '-' . strtolower($v1) . '.html';
+            $v = $k[0] . '-' . $k[1];
             $res .= <<<HTML
-            <div class="padding-left"><a href="$page">$v0 - $v1</a></div>
+            <span class="padding-left"><a href="#$v">$v</a>
 HTML;
         } // end relations
         $res .= <<<HTML
@@ -177,11 +156,15 @@ HTML;
 HTML;
         $res .= <<<HTML
     </ul>
-</td>
-</tr></table>
-<div class="intro">
-$intro
 </div>
+
+<!-- ************************************* -->
+<h3>-- PROTOTYPE --</h3>
+<ul>
+    <li>Each link will point to curve(s) with the distribution(s).</li>
+    <li>These curves will show original and/or random data.</li>
+    <li>For each curve : display min, max, mean, median ?</li>
+</ul>
 HTML;
         return $res;
     }

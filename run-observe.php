@@ -39,7 +39,7 @@ USAGE;
 // --- $argv[1] : command file ---
 //
 if($argc != 3){
-    echo "WRONG USAGE - run-observes.php needs 2 arguments\n";
+    echo "WRONG USAGE - {$argv[0]} needs 2 arguments\n";
     echo $USAGE;
     echo "Possible values for argument1 : $commandFiles_str\n";
     exit;

@@ -15,7 +15,7 @@
     @license    GPL
     @history    2021-02-01 03:32:45+01:00, Thierry Graff : Creation
 ********************************************************************************/
-namespace observe\widgets\stats;
+namespace observe\parts\stats;
 
 use observe\Observe;
 use observe\patterns\Command;

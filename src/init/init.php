@@ -8,4 +8,3 @@ require_once __DIR__ . DS . 'autoload.php';
 use observe\Config;
 
 Config::init();
-
