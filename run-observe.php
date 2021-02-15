@@ -13,11 +13,13 @@
 define('DS', DIRECTORY_SEPARATOR);
 
 //require_once __DIR__ . DS . 'src' . DS . 'init' . DS . 'init.php';
-require_once implode(DS, [__DIR__, 'src', 'init', 'init.php']);
+require_once implode(DS, [__DIR__, 'src', 'app', 'init.php']);
 
-use observe\Run;
-use observe\ObserveException;
-use observe\CommandFile;
+use observe\app\Run;
+use observe\app\ObserveException;
+use observe\app\CommandFile;
+
+//echo "\n<pre>"; print_r($argv); echo "</pre>\n"; exit;
 
 //
 // parameter checking
@@ -27,42 +29,43 @@ $commandFiles_str = implode(", ", $commandFiles);
 
 $USAGE = <<<USAGE
 -------                                                                                               
-Usage : 
+Usage: 
     php {$argv[0]} <command> <step>
-Example :
+Example:
     php {$argv[0]} test/toto
 -------
 
 USAGE;
 
+if($argc == 1){
+    echo "WRONG USAGE - {$argv[0]} needs 2 arguments\n";
+    echo $USAGE;
+    echo "Possible values for argument1:\n     $commandFiles_str\n";
+    exit;
+}
+
 //
 // --- $argv[1] : command file ---
 //
-if($argc != 3){
-    echo "WRONG USAGE - {$argv[0]} needs 2 arguments\n";
+if(!in_array($argv[1], $commandFiles)){
+    echo "WRONG USAGE - INVALID COMMAND FILE: {$argv[1]}\n";
     echo $USAGE;
-    echo "Possible values for argument1 : $commandFiles_str\n";
+    echo "Possible values for argument1:\n     $commandFiles_str\n";
     exit;
 }
-else{
-    if(!in_array($argv[1], $commandFiles)){
-        echo "WRONG USAGE - INVALID COMMAND : {$argv[1]}\n";
-        echo $USAGE;
-        echo "Possible values for argument1 : $commandFiles_str\n";
-        exit;
-    }
-}
+
 // here, $argv[1] is valid
 $cmdFile = new CommandFile($argv[1]);
 
+//echo "$cmdFile\n"; exit;
 //
 // --- $argv[2] : command ---
 //
 if(!$cmdFile->commandExists($argv[2])){
     
-    echo "WRONG USAGE - INVALID COMMAND : {$argv[2]}\n";
+    echo "WRONG USAGE - INVALID COMMAND: {$argv[2]}\n";
     echo $USAGE;
-    echo "Possible values for argument2 : " . implode(', ', $cmdFile->getAllCommands())  . "\n";
+    echo "Possible values for argument2: " . implode(', ', $cmdFile->getAllCommands())  . "\n";
     exit;
 }
 // here, $argv[2] is valid
@@ -77,7 +80,7 @@ catch(observe\ObserveException $e){
     echo "ERROR: " . $e->getMessage() . "\n";
 }
 catch(Exception $e){
-    echo 'Exception : ' . $e->getMessage() . "\n";
+    echo 'Exception: ' . $e->getMessage() . "\n";
     echo $e->getFile() . ' - line ' . $e->getLine() . "\n";
     echo $e->getTraceAsString() . "\n";
 }

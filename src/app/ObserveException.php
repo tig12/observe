@@ -4,6 +4,6 @@
     @license    GPL
     @history    , Thierry Graff : Creation
 ********************************************************************************/
-namespace observe;
+namespace observe\app;
 
 class ObserveException extends \Exception {}

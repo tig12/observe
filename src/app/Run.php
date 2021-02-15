@@ -5,7 +5,7 @@
     @license    GPL
     @history    2020-12-15 21:42:03+01:00, Thierry Graff : creation
 ********************************************************************************/
-namespace observe;
+namespace observe\app;
 
 use tiglib\filesystem\globRecursive;
 
@@ -13,6 +13,9 @@ class Run{
     
     /** 
         Returns the available command files = relative paths of YAML files located in commands/
+        
+        Possible values for CLI argument 1
+        
         Ex : if commands/ contains
             commands
                 ├── test
@@ -29,6 +32,7 @@ class Run{
         $res = [];
         $tmp = globRecursive::execute(self::commandsDir() . DS . '*.yml');
         foreach($tmp as $elt){
+            // TODO keep paths ending by yml and not starting with z.
             if(!\str_ends_with($elt, '.yml')){
                 continue;
             }
@@ -39,7 +43,7 @@ class Run{
     
     /**  Returns the directory containing the command filess **/
     public static function commandsDir(){
-        return dirname(__DIR__) . DS . 'commands';
+        return dirname(dirname(__DIR__)) . DS . 'commands';
     }
     
     /**

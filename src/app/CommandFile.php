@@ -5,7 +5,7 @@
     @license    GPL
     @history    2020-12-16 16:58:59+01:00, Thierry Graff : creation
 ********************************************************************************/
-namespace observe;
+namespace observe\app;
 
 class CommandFile {
     

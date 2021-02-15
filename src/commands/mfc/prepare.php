@@ -8,9 +8,9 @@
 ********************************************************************************/
 namespace observe\commands\mfc;
 
-use observe\Observe;
-use observe\patterns\Command;
-use observe\ObserveException;
+use observe\app\Observe;
+use observe\app\Command;
+use observe\app\ObserveException;
 use tiglib\arrays\csvAssociative;
 
 class prepare implements Command {
