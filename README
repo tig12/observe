@@ -1,12 +1,12 @@
 
-Draft tool to generate graphics on https://g5.tig12.net/observe
-
 Observe program is a small generic tool to execute commands.
-Based on command files, containing the command and its parameter. 
+Based on yaml command files, containing the commands and their parameters.
 
-Developed to observe a file containing all births in France of year 2000 (N = 591 936).
+Unstable draft, under construction
 
-Each line contains untimed birth days of mother, father, child.
+Developed to analyze files containing mother - father - child birth data
+- Births in France of year 2000 (N = 591 936).
+- Gauquelin heredity data (N = 20 916)
 
 Current commands implemented :
 - convertFile   : clean the input and have standard formats
@@ -20,3 +20,10 @@ Current commands implemented :
 - view.pages    : Generate html pages containing svg bar charts
                   3 pages with 121 drawings.
 
+Generated pages :
+
+Y2000 births in France
+https://g5.tig12.net/observe/a00/a00-html/
+
+Gauquelin data
+https://g5.tig12.net/observe/gauquelin/heredity-newalch-20916/gq-html/
