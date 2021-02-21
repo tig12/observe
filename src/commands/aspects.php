@@ -6,9 +6,9 @@
 ********************************************************************************/
 namespace observe\commands;
 
-use observe\Observe;
-use observe\patterns\Command;
-use observe\ObserveException;
+use observe\app\Observe;
+use observe\app\Command;
+use observe\app\ObserveException;
 use tiglib\arrays\csvAssociative;
 
 class aspects implements Command {
@@ -17,7 +17,7 @@ class aspects implements Command {
         //
         // check parameters
         //
-        $classname = 'computeAspects'; // TODO copute by reflection
+        $classname = __CLASS__;
         if(!isset($params['input-file'])){
             throw new ObserveException("$classname needs a parameter 'input-file'");
         }

@@ -24,10 +24,11 @@
 ********************************************************************************/
 namespace tigeph\ephem\swetest;
 
+use tigeph\Ephem;
 use tigeph\model\DomC;
 use tigeph\model\SysolC;
 
-class Swetest {
+class Swetest implements Ephem {
     
     /** Path to the swetest binary **/
     private static $SWEBIN;
@@ -36,10 +37,10 @@ class Swetest {
     private static $SWEDIR;
     
     /**
-        Correspondance between domification constants
-        and sweph constants used in arguments
+        Correspondance between tigeph domification constants
+        and swetest constants used in arguments
     **/
-    public static $match_arg_domification = [
+    private const MATCH_ARG_DOMIFICATION = [
         DomC::PLACIDUS         => 'P',
         DomC::KOCH             => 'K',
         DomC::PORPHYRIUS       => 'O',
@@ -50,15 +51,15 @@ class Swetest {
     ];
     
     /**
-        Correspondance between planet constants
-        and sweph constants used in arguments 
+        Correspondance between tigeph planet constants
+        and swetest constants used in arguments 
     **/
-    public static $match_arg_planets = [
-// p main factors as above, plus main asteroids DEFGHI
-// h ficticious factors J..X
-// z hypothetical body, with number given in -xz
-// s minor planet, with MPC number given in -xs
-// a all factors
+    private const MATCH_ARG_PLANETS = [
+        // p main factors as above, plus main asteroids DEFGHI
+        // h ficticious factors J..X
+        // z hypothetical body, with number given in -xz
+        // s minor planet, with MPC number given in -xs
+        // a all factors
         SysolC::SUN       => '0',
         SysolC::MERCURY   => '2',
         SysolC::VENUS     => '3',
@@ -104,8 +105,8 @@ class Swetest {
     ];
     
     // ******************************************************
-    /** Correspondance between planet constants and sweph output **/
-    public static $match_output_planets = [
+    /** Correspondance between planet constants and swetest output **/
+    private const MATCH_OUTPUT_PLANETS = [
         'Sun'           => SysolC::SUN,
         'Mercury'       => SysolC::MERCURY,
         'Venus'         => SysolC::VENUS,
@@ -139,8 +140,8 @@ class Swetest {
     ];
     
     // ******************************************************
-    /** Correspondance between house constants and sweph output **/
-    public static $match_output_houses = [
+    /** Correspondance between house constants and swetest output **/
+    private const MATCH_OUTPUT_HOUSES = [
         'house  1' => DomC::H1,
         'house  2' => DomC::H2,
         'house  3' => DomC::H3,
@@ -156,60 +157,124 @@ class Swetest {
     ];
 
     // ******************************************************
-    /** static initializer **/
+    /**
+        Initialises path to swetest binary and path to directory containing sweph data files
+    **/
     public static function init($sweBin, $sweDir){
         Swetest::$SWEBIN = $sweBin;
         Swetest::$SWEDIR = $sweDir;
     }
     
     //***************************************************
+    public static function getComputableThings(){
+        return [
+            SysolC::SUN,
+            SysolC::MOON,
+            SysolC::MERCURY,
+            SysolC::VENUS,
+            SysolC::EARTH,
+            SysolC::MARS,
+            SysolC::JUPITER,
+            SysolC::SATURN,
+            SysolC::URANUS,
+            SysolC::NEPTUNE,
+            SysolC::PLUTO,
+            SysolC::MEAN_LUNAR_NODE,
+            SysolC::TRUE_LUNAR_NODE,
+            SysolC::NUTATION,
+            SysolC::MEAN_LUNAR_APOGEE,
+            SysolC::OSCULTATING_LUNAR_APOGEE,
+            //
+            SysolC::CHIRON,
+            SysolC::PHOLUS,
+            SysolC::CERES,
+            SysolC::PALLAS,
+            SysolC::JUNO,
+            SysolC::VESTA,
+            SysolC::CUPIDO,
+            SysolC::HADES,
+            SysolC::ZEUS,
+            SysolC::KRONOS,
+            SysolC::SUN,
+            SysolC::MERCURY,
+            SysolC::VENUS,
+            SysolC::MOON,
+            SysolC::MARS,
+            SysolC::JUPITER,
+            SysolC::SATURN,
+            SysolC::URANUS,
+            SysolC::NEPTUNE,
+            SysolC::PLUTO,
+            //
+            SysolC::MEAN_LUNAR_NODE,
+            SysolC::TRUE_LUNAR_NODE,
+            SysolC::MEAN_LUNAR_APOGEE, // black moon
+            SysolC::OSCULTATING_LUNAR_APOGEE, // true black moon ?
+            //
+            SysolC::CERES,
+            SysolC::PALLAS,
+            SysolC::JUNO,
+            SysolC::VESTA,
+            //
+            SysolC::CHIRON,
+            SysolC::PHOLUS,
+            //
+            DomC::H1,
+            DomC::H2,
+            DomC::H3,
+            DomC::H4,
+            DomC::H5,
+            DomC::H6,
+            DomC::H7,
+            DomC::H8,
+            DomC::H9,
+            DomC::H10,
+            DomC::H11,
+            DomC::H12,
+        ];
+    }
+    
+    
+    //***************************************************
     /**
-        Computations using Swiss Ephemeris of the planetary positions and house cuspides
-        Returns false if computation is impossible
-        @param  $P associative array of parameters containing :
-            - 'date'                string format YYYY-MM-DD HH:MM:SS
-                                    required
-                                    WARNING : the time must be expressed in UTC
-            - 'planets'             array containing the planet codes to compute
-                                    required
+        Computation using swetest program of Swiss Ephemeris
+        See tigeph\Ephem for documentation of parameters $date and $planets, and return type.
+        @param $params  Associative array of parameters containing :
             - 'compute-houses'      boolean
                                     optional
                                     default false
-            - 'domification-system' use a constant of DomC
+            - 'domification-system' use a constant of tigeph\model\DomC
                                     required only if 'compute-houses' = true
             - 'lg'                  longitude of the observer's place, in decimal degrees
                                     required only if 'compute-houses' = true
             - 'lat'                 latitude of the observer's place, in decimal degrees
                                     required only if 'compute-houses' = true
-        @return associative array that may contain the following elements :
-            result['planets']
-                map planet code => planet geocentric ecliptic longitude, in decimal degrees
-            result['houses']
-                array of 12 elements containing house ecliptic longitude, in decimal degrees
-                returned if 'compute-houses' = true and 'lg' and 'lat' are provided
     **/
-    public static function ephem($P){
+    public static function ephem (
+        $date,
+        $what,
+        $params=[
+            'compute-houses' => false,    
+        ],
+    ) {
         //             
         // build argument list, depending on this function's arguments
         //
         $args = '';
         // date time
-        [$day, $time] = explode(' ', $P['date']);
+        [$day, $time] = explode(' ', $date);
         $tmp = explode('-', $day);
         $sweDay = $tmp[2] . '.' . $tmp[1] . '.' . $tmp[0];
         $args .= ' -b' . $sweDay . ' -ut' . $time; // ex -b15.12.2016 -ut14:19:55
         // planets
         $args .= ' -p'; // ex -p023C1456789FGIHABmt
-        foreach($P['planets'] as $planet){
-            $args .= Swetest::$match_arg_planets[$planet];
+        foreach($what as $planet){
+            $args .= Swetest::MATCH_ARG_PLANETS[$planet];
         }
         // houses
-        if(!isset($P['compute-houses'])){
-            $P['compute-houses'] = false;
-        }
-        if($P['compute-houses']){
-            $domificationSystem = Swetest::$match_arg_domification[$P['domification-system']];
-            $args .= ' -house' . $P['lg'] . ',' . $P['lat'] . ',' . $domificationSystem; // ex -house12.05,49.50,P
+        if($params['compute-houses']){
+            $domificationSystem = Swetest::MATCH_ARG_DOMIFICATION[$params['domification-system']];
+            $args .= ' -house' . $params['lg'] . ',' . $params['lat'] . ',' . $domificationSystem; // ex -house12.05,49.50,P
         }
         // ephemeris dir
         $args .= ' -edir' . Swetest::$SWEDIR;
@@ -227,23 +292,20 @@ class Swetest {
         // Parse the output and fill returned array
         //
         $res = [
-            'planets' => [],
         ];
-        if($P['compute-houses']){
-            $res['planets'] = [];
-        }
         // pattern for a line containing one coordinate
         $p1 = '/^(.*?)(-?\d+\.\d+)\s*$/';
         foreach($output as $line){
             preg_match($p1, $line, $matches);
             if(count($matches) == 3){
                 $code = trim($matches[1]);
-                if(isset(Swetest::$match_output_planets[$code])){
-                    $object = Swetest::$match_output_planets[$code];
-                    $res['planets'][$object] = $matches[2];
+                if(isset(Swetest::MATCH_OUTPUT_PLANETS[$code])){
+                    $object = Swetest::MATCH_OUTPUT_PLANETS[$code];
+                    $res[$object] = $matches[2];
                 }
-                else if(isset(Swetest::$match_output_houses[$code])){
-                    $res['houses'][] = $matches[2];
+                else if(isset(Swetest::MATCH_OUTPUT_HOUSES[$code])){
+                    $object = Swetest::MATCH_OUTPUT_HOUSES[$code];
+                    $res[$object] = $matches[2];
                 }
             }
         }
@@ -272,7 +334,7 @@ class Swetest {
                 map planet code => ISO 8601 date of rise (lever)
             result['set']
                 map planet code => ISO 8601 date of set (coucher)
-        @todo Code could be simplified, by calling directly sweph with -n2 (this would lead to longer execution time)
+        @todo Code could be simplified, by calling directly swetest with -n2 (this would lead to longer execution time)
     **/
     public static function riseSet($P){
         //
@@ -290,8 +352,8 @@ class Swetest {
         //
         // execute swiss ephem
         //
-        foreach($P['planets'] as $planet){
-            $args2 = $args . ' -p' .  Swetest::$match_arg_planets[$planet];
+        foreach($what as $planet){
+            $args2 = $args . ' -p' .  Swetest::MATCH_ARG_PLANETS[$planet];
             exec(self::$SWEBIN . $args2, $output);
         }
         // parse output and fill result
@@ -302,7 +364,7 @@ class Swetest {
         $j = 0;
         $missing_rise = [];
         for($i=1; $i < count($output); $i+=2){
-            $planet = $P['planets'][$j];
+            $planet = $what[$j];
             $j++;
             preg_match($p1, $output[$i], $m);
             if(count($m) == 13){
@@ -323,7 +385,7 @@ class Swetest {
             $args = $args . ' -n2';
             foreach($missing_rise as $planet){
                 unset($output);
-                $args2 = $args . ' -p' .  Swetest::$match_arg_planets[$planet];
+                $args2 = $args . ' -p' .  Swetest::MATCH_ARG_PLANETS[$planet];
                 exec(self::$SWEBIN . $args2, $output);
                 preg_match($p1, $output[2], $m);
                 if(count($m) == 13){
@@ -352,12 +414,12 @@ class Swetest {
     public static function surroundingRiseSet($P){
         //
         // build argument list, depending on this function's arguments
-        // sweph is called for the day before, for 3 consecutive days => sure to have surrounding
+        // swetest is called for the day before, for 3 consecutive days => sure to have surrounding
         //
         $args = '';
         // date time
         $dt = new DateTime($P['date']);
-//        $dt->setTimezone(new DateTimeZone('UTC')); // converted in utc for sweph
+//        $dt->setTimezone(new DateTimeZone('UTC')); // converted in utc for swetest
         $date_utc = $dt->format('Y-m-d H:i:s');
         $dt->sub(new DateInterval('P1D'));
         $day = $dt->format('j.n.Y');
@@ -378,10 +440,10 @@ class Swetest {
         $p_dayhour = '(\d{1,2})\.(\d{2})\.(\d{4})\s+(\d{2}):(\d{2}):(.*?)';
         $p1 = '/rise\s+' . $p_dayhour . '\s+set +' . $p_dayhour . '\s+.*/'; // pattern for rise and set
         $p2 = '/rise\s+\-\s+set +' . $p_dayhour . '$/'; // pattern for set only
-        foreach($P['planets'] as $planet){
+        foreach($what as $planet){
             unset($output);
             $dates = [];
-            $args2 = $args . ' -p' .  Swetest::$match_arg_planets[$planet];
+            $args2 = $args . ' -p' .  Swetest::MATCH_ARG_PLANETS[$planet];
             exec(self::$SWEBIN . $args2, $output);
             for($i=1; $i < 4; $i++){ // loop on the lines of results
                 preg_match($p1, $output[$i], $m);

@@ -39,8 +39,8 @@ USAGE;
 
 if($argc == 1){
     echo "WRONG USAGE - {$argv[0]} needs 2 arguments\n";
-    echo $USAGE;
     echo "Possible values for argument1:\n     $commandFiles_str\n";
+    echo $USAGE;
     exit;
 }
 
@@ -49,23 +49,28 @@ if($argc == 1){
 //
 if(!in_array($argv[1], $commandFiles)){
     echo "WRONG USAGE - INVALID COMMAND FILE: {$argv[1]}\n";
-    echo $USAGE;
     echo "Possible values for argument1:\n     $commandFiles_str\n";
+    echo $USAGE;
     exit;
 }
 
 // here, $argv[1] is valid
 $cmdFile = new CommandFile($argv[1]);
 
-//echo "$cmdFile\n"; exit;
+if($argc == 2){
+    echo "WRONG USAGE - {$argv[0]} needs 2 arguments\n";
+    echo "Possible values for argument2: " . implode(', ', $cmdFile->getAllCommands())  . "\n";
+    echo $USAGE;
+    exit;
+}
+
 //
 // --- $argv[2] : command ---
 //
 if(!$cmdFile->commandExists($argv[2])){
-    
     echo "WRONG USAGE - INVALID COMMAND: {$argv[2]}\n";
-    echo $USAGE;
     echo "Possible values for argument2: " . implode(', ', $cmdFile->getAllCommands())  . "\n";
+    echo $USAGE;
     exit;
 }
 // here, $argv[2] is valid
@@ -76,7 +81,7 @@ if(!$cmdFile->commandExists($argv[2])){
 try{
     $cmdFile-> executeCommand($argv[2]);
 }
-catch(observe\ObserveException $e){
+catch(observe\app\ObserveException $e){
     echo "ERROR: " . $e->getMessage() . "\n";
 }
 catch(Exception $e){

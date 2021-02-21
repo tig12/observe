@@ -1,27 +1,33 @@
 <?php
 /******************************************************************************
-
+    Astrological computations using tigeph library.
+    
     @license    GPL
     @history    2020-12-17 21:31:38+01:00, Thierry Graff : Creation
 ********************************************************************************/
 namespace observe\commands;
 
-use observe\Observe;
-use observe\Config;
-use observe\patterns\Command;
-use observe\ObserveException;
+use observe\app\Observe;
+use observe\app\Config;
+use observe\app\Command;
+use observe\app\ObserveException;
 use tiglib\arrays\csvAssociative;
+use tigeph\Tigeph;
+use tigeph\model\SysolC;
+use tigeph\model\IAA;
 use tigeph\ephem\swetest\Swetest;
 use tigeph\ephem\meeus1\Meeus1;
-use tigeph\model\SysolC;
 
 class ComputeAstro implements Command {
+    
+    /** Astronomical engine used for the computations **/
+    private static $engine;
     
     public static function execute($params=[]){
         //
         // check parameters
         //
-        $classname = 'ComputeAstro'; // TODO copute by reflection
+        $classname = __CLASS__;
         if(!isset($params['input-file'])){
             throw new ObserveException("$classname needs a parameter 'input-file'");
         }
@@ -31,14 +37,19 @@ class ComputeAstro implements Command {
             throw new ObserveException("File not found : $infile");
         }
         //
-        $engines = ['meeus1', 'swetest'];
+        $engines = Tigeph::getEngines();
         if(!isset($params['engine'])){
-            throw new ObserveException("$classname needs a parameter 'engine' ; supported values: " . implode(', ', $engines);
+            throw new ObserveException("$classname needs a parameter 'engine' ; supported values: " . implode(', ', $engines));
         }
         if(!in_array($params['engine'], $engines)){
-            throw new ObserveException("Invalid parameter 'engine' ({$params['engine']}); supported values: " . implode(', ', $engines);
+            throw new ObserveException("Invalid parameter 'engine' ({$params['engine']}); supported values: " . implode(', ', $engines));
         }
-exit;
+        self::$engine = $params['engine'];
+        //
+        $skip = false; 
+        if(isset($params['skip'])){
+            $skip = $params['skip']; // skip = optional parameter
+        }
         //
         if(!isset($params['actions'])){
             throw new ObserveException("$classname needs a parameter 'actions'");
@@ -54,18 +65,19 @@ exit;
             throw new ObserveException("Create directory '$dir' and try again");
         }
         //
-        //  sweph
-        //
-        self::$IAA_SWEPH = array_flip(self::SWEPH_IAA);
-        Sweph::init(Config::$data['swetest']['bin'], Config::$data['swetest']['dir']);
-        //
-        //  buld output columns
+        //  build output columns
         //
         $outcols = [];
         foreach($actions as $action){
-            foreach($action['astro'] as $planetCode){
-                $outcols[] = $action['in-col'] . '-' . $planetCode;
+            foreach($action['tigeph-codes'] as $planetCode){
+                $outcols[] = $action['in-col'] . '-' . IAA::TIGEPH_IAA[$planetCode];
             }
+        }
+        //
+        //  initialize tigeph
+        //
+        if($params['engine'] == 'swetest'){
+            Swetest::init(Config::$data['swetest']['bin'], Config::$data['swetest']['dir']);
         }
         //
         //  execute
@@ -75,14 +87,18 @@ exit;
         //
         $N =0;
         $t1 = microtime(true);
+        $emptyNew = array_fill_keys($outcols, '');
         foreach($in as $old){
-            $new = array_fill_keys($outcols, '');
+            $new = $emptyNew;
             foreach($actions as $action){
                 $date = $old[$action['in-col']];
-                $coords = $action['method']->invoke(null, $date, $action['astro']);
-                foreach($coords as $planetCode => $coord){
-                    $new[$action['in-col'] . '-' . $planetCode] = $coord;
+                if($date !== $skip){
+                    $coords = self::ephem($date, $action['tigeph-codes']);
+                    foreach($coords as $planetCode => $coord){
+                        $new[$action['in-col'] . '-' . $planetCode] = $coord;
+                    }
                 }
+                // else date = skip => don't compute, keep fields empty
             }
             $res .= implode(Observe::CSV_SEP, $new) . "\n";
             $N++;
@@ -96,9 +112,8 @@ exit;
     
     /**
         Parses lines expressing actions, like
-            planets C SO MO ME VE MA JU SA UR NE PL NN SN
-        The first word is the method name
-        The second word is the name of column of input file (ISO 8601 date)
+            C SO MO ME VE MA JU SA UR NE PL NN SN
+        The first word is the name of column of input file (must contain a ISO 8601 date)
         Following words are IAA codes of astrological factors to compute
     **/
     private static function computeActions($param){
@@ -106,40 +121,38 @@ exit;
         foreach($param as $line){
             $action = [];
             $tmp = preg_split('/\s+/', $line);
-            if(count($tmp) < 3){
+            if(count($tmp) < 2){
                 throw new ObserveException("Invalid syntax : $line");
             }
-            $action['method-name'] = array_shift($tmp);
             $action['in-col'] = array_shift($tmp);
-            $action['astro'] = $tmp;
-            try{
-                $method = new \ReflectionMethod(__CLASS__ . '::' . $action['method-name']);
+            // convert IAA codes to tigeph codes
+            $action['tigeph-codes'] = [];
+            foreach($tmp as $iaaCode){
+                if(!isset(IAA::IAA_TIGEPH[$iaaCode])){
+                    throw new ObserveException("Invalid IAA code '$iaaCode' in line : $line");
+                }
+                $action['tigeph-codes'][] = IAA::IAA_TIGEPH[$iaaCode];
             }
-            catch(\ReflectionException $e){
-                throw new ObserveException("Invalid method name '{$action['method-name']}' in line : $line");
-            }
-            $method->setAccessible(true);
-            $action['method'] = $method;
             $res[] = $action;
         }
         return $res;
     }
     
     /** 
+        Calls ephemeris computation engine
     **/
-    private static function planets($date, $planetCodes){
-        $sweDay = substr($date, 8, 2) . '.' . substr($date, 5, 2) . '.' . substr($date, 0, 4);
-        $sweTime = '12:00:00';// TODO compute also time
-        $sweCodes = array_map(function($code){ return self::$IAA_SWEPH[$code];}, $planetCodes);
-        $params = [
-            'day'       => $sweDay,
-            'time'      => $sweTime,
-            'planets'   => $sweCodes,
-        ];
-        $coords = Sweph::ephem($params);
+    private static function ephem($date, $iaaCodes){
+        // TODO compute also time - current code only works for untimed dates
+        $day = $date;
+        $time = '12:00:00';
+        $day_time = "$day $time";
+        switch(self::$engine){
+        	case 'meeus1':  $coords = Meeus1::ephem($day_time, $iaaCodes); break;
+        	case 'swetest': $coords = Swetest::ephem($day_time, $iaaCodes); break;
+        }
         $res = [];
-        foreach($coords['planets'] as $code => $coord){
-            $res[self::SWEPH_IAA[$code]] = $coord;
+        foreach($coords as $iaaCode => $coord){
+            $res[IAA::TIGEPH_IAA[$iaaCode]] = $coord;
         }
         return $res;
     }

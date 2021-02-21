@@ -13,12 +13,13 @@
 ****************************************************************************************/
 namespace tigeph\ephem\meeus1;
 
+use tigeph\Ephem;
 use tigeph\model\SpaceTimeC;
 use tigeph\model\SolarFramesC;
 use tigeph\model\SysolC;
 use tigeph\ephem\JulianDay;
 
-class Meeus1 {
+class Meeus1 implements Ephem {
     
     //********************* Instance variables ******************************
     private $planets;
@@ -55,7 +56,7 @@ class Meeus1 {
     
     //***************************************************
     /** Returns an array of planets (using SysolC) the theory is able to compute. **/
-    public static function getComputablePlanets(){
+    public static function getComputableThings(){
         return [
             SysolC::SUN,
             SysolC::MOON,
@@ -67,28 +68,33 @@ class Meeus1 {
             SysolC::SATURN,
             SysolC::URANUS,
             SysolC::NEPTUNE,
-            SysolC::PLUTO
+            SysolC::PLUTO,
+            SysolC::MEAN_LUNAR_NODE,
         ];
     }
     
     /** 
-        @param  $P params, see Swetest::ephem() doc
+        Computation using swetest program of Swiss Ephemeris
+        See tigeph\Ephem for documentation of parameters $date and $planets, and return type.
     **/
-    public static function ephem($P) {
-        $jd = JulianDay::isoDate2jd($P['date']);
+    public static function ephem(
+        $date,
+        $what,
+        $params=[],
+    ) {
+        $jd = JulianDay::isoDate2jd($date);
         $frame=SolarFramesC::EC;
         $sphereCart=SpaceTimeC::SPHERICAL;
         $onlyLongitude=true;
-        $meeus = new Meeus1($P['planets'], $jd);
-        return [
-            'planets' => $meeus->calcPlanets($frame, $sphereCart),
-        ];
+        $meeus = new Meeus1($what, $jd);
+        return $meeus->calcPlanets($frame, $sphereCart);
     }
     
     
     //***************************************************
     /**
         Computation of coordinates of one or several planets, using Meeus' computation.
+        SysolC::MEAN_LUNAR_NODE computed only if geocentric ecliptic coordinates are demanded
         @param  $frame
                 The frame in which the coordinates must be expressed, 
                 using constants of SolarFramesC ; Geocentric Ecliptic by default.
@@ -111,7 +117,7 @@ class Meeus1 {
         }
         // TO DO : check coherence of param : helio + sun or geo + earth) ; moon : only geo
         if($this->planets == ""){
-            $this->planets = self::getComputablePlanets();
+            $this->planets = self::getComputableThings();
             if($frame == SolarFramesC::HELIO){
                 $this->planets[] = SysolC::EARTH;
             }
@@ -151,7 +157,8 @@ class Meeus1 {
         //
         $h = [];
         foreach($this->planets as $pl){
-            if( in_array($pl, self::getComputablePlanets())
+            if( in_array($pl, self::getComputableThings())
+                && $pl != SysolC::MEAN_LUNAR_NODE
                 && (
                     ($frame != SolarFramesC::HELIO && $pl != SysolC::SUN && $pl != SysolC::MOON)
                  || ($frame == SolarFramesC::HELIO && $pl != SysolC::EARTH)
@@ -211,12 +218,20 @@ class Meeus1 {
                 }
             }
         }
+        if(in_array(SysolC::MEAN_LUNAR_NODE, $this->planets)){
+            $g[SysolC::MEAN_LUNAR_NODE] = new Vector3(0, self::calcMeanLunarNode(), 0);
+        }
         //
         // to do : apply precession and nutation
         //
         //if($frame == EC)
         //
         // to do : conversion Ec / Eq
+        //
+        // keep only 3 digits
+        foreach($g as $k => $v){
+            $g[$k]->x2 = round($g[$k]->x2, 3);
+        }
         //
         if($onlyLongitude){
             $res = [];
@@ -231,21 +246,22 @@ class Meeus1 {
     
     //***************************************************
     /** Calls one of the calcXXX function, depending on parameter $whichPlanet.
-    <br/>cf chap 18 of Meeus.
-    @param $whichPlanet The index of the planet to compute, as defined in AstronomyConstants.php.
+        cf chap 18 of Meeus.
+        @param $whichPlanet The index of the planet to compute, as defined in AstronomyConstants.php.
     **/
     private function calcPlanet($whichPlanet){
         switch($whichPlanet){
-            case SysolC::MOON       : return $this->calcMoon();     break;
-            case SysolC::MERCURY    : return $this->calcMercury();  break;
-            case SysolC::VENUS      : return $this->calcVenus();    break;
-            case SysolC::EARTH      : return $this->calcEarth();    break;
-            case SysolC::MARS       : return $this->calcMars();     break;
-            case SysolC::JUPITER    : return $this->calcJupiter();  break;
-            case SysolC::SATURN     : return $this->calcSaturn();   break;
-            case SysolC::URANUS     : return $this->calcUranus();   break;
-            case SysolC::NEPTUNE    : return $this->calcNeptune();  break;
-            case SysolC::PLUTO      : return $this->calcPluto();    break;
+            case SysolC::MOON            : return $this->calcMoon();          break;
+            case SysolC::MERCURY         : return $this->calcMercury();       break;
+            case SysolC::VENUS           : return $this->calcVenus();         break;
+            case SysolC::EARTH           : return $this->calcEarth();         break;
+            case SysolC::MARS            : return $this->calcMars();          break;
+            case SysolC::JUPITER         : return $this->calcJupiter();       break;
+            case SysolC::SATURN          : return $this->calcSaturn();        break;
+            case SysolC::URANUS          : return $this->calcUranus();        break;
+            case SysolC::NEPTUNE         : return $this->calcNeptune();       break;
+            case SysolC::PLUTO           : return $this->calcPluto();         break;
+            case SysolC::MEAN_LUNAR_NODE : return $this->calcMeanLunarNode(); break;
         }
     }
     
@@ -272,7 +288,7 @@ class Meeus1 {
     
     //***************************************************
     /** Computes the heliocentric ecliptic coordinates of the Earth - spherical coordinates.
-    <br/>cf chap 18 of Meeus.
+        cf chap 18 of Meeus.
     **/
     private function calcEarth(){
         $T = $this->T;
@@ -1119,6 +1135,16 @@ class Meeus1 {
         //
         return new Vector3($r, $l, $b);
     }
+    
+    /**
+        Computes the geocentric ecliptic longitude of mean moon north node
+        Result in decimal degrees
+        cf chap 30 of Meeus.
+        Formula also implemented in calcMoon()
+    **/
+    private function calcMeanLunarNode(){
+        return Meeus1x::mod360(259.183275 - 1934.142 * $this->T + 0.002078 * $this->T2 - 0.0000022*$this->T3);
+    }
 } // end class
 
 
@@ -1170,7 +1196,7 @@ class Meeus1x {
     @param $v A Vector3, with the angles expressed in degrees.
     @return The cartesian coordinates ; the unit is the same as the distance unit of $v.
     */
-    public static function sphereToCart($v){
+    public static function sphereToCart(Vector3 $v){
         $r = $v->x1;
         $theta = deg2rad($v->x2);
         $phi = deg2rad($v->x3);
@@ -1185,7 +1211,7 @@ class Meeus1x {
     @param $v A Vector3, with the angles expressed in degrees.
     @return The spherical coordinates ; the angles are in degrees.
     */
-    public static function cartToSphere($v){
+    public static function cartToSphere(Vector3 $v){
         // variables to remember initial values.
         $X = $v->x1;
         $Y = $v->x2;
@@ -1246,6 +1272,4 @@ class Vector3 {
         );
     }
     
-}// end class
-
-    
+} // end class
