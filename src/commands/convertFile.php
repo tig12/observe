@@ -11,6 +11,8 @@ use observe\app\Command;
 use observe\app\ObserveException;
 use tiglib\arrays\csvAssociative;
 
+use observe\parts\fileSystem;
+
 class convertFile implements Command {
     
     public static function execute($params=[]){
@@ -18,28 +20,34 @@ class convertFile implements Command {
         // check parameters
         //
         $classname = __CLASS__;
-        if(!isset($params['input-file'])){
-            throw new ObserveException("$classname needs a parameter 'input-file'");
-        }
         //
-        $infile = $params['input-file'];
+        // in-file
+        if(!isset($params['in-dir'])){
+            throw new ObserveException("$classname needs a parameter 'in-dir'");
+        }
+        if(!isset($params['in-file'])){
+            throw new ObserveException("$classname needs a parameter 'in-file'");
+        }
+        $infile = $params['in-dir'] . DS . $params['in-file'];
         if(!is_file($infile)){
             throw new ObserveException("File not found : $infile");
         }
         //
+        // out-file
+        if(!isset($params['out-dir'])){
+            throw new ObserveException("$classname needs a parameter 'out-dir'");
+        }
+        if(!isset($params['out-file'])){
+            throw new ObserveException("$classname needs a parameter 'out-file'");
+        }
+        $outfile = $params['out-dir'] . DS . $params['out-file'];
+        fileSystem::mkdir(dirname($outfile));
+        //
+        // actions
         if(!isset($params['actions'])){
             throw new ObserveException("$classname needs a parameter 'actions'");
         }
         $actions = self::computeActions($params['actions']);
-        //
-        if(!isset($params['output-file'])){
-            throw new ObserveException("$classname needs a parameter 'output-file'");
-        }
-        $outfile = $params['output-file'];
-        $dir = dirname($outfile);
-        if(!is_dir($dir)){
-            throw new ObserveException("Create directory '$dir' and try again");
-        }
         //
         //  compute actions
         //
@@ -51,6 +59,7 @@ class convertFile implements Command {
         // load input file
         //
         $res = implode(Observe::CSV_SEP, $outcols) . "\n";
+        
         $in = csvAssociative::compute($infile);
         //
         // execute actions
@@ -76,8 +85,7 @@ class convertFile implements Command {
         //
         // write output file
         //
-        file_put_contents($outfile, $res);
-        echo "Wrote $N lines in $outfile\n";
+        fileSystem::saveFile($outfile, $res, message: "Wrote $N lines in $outfile\n");
     }
     
     /**

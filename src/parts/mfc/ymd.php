@@ -1,93 +1,72 @@
 <?php
 /******************************************************************************
-    Conducts the generation of pages for a MFCW (mother, father, child, mariage) group.
+    Computes year, day, age distributions from a csv file containing YYYY-MM-DD dates
     
     @license    GPL
     @history    2021-02-14 11:05:05+01:00, Thierry Graff : Creation
 ********************************************************************************/
-namespace observe\commands\mfc;
+namespace observe\parts\mfc;
 
 use observe\app\Observe;
-use observe\app\Command;
 use observe\app\ObserveException;
 use tiglib\arrays\csvAssociative;
 use tiglib\time\diff;
 
-use observe\parts\person\Distrib as PersonDistrib;
-
-class pages implements Command {
-    
-    /** Parameters passed to execute() **/
-    private static $params;
-    
-    /**
-        Distributions built from tmp-dir/ymd.csv
-    **/
-    private static $ymd_distribs = [
-        'M' => [
-            'year' => [],
-            'day' => [],
-            'age-wed' => [],
-            'age-child' => [],
-        ],
-        'F' => [
-            'year' => [],
-            'day' => [],
-            'age-wed' => [],
-            'age-child' => [],
-        ],
-        'C' => [
-            'year' => [],
-            'day' => [],
-            'rank' => [],
-            'wed-child' => [], // interval [wedding - birth]
-        ],
-        'W' => [
-            'year' => [],
-            'n' => 0,
-        ],
-        
-    ];
-                                                                           
-    public static function execute($params=[]){
-        
-        self::$params = $params;
-        
-        self::loadYMD();
-        
-        $mPage = self::motherFatherPage('M');
-        $fPage = self::motherFatherPage('F');
-        $cPage = self::childPage();
-        $wPage = self::weddingPage();
-        
-    }
-    
+class ymd {
+                                                                               
     // ******************************************************
     /**
-        Computes self::$ymd_distribs
+        @param $data    Array representing a csv file.
+                        Each entry is an associative array representing one line of the file
+        @param $columns Name of the columns representing M, F, C, W, CRANK in the csv file
+        @param $skip    
     **/
-    public static function loadYMD(){
+    public static function loadYMD(
+        &$data,
+        $columns,
+        $skipW,
+    ){
         
-        $colM = self::$params['ymd']['columns']['M'];
-        $colF = self::$params['ymd']['columns']['F'];
-        $colC = self::$params['ymd']['columns']['C'];
-        $colW = self::$params['ymd']['columns']['W'];
-        $colCRANK = self::$params['ymd']['columns']['CRANK']; // child rank
+        $dist = [
+            'M' => [
+                'year' => [],
+                'day' => [],
+                'age-wed' => [],
+                'age-child' => [],
+            ],
+            'F' => [
+                'year' => [],
+                'day' => [],
+                'age-wed' => [],
+                'age-child' => [],
+            ],
+            'C' => [
+                'year' => [],
+                'day' => [],
+                'rank' => [],
+                'wed-birth' => [], // interval [wedding - child birth]
+            ],
+            'W' => [
+                'year' => [],
+                'delta-mf' => [], // interval [father birth - mother birth] // TODO 
+                'N' => 0, // nb of rows with wedding info
+            ],
+        ];
         
-        $dist =& self::$ymd_distribs;
+        $colM = $columns['M'];
+        $colF = $columns['F'];
+        $colC = $columns['C'];
+        $colW = $columns['W'];
+        $colCRANK = $columns['CRANK']; // child rank
         
         $nW = 0;
         $n = 0;
         
-        // load the file
-        $infile = self::$params['tmp-dir'] . DS . self::$params['ymd']['file'];
-        $ymd = csvAssociative::compute($infile);
-        
-        $lineHasWedding = function($line){
-            return $line[self::$params['ymd']['columns']['W']] != self::$params['ymd']['skip']['W'];
+        $lineHasWedding = function($line) use ($columns, $skipW) {
+            return $line[$columns['W']] != $skipW;
         };
         
-        foreach($ymd as $line){
+        foreach($data as $line){
             $n++; 
             [$yM, $mM, $dM] = explode('-', $line[$colM]);
             [$yF, $mF, $dF] = explode('-', $line[$colF]);
@@ -158,15 +137,15 @@ class pages implements Command {
             // interval wedding - birth
             if($lineHasWedding($line)){
                 $diff = diff::compute($dateW, $dateC, unit:'M');
-                if(!isset($dist['C']['wed-child'][$diff])){ $dist['C']['wed-child'][$diff] = 0; }
-                $dist['C']['wed-child'][$diff]++;
+                if(!isset($dist['C']['wed-birth'][$diff])){ $dist['C']['wed-birth'][$diff] = 0; }
+                $dist['C']['wed-birth'][$diff]++;
             }
             //
             // W
             //
             if($lineHasWedding($line)){
-                // n
-                $dist['W']['n']++;
+                // N
+                $dist['W']['N']++;
                 // year
                 if(!isset($dist['W']['year'][$yW])){ $dist['W']['year'][$yW] = 0; }
                 $dist['W']['year'][$yW]++;
@@ -191,41 +170,10 @@ class pages implements Command {
         ksort($dist['C']['year']);
         ksort($dist['C']['day']);
         ksort($dist['C']['rank']);
-        ksort($dist['C']['wed-child']);
+        ksort($dist['C']['wed-birth']);
         ksort($dist['W']['year']);
         ksort($dist['W']['day']);
-//echo "\n<pre>"; print_r(self::$ymd_distribs['W']); echo "</pre>\n"; exit;
+        return $dist;
     }
     
-    // ******************************************************
-    /**
-        @param $
-    **/
-    public static function motherFatherPage($MF): string {
-        $res = '';
-        
-//        $distrib = PersonDistrib::yearDistrib(self::$ymd, 'M');
-        
-        return $res;
-    }
-
-    // ******************************************************
-    /**
-        @param $
-    **/
-    public static function childPage(): string {
-        $res = '';
-        return $res;
-    }
-
-    // ******************************************************
-    /**
-        @param $
-    **/
-    public static function weddingPage(): string {
-        $res = '';
-        return $res;
-    }
-    
-    
-}// end class
+} // end class

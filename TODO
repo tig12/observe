@@ -4,3 +4,12 @@
 
 - git submodule for tigeph
 
+- MFC: maybe replace in computeAstro
+    instead of generating data/planets.csv, generate data/planets-M.csv, data/planets-F.csv etc.
+
+- revise parameter skip : check, document, test
+
+- clarify distrib / group commands.
+Classes of parts/ should not read / write files ; should be done in commands
+distrib -> distrib-ymd
+group   -> distrib-aspect

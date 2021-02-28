@@ -2,6 +2,11 @@
 /******************************************************************************
     Astrological computations using tigeph library.
     
+    Execution 2021-02-28
+    Wrote 591936 lines in output/experiences/insee/a00/data/planets.csv (462.705 s)
+    
+    
+    
     @license    GPL
     @history    2020-12-17 21:31:38+01:00, Thierry Graff : Creation
 ********************************************************************************/
@@ -18,6 +23,8 @@ use tigeph\model\IAA;
 use tigeph\ephem\swetest\Swetest;
 use tigeph\ephem\meeus1\Meeus1;
 
+use observe\parts\fileSystem;
+
 class ComputeAstro implements Command {
     
     /** Astronomical engine used for the computations **/
@@ -28,15 +35,30 @@ class ComputeAstro implements Command {
         // check parameters
         //
         $classname = __CLASS__;
-        if(!isset($params['input-file'])){
-            throw new ObserveException("$classname needs a parameter 'input-file'");
-        }
         //
-        $infile = $params['input-file'];
+        // in-file
+        if(!isset($params['in-dir'])){
+            throw new ObserveException("$classname needs a parameter 'in-dir'");
+        }
+        if(!isset($params['in-file'])){
+            throw new ObserveException("$classname needs a parameter 'in-file'");
+        }
+        $infile = $params['in-dir'] . DS . $params['in-file'];
         if(!is_file($infile)){
             throw new ObserveException("File not found : $infile");
         }
         //
+        // out-file
+        if(!isset($params['out-dir'])){
+            throw new ObserveException("$classname needs a parameter 'out-dir'");
+        }
+        if(!isset($params['out-file'])){
+            throw new ObserveException("$classname needs a parameter 'out-file'");
+        }
+        $outfile = $params['out-dir'] . DS . $params['out-file'];
+        fileSystem::mkdir(dirname($outfile));
+        //
+        // astro engines
         $engines = Tigeph::getEngines();
         if(!isset($params['engine'])){
             throw new ObserveException("$classname needs a parameter 'engine' ; supported values: " . implode(', ', $engines));
@@ -46,24 +68,17 @@ class ComputeAstro implements Command {
         }
         self::$engine = $params['engine'];
         //
+        // skip
         $skip = false; 
         if(isset($params['skip'])){
             $skip = $params['skip']; // skip = optional parameter
         }
         //
+        // actions
         if(!isset($params['actions'])){
             throw new ObserveException("$classname needs a parameter 'actions'");
         }
         $actions = self::computeActions($params['actions']);
-        //
-        if(!isset($params['output-file'])){
-            throw new ObserveException("$classname needs a parameter 'output-file'");
-        }
-        $outfile = $params['output-file'];
-        $dir = dirname($outfile);
-        if(!is_dir($dir)){
-            throw new ObserveException("Create directory '$dir' and try again");
-        }
         //
         //  build output columns
         //
@@ -83,6 +98,7 @@ class ComputeAstro implements Command {
         //  execute
         //
         $res = implode(Observe::CSV_SEP, $outcols) . "\n";
+        //
         $in = csvAssociative::compute($infile);
         //
         $N =0;
@@ -106,8 +122,7 @@ class ComputeAstro implements Command {
         }
         $t2 = microtime(true);
         $dt = round($t2 - $t1, 3);
-        file_put_contents($outfile, $res);
-        echo "Wrote $N lines in $outfile ($dt s)\n";
+        fileSystem::saveFile($outfile, $res, message: "Wrote $N lines in $outfile ($dt s)\n");
     }
     
     /**

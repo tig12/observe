@@ -1,60 +1,25 @@
 <?php
 /******************************************************************************
-    Generates SVG horizontal chart bar from the column of a file
-    
-    If 
-    
-    
-    TODO add 'input-data' parameter ; input-data|(input-file & col)
-    TODO add 'output-data' parameter ; output-data|(ouput-file)
+    Generates SVG horizontal bar chart bar from a distribution
     
     @license    GPL
+    @history    2021-02-28 23:08:04+01:00, Thierry Graff : refactor, moved from commands to parts
     @history    2020-12-20 18:48:55+01:00, Thierry Graff : Creation
 ********************************************************************************/
 namespace observe\parts\draw;
 
 use observe\Observe;
-use observe\patterns\Command;
-use observe\ObserveException;
-use tiglib\arrays\csvAssociative;
-use tiglib\arrays\csvRegular;
 
 class bar implements Command {
     
-    public static function execute($params=[]){
-        //
-        // check parameters                                                     
-        //
-        $classname = 'bar'; // TODO copute by reflection
-        if(!isset($params['input-file'])){
-            throw new ObserveException("$classname needs a parameter 'input-file'");
-        }
-        $infile = $params['input-file'];
-        if(!is_file($infile)){
-            throw new ObserveException("File not found : $infile");
-        }
-        //
-        if(!isset($params['col'])){
-            throw new ObserveException("$classname needs a parameter 'col'");
-        }
-        //
-        if(!isset($params['assoc'])){
-            throw new ObserveException("$classname needs a parameter 'assoc'");
-        }
-        // output
-        if(isset($params['output-file']) && isset($params['output-data'])){
-            throw new ObserveException("$classname can't have both parameters 'output-data' and 'output-file'");
-        }
-        if(!isset($params['output-file']) && !isset($params['output-data'])){
-            throw new ObserveException("$classname needs either parameter 'output-data' or 'output-file'");
-        }
-        if(isset($params['output-file'])){
-            $outfile = $params['output-file'];
-            $outdir = dirname($outfile);
-            if(!is_dir($outdir)){
-                throw new ObserveException("output directory does not exist: $outdir");
-            }
-        }
+    
+    /** 
+        @param $params  Assoc array with the following keys :
+                        'distrib' : The distribution to represent
+    **/
+    public static function svg($params=[
+            'distrib' => [],
+        ]){
         //
         //  execute
         //

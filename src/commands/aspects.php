@@ -10,6 +10,9 @@ use observe\app\Observe;
 use observe\app\Command;
 use observe\app\ObserveException;
 use tiglib\arrays\csvAssociative;
+use tiglib\math\mod360;
+
+use observe\parts\fileSystem;
 
 class aspects implements Command {
     
@@ -18,31 +21,48 @@ class aspects implements Command {
         // check parameters
         //
         $classname = __CLASS__;
-        if(!isset($params['input-file'])){
-            throw new ObserveException("$classname needs a parameter 'input-file'");
-        }
         //
-        $infile = $params['input-file'];
+        // in-file
+        if(!isset($params['in-dir'])){
+            throw new ObserveException("$classname needs a parameter 'in-dir'");
+        }
+        if(!isset($params['in-file'])){
+            throw new ObserveException("$classname needs a parameter 'in-file'");
+        }
+        $infile = $params['in-dir'] . DS . $params['in-file'];
         if(!is_file($infile)){
             throw new ObserveException("File not found : $infile");
         }
         //
+        // out-file
+        if(!isset($params['out-dir'])){
+            throw new ObserveException("$classname needs a parameter 'out-dir'");
+        }
+        if(!isset($params['out-file'])){
+            throw new ObserveException("$classname needs a parameter 'out-file'");
+        }
+        $outfile = $params['out-dir'] . DS . $params['out-file'];
+        fileSystem::mkdir(dirname($outfile));
+        //
+        // skip
+        //
+        $skip = false;
+        if(isset($params['skip'])){
+            $skip = $params['skip'];
+        }
+        // actions
         if(!isset($params['actions'])){
             throw new ObserveException("$classname needs a parameter 'actions'");
         }
         //
-        if(!isset($params['output-file'])){
-            throw new ObserveException("$classname needs a parameter 'output-file'");
-        }
-        $outfile = $params['output-file'];
-        $dir = dirname($outfile);
-        if(!is_dir($dir)){
-            throw new ObserveException("Create directory '$dir' and try again");
-        }
-        //
         //  execute
         //
+        $t1 = microtime(true);
         $in = csvAssociative::compute($infile);
+        $t2 = microtime(true);
+        $dt = round($t2 - $t1, 3);
+        echo "Read $infile ($dt s)\n";
+
         $incols = array_keys($in[0]);
         //
         // Build pairs of input columns, using actions
@@ -79,31 +99,28 @@ class aspects implements Command {
         // build res
         $res = implode(Observe::CSV_SEP, $outcols) . "\n";
         $N = 0;
+        $t1 = microtime(true);
         foreach($in as $old){
             $new = [];
             foreach($pairs as $pair){
-                $new[] = self::mod360(round($old[$pair[1]] - $old[$pair[0]], 1));
+                if($old[$pair[0]] === $skip || $old[$pair[1]] === $skip){
+                    // HERE decide that an empty string is written if skip encountered
+                    // maybe add a parameter 'replace' to decide what to do
+                    $new[] = '';
+                }
+                else{
+                    $new[] = mod360::compute(round($old[$pair[1]] - $old[$pair[0]], 1));
+                }
             }
             $res .= implode(Observe::CSV_SEP, $new) . "\n";
             $N++;
-            if($N % 100000 == 0) echo "$N\n";
+            if($N % 10000 == 0) echo "$N\n";
         }
-        file_put_contents($outfile, $res);
-        echo "Wrote $N lines in $outfile\n";
+        $t2 = microtime(true);
+        $dt = round($t2 - $t1, 3);
+        echo "Compute aspects ($dt s)\n";
+        
+        fileSystem::saveFile($outfile, $res, message:"Wrote $N lines in $outfile\n");
     }
-    
-    //***************************************************
-    /** Returns a number modulo 360 (between 0 and 360). **/
-    private static function mod360($nb){
-        if($nb >= 0){
-            $dec = $nb - floor($nb);
-            return $nb%360 + $dec;
-        }
-        else{
-            $dec = $nb - floor($nb);
-            if($dec != 0) $dec -= 1;
-            return $nb%360 + $dec + 360;
-        }
-    }
-    
-}// end class
+        
+} // end class
