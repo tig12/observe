@@ -27,7 +27,7 @@ class headfoot {
     <meta name="description" content="$description">
     <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
     <link rel="copyright" href="http://www.gnu.org/copyleft/gpl.html"/>
-    <link rel="stylesheet" href="$pathToRoot/static/observe.css" type="text/css">
+    <link rel="stylesheet" href="$pathToRoot/static/css/observe.css" type="text/css">
 </head>
 
 <body>

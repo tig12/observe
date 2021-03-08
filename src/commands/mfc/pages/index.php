@@ -1,10 +1,10 @@
 <?php
 /******************************************************************************
-    Computes index.html page of a MFCW group
+    Computes index.html page of a MFCW experience
     Auxiliary of all::compute()
     
     @license    GPL
-    @history    2021-02-28 22:09:39+01:00, Thierry Graff : Creation from formar class pages
+    @history    2021-02-28 22:09:39+01:00, Thierry Graff : Creation from former class pages
     @history    2020-12-16 18:17:02+01:00, Thierry Graff : Creation of observe\commands\mfc\pages
 ********************************************************************************/
 namespace observe\commands\mfc\pages;
@@ -46,11 +46,15 @@ HTML;
         $res .= <<<HTML
 <table><tr>
 <td class="vertical-align-top padding-right2">
-    <ul>
+    <ul class="naked">
 HTML;
+        //
+        // M - F
+        //
         foreach(['M', 'F'] as $k){
             $v = constant("observe\commands\mfc\MFC::$k");
             $page = strtolower($v) . '.html';
+            $ageAtWeddingStr = $params['wedding'] === true ? '<span class="padding-left"><a href="' . $page . '#age-W">at wedding</a>' : '';
             $res .= <<<HTML
         <li>
             <b><a href="$page">$k - $v</a></b>
@@ -62,8 +66,8 @@ HTML;
                 </li>
                 <li>
                     <b>Age</b>
-                    <span class="padding-left"><a href="$page#age-C.html">at child birth</a>
-                    <span class="padding-left"><a href="$page#age-W.html">at wedding</a>
+                    <span class="padding-left"><a href="$page#age-C">at child birth</a>
+                    $ageAtWeddingStr
                 </li>
                 <li>
                     <b><a href="$page#planets">Planets</a></b>
@@ -72,10 +76,44 @@ HTML;
         </li>
 HTML;
         } // end M F
-        $k = 'W';
-        $v = "Wedding";
+        //
+        // C
+        //
+        $k = 'C';
+        $v = "Child";
         $page = strtolower($v) . '.html';
         $res .= <<<HTML
+        <li>
+            <b><a href="$page">$k - $v</a></b>
+            <ul>
+                <li>
+                    <b>Date</b>
+                    <span class="padding-left"><a href="$page#birthday">days</a>
+                </li>
+HTML;
+        if($params['wedding']){
+            $res .= <<<HTML
+                <li>
+                    <b>Age</b>
+                    <span class="padding-left"><a href="$page#age-W">at wedding</a>
+                </li>
+HTML;
+        }
+        $res .= <<<HTML
+                <li>
+                    <b><a href="$page#planets">Planets</a></b>
+                </li>
+            </ul>
+        </li>
+HTML;
+        //
+        // W
+        //
+        if($params['wedding'] === true){
+            $k = 'W';
+            $v = "Wedding";
+            $page = strtolower($v) . '.html';
+            $res .= <<<HTML
         <li>
             <b><a href="$page">$k - $v</a></b>
             <ul>
@@ -92,33 +130,24 @@ HTML;
                 </li>
             </ul>
         </li>
-HTML;                                                                                                                                      
-        $k = 'C';
-        $v = "Child";
-        $page = strtolower($v) . '.html';
-        $res .= <<<HTML
-        <li>
-            <b><a href="$page">$k - $v</a></b>
-            <ul>
-                <li>
-                    <b>Date</b>
-                    <span class="padding-left"><a href="$page#birthday">days</a>
-                </li>
-                <li>
-                    <b><a href="$page#planets">Planets</a></b>
-                </li>
-            </ul>
-        </li>
-    </ul>
 HTML;
+        }
+        $res .= "    </ul>\n";
+        //
+        // relations
+        //
         $res .= <<<HTML
 </td>
 <td class="vertical-align-top border-left">
-    <ul>
+    <ul class="naked">
         <li>
             <div><b>Inter-aspects</b></div>
 HTML;
-        foreach(['MF', 'MW', 'MC', 'FW', 'FC', 'WC', ] as $k){
+        $combinations = 
+            $params['wedding'] === true
+            ? ['MF', 'MW', 'MC', 'FC', 'FW', 'CW']
+            : ['MF', 'MC', 'FC'];
+        foreach($combinations as $k){
             $v0 = constant('observe\commands\mfc\MFC::' . $k[0]);
             $v1 = constant('observe\commands\mfc\MFC::' . $k[1]);
             $page = strtolower($v0) . '-' . strtolower($v1) . '.html';

@@ -43,12 +43,14 @@ class all implements Command {
         //
         //  execute
         //
-//        fileSystem::saveFile("$outdir/index.html", index::computePage($params));
-        fileSystem::saveFile("$outdir/mother.html", MF::computePage($params, 'M'));
-exit;
-        fileSystem::saveFile("$outdir/father.html", MF::computePage($params, 'F'));
+        fileSystem::saveFile("$outdir/index.html", index::computePage($params));
+        fileSystem::saveFile("$outdir/mother.html", MF::computePage(params:$params, MF:'M'));
+//exit;
+        fileSystem::saveFile("$outdir/father.html", MF::computePage(params:$params, MF:'F'));
         fileSystem::saveFile("$outdir/child.html", C::computePage($params));
-        fileSystem::saveFile("$outdir/wedding.html", W::computePage($params));
+        if($params['wedding'] === true){
+            fileSystem::saveFile("$outdir/wedding.html", W::computePage($params));
+        }
         
     }
     

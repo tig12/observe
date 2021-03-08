@@ -18,6 +18,9 @@ class distrib {
     /** 
         Loads a distribution from a csv file.
         The csv must contain 2 columns
+        The first column contains the values of the random variable
+            ex: the angular values (1 - 360) in the case of a zodiacal distribution
+        The second column contains the nb of occurences
         @param  $header True if the first line contains column line ; false otherwise
     **/
     public static function loadFromCSV(string $filename, bool $header): array {
@@ -32,5 +35,16 @@ class distrib {
         }
         return $res;
     }
+    
+    // ******************************************************
+    /**
+        Computes the arithmetic mean of data
+        @param  $data Regular or associative array.
+                Values are used to compute the mean
+    **/
+    public static function mean(&$data) {
+        return array_sum($data) / count($data);
+    }
+    
     
 } // end class
