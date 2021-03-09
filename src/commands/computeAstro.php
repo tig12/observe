@@ -1,14 +1,11 @@
 <?php
 /******************************************************************************
     Astrological computations using tigeph library.
-    
-    Execution 2021-02-28
-    Wrote 591936 lines in output/experiences/insee/a00/data/planets.csv (462.705 s)
-    
-    
+    Input : a csv file with columns containing YYYY-MM-DD dates.
+    Output : one csv file per input column, containing longitudes of planets
     
     @license    GPL
-    @history    2020-12-17 21:31:38+01:00, Thierry Graff : Creation
+    @history    2021-03-09 04:34:44+01:00, Thierry Graff : Creation from computeAstro1
 ********************************************************************************/
 namespace observe\commands;
 
@@ -17,6 +14,7 @@ use observe\app\Config;
 use observe\app\Command;
 use observe\app\ObserveException;
 use tiglib\arrays\csvAssociative;
+
 use tigeph\Tigeph;
 use tigeph\model\SysolC;
 use tigeph\model\IAA;
@@ -25,7 +23,7 @@ use tigeph\ephem\meeus1\Meeus1;
 
 use observe\parts\fileSystem;
 
-class ComputeAstro implements Command {
+class computeAstro implements Command {
     
     /** Astronomical engine used for the computations **/
     private static $engine;
@@ -48,15 +46,15 @@ class ComputeAstro implements Command {
             throw new ObserveException("File not found : $infile");
         }
         //
-        // out-file
+        // out-dir
         if(!isset($params['out-dir'])){
             throw new ObserveException("$classname needs a parameter 'out-dir'");
         }
-        if(!isset($params['out-file'])){
-            throw new ObserveException("$classname needs a parameter 'out-file'");
+        if(!isset($params['out-subdir'])){
+            throw new ObserveException("$classname needs a parameter 'out-subdir'");
         }
-        $outfile = $params['out-dir'] . DS . $params['out-file'];
-        fileSystem::mkdir(dirname($outfile));
+        $outdir = $params['out-dir'] . DS . $params['out-subdir'];
+        fileSystem::mkdir($outdir);
         //
         // astro engines
         $engines = Tigeph::getEngines();
@@ -80,49 +78,71 @@ class ComputeAstro implements Command {
         }
         $actions = self::computeActions($params['actions']);
         //
-        //  build output columns
-        //
-        $outcols = [];
-        foreach($actions as $action){
-            foreach($action['tigeph-codes'] as $planetCode){
-                $outcols[] = $action['in-col'] . '-' . IAA::TIGEPH_IAA[$planetCode];
-            }
-        }
-        //
         //  initialize tigeph
         //
         if($params['engine'] == 'swetest'){
             Swetest::init(Config::$data['swetest']['bin'], Config::$data['swetest']['dir']);
         }
         //
-        //  execute
+        //  initialize result, output file names and output columns
         //
-        $res = implode(Observe::CSV_SEP, $outcols) . "\n";
+        $res = [];
+        $outfiles = [];
+        $outcols = [];
+        $outkeys = []; // = names of output colums
+        $emptyCoords = []; // useful when a date = $skip
+        foreach($actions as $action){
+            $key = $action['in-col'];
+            $outkeys[] = $key;
+            $res[$key] = [];
+            $outfiles[$key] = $outdir . DS . $key . '.csv';
+            foreach($action['tigeph-codes'] as $planetCode){
+                if(!isset($outcols[$key])){
+                    $outcols[$key] = [];
+                }
+                $outcols[$key][] = IAA::TIGEPH_IAA[$planetCode];
+            }
+            $emptyCoords[$key] = array_fill_keys($outcols[$key], '');
+        }
+        foreach($outkeys as $k){
+            $res[$k] = implode(Observe::CSV_SEP, $outcols[$k]) . "\n";
+        }
+        //
+        //  execute
         //
         $in = csvAssociative::compute($infile);
         //
         $N =0;
         $t1 = microtime(true);
-        $emptyNew = array_fill_keys($outcols, '');
-        foreach($in as $old){
+        $emptyNew = array_fill_keys($outkeys, []);
+        foreach($in as $line){
             $new = $emptyNew;
             foreach($actions as $action){
-                $date = $old[$action['in-col']];
-                if($date !== $skip){
-                    $coords = self::ephem($date, $action['tigeph-codes']);
-                    foreach($coords as $planetCode => $coord){
-                        $new[$action['in-col'] . '-' . $planetCode] = $coord;
-                    }
+                $currentKey = $action['in-col'];
+                $date = $line[$currentKey];
+                if($date === $skip){
+                    $coords = $emptyCoords[$currentKey];
                 }
-                // else date = skip => don't compute, keep fields empty
+                else{
+                    $coords = self::ephem($date, $action['tigeph-codes']);
+                }
+                foreach($coords as $planetCode => $coord){
+                    $new[$currentKey][$planetCode] = $coord;
+                }
             }
-            $res .= implode(Observe::CSV_SEP, $new) . "\n";
+            foreach($outkeys as $key){
+                $res[$key] .= implode(Observe::CSV_SEP, $new[$key]) . "\n";
+            }
             $N++;
             if($N % 1000 == 0) echo "$N\n";
         }
         $t2 = microtime(true);
         $dt = round($t2 - $t1, 3);
-        fileSystem::saveFile($outfile, $res, message: "Wrote $N lines in $outfile ($dt s)\n");
+        
+        foreach($outkeys as $key){
+            fileSystem::saveFile($outfiles[$key], $res[$key], message: "Wrote $N lines in {$outfiles[$key]}\n");
+        }
+        echo "Execution time: $dt s\n";
     }
     
     /**

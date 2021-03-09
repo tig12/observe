@@ -6,8 +6,6 @@
 ********************************************************************************/
 namespace observe\parts\stats;
 
-use observe\app\Observe;
-
 class constant {
     
     /** 

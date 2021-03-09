@@ -17,11 +17,7 @@
 ********************************************************************************/
 namespace observe\parts\stats;
 
-use observe\Observe;
-use observe\patterns\Command;
-use observe\ObserveException;
-
-class student implements Command {
+class student {
     public static function execute($params=[]){
     }
     
