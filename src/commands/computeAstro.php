@@ -155,6 +155,7 @@ class computeAstro implements Command {
         $res = [];
         foreach($param as $line){
             $action = [];
+            // TODO this preg_split for planet codes should be in a function (see commands.mfc.pages.all) 
             $tmp = preg_split('/\s+/', $line);
             if(count($tmp) < 2){
                 throw new ObserveException("Invalid syntax : $line");

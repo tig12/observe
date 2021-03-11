@@ -54,7 +54,7 @@ class bar {
         @param  $ylegendsH          in px - height of y legends (= font size)
         @param  $ylegendsRightGap   in px - gap between y legends and y axis.
         @param  $ylegendsRound      Nb of decimal to include in the displayed values.
-                                    (applies to mean)
+                                    (meaningful for mean, whidh is generally not integer)
         
     **/
     public static function svg(

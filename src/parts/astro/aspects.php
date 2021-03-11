@@ -12,7 +12,7 @@ class aspects {
     
     /** 
         Computes the aspects within one data set.
-        Useless aspects are not computed (eg sun-sun, or sun-moon the not moon-sun).
+        Useless aspects are not computed (eg sun-sun, or sun-moon then not moon-sun).
         
         @param  $data Array of associative arrays.
                 Each assoc. array must have keys = planet codes (IAA) and values = longitudes

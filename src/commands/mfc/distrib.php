@@ -12,103 +12,202 @@ use observe\app\Command;
 use observe\app\ObserveException;
 use tiglib\arrays\csvAssociative;
 
-use observe\parts\mfc\ymd;
+use observe\parts\mfc\distrib\ymd;
+use observe\parts\mfc\distrib\planets;
 use observe\parts\fileSystem;
 
 class distrib implements Command {
     
-    /** Parameters passed to execute() **/
+    /** Parameters passed to execute(). **/
     private static $params;
     
-    public static function execute($params=[]){
-        
+    private static $dirDistrib;
+    
+    // ******************************************************
+    public static function execute($params=[]) {
         self::$params = $params;
+        // skip-W, optional parameter
+        if(!isset(self::$params['ymd']['skip-W'])){
+            self::$params['ymd']['skip-W'] = false;
+        }
         
-        $dist = [];
+        self::$dirDistrib = self::$params['out-dir'] . DS . 'distrib';
         
+        self::exec_ymd();
+        
+        self::exec_planets();
+        
+        self::exec_aspects();
+    }
+    
+    // ******************************************************
+    /** Computes distributions using data/ymd.csv **/
+    private static function exec_ymd() {
         //
-        // ymd
-        //
-        $inFile = $params['in-dir'] . DS . $params['ymd']['in-file'];
+        $inFile = self::$params['in-dir'] . DS . 'data' . DS . 'ymd.csv';
         if(!file_exists($inFile)){
             throw new ObserveException("File $inFile does not exist");
         }
-        $data = csvAssociative::compute($inFile);
-        $dist['ymd'] = ymd::loadYMD(
-            data:       $data,
-            columns:    $params['ymd']['columns'],
-            skipW:      $params['ymd']['skip-W'],
-        );
-//echo "\n<pre>"; print_r($dist['ymd']['W']); echo "</pre>\n"; exit;
         //
-        $outBaseDir = $params['out-dir'] . DS . $params['out-subdir'];
+        echo "Computing ymd distributions...\n";
+        //
+        $data = csvAssociative::compute($inFile);
+        $distribs = ymd::computeDistrib(
+            data:       $data,
+            processW:   self::$params['process-wedding'],
+            skipW:      self::$params['ymd']['skip-W'],
+        );
         //
         // M
         //
-        $outFile = $outBaseDir . DS . 'M' . DS . 'year.csv';
+        $outFile = self::$dirDistrib . DS . 'M' . DS . 'year.csv';
         fileSystem::mkdir(dirname($outFile));
-        fileSystem::saveFile($outFile, self::distrib2csv($dist['ymd']['M']['year']));
+        fileSystem::saveFile($outFile, self::distrib2csv($distribs['M']['year']));
         //
-        $outFile = $outBaseDir . DS . 'M' . DS . 'day.csv';
-        fileSystem::saveFile($outFile, self::distrib2csv($dist['ymd']['M']['day']));
+        $outFile = self::$dirDistrib . DS . 'M' . DS . 'day.csv';
+        fileSystem::saveFile($outFile, self::distrib2csv($distribs['M']['day']));
         //
-        $outFile = $outBaseDir . DS . 'M' . DS . 'age-wed.csv';
-        fileSystem::saveFile($outFile, self::distrib2csv($dist['ymd']['M']['age-wed']));
+        if(self::$params['process-wedding']){
+            $outFile = self::$dirDistrib . DS . 'M' . DS . 'age-wed.csv';
+            fileSystem::saveFile($outFile, self::distrib2csv($distribs['M']['age-wed']));
+        }
         //
-        $outFile = $outBaseDir . DS . 'M' . DS . 'age-child.csv';
-        fileSystem::saveFile($outFile, self::distrib2csv($dist['ymd']['M']['age-child']));
+        $outFile = self::$dirDistrib . DS . 'M' . DS . 'age-child.csv';
+        fileSystem::saveFile($outFile, self::distrib2csv($distribs['M']['age-child']));
         //
         // F
         //
-        $outFile = $outBaseDir . DS . 'F' . DS . 'year.csv';
+        $outFile = self::$dirDistrib . DS . 'F' . DS . 'year.csv';
         fileSystem::mkdir(dirname($outFile));
-        fileSystem::saveFile($outFile, self::distrib2csv($dist['ymd']['F']['year']));
+        fileSystem::saveFile($outFile, self::distrib2csv($distribs['F']['year']));
         //
-        $outFile = $outBaseDir . DS . 'F' . DS . 'day.csv';
-        fileSystem::saveFile($outFile, self::distrib2csv($dist['ymd']['F']['day']));
+        $outFile = self::$dirDistrib . DS . 'F' . DS . 'day.csv';
+        fileSystem::saveFile($outFile, self::distrib2csv($distribs['F']['day']));
         //
-        $outFile = $outBaseDir . DS . 'F' . DS . 'age-wed.csv';
-        fileSystem::saveFile($outFile, self::distrib2csv($dist['ymd']['F']['age-wed']));
+        if(self::$params['process-wedding']){
+            $outFile = self::$dirDistrib . DS . 'F' . DS . 'age-wed.csv';
+            fileSystem::saveFile($outFile, self::distrib2csv($distribs['F']['age-wed']));
+        }
         //
-        $outFile = $outBaseDir . DS . 'F' . DS . 'age-child.csv';
-        fileSystem::saveFile($outFile, self::distrib2csv($dist['ymd']['F']['age-child']));
+        $outFile = self::$dirDistrib . DS . 'F' . DS . 'age-child.csv';
+        fileSystem::saveFile($outFile, self::distrib2csv($distribs['F']['age-child']));
         //
         // C
         //
-        $outFile = $outBaseDir . DS . 'C' . DS . 'year.csv';
+        $outFile = self::$dirDistrib . DS . 'C' . DS . 'year.csv';
         fileSystem::mkdir(dirname($outFile));
-        fileSystem::saveFile($outFile, self::distrib2csv($dist['ymd']['C']['year']));
+        fileSystem::saveFile($outFile, self::distrib2csv($distribs['C']['year']));
         //
-        $outFile = $outBaseDir . DS . 'C' . DS . 'day.csv';
-        fileSystem::saveFile($outFile, self::distrib2csv($dist['ymd']['C']['day']));
+        $outFile = self::$dirDistrib . DS . 'C' . DS . 'day.csv';
+        fileSystem::saveFile($outFile, self::distrib2csv($distribs['C']['day']));
         //
-        $outFile = $outBaseDir . DS . 'C' . DS . 'rank.csv';
-        fileSystem::saveFile($outFile, self::distrib2csv($dist['ymd']['C']['rank']));
+        $outFile = self::$dirDistrib . DS . 'C' . DS . 'rank.csv';
+        fileSystem::saveFile($outFile, self::distrib2csv($distribs['C']['rank']));
         //
-        $outFile = $outBaseDir . DS . 'C' . DS . 'wed-birth.csv';
-        fileSystem::saveFile($outFile, self::distrib2csv($dist['ymd']['C']['wed-birth']));
+        if(self::$params['process-wedding']){
+            $outFile = self::$dirDistrib . DS . 'C' . DS . 'wed-birth.csv';
+            fileSystem::saveFile($outFile, self::distrib2csv($distribs['C']['wed-birth']));
+        }
         //
         // W
         //
-        $outFile = $outBaseDir . DS . 'W' . DS . 'year.csv';
-        fileSystem::mkdir(dirname($outFile));
-        fileSystem::saveFile($outFile, self::distrib2csv($dist['ymd']['W']['year']));
-        //
-        $outFile = $outBaseDir . DS . 'W' . DS . 'day.csv';
-        fileSystem::saveFile($outFile, self::distrib2csv($dist['ymd']['W']['day']));
-        //
-        // N is not a distribution but a constant => in txt file
-        $outFile = $outBaseDir . DS . 'W' . DS . 'N.txt';
-        fileSystem::saveFile($outFile, $dist['ymd']['W']['N']);
-        //
-        //
-        // planets
-        //
-//        $dist['planets'] = planets::loadPlanets($params);
-        
-        
+        if(self::$params['process-wedding']){
+            $outFile = self::$dirDistrib . DS . 'W' . DS . 'year.csv';
+            fileSystem::mkdir(dirname($outFile));
+            fileSystem::saveFile($outFile, self::distrib2csv($distribs['W']['year']));
+            //
+            $outFile = self::$dirDistrib . DS . 'W' . DS . 'day.csv';
+            fileSystem::saveFile($outFile, self::distrib2csv($distribs['W']['day']));
+            //
+            // N is not a distribution but a constant => in txt file
+            $outFile = self::$dirDistrib . DS . 'W' . DS . 'N.txt';
+            fileSystem::saveFile($outFile, $distribs['W']['N']);
+        }
     }
     
+    // ******************************************************
+    /** Computes distributions of plants of each MFCW member **/
+    public static function exec_planets() {
+        //
+        echo "Computing planet distributions...\n";
+        //
+        // 1 - load data
+        //
+        $inDir = self::$params['in-dir'] . DS . 'data' . DS . 'planets';
+        $data = [];
+        $keys = ['M', 'F', 'C'];
+        if(self::$params['process-wedding']){
+            $keys[] = 'W';
+        }
+        foreach($keys as $key){
+            $inFile = $inDir . DS . $key . '.csv';
+            if(!file_exists($inFile)){
+                throw new ObserveException("File $inFile does not exist");
+            }
+            $data[$key] = csvAssociative::compute($inFile);
+        }
+        //
+        // 2 - compute distributions
+        //
+        $distribs = planets::computeDistrib(
+            data:       $data,
+            processW:   self::$params['process-wedding'],
+        );
+        //
+        // 3 - store distributions
+        //
+        foreach($distribs as $memberKey => $planets){
+            $dirname = self::$params['out-dir'] . DS . 'distrib' . DS . $memberKey . DS . 'planets'; // ex distrib/F/planets/
+            fileSystem::mkdir($dirname);
+            foreach($planets as $planet => $distrib){
+                $csv = self::distrib2csv($distrib);
+                $filename = $dirname . DS . $planet . '.csv';
+                fileSystem::saveFile($filename, $csv);
+            }
+        }
+    }
+    
+    // ******************************************************
+    /** Computes distributions of aspects of each MFCW member **/
+    public static function exec_aspects() {
+        //
+        echo "Computing aspect distributions...\n";
+        //
+        // 1 - load data
+        //
+        $inDir = self::$params['in-dir'] . DS . 'data' . DS . 'planets';
+        $data = [];
+        $keys = ['M', 'F', 'C'];
+        if(self::$params['process-wedding']){
+            $keys[] = 'W';
+        }
+        foreach($keys as $key){
+            $inFile = $inDir . DS . $key . '.csv';
+            if(!file_exists($inFile)){
+                throw new ObserveException("File $inFile does not exist");
+            }
+            $data[$key] = csvAssociative::compute($inFile);
+        }
+        //
+        // 2 - compute distributions
+        //
+        $distribs = planets::computeDistrib(
+            data:       $data,
+            processW:   self::$params['process-wedding'],
+        );
+        //
+        // 3 - store distributions
+        //
+        foreach($distribs as $memberKey => $planets){
+            $dirname = self::$params['out-dir'] . DS . 'distrib' . DS . $memberKey . DS . 'planets'; // distrib/F/planets
+            fileSystem::mkdir($dirname);
+            foreach($planets as $planet => $distrib){
+                $csv = self::distrib2csv($distrib);
+                $filename = $dirname . DS . $planet . '.csv';
+                fileSystem::saveFile($filename, $csv);
+            }
+        }
+    }
     
     // ******************************************************
     /**

@@ -13,3 +13,6 @@
 Classes of parts/ should not read / write files ; should be done in commands
 distrib -> distrib-ymd
 group   -> distrib-aspect
+
+- in observe\parts\mfc\distrib\ymd : replace $lineHasWedding by observe\parts\mfc\distrib\distrib::lineHasWedding()
+

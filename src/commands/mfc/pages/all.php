@@ -38,6 +38,10 @@ class all implements Command {
             throw new ObserveException("$classname needs a parameter 'out-dir'");
         }
         fileSystem::mkdir($outdir);
+        // planets, convert string like "SO MO ME VE MA JU SA UR NE PL NN" to array
+        // TODO this preg_split for planet codes should be in a function (see commands.comuteAstro) 
+        $tmp = preg_split('/\s+/', $params['planets']);
+        $params['planets'] = $tmp;
         //
         self::$params = $params;
         //
@@ -45,7 +49,6 @@ class all implements Command {
         //
         fileSystem::saveFile("$outdir/index.html", index::computePage($params));
         fileSystem::saveFile("$outdir/mother.html", MF::computePage(params:$params, MF:'M'));
-//exit;
         fileSystem::saveFile("$outdir/father.html", MF::computePage(params:$params, MF:'F'));
         fileSystem::saveFile("$outdir/child.html", C::computePage($params));
         if($params['wedding'] === true){

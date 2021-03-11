@@ -8,6 +8,8 @@
 ********************************************************************************/
 namespace observe\commands\mfc\pages;
 
+use tigeph\model\IAA;
+
 use observe\parts\page\headfoot;
 use observe\parts\stats\distrib;
 use observe\parts\draw\bar;
@@ -80,6 +82,26 @@ class C {
                 ylegendsRound: 1,
             );
             $res .= '<div id="age-W"></div>';
+            $res .= $svg;
+        }
+        //
+        // planets
+        //
+        $res .= '<h2 id="planets">Planets at birth</h2>';
+        $dirname = $params['in-dir'] . DS . 'distrib' . DS . 'C' . DS . 'planets';
+        foreach($params['planets'] as $planet){
+            $planetName = IAA::PLANET_NAMES[$planet];
+            $filename = $dirname . DS . $planet . '.csv';
+            $dist = distrib::loadFromCSV($filename, header:false);
+            $svg = bar::svg(
+                data: $dist,
+                title: "Child - $planetName at birth",
+                barW: 2,
+                xlegends: ['min', 'max'],
+                ylegends: ['min', 'max', 'mean'],
+                ylegendsRound: 1,
+            );
+            $res .= '<div id="planet-' . $planet . '"></div>';
             $res .= $svg;
         }
 
