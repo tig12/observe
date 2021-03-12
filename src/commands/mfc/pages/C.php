@@ -11,11 +11,30 @@ namespace observe\commands\mfc\pages;
 use tigeph\model\IAA;
 
 use observe\parts\page\headfoot;
+use observe\parts\page\toc;
+use observe\parts\page\nav;
 use observe\parts\stats\distrib;
 use observe\parts\draw\bar;
 use observe\parts\fileSystem;
 
 class C {
+    
+    /**
+        TOC = Table of contents
+        Correct when $params['wedding'] = true
+    **/
+    const toc = [
+        'birthday' => 'Day of birth',
+        'birthyear' => 'Year of birth',
+        'age-W' => 'Duration between parents\' wedding and birth',
+        'planets' => 'Planets at births',
+        'aspects' => 'Aspects at birth',
+    ];
+    
+    /** Navigation **/
+    const nav = [
+        'top'   => ['index.html', 'a00 experience'],
+    ];
     
     /**
         @param $params  Parameters passed to all::execute()
@@ -35,6 +54,15 @@ class C {
         );
         
         $res .= "<h1>$title</h1>\n";
+        $toc = self::toc;
+        if(!$params['wedding']){
+            unset($toc['age-W']);
+        }
+        if(!$params['child-by-year']){
+            unset($toc['birthyear']);
+        }
+        $res .= nav::html(self::nav);
+        $res .= toc::html($toc);
         //
         // year
         //
@@ -75,7 +103,7 @@ class C {
             $dist = distrib::loadFromCSV($filename, header:false);
             $svg = bar::svg(
                 data: $dist,
-                title: "$titleUCString - Nb of months between wedding and birth",
+                title: "$titleUCString - Duratio between parents'wedding and birth (in months)",
                 barW: 2,
                 xlegends: ['min', 'max'],
                 ylegends: ['min', 'max', 'mean'],

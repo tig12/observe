@@ -11,11 +11,31 @@ namespace observe\commands\mfc\pages;
 use tigeph\model\IAA;
 
 use observe\parts\page\headfoot;
+use observe\parts\page\toc;
+use observe\parts\page\nav;
 use observe\parts\stats\distrib;
 use observe\parts\draw\bar;
 use observe\parts\fileSystem;
 
 class MF {
+    
+    /**
+        TOC = Table of contents
+        Correct when $params['wedding'] = true
+    **/
+    const toc = [
+        'birthyear' => 'Year of birth',
+        'birthday' => 'Day of birth',
+        'age-C' => 'Age at child birth',
+        'age-W' => 'Age at wedding',
+        'planets' => 'Planets at births',
+        'aspects' => 'Aspects at birth',
+    ];
+    
+    /** Navigation **/
+    const nav = [
+        'top'   => ['index.html', 'a00 experience'],
+    ];
     
     /**
         @param $params  Parameters passed to all::execute()
@@ -34,8 +54,13 @@ class MF {
             title:          $title,
             description:    '',
         );
-        
         $res .= "<h1>$title</h1>\n";
+        $toc = self::toc;
+        if(!$params['wedding']){
+            unset($toc['age-W']);
+        }
+        $res .= nav::html(self::nav);
+        $res .= toc::html($toc);
         //
         // year
         //
@@ -84,18 +109,20 @@ class MF {
         //
         // age at wedding
         //
-        $filename = $params['in-dir'] . DS . 'distrib' . DS . $MF . DS . 'age-wed.csv';
-        $dist = distrib::loadFromCSV($filename, header:false);
-        $svg = bar::svg(
-            data: $dist,
-            title: "$MFucstring - age at wedding",
-            barW: 8,
-            xlegends: ['min', 'max', 'top'],
-            ylegends: ['min', 'max', 'mean'],
-            ylegendsRound: 1,
-        );
-        $res .= '<div id="age-W"></div>';
-        $res .= $svg;
+        if($params['wedding'] === true){
+            $filename = $params['in-dir'] . DS . 'distrib' . DS . $MF . DS . 'age-wed.csv';
+            $dist = distrib::loadFromCSV($filename, header:false);
+            $svg = bar::svg(
+                data: $dist,
+                title: "$MFucstring - age at wedding",
+                barW: 8,
+                xlegends: ['min', 'max', 'top'],
+                ylegends: ['min', 'max', 'mean'],
+                ylegendsRound: 1,
+            );
+            $res .= '<div id="age-W"></div>';
+            $res .= $svg;
+        }
         //
         // planets
         //

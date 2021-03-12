@@ -72,6 +72,9 @@ HTML;
                 <li>
                     <b><a href="$page#planets">Planets</a></b>
                 </li>
+                <li>
+                    <b><a href="$page#aspects">Aspects</a></b>
+                </li>
             </ul>
         </li>
 HTML;
@@ -103,6 +106,9 @@ HTML;
                 <li>
                     <b><a href="$page#planets">Planets</a></b>
                 </li>
+                <li>
+                    <b><a href="$page#aspects">Aspects</a></b>
+                </li>
             </ul>
         </li>
 HTML;
@@ -127,6 +133,9 @@ HTML;
                 </li>
                 <li>
                     <b><a href="$page#planets">Planets</a></b>
+                </li>
+                <li>
+                    <b><a href="$page#aspects">Aspects</a></b>
                 </li>
             </ul>
         </li>

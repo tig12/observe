@@ -11,12 +11,28 @@ namespace observe\commands\mfc\pages;
 use tigeph\model\IAA;
 
 use observe\parts\page\headfoot;
+use observe\parts\page\toc;
+use observe\parts\page\nav;
 use observe\parts\stats\distrib;
 use observe\parts\stats\constant;
 use observe\parts\draw\bar;
 use observe\parts\fileSystem;
 
 class W {
+    
+    /** TOC = Table of contents **/
+    const toc = [
+        'proportion' => 'Day of birth',
+        'year' => 'Wedding day',
+        'day' => 'Wedding day',
+        'planets' => 'Planets at wedding',
+        'aspects' => 'Aspects at wedding',
+    ];
+    
+    /** Navigation **/
+    const nav = [
+        'top'   => ['index.html', 'a00 experience'],
+    ];
     
     /**
         @param $params  Parameters passed to all::execute()
@@ -36,6 +52,9 @@ class W {
         );
         
         $res .= "<h1>$title</h1>\n";
+        $res .= nav::html(self::nav);
+        $res .= toc::html(self::toc);
+        
         //
         // proportion
         //
@@ -52,28 +71,26 @@ class W {
         //
         // year
         //
-        if($params['child-by-year'] === true){
-            $filename = $params['in-dir'] . DS . 'distrib' . DS . 'C' . DS . 'year.csv';
-            $dist = distrib::loadFromCSV($filename, header:false);
-            $svg = bar::svg(
-                data: $dist,
-                title: "$titleUCString - year of birth",
-                barW: 8,
-                xlegends: ['min', 'max', 'top'],
-                ylegends: ['min', 'max', 'mean'],
-                ylegendsRound: 1,
-            );
-            $res .= '<div id="birthyear"></div>';
-            $res .= $svg;
-        }
+        $filename = $params['in-dir'] . DS . 'distrib' . DS . 'W' . DS . 'year.csv';
+        $dist = distrib::loadFromCSV($filename, header:false);
+        $svg = bar::svg(
+            data: $dist,
+            title: "$titleUCString year",
+            barW: 8,
+            xlegends: ['min', 'max'],
+            ylegends: ['min', 'max', 'mean'],
+            ylegendsRound: 1,
+        );
+        $res .= '<div id="birthyear"></div>';
+        $res .= $svg;
         //
         // day
         //
-        $filename = $params['in-dir'] . DS . 'distrib' . DS . 'C' . DS . 'day.csv';
+        $filename = $params['in-dir'] . DS . 'distrib' . DS . 'W' . DS . 'day.csv';
         $dist = distrib::loadFromCSV($filename, header:false);
         $svg = bar::svg(   
             data: $dist,
-            title: "$titleUCString - day of birth",
+            title: "$titleUCString day",
             barW: 2,
             xlegends: ['min', 'max'],
             ylegends: ['min', 'max', 'mean'],
@@ -81,23 +98,6 @@ class W {
         );
         $res .= '<div id="birthday"></div>';
         $res .= $svg;
-        //
-        // "age at wedding" = duration [wedding - birth]
-        //
-        if($params['wedding'] === true){
-            $filename = $params['in-dir'] . DS . 'distrib' . DS . 'C' . DS . 'wed-birth.csv';
-            $dist = distrib::loadFromCSV($filename, header:false);
-            $svg = bar::svg(
-                data: $dist,
-                title: "$titleUCString - Nb of months between wedding and birth",
-                barW: 2,
-                xlegends: ['min', 'max', 'top'],
-                ylegends: ['min', 'max', 'mean'],
-                ylegendsRound: 1,
-            );
-            $res .= '<div id="age-W"></div>';
-            $res .= $svg;
-        }
         //
         // planets
         //
