@@ -103,7 +103,7 @@ class C {
             $dist = distrib::loadFromCSV($filename, header:false);
             $svg = bar::svg(
                 data: $dist,
-                title: "$titleUCString - Duratio between parents'wedding and birth (in months)",
+                title: "$titleUCString - Duration between parents' wedding and birth (in months)",
                 barW: 2,
                 xlegends: ['min', 'max'],
                 ylegends: ['min', 'max', 'mean'],

@@ -1,15 +1,112 @@
 <?php
 /******************************************************************************
-    Computes year, day, age distributions from a csv file containing YYYY-MM-DD dates
+    Conducts the generation of MFCW distributions using file ymd.csv.
     
     @license    GPL
-    @history    2021-02-14 11:05:05+01:00, Thierry Graff : Creation
+    @history    2021-03-14 17:59:59+01:00, Thierry Graff : Split to create ymd
+    @history    2021-02-14 11:05:05+01:00, Thierry Graff : Creation (commands\mfc\distrib)
 ********************************************************************************/
-namespace observe\parts\mfc\distrib;
+namespace observe\commands\mfc\distrib;
 
+use observe\app\Command;
+use observe\app\ObserveException;
+use tiglib\arrays\csvAssociative;
 use tiglib\time\diff;
 
-class ymd {
+use observe\parts\fileSystem;
+use observe\parts\distrib\distrib;
+
+class ymd implements Command {
+    
+    
+    public static function execute($params=[]) {
+        // skip-W, optional parameter
+        if(!isset($params['skip-W'])){
+            $params['skip-W'] = false;
+        }
+        
+        $dirDistrib = $params['out-dir'] . DS . 'distrib';
+        
+        $inFile = $params['in-dir'] . DS . 'data' . DS . 'ymd.csv';
+        if(!file_exists($inFile)){
+            throw new ObserveException("File $inFile does not exist");
+        }
+        //
+        echo "Computing ymd distributions...\n";
+        //
+        $data = csvAssociative::compute($inFile);
+        $distribs = self::computeDistribs(
+            data:       $data,
+            processW:   $params['experience']['has-wedding'],
+            skipW:      $params['skip-W'],
+        );
+        //
+        // M
+        //
+        $outFile = $dirDistrib . DS . 'M' . DS . 'year.csv';
+        fileSystem::mkdir(dirname($outFile));
+        fileSystem::saveFile($outFile, distrib::distrib2csv($distribs['M']['year']));
+        //
+        $outFile = $dirDistrib . DS . 'M' . DS . 'day.csv';
+        fileSystem::saveFile($outFile, distrib::distrib2csv($distribs['M']['day']));
+        //
+        if($params['experience']['has-wedding']){
+            $outFile = $dirDistrib . DS . 'M' . DS . 'age-wed.csv';
+            fileSystem::saveFile($outFile, distrib::distrib2csv($distribs['M']['age-wed']));
+        }
+        //
+        $outFile = $dirDistrib . DS . 'M' . DS . 'age-child.csv';
+        fileSystem::saveFile($outFile, distrib::distrib2csv($distribs['M']['age-child']));
+        //
+        // F
+        //
+        $outFile = $dirDistrib . DS . 'F' . DS . 'year.csv';
+        fileSystem::mkdir(dirname($outFile));
+        fileSystem::saveFile($outFile, distrib::distrib2csv($distribs['F']['year']));
+        //
+        $outFile = $dirDistrib . DS . 'F' . DS . 'day.csv';
+        fileSystem::saveFile($outFile, distrib::distrib2csv($distribs['F']['day']));
+        //
+        if($params['experience']['has-wedding']){
+            $outFile = $dirDistrib . DS . 'F' . DS . 'age-wed.csv';
+            fileSystem::saveFile($outFile, distrib::distrib2csv($distribs['F']['age-wed']));
+        }
+        //
+        $outFile = $dirDistrib . DS . 'F' . DS . 'age-child.csv';
+        fileSystem::saveFile($outFile, distrib::distrib2csv($distribs['F']['age-child']));
+        //
+        // C
+        //
+        $outFile = $dirDistrib . DS . 'C' . DS . 'year.csv';
+        fileSystem::mkdir(dirname($outFile));
+        fileSystem::saveFile($outFile, distrib::distrib2csv($distribs['C']['year']));
+        //
+        $outFile = $dirDistrib . DS . 'C' . DS . 'day.csv';
+        fileSystem::saveFile($outFile, distrib::distrib2csv($distribs['C']['day']));
+        //
+        $outFile = $dirDistrib . DS . 'C' . DS . 'rank.csv';
+        fileSystem::saveFile($outFile, distrib::distrib2csv($distribs['C']['rank']));
+        //
+        if($params['experience']['has-wedding']){
+            $outFile = $dirDistrib . DS . 'C' . DS . 'wed-birth.csv';
+            fileSystem::saveFile($outFile, distrib::distrib2csv($distribs['C']['wed-birth']));
+        }
+        //
+        // W
+        //
+        if($params['experience']['has-wedding']){
+            $outFile = $dirDistrib . DS . 'W' . DS . 'year.csv';
+            fileSystem::mkdir(dirname($outFile));
+            fileSystem::saveFile($outFile, distrib::distrib2csv($distribs['W']['year']));
+            //
+            $outFile = $dirDistrib . DS . 'W' . DS . 'day.csv';
+            fileSystem::saveFile($outFile, distrib::distrib2csv($distribs['W']['day']));
+            //
+            // N is not a distribution but a constant => in txt file
+            $outFile = $dirDistrib . DS . 'W' . DS . 'N.txt';
+            fileSystem::saveFile($outFile, $distribs['W']['N']);
+        }
+    }
     
     // ******************************************************
     /**
@@ -20,7 +117,7 @@ class ymd {
                             Useful only if $processW = true.
         @return The YMD distributions in associative arrays.
     **/
-    public static function computeDistrib(
+    public static function computeDistribs(
         &$data,
         bool $processW,
         $skipW = false,

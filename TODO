@@ -16,3 +16,5 @@ group   -> distrib-aspect
 
 - in observe\parts\mfc\distrib\ymd : replace $lineHasWedding by observe\parts\mfc\distrib\distrib::lineHasWedding()
 
+- refactor articulation between commands/mfc/distrib and parts/mfc/distrib :
+  replace parts/mfc/distrib by parts/distrib with code independant from mfc
