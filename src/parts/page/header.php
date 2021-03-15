@@ -1,17 +1,17 @@
 <?php
 /******************************************************************************
     
-    Footer and header of generated pages.
+    Header of generated pages.
 
     @license    GPL
+    @history    2021-03-15 18:30:30+01:00, Thierry Graff : Creation from former class headfoot
     @history    2021-02-27 23:05:44+01:00, Thierry Graff : Creation
 ********************************************************************************/
 namespace observe\parts\page;
 
-class headfoot {
+class header {
     
-    // ******************************************************
-    public static function header(
+    public static function html(
         $pathToRoot  = '.',
         $title       = '',
         $description = '',
@@ -34,14 +34,5 @@ class headfoot {
 
 HTML;
     }
-    
-    // ******************************************************
-    public static function footer(){
-        return <<<HTML
-</body>
-</html>
-
-HTML;
-    }
-    
-}// end class
+        
+} // end class

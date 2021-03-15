@@ -52,16 +52,17 @@ class interaspects implements Command {
             $inCols2 = array_keys($in2[0]);
             // 2 - compute distributions
             // ex: $aspects : [0 => ['SO-SO' => 253.3, 'SO-MO' => 24.4 ...], ...]
-throw new Exception("IMPLEMENT HERE");
-            $aspects = aspects2::computeSingle(
-                data: $in,
-                cols: $inCols,
-                skip: $params['aspects']['skip'],
-                precision: $params['aspects']['precision']
+            $aspects = aspects2::computeDouble(
+                data1: $in1,
+                data2: $in2,
+                cols1: $inCols1,
+                cols2: $inCols2,
+                skip: $params['interaspects']['skip'],
+                precision: $params['interaspects']['precision']
             );
             $distribs = degrees::computeDistrib($aspects);
             // 3 - store distributions
-            $outDir = $dirDistrib . DS . $member . DS . 'aspects'; // ex distrib/F/aspects/
+            $outDir = $dirDistrib . DS . "$member1-$member2"; // ex distrib/M-F/
             fileSystem::mkdir($outDir);
             foreach($distribs as $aspectCode => $distrib){
                 $outFile = $outDir . DS . $aspectCode . '.csv';

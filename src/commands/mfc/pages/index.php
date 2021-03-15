@@ -12,7 +12,8 @@ namespace observe\commands\mfc\pages;
 use observe\app\ObserveException;
 use tiglib\arrays\csvAssociative;
 
-use observe\parts\page\headfoot;
+use observe\parts\page\header;
+use observe\parts\page\footer;
 
 class index {
     
@@ -28,7 +29,7 @@ class index {
         $subtitle = $params['experience']['subtitle'] ?? '';
         $description = $params['experience']['description'] ?? '';
         
-        $res .= headfoot::header(
+        $res .= header::html(
             pathToRoot:     '../../..',
             title:          $title,
             description:    $description,
@@ -176,7 +177,7 @@ $intro
 </div>
 HTML;
 
-        $res .= headfoot::footer();
+        $res .= footer::html();
 
         return $res;
     }
