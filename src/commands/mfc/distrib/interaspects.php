@@ -12,6 +12,7 @@ use observe\app\Command;
 use observe\app\ObserveException;
 use tiglib\arrays\csvAssociative;
 
+use observe\commands\mfc\MFC;
 use observe\parts\fileSystem;
 use observe\parts\distrib\distrib;
 use observe\parts\distrib\degrees;
@@ -28,12 +29,7 @@ class interaspects implements Command {
         if($params['experience']['has-wedding']){
             $members[] = 'W';
         }
-        $couples = [];
-        for($i=0; $i < count($members); $i++){
-            for($j=$i+1; $j < count($members); $j++){
-                $couples[] = [$members[$i], $members[$j]];
-            }
-        }
+        $couples = MFC::computeCouples($params['experience']['has-wedding']);
         foreach($couples as $couple){
             $member1 = $couple[0];
             $member2 = $couple[1];

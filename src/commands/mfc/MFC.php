@@ -14,4 +14,30 @@ class MFC {
     const W = 'Wedding';
     const C = 'Child';
     
-}// end class
+    const LABELS = [
+        'M' => 'Mother',
+        'F' => 'Father',
+        'C' => 'Child',
+        'W' => 'Wedding',
+    ];
+    
+    /**
+        Computes the possible combinations of members in a MFCW experience.
+        @param  $wedding    Include wedding in couple computation ?
+    **/
+    public static function computeCouples(bool $wedding) {
+        $members = ['M', 'F', 'C'];
+        if($wedding){
+            $members[] = 'W';
+        }
+        $couples = [];
+        for($i=0; $i < count($members); $i++){
+            for($j=$i+1; $j < count($members); $j++){
+                $couples[] = [$members[$i], $members[$j]];
+            }
+        }
+        return $couples;
+    }
+    
+    
+} // end class

@@ -7,9 +7,9 @@
 ********************************************************************************/
 namespace observe\commands\mfc\pages;
 
-use observe\app\Observe;
 use observe\app\Command;
 use observe\app\ObserveException;
+use observe\commands\mfc\MFC;
 use tiglib\arrays\csvAssociative;
 
 use observe\parts\fileSystem;
@@ -47,14 +47,24 @@ class all implements Command {
         //
         //  execute
         //
-        fileSystem::saveFile("$outdir/index.html", index::computePage($params));
-        fileSystem::saveFile("$outdir/mother.html", MF::computePage(params:$params, MF:'M'));
-        fileSystem::saveFile("$outdir/father.html", MF::computePage(params:$params, MF:'F'));
-        fileSystem::saveFile("$outdir/child.html", C::computePage($params));
-        if($params['wedding'] === true){
-            fileSystem::saveFile("$outdir/wedding.html", W::computePage($params));
+/* 
+        fileSystem::saveFile($outdir . DS . 'index.html', index::computePage($params));
+        fileSystem::saveFile($outdir . DS . 'mother.html', MF::computePage(params:$params, MF:'M'));
+        fileSystem::saveFile($outdir . DS . 'father.html', MF::computePage(params:$params, MF:'F'));
+        fileSystem::saveFile($outdir . DS . 'child.html', C::computePage($params));
+        if($params['experience']['has-wedding'] === true){
+            fileSystem::saveFile($outdir . DS . 'wedding.html', W::computePage($params));
         }
-        
+*/
+        // inter-aspects
+        $couples = MFC::computeCouples($params['experience']['has-wedding']);
+        foreach($couples as $couple){
+            $member1 = $couple[0];
+            $member2 = $couple[1];
+            $outFile = $outdir . DS . strToLower(MFC::LABELS[$member1]) . '-' . strToLower(MFC::LABELS[$member2]) . '.html';
+            fileSystem::saveFile($outFile, interaspects::computePage($params, $member1, $member2));
+break;
+        }
     }
     
 }// end class
