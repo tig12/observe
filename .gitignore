@@ -1,17 +1,15 @@
 
 config.yml
 1.local
+
 tmp
+data
+commands
 output
+
+TODO
 ENCOURS
 
-# don't version data/ but version some subdirs
-data/*
-!data/sample
-
-# don't version commands/ but version some subdirs
-commands/*
-!commands/sample
 
 # files marked for deletion
 z.*

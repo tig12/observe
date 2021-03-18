@@ -19,27 +19,29 @@ class nav {
     
     /** 
         @param  $nav
-                Ex: $nav = [
-                        'top'   => ['index.html', 'a00 experience'],
-                        'prev'  => ['father.html', 'Father'],
-                        'next'  => ['wedding.html', 'Wedding'],
-                    ];
+                ex: [
+                        ['index.html', 'a00 - Births in France, year 2000'],
+                        ['mother.html', 'Mother'],
+                        ...
+                    ]
+        @return The html code of navigation menu
     **/
-    public static function html($nav){
+    public static function html($nav, $pathToRoot){
         $res = '';
-        
         $res .= <<<HTML
-<nav class="prevnext">
+<ul class="menus">
+  <li class="dropdown">
+    <a class="dropbtn" href="index.html"><img src="$pathToRoot/static/menu.png" class="border" style="border-radius:10px;"></a>
+    <div class="dropdown-content">
 HTML;
-        foreach($nav as $navKey => $element){
-            [$href, $title] = $element;
-            $label = self::labels[$navKey];
-            $res .= <<<HTML
-<a class="$navKey" href="$href" title="$title">$label</a>
-HTML;
+        foreach($nav as [$href, $label]){
+            $res .= '    ' . ($href == '' ? "$label\n" : "<a href=\"$href\">$label</a>\n");
         }
         $res .= <<<HTML
-</nav>
+    </div>
+  </li>
+</ul>
+
 HTML;
         return $res;
     }

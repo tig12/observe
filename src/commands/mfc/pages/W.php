@@ -10,6 +10,7 @@ namespace observe\commands\mfc\pages;
 
 use tigeph\model\IAA;
 
+use observe\commands\mfc\MFC;
 use observe\parts\page\header;
 use observe\parts\page\footer;
 use observe\parts\page\toc;
@@ -28,45 +29,37 @@ class W {
         'proportion' => 'Day of birth',
         'year' => 'Wedding day',
         'day' => 'Wedding day',
-        'planets' => 'Planets at wedding',
-        'aspects' => 'Aspects at wedding',
-    ];
-    
-    /** Navigation **/
-    private static $nav = [
-        'top'   => ['index.html', 'a00 experience'],
+        'planets' => 'Planets at wedding date',
+        'aspects' => 'Aspects at wedding date',
     ];
     
     /**
         @param $params  Parameters passed to all::execute()
     **/
     public static function computePage(&$params): string {
-        
         $res = '';
-        
         $titleString = 'wedding';
         $titleUCString = ucfirst($titleString);
-        
         $title = $params['experience']['code'] . ' - ' . $titleUCString;
+        $pathToRoot = '../../..';
         $res .= header::html(
-            pathToRoot:     '../../..',
+            pathToRoot:     $pathToRoot,
             title:          $title,
             description:    '',
         );
-        
+        $res .= nav::html(MFC::nav($params), $pathToRoot);
         $res .= "<h1>$title</h1>\n";
-        $res .= nav::html(self::$nav);
         $toc = toc::html(self::$toc);
         $tocPlanets = tocPlanets::html($params['planets']);
         $toc = str_replace(
-            '<li><a href="#planets">Planets at wedding</a></li>',
-            '<li><a href="#planets">Planets at wedding</a><div class="padding-left">' . $tocPlanets . '</div></li>',
+            '<li><a href="#planets">Planets at wedding date</a></li>',
+            '<li><a href="#planets">Planets at wedding date</a><div class="padding-left">' . $tocPlanets . '</div></li>',
             $toc
         );
         $tocAspects = tocAspects::html($params['planets']);
         $toc = str_replace(
-            '<li><a href="#aspects">Aspects at wedding</a></li>',
-            '<li><a href="#aspects">Aspects at wedding</a><div class="padding-left">' . $tocAspects . '</div></li>',
+            '<li><a href="#aspects">Aspects at wedding date</a></li>',
+            '<li><a href="#aspects">Aspects at wedding date</a><div class="padding-left">' . $tocAspects . '</div></li>',
             $toc
         );
         $res .= $toc;
@@ -137,7 +130,7 @@ class W {
         //
         // aspects
         //
-        $res .= '<h2 id="aspects">Aspects at wedding</h2>';
+        $res .= '<h2 id="aspects">Aspects at wedding date</h2>';
         $res .= '<div class="padding-left">' . $tocAspects . '</div>';
         $dirname = $params['in-dir'] . DS . 'distrib' . DS . 'W' . DS . 'aspects';
         for($i=0; $i < count($params['planets']); $i++){
@@ -151,7 +144,7 @@ class W {
                 $dist = distrib::loadFromCSV($filename, header:false);
                 $svg = bar::svg(
                     data: $dist,
-                    title: "Wedding - Aspects $planetName1 / $planetName2 at birth",
+                    title: "Aspects $planetName1 / $planetName2 at wedding date",
                     barW: 2,
                     xlegends: ['min', 'max'],
                     ylegends: ['min', 'max', 'mean'],

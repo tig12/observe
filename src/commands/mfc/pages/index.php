@@ -12,8 +12,10 @@ namespace observe\commands\mfc\pages;
 use observe\app\ObserveException;
 use tiglib\arrays\csvAssociative;
 
+use observe\commands\mfc\MFC;
 use observe\parts\page\header;
 use observe\parts\page\footer;
+use observe\parts\page\nav;
 
 class index {
     
@@ -21,20 +23,18 @@ class index {
         @param $params  Parameters passed to all::execute()
     **/
     public static function computePage(&$params): string {
-        
         $res = '';
-        
         $intro = $params['experience']['intro'] ?? '';
         $title = $params['experience']['title'] ?? '';
         $subtitle = $params['experience']['subtitle'] ?? '';
         $description = $params['experience']['description'] ?? '';
-        
+        $pathToRoot = '../../..';
         $res .= header::html(
-            pathToRoot:     '../../..',
+            pathToRoot:     $pathToRoot,
             title:          $title,
             description:    $description,
         );
-        
+        $res .= nav::html(MFC::nav($params), $pathToRoot);
         $intro = nl2br(trim($intro), false);
         $res .= <<<HTML
 <h1>
@@ -48,6 +48,7 @@ HTML;
 <table><tr>
 <td class="vertical-align-top padding-right2">
     <ul class="naked">
+    
 HTML;
         //
         // M - F
@@ -55,7 +56,9 @@ HTML;
         foreach(['M', 'F'] as $k){
             $v = constant("observe\commands\mfc\MFC::$k");
             $page = strtolower($v) . '.html';
-            $ageAtWeddingStr = $params['wedding'] === true ? '<span class="padding-left"><a href="' . $page . '#age-W">at wedding</a>' : '';
+            $ageAtWeddingStr = ($params['experience']['has-wedding'] === true
+                ? '<span class="padding-left"><a href="' . $page . '#age-W">at wedding</a>'
+                : '');
             $res .= <<<HTML
         <li>
             <b><a href="$page">$k - $v</a></b>
@@ -78,6 +81,7 @@ HTML;
                 </li>
             </ul>
         </li>
+        
 HTML;
         } // end M F
         //
@@ -94,13 +98,15 @@ HTML;
                     <b>Date</b>
                     <span class="padding-left"><a href="$page#birthday">days</a>
                 </li>
+                
 HTML;
-        if($params['wedding']){
+        if($params['experience']['has-wedding']){
             $res .= <<<HTML
                 <li>
                     <b>Age</b>
                     <span class="padding-left"><a href="$page#age-W">at wedding</a>
                 </li>
+                
 HTML;
         }
         $res .= <<<HTML
@@ -112,11 +118,12 @@ HTML;
                 </li>
             </ul>
         </li>
+        
 HTML;
         //
         // W
         //
-        if($params['wedding'] === true){
+        if($params['experience']['has-wedding'] === true){
             $k = 'W';
             $v = "Wedding";
             $page = strtolower($v) . '.html';
@@ -140,41 +147,41 @@ HTML;
                 </li>
             </ul>
         </li>
+        
 HTML;
         }
         $res .= "    </ul>\n";
         //
-        // relations
+        // inter-aspects
         //
         $res .= <<<HTML
 </td>
-<td class="vertical-align-top border-left">
+<td class="vertical-align-top border-left padding-right2">
     <ul class="naked">
         <li>
             <div><b>Inter-aspects</b></div>
+            
 HTML;
-        $combinations = 
-            $params['wedding'] === true
-            ? ['MF', 'MW', 'MC', 'FC', 'FW', 'CW']
-            : ['MF', 'MC', 'FC'];
-        foreach($combinations as $k){
+        $couples = MFC::computeCouples($params['experience']['has-wedding']);
+        foreach($couples as $k){
             $v0 = constant('observe\commands\mfc\MFC::' . $k[0]);
             $v1 = constant('observe\commands\mfc\MFC::' . $k[1]);
             $page = strtolower($v0) . '-' . strtolower($v1) . '.html';
-            $res .= <<<HTML
-            <div class="padding-left"><a href="$page">$v0 - $v1</a></div>
-HTML;
+            $res .= "<div class=\"padding-left\"><a href=\"$page\">$v0 - $v1</a></div>\n";
         } // end relations
-        $res .= <<<HTML
-        </li>
-HTML;
+        $res .= "        </li>\n";
         $res .= <<<HTML
     </ul>
 </td>
-</tr></table>
+<td class="vertical-align-top border-left padding-left">
+    <a href="distrib">List CSV files containing distributions</a>
+</td>
+</tr>
+</table>
 <div class="intro">
 $intro
 </div>
+
 HTML;
 
         $res .= footer::html();

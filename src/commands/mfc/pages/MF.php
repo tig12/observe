@@ -10,6 +10,7 @@ namespace observe\commands\mfc\pages;
 
 use tigeph\model\IAA;
 
+use observe\commands\mfc\MFC;
 use observe\parts\page\header;
 use observe\parts\page\footer;
 use observe\parts\page\toc;
@@ -24,7 +25,7 @@ class MF {
     
     /**
         TOC = Table of contents
-        Correct when $params['wedding'] = true
+        Correct when $params['experience']['has-wedding'] = true
     **/
     private static $toc = [
         'birthyear' => 'Year of birth',
@@ -35,33 +36,26 @@ class MF {
         'aspects' => 'Aspects at birth',
     ];
     
-    /** Navigation **/
-    private static $nav = [
-        'top'   => ['index.html', 'a00 experience'],
-    ];
-    
     /**
         @param $params  Parameters passed to all::execute()
         @param $MF      'M' or 'F'
     **/
     public static function computePage(&$params, $MF): string {
-        
         $res = '';
-        
         $MFstring = $MF == 'M' ? 'mother' : 'father';
         $MFucstring = ucfirst($MFstring);
-        
         $title = $params['experience']['code'] . ' - ' . $MFucstring;
+        $pathToRoot = '../../..';
         $res .= header::html(
-            pathToRoot:     '../../..',
+            pathToRoot:     $pathToRoot,
             title:          $title,
             description:    '',
         );
+        $res .= nav::html(MFC::nav($params), $pathToRoot);
         $res .= "<h1>$title</h1>\n";
-        if(!$params['wedding']){
+        if(!$params['experience']['has-wedding']){
             unset(self::$toc['age-W']);
         }
-        $res .= nav::html(self::$nav);
         $toc = toc::html(self::$toc);
         $tocPlanets = tocPlanets::html($params['planets']);
         $toc = str_replace(
@@ -124,7 +118,7 @@ class MF {
         //
         // age at wedding
         //
-        if($params['wedding'] === true){
+        if($params['experience']['has-wedding'] === true){
             $filename = $params['in-dir'] . DS . 'distrib' . DS . $MF . DS . 'age-wed.csv';
             $dist = distrib::loadFromCSV($filename, header:false);
             $svg = bar::svg(

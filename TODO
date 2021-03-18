@@ -4,9 +4,9 @@
 
 - git submodule for tigeph
 
-- refactor constants of commands/mfc/MFC
+- suppress constants M, F, C, W of commands/mfc/MFC
 
-- in observe\parts\mfc\distrib\ymd : replace $lineHasWedding by observe\parts\mfc\distrib\distrib::lineHasWedding()
+- remove $titleString and $titleUCString in commands/mfc/pages/ 
 
-- refactor articulation between commands/mfc/distrib and parts/mfc/distrib :
-  replace parts/mfc/distrib by parts/distrib with code independant from mfc
+- remove $titleString and self::$toc in commands/mfc/pages/ 
+  (compute directly in the function and then call parts/parge/toc)

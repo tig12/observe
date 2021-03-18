@@ -39,5 +39,42 @@ class MFC {
         return $couples;
     }
     
+    // ******************************************************
+    /**
+        @param  $params Parameters passed to mfc\pages\all
+        @return array of arrays containing 2 elements (href and label)
+                ex: [
+                        ['index.html', 'a00 - Births in France, year 2000'],
+                        ['mother.html', 'Mother'],
+                        ...
+                    ]
+    **/
+    public static function nav(&$params) {
+        $tmp = self::LABELS;
+        if(!$params['experience']['has-wedding']){
+            unset($tmp['W']);
+        }
+        $members = array_keys($tmp);
+        $couples = self::computeCouples($params['experience']['has-wedding']);
+        foreach($couples as $couple){
+        }
+        $res = [];
+        $res[] = ['index.html', $params['experience']['title']];
+        foreach($members as $member){
+            $href = strToLower(self::LABELS[$member]) . '.html';
+            $label = self::LABELS[$member];
+            $res[] = [$href, $label];
+        }
+        $res[] = ['', '<center><hr style="width:80%;"></center>'];
+        foreach($couples as [$member1, $member2]){
+            $href = strToLower(self::LABELS[$member1]) . '-' . strToLower(self::LABELS[$member2]) . '.html';
+            $label = self::LABELS[$member1] . ' - ' . self::LABELS[$member2];
+            $res[] = [$href, $label];
+        }
+        $res[] = ['', '<center><hr style="width:80%;"></center>'];
+        $res[] = ['distrib', 'CSV distributions'];
+        return $res;
+    }
+    
     
 } // end class

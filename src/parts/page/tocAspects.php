@@ -17,19 +17,29 @@ class tocAspects {
     **/
     public static function html($planets){
         $res = '';
-        for($i=0; $i < count($planets); $i++){
-            $res .= '<div>';
-            for($j=$i+1; $j < count($planets); $j++){
+        $N = count($planets);
+        $res .= "<table class=\"border padded2\">\n";
+        $res .= "<tr>\n";
+        $res .= "<th></th>\n";
+        for($i=0; $i < $N-1; $i++){
+            $res .= '<th>' . IAA::PLANET_NAMES[$planets[$i]] . "</th>\n";
+        }
+        $res .= "<tr>\n";
+        for($i=1; $i < $N; $i++){
+            $res .= "<tr>\n";
+            $res .= '<th>' . IAA::PLANET_NAMES[$planets[$i]] . "</th>\n";
+            for($j=0; $j < $i; $j++){
                 $planet1 = $planets[$i];
                 $planet2 = $planets[$j];
-                $planetName1 = IAA::PLANET_NAMES[$planet1];
-                $planetName2 = IAA::PLANET_NAMES[$planet2];
-                $aspectCode = "$planet1-$planet2";
-                $res .= '<span class="padding-right"><a href="#aspect-' . $aspectCode . '">'
-                    . "$planetName1-$planetName2" . '</a></span>' . "\n";
+                $aspectCode = "$planet2-$planet1";
+                $res .= '<td><a href="#aspect-' . $aspectCode . '">'
+                    . "$planet2 - $planet1" . '</a></td>' . "\n";
             }
-            $res .= '</div>';
+            $colspan = $N - $i;
+            $res .= "<td colspan=\"$colspan\"></td>\n";
+            $res .= "</tr>\n";
         }
+        $res .= "</table>\n";
         return $res;
     }
     

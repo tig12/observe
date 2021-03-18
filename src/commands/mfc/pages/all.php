@@ -47,7 +47,6 @@ class all implements Command {
         //
         //  execute
         //
-/* 
         fileSystem::saveFile($outdir . DS . 'index.html', index::computePage($params));
         fileSystem::saveFile($outdir . DS . 'mother.html', MF::computePage(params:$params, MF:'M'));
         fileSystem::saveFile($outdir . DS . 'father.html', MF::computePage(params:$params, MF:'F'));
@@ -55,7 +54,6 @@ class all implements Command {
         if($params['experience']['has-wedding'] === true){
             fileSystem::saveFile($outdir . DS . 'wedding.html', W::computePage($params));
         }
-*/
         // inter-aspects
         $couples = MFC::computeCouples($params['experience']['has-wedding']);
         foreach($couples as $couple){
@@ -63,7 +61,6 @@ class all implements Command {
             $member2 = $couple[1];
             $outFile = $outdir . DS . strToLower(MFC::LABELS[$member1]) . '-' . strToLower(MFC::LABELS[$member2]) . '.html';
             fileSystem::saveFile($outFile, interaspects::computePage($params, $member1, $member2));
-break;
         }
     }
     

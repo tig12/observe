@@ -8,8 +8,7 @@
 ********************************************************************************/
 namespace observe\commands\mfc\pages;
 
-use tigeph\model\IAA;
-
+use observe\commands\mfc\MFC;
 use observe\parts\page\header;
 use observe\parts\page\footer;
 use observe\parts\page\toc;
@@ -19,12 +18,13 @@ use observe\parts\page\nav;
 use observe\parts\stats\distrib;
 use observe\parts\draw\bar;
 use observe\parts\fileSystem;
+use tigeph\model\IAA;
 
 class C {
     
     /**
         TOC = Table of contents
-        Correct when $params['wedding'] = true
+        Correct when $params['experience']['has-wedding'] = true
     **/
     private static $toc = [
         'birthday' => 'Day of birth',
@@ -34,36 +34,29 @@ class C {
         'aspects' => 'Aspects at birth',
     ];
     
-    /** Navigation **/
-    private static $nav = [
-        'top'   => ['index.html', 'a00 experience'],
-    ];
-    
     /**
         @param $params  Parameters passed to all::execute()
     **/
     public static function computePage(&$params): string {
-        
         $res = '';
-        
         $titleString = 'child';
         $titleUCString = ucfirst($titleString);
-        
         $title = $params['experience']['code'] . ' - ' . $titleUCString;
+        $pathToRoot = '../../..';
         $res .= header::html(
-            pathToRoot:     '../../..',
+            pathToRoot:     $pathToRoot,
             title:          $title,
             description:    '',
         );
         
         $res .= "<h1>$title</h1>\n";
-        if(!$params['wedding']){
+        $res .= nav::html(MFC::nav($params), $pathToRoot);
+        if(!$params['experience']['has-wedding']){
             unset(self::$toc['age-W']);
         }
         if(!$params['child-by-year']){
             unset(self::$toc['birthyear']);
         }
-        $res .= nav::html(self::$nav);
         $toc = toc::html(self::$toc);
         $tocPlanets = tocPlanets::html($params['planets']);
         $toc = str_replace(
@@ -113,7 +106,7 @@ class C {
         //
         // "age at wedding" = duration [wedding - birth]
         //
-        if($params['wedding'] === true){
+        if($params['experience']['has-wedding'] === true){
             $filename = $params['in-dir'] . DS . 'distrib' . DS . 'C' . DS . 'wed-birth.csv';
             $dist = distrib::loadFromCSV($filename, header:false);
             $svg = bar::svg(

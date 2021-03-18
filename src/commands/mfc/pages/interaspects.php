@@ -15,6 +15,7 @@ use observe\commands\mfc\MFC;
 use observe\parts\page\header;
 use observe\parts\page\footer;
 use observe\parts\page\tocInteraspects;
+use observe\parts\page\nav;
 use observe\parts\stats\distrib;
 use observe\parts\draw\bar;
 use observe\parts\fileSystem;
@@ -28,19 +29,18 @@ class interaspects {
         @param  $member2    'M' or 'F' or 'C' or 'W'
     **/
     public static function computePage(&$params, $member1, $member2): string {
-        //
         $res = '';
-        //
         $label1 = MFC::LABELS[$member1];
         $label2 = MFC::LABELS[$member2];
         $titleString = "$label1 / $label2 inter-aspects";
-        //
         $title = $params['experience']['code'] . ' - ' . $titleString;
+        $pathToRoot = '../../..';
         $res .= header::html(
-            pathToRoot:     '../../..',
+            pathToRoot:     $pathToRoot,
             title:          $title,
             description:    '',
         );
+        $res .= nav::html(MFC::nav($params), $pathToRoot);
         $res .= "<h1>$title</h1>\n";
         $res .= tocInteraspects::html($params['planets'], $params['planets'], $label1, $label2);
         //
