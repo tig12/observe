@@ -22,9 +22,9 @@ class tocAspects {
         $res .= "<tr>\n";
         $res .= "<th></th>\n";
         for($i=0; $i < $N-1; $i++){
-            $res .= '<th>' . IAA::PLANET_NAMES[$planets[$i]] . "</th>\n";
+            $res .= '<th class="center">' . IAA::PLANET_NAMES[$planets[$i]] . "</th>\n";
         }
-        $res .= "<tr>\n";
+        $res .= "</tr>\n";
         for($i=1; $i < $N; $i++){
             $res .= "<tr>\n";
             $res .= '<th>' . IAA::PLANET_NAMES[$planets[$i]] . "</th>\n";
@@ -35,8 +35,6 @@ class tocAspects {
                 $res .= '<td><a href="#aspect-' . $aspectCode . '">'
                     . "$planet2 - $planet1" . '</a></td>' . "\n";
             }
-            $colspan = $N - $i;
-            $res .= "<td colspan=\"$colspan\"></td>\n";
             $res .= "</tr>\n";
         }
         $res .= "</table>\n";
