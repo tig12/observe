@@ -8,8 +8,6 @@
 ********************************************************************************/
 namespace observe\commands\mfc\pages;
 
-use tigeph\model\IAA;
-
 use observe\commands\mfc\MFC;
 use observe\parts\page\header;
 use observe\parts\page\footer;
@@ -20,6 +18,7 @@ use observe\parts\page\nav;
 use observe\parts\stats\distrib;
 use observe\parts\draw\bar;
 use observe\parts\fileSystem;
+use tigeph\model\IAA;
 
 class MF {
     
@@ -70,96 +69,153 @@ class MF {
             $toc
         );
         $res .= $toc;
+        
+        //
+        //  =============== y-m-d ===============
+        //
+        if($params['svg-separate'] == true){
+// HERE - confusion between img src and filesystem
+// Also in all other calls to bar::svg()
+            $svgdir = $params['out-dir'] . DS . $params['svg-path'] . DS . $MF;
+            fileSystem::mkdir($svgdir);
+        }
         //
         // year
         //
-        $filename = $params['in-dir'] . DS . 'distrib' . DS . $MF . DS . 'year.csv';
-        $dist = distrib::loadFromCSV($filename, header:false);
-        $svg = bar::svg(
-            data: $dist,
-            title: "$MFucstring - year of birth",
-            barW: 8,
-            xlegends: ['min', 'max', 'top'],
-            ylegends: ['min', 'max', 'mean'],
-            ylegendsRound: 1,
+        $infile = $params['in-dir'] . DS . 'distrib' . DS . $MF . DS . 'year.csv';
+        $dist = distrib::loadFromCSV($infile, header:false);
+        [$html_markup, $file_contents] = bar::svg(
+            data:           $dist,
+            title:          "$MFucstring - year of birth",
+            svg_separate:   $params['svg-separate'],
+// HERE - confusion between img src and filesystem
+            img_src:        $params['svg-path'] . "/$MF/year.svg",
+            barW:           8,
+            xlegends:       ['min', 'max', 'top'],
+            ylegends:       ['min', 'max', 'mean'],
+            ylegendsRound:  1,
+            meanBar: true,
         );
         $res .= '<div id="birthyear"></div>';
-        $res .= $svg;
+        $res .= $html_markup;
+        if($params['svg-separate'] == true){
+            fileSystem::saveFile($svgdir . DS . 'year.svg', $file_contents);
+        }
+//return $res;
         //
         // day
         //
-        $filename = $params['in-dir'] . DS . 'distrib' . DS . $MF . DS . 'day.csv';
-        $dist = distrib::loadFromCSV($filename, header:false);
-        $svg = bar::svg(
+        $infile = $params['in-dir'] . DS . 'distrib' . DS . $MF . DS . 'day.csv';
+        $dist = distrib::loadFromCSV($infile, header:false);
+        [$html_markup, $file_contents] = bar::svg(
             data: $dist,
             title: "$MFucstring - day of birth",
+            svg_separate:   $params['svg-separate'],
+            img_src:        $params['svg-path'] . "/$MF/day.svg",
             barW: 2,
             xlegends: ['min', 'max'],
             ylegends: ['min', 'max', 'mean'],
             ylegendsRound: 1,
+            meanBar: true,
         );
         $res .= '<div id="birthday"></div>';
-        $res .= $svg;
+        $res .= $html_markup;
+        if($params['svg-separate'] == true){
+            fileSystem::saveFile($svgdir . DS . 'day.svg', $file_contents);
+        }
         //
         // age at child birth
         //
-        $filename = $params['in-dir'] . DS . 'distrib' . DS . $MF . DS . 'age-child.csv';
-        $dist = distrib::loadFromCSV($filename, header:false);
-        $svg = bar::svg(
+        $infile = $params['in-dir'] . DS . 'distrib' . DS . $MF . DS . 'age-child.csv';
+        $dist = distrib::loadFromCSV($infile, header:false);
+        [$html_markup, $file_contents] = bar::svg(
             data: $dist,
             title: "$MFucstring - age at child birth",
+            svg_separate:   $params['svg-separate'],
+            img_src:        $params['svg-path'] . "/$MF/age-child.svg",
             barW: 8,
             xlegends: ['min', 'max', 'top'],
             ylegends: ['min', 'max', 'mean'],
             ylegendsRound: 1,
+            meanBar: true,
         );
-        $res .= '<div id="age-C"></div>';
-        $res .= $svg;
+        $res .= '<div id="age-C"></div>' . "\n";
+        $res .= '<div style="float:left;">' . "\n";
+        $res .= $html_markup;
+        $res .= '</div><!-- end float-left -->' . "\n";
+        if($params['svg-separate'] == true){
+            fileSystem::saveFile($svgdir . DS . 'age-child.svg', $file_contents);
+        }
         //
         // age at wedding
         //
         if($params['experience']['has-wedding'] === true){
-            $filename = $params['in-dir'] . DS . 'distrib' . DS . $MF . DS . 'age-wed.csv';
-            $dist = distrib::loadFromCSV($filename, header:false);
-            $svg = bar::svg(
+            $infile = $params['in-dir'] . DS . 'distrib' . DS . $MF . DS . 'age-wed.csv';
+            $dist = distrib::loadFromCSV($infile, header:false);
+            [$html_markup, $file_contents] = bar::svg(
                 data: $dist,
                 title: "$MFucstring - age at wedding",
+                svg_separate:   $params['svg-separate'],
+                img_src:        $params['svg-path'] . "/$MF/has-wedding.svg",
                 barW: 8,
                 xlegends: ['min', 'max', 'top'],
                 ylegends: ['min', 'max', 'mean'],
                 ylegendsRound: 1,
+                meanBar: true,
             );
             $res .= '<div id="age-W"></div>';
-            $res .= $svg;
+            $res .= '<div style="float:left;">' . "\n";
+            $res .= $html_markup;
+            $res .= '</div><!-- end float-left -->' . "\n";
+            $res .= '<br style="clear:left;">' . "\n";
+            if($params['svg-separate'] == true){
+                fileSystem::saveFile($svgdir . DS . 'has-wedding.svg', $file_contents);
+            }
         }
+        
         //
-        // planets
+        //  =============== planets ===============
+        //
+        if($params['svg-separate'] == true){
+            $svgdir = $params['out-dir'] . DS . $params['svg-path'] . DS . $MF . DS . 'planets';
+            fileSystem::mkdir($svgdir);
+        }
         //
         $res .= '<h2 id="planets">Planets at birth</h2>';
         $res .= '<div class="padding-left">' . $tocPlanets . '</div>';
-        $dirname = $params['in-dir'] . DS . 'distrib' . DS . $MF . DS . 'planets';
+        $indir = $params['in-dir'] . DS . 'distrib' . DS . $MF . DS . 'planets';
         foreach($params['planets'] as $planet){
             $planetName = IAA::PLANET_NAMES[$planet];
-            $filename = $dirname . DS . $planet . '.csv';
-            $dist = distrib::loadFromCSV($filename, header:false);
-            $svg = bar::svg(
+            $infile = $indir . DS . $planet . '.csv';
+            $dist = distrib::loadFromCSV($infile, header:false);
+            [$html_markup, $file_contents] = bar::svg(
                 data: $dist,
                 title: "$MFucstring - $planetName at birth",
+                svg_separate:   $params['svg-separate'],
+                img_src:        $params['svg-path'] . "/$MF/planets/$planet.svg",
                 barW: 2,
                 xlegends: ['min', 'max'],
                 ylegends: ['min', 'max', 'mean'],
                 ylegendsRound: 1,
             );
             $res .= '<div id="planet-' . $planet . '"></div>';
-            $res .= $svg;
+            $res .= $html_markup;
+            if($params['svg-separate'] == true){
+                fileSystem::saveFile($svgdir . DS . $planet . '.svg', $file_contents);
+            }
         }
+        
         //
-        // aspects
+        //  =============== aspects ===============
+        //
+        if($params['svg-separate'] == true){
+            $svgdir = $params['out-dir'] . DS . $params['svg-path'] . DS . $MF . DS . 'aspects';
+            fileSystem::mkdir($svgdir);
+        }
         //
         $res .= '<h2 id="aspects">Aspects at birth</h2>';
         $res .= '<div class="padding-left">' . $tocAspects . '</div>';
-        $dirname = $params['in-dir'] . DS . 'distrib' . DS . $MF . DS . 'aspects';
-        
+        $indir = $params['in-dir'] . DS . 'distrib' . DS . $MF . DS . 'aspects';
         for($i=0; $i < count($params['planets']); $i++){
             for($j=$i+1; $j < count($params['planets']); $j++){
                 $planet1 = $params['planets'][$i];
@@ -167,18 +223,23 @@ class MF {
                 $planetName1 = IAA::PLANET_NAMES[$planet1];
                 $planetName2 = IAA::PLANET_NAMES[$planet2];
                 $aspectCode = "$planet1-$planet2";
-                $filename = $dirname . DS . $aspectCode . '.csv';
-                $dist = distrib::loadFromCSV($filename, header:false);
-                $svg = bar::svg(
+                $infile = $indir . DS . $aspectCode . '.csv';
+                $dist = distrib::loadFromCSV($infile, header:false);
+                [$html_markup, $file_contents] = bar::svg(
                     data: $dist,
                     title: "$MFucstring - Aspects $planetName1 / $planetName2 at birth",
+                    svg_separate:   $params['svg-separate'],
+                    img_src:        $params['svg-path'] . "/$MF/aspects/$aspectCode.svg",
                     barW: 2,
                     xlegends: ['min', 'max'],
                     ylegends: ['min', 'max', 'mean'],
                     ylegendsRound: 1,
                 );
                 $res .= '<div id="aspect-' . $aspectCode . '"></div>';
-                $res .= $svg;
+                $res .= $html_markup;
+                if($params['svg-separate'] == true){
+                    fileSystem::saveFile($svgdir . DS . $aspectCode . '.svg', $file_contents);
+                }
             }
         }
         //

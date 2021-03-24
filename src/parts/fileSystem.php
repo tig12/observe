@@ -14,9 +14,16 @@ class fileSystem {
     /**
         file_put_contents + log
     **/
-    public static function saveFile($path, $content, $message='') {
+    public static function saveFile(
+        string $path,
+        string $content,
+        string $message = '',
+        bool   $verbose = true,
+    ) {
         file_put_contents($path, $content);
-        echo ($message != '' ? $message : "Wrote $path\n");
+        if($verbose){
+            echo ($message != '' ? $message : "Wrote $path\n");
+        }
     }
     
     // ******************************************************
@@ -24,10 +31,16 @@ class fileSystem {
         mkdir + log
         The directory is created only if it does not exist
     **/
-    public static function mkdir($path, $message='') {
+    public static function mkdir(
+        string $path,
+        string $message = '',
+        bool   $verbose = true,
+    ) {
         if(!is_dir($path)){
             mkdir($path, 0755, true);
-            echo ($message != '' ? $message : "Created directory $path\n");
+            if($verbose){
+                echo ($message != '' ? $message : "Created directory $path\n");
+            }
         }
     }
     

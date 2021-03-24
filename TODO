@@ -1,5 +1,7 @@
 
 
+- param svg_path : confusion between img src and filesystem in commands/mfc/pages
+
 - put vendor/ in src/
 
 - git submodule for tigeph

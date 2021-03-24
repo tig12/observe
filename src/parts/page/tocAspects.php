@@ -19,12 +19,6 @@ class tocAspects {
         $res = '';
         $N = count($planets);
         $res .= "<table class=\"border padded2\">\n";
-        $res .= "<tr>\n";
-        $res .= "<th></th>\n";
-        for($i=0; $i < $N-1; $i++){
-            $res .= '<th class="center">' . IAA::PLANET_NAMES[$planets[$i]] . "</th>\n";
-        }
-        $res .= "</tr>\n";
         for($i=1; $i < $N; $i++){
             $res .= "<tr>\n";
             $res .= '<th>' . IAA::PLANET_NAMES[$planets[$i]] . "</th>\n";
@@ -37,6 +31,12 @@ class tocAspects {
             }
             $res .= "</tr>\n";
         }
+        $res .= "<tr>\n";
+        $res .= "<th></th>\n";
+        for($i=0; $i < $N-1; $i++){
+            $res .= '<th class="center">' . IAA::PLANET_NAMES[$planets[$i]] . "</th>\n";
+        }
+        $res .= "</tr>\n";
         $res .= "</table>\n";
         return $res;
     }

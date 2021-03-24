@@ -37,19 +37,29 @@ class all implements Command {
         if(!$outdir){
             throw new ObserveException("$classname needs a parameter 'out-dir'");
         }
-        fileSystem::mkdir($outdir);
+// TODO put all this code in commands/page::cleanParams()
+// this preg_split for planet codes should be in a function (see commands.computeAstro) 
         // planets, convert string like "SO MO ME VE MA JU SA UR NE PL NN" to array
-        // TODO this preg_split for planet codes should be in a function (see commands.comuteAstro) 
         $tmp = preg_split('/\s+/', $params['planets']);
         $params['planets'] = $tmp;
+        //
+        if(!isset($params['svg-separate'])){
+            $params['svg-separate'] = false;
+        }
+        if(!isset($params['svg-path'])){
+            $params['svg-path'] = 'svg';
+        }
         //
         self::$params = $params;
         //
         //  execute
         //
+        fileSystem::mkdir($outdir . DS . $params['svg-path']);
+fileSystem::saveFile($outdir . DS . 'mother.html', MF::computePage($params, MF:'M'));
+exit;
         fileSystem::saveFile($outdir . DS . 'index.html', index::computePage($params));
-        fileSystem::saveFile($outdir . DS . 'mother.html', MF::computePage(params:$params, MF:'M'));
-        fileSystem::saveFile($outdir . DS . 'father.html', MF::computePage(params:$params, MF:'F'));
+        fileSystem::saveFile($outdir . DS . 'mother.html', MF::computePage($params, MF:'M'));
+        fileSystem::saveFile($outdir . DS . 'father.html', MF::computePage($params, MF:'F'));
         fileSystem::saveFile($outdir . DS . 'child.html', C::computePage($params));
         if($params['experience']['has-wedding'] === true){
             fileSystem::saveFile($outdir . DS . 'wedding.html', W::computePage($params));
