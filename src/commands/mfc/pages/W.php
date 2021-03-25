@@ -76,60 +76,97 @@ class W {
                  . ' wedding dates in the data'
                  . ' = ' . $percent . ' %' . "</div>\n";
         }
+        
         //
+        //  =============== y-m-d ===============
+        //
+         if($params['svg-separate'] == true){
+            $svgdir = $params['out-dir'] . DS . $params['svg-path'] . DS . 'W';
+            fileSystem::mkdir($svgdir);
+        }
+       //
         // year
         //
-        $filename = $params['in-dir'] . DS . 'distrib' . DS . 'W' . DS . 'year.csv';
-        $dist = distrib::loadFromCSV($filename, header:false);
-        $svg = bar::svg(
+        $infile = $params['in-dir'] . DS . 'distrib' . DS . 'W' . DS . 'year.csv';
+        $dist = distrib::loadFromCSV($infile, header:false);
+        [$html_markup, $file_contents] = bar::svg(
             data: $dist,
             title: "$titleUCString year",
+            svg_separate:   $params['svg-separate'],
+            img_src:        $params['svg-path'] . "/W/year.svg",
             barW: 8,
             xlegends: ['min', 'max'],
             ylegends: ['min', 'max', 'mean'],
             ylegendsRound: 1,
+            meanLine: true,
         );
         $res .= '<div id="birthyear"></div>';
-        $res .= $svg;
+        $res .= $html_markup;
+        if($params['svg-separate'] == true){
+            fileSystem::saveFile($svgdir . DS . 'year.svg', $file_contents);
+        }
+//return $res;
         //
         // day
         //
-        $filename = $params['in-dir'] . DS . 'distrib' . DS . 'W' . DS . 'day.csv';
-        $dist = distrib::loadFromCSV($filename, header:false);
-        $svg = bar::svg(   
+        $infile = $params['in-dir'] . DS . 'distrib' . DS . 'W' . DS . 'day.csv';
+        $dist = distrib::loadFromCSV($infile, header:false);
+        [$html_markup, $file_contents] = bar::svg(
             data: $dist,
             title: "$titleUCString day",
+            svg_separate:   $params['svg-separate'],
+            img_src:        $params['svg-path'] . "/W/day.svg",
             barW: 2,
             xlegends: ['min', 'max'],
             ylegends: ['min', 'max', 'mean'],
             ylegendsRound: 1,
+            meanLine: true,
         );
         $res .= '<div id="birthday"></div>';
-        $res .= $svg;
+        $res .= $html_markup;
+        if($params['svg-separate'] == true){
+            fileSystem::saveFile($svgdir . DS . 'day.svg', $file_contents);
+        }
+        
         //
-        // planets
+        //  =============== planets ===============
+        //
+        if($params['svg-separate'] == true){
+            $svgdir = $params['out-dir'] . DS . $params['svg-path'] . DS . 'W' . DS . 'planets';
+            fileSystem::mkdir($svgdir);
+        }
         //
         $res .= '<h2 id="planets">Planets at wedding date</h2>';
         $res .= '<div class="padding-left">' . $tocPlanets . '</div>';
         $dirname = $params['in-dir'] . DS . 'distrib' . DS . 'W' . DS . 'planets';
         foreach($params['planets'] as $planet){
             $planetName = IAA::PLANET_NAMES[$planet];
-            $filename = $dirname . DS . $planet . '.csv';
-            $dist = distrib::loadFromCSV($filename, header:false);
-            $svg = bar::svg(
+            $infile = $dirname . DS . $planet . '.csv';
+            $dist = distrib::loadFromCSV($infile, header:false);
+            [$html_markup, $file_contents] = bar::svg(
                 data: $dist,
                 title: "$planetName at wedding date",
+                svg_separate:   $params['svg-separate'],
+                img_src:        $params['svg-path'] . "/W/planets/$planet.svg",
                 barW: 2,
                 xlegends: ['min', 'max'],
                 ylegends: ['min', 'max', 'mean'],
                 ylegendsRound: 1,
             );
             $res .= '<div id="planet-' . $planet . '"></div>';
-            $res .= $svg;
+            $res .= $html_markup;
+            if($params['svg-separate'] == true){
+                fileSystem::saveFile($svgdir . DS . $planet . '.svg', $file_contents);
+            }
         }
+        
         //
-        // aspects
+        //  =============== aspects ===============
         //
+        if($params['svg-separate'] == true){
+            $svgdir = $params['out-dir'] . DS . $params['svg-path'] . DS . 'W' . DS . 'aspects';
+            fileSystem::mkdir($svgdir);
+        }
         $res .= '<h2 id="aspects">Aspects at wedding date</h2>';
         $res .= '<div class="padding-left">' . $tocAspects . '</div>';
         $dirname = $params['in-dir'] . DS . 'distrib' . DS . 'W' . DS . 'aspects';
@@ -140,18 +177,23 @@ class W {
                 $planetName1 = IAA::PLANET_NAMES[$planet1];
                 $planetName2 = IAA::PLANET_NAMES[$planet2];
                 $aspectCode = "$planet1-$planet2";
-                $filename = $dirname . DS . $aspectCode . '.csv';
-                $dist = distrib::loadFromCSV($filename, header:false);
-                $svg = bar::svg(
+                $infile = $dirname . DS . $aspectCode . '.csv';
+                $dist = distrib::loadFromCSV($infile, header:false);
+                [$html_markup, $file_contents] = bar::svg(
                     data: $dist,
                     title: "Aspects $planetName1 / $planetName2 at wedding date",
+                    svg_separate:   $params['svg-separate'],
+                    img_src:        $params['svg-path'] . "/W/aspects/$aspectCode.svg",
                     barW: 2,
                     xlegends: ['min', 'max'],
                     ylegends: ['min', 'max', 'mean'],
                     ylegendsRound: 1,
                 );
                 $res .= '<div id="aspect-' . $aspectCode . '"></div>';
-                $res .= $svg;
+                $res .= $html_markup;
+                if($params['svg-separate'] == true){
+                    fileSystem::saveFile($svgdir . DS . $aspectCode . '.svg', $file_contents);
+                }
             }
         }
         //

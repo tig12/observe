@@ -27,7 +27,7 @@ class ymd implements Command {
         
         $dirDistrib = $params['out-dir'] . DS . 'distrib';
         
-        $inFile = $params['in-dir'] . DS . 'data' . DS . 'ymd.csv';
+        $inFile = $params['in-dir'] . DS . 'ymd.csv';
         if(!file_exists($inFile)){
             throw new ObserveException("File $inFile does not exist");
         }

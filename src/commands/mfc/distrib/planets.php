@@ -24,7 +24,7 @@ class planets implements Command {
         $dirDistrib = $params['out-dir'] . DS . 'distrib';
         //
         echo "Computing planet distributions...\n";
-        $inDir = $params['in-dir'] . DS . 'data' . DS . 'planets';
+        $inDir = $params['in-dir'] . DS . 'planets';
         $members = ['M', 'F', 'C'];
         if($params['experience']['has-wedding']){
             $members[] = 'W';

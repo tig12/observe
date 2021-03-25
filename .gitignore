@@ -2,10 +2,12 @@
 config.yml
 1.local
 
-tmp
-data
 commands
+data
+log
 output
+tmp
+
 
 TODO
 ENCOURS

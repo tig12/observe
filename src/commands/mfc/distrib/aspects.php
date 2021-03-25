@@ -23,7 +23,7 @@ class aspects implements Command {
     public static function execute($params=[]) {
         // TODO check params
         $dirDistrib = $params['out-dir'] . DS . 'distrib';
-        $inDir = $params['in-dir'] . DS . 'data' . DS . 'planets';
+        $inDir = $params['in-dir'] . DS . 'planets';
         $data = [];
         $members = ['M', 'F', 'C'];
         if($params['experience']['has-wedding']){
@@ -31,7 +31,7 @@ class aspects implements Command {
         }
         foreach($members as $member){
             // 1 - load data
-            $inFile = $params['in-dir'] . DS . 'data' . DS . 'planets' . DS . $member . '.csv';
+            $inFile = $params['in-dir'] . DS . 'planets' . DS . $member . '.csv';
             if(!file_exists($inFile)){
                 throw new ObserveException("File $inFile does not exist");
             }

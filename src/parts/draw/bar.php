@@ -64,9 +64,9 @@ class bar {
         @param  $ylegendsRound      Nb of decimal to include in the displayed values.
                                     (meaningful for mean, whidh is generally not integer)
         // other
-        @param  $meanBar            Only if $ylegends contain 'mean'
+        @param  $meanLine           Only if $ylegends contain 'mean'
                                     Draw horizontal line for mean ?
-        @param  $meanBarStyle       Style for mean bar
+        @param  $meanLineStyle      Style for mean bar
         
         @return Array containing 2 elements.
                 If $svg_separate = true,
@@ -110,7 +110,7 @@ class bar {
             int     $ylegendsRightGap = 5,
             int     $ylegendsRound = 0,
             // other
-            bool    $meanBar = false,
+            bool    $meanLine = false,
         ){
         $svg = '';
         // characteristics of data
@@ -251,7 +251,7 @@ class bar {
         //
         // other
         //
-        if($meanBar){
+        if($meanLine){
             $y1 = $y2 = $yMean;
             $x1 = $xBegin;
             $x2 = $xEnd;

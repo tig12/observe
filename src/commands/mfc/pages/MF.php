@@ -94,14 +94,13 @@ class MF {
             xlegends:       ['min', 'max', 'top'],
             ylegends:       ['min', 'max', 'mean'],
             ylegendsRound:  1,
-            meanBar: true,
+            meanLine: true,
         );
         $res .= '<div id="birthyear"></div>';
         $res .= $html_markup;
         if($params['svg-separate'] == true){
             fileSystem::saveFile($svgdir . DS . 'year.svg', $file_contents);
         }
-//return $res;
         //
         // day
         //
@@ -116,7 +115,7 @@ class MF {
             xlegends: ['min', 'max'],
             ylegends: ['min', 'max', 'mean'],
             ylegendsRound: 1,
-            meanBar: true,
+            meanLine: true,
         );
         $res .= '<div id="birthday"></div>';
         $res .= $html_markup;
@@ -137,7 +136,7 @@ class MF {
             xlegends: ['min', 'max', 'top'],
             ylegends: ['min', 'max', 'mean'],
             ylegendsRound: 1,
-            meanBar: true,
+            meanLine: true,
         );
         $res .= '<div id="age-C"></div>' . "\n";
         $res .= '<div style="float:left;">' . "\n";
@@ -161,7 +160,7 @@ class MF {
                 xlegends: ['min', 'max', 'top'],
                 ylegends: ['min', 'max', 'mean'],
                 ylegendsRound: 1,
-                meanBar: true,
+                meanLine: true,
             );
             $res .= '<div id="age-W"></div>';
             $res .= '<div style="float:left;">' . "\n";
