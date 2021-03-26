@@ -47,7 +47,7 @@ HTML;
         $res .= <<<HTML
 <table><tr>
 <td class="vertical-align-top padding-right2">
-    <ul class="naked">
+    <ul class="naked spaced">
     
 HTML;
         //
@@ -159,8 +159,8 @@ HTML;
 <td class="vertical-align-top border-left padding-right2">
     <ul class="naked">
         <li>
-            <div><b>Inter-aspects</b></div>
-            
+            <div class="padding bold">Inter-aspects</div>
+
 HTML;
         $couples = MFC::computeCouples($params['experience']['has-wedding']);
         foreach($couples as $k){
@@ -170,11 +170,24 @@ HTML;
             $res .= "<div class=\"padding-left\"><a href=\"$page\">$v0 - $v1</a></div>\n";
         } // end relations
         $res .= "        </li>\n";
+        
+// TODO put this code in a00.yml
         $res .= <<<HTML
     </ul>
 </td>
-<td class="vertical-align-top border-left padding-left">
-    <a href="distrib">List CSV files containing distributions</a>
+<td class="vertical-align-top border-left padding-top">
+    <div class="padding-left bold">Download</div>
+    <ul class="naked spaced margin0 padding0 padding-left">
+        <li>
+            <a href="data/a00.csv.zip">a00.csv.zip</a> : Original file from Didier Castille
+        </li>
+        <li>
+            <a href="tmp/distrib.zip">distrib.zip</a> : Distributions computed by the program
+        </li>
+        <li>
+            <a href="svg/">svg/</a> if you want to browse images.
+        </li>
+    </ul>
 </td>
 </tr>
 </table>
