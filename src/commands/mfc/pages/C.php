@@ -61,13 +61,13 @@ class C {
         $tocPlanets = tocPlanets::html($params['planets']);
         $toc = str_replace(
             '<li><a href="#planets">Planets at birth</a></li>',
-            '<li><a href="#planets">Planets at birth</a><div class="padding-left">' . $tocPlanets . '</div></li>',
+            '<li class="padding-top05"><a href="#planets">Planets at birth</a><div class="padding-left">' . $tocPlanets . '</div></li>',
             $toc
         );
         $tocAspects = tocAspects::html($params['planets']);
         $toc = str_replace(
             '<li><a href="#aspects">Aspects at birth</a></li>',
-            '<li><a href="#aspects">Aspects at birth</a><div class="padding-left">' . $tocAspects . '</div></li>',
+            '<li class="padding-top05"><a href="#aspects">Aspects at birth</a><div class="padding-left">' . $tocAspects . '</div></li>',
             $toc
         );
         $res .= $toc;

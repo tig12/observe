@@ -70,7 +70,6 @@ class all implements Command {
 // TODO put nex line in MFC::coupleLabel()
             $outFile = $outdir . DS . strToLower(MFC::LABELS[$member1]) . '-' . strToLower(MFC::LABELS[$member2]) . '.html';
             fileSystem::saveFile($outFile, interaspects::computePage($params, $member1, $member2));
-//exit;
         }
     }
     

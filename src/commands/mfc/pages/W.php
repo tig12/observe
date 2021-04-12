@@ -27,7 +27,7 @@ class W {
     /** TOC = Table of contents **/
     private static $toc = [
         'proportion' => 'Day of birth',
-        'year' => 'Wedding day',
+        'year' => 'Wedding year',
         'day' => 'Wedding day',
         'planets' => 'Planets at wedding date',
         'aspects' => 'Aspects at wedding date',
@@ -53,13 +53,13 @@ class W {
         $tocPlanets = tocPlanets::html($params['planets']);
         $toc = str_replace(
             '<li><a href="#planets">Planets at wedding date</a></li>',
-            '<li><a href="#planets">Planets at wedding date</a><div class="padding-left">' . $tocPlanets . '</div></li>',
+            '<li class="padding-top05"><a href="#planets">Planets at wedding date</a><div class="padding-left">' . $tocPlanets . '</div></li>',
             $toc
         );
         $tocAspects = tocAspects::html($params['planets']);
         $toc = str_replace(
             '<li><a href="#aspects">Aspects at wedding date</a></li>',
-            '<li><a href="#aspects">Aspects at wedding date</a><div class="padding-left">' . $tocAspects . '</div></li>',
+            '<li class="padding-top05"><a href="#aspects">Aspects at wedding date</a><div class="padding-left">' . $tocAspects . '</div></li>',
             $toc
         );
         $res .= $toc;

@@ -25,7 +25,7 @@ class svg {
     public static function result(string $svg, bool $svg_separate, $img_src) {
         $svg .= "</svg>\n";
         if($svg_separate){
-            $res[0] = '<img class="svg" src="' . $img_src . '">' . "\n";
+            $res[0] = '<img loading="lazy" class="svg" src="' . $img_src . '">' . "\n";
             $res[1] = $svg;
         }
         else {
