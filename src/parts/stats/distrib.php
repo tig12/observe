@@ -24,7 +24,7 @@ class distrib {
         @param  $header True if the first line contains column line ; false otherwise
     **/
     public static function loadFromCSV(string $filename, bool $header): array {
-        $lines = file($filename);
+        $lines = file($filename, FILE_IGNORE_NEW_LINES);
         if($header){
             array_shift($lines);
         }

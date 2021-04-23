@@ -188,15 +188,16 @@ class bar {
             $x1 = $xBegin + ($i)*$barGap + $i*$barW;
             $y1 = $yEnd;
             $x2 = $x1;
-            $y = ($val-$min) * $deltaY / $maxMin;
+            $y = round(($val-$min) * $deltaY / $maxMin, 1);
             $y2 = $yEnd - $y;
             if($barHover === true){
-                $svg .= "<g><title>$key: $val</title>\n";
+                $svg .= "<g><title>$key: $val</title>";
             }
-            $svg .= "<line x1=\"$x1\" y1=\"$y1\" x2=\"$x2\" y2=\"$y2\" style=\"$barStyle\" />\n";
+            $svg .= "<line x1=\"$x1\" y1=\"$y1\" x2=\"$x2\" y2=\"$y2\" style=\"$barStyle\" />";
             if($barHover === true){
-                $svg .= "</g>\n";
+                $svg .= '</g>';
             }
+            $svg .= "\n";
             $i++;
         }
         //
