@@ -65,6 +65,7 @@ class interaspects {
                     title:          "$label1 $planetName1 / $label2 $planetName2 inter-aspects",
                     svg_separate:   $params['svg-separate'],
                     img_src:        $params['svg-path'] . "/$strM1M2/aspects/$strM1P1M2P2.svg",
+                    img_alt:        "$label1 $planetName1 / $label2 $planetName2 inter-aspects",
                     barW:           2,
                     xlegends:       ['min', 'max'],
                     ylegends:       ['min', 'max', 'mean'],

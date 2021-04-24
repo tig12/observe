@@ -90,15 +90,16 @@ class W {
         $infile = $params['in-dir'] . DS . 'distrib' . DS . 'W' . DS . 'year.csv';
         $dist = distrib::loadFromCSV($infile, header:false);
         [$html_markup, $file_contents] = bar::svg(
-            data: $dist,
-            title: "$titleUCString year",
+            data:           $dist,
+            title:          "$titleUCString year",
             svg_separate:   $params['svg-separate'],
             img_src:        $params['svg-path'] . "/W/year.svg",
-            barW: 8,
-            xlegends: ['min', 'max'],
-            ylegends: ['min', 'max', 'mean'],
-            ylegendsRound: 1,
-            meanLine: true,
+            img_alt:        "$titleUCString year",
+            barW:           8,
+            xlegends:       ['min', 'max'],
+            ylegends:       ['min', 'max', 'mean'],
+            ylegendsRound:  1,
+            meanLine:       true,
         );
         $res .= '<div id="birthyear"></div>';
         $res .= $html_markup;
@@ -112,15 +113,16 @@ class W {
         $infile = $params['in-dir'] . DS . 'distrib' . DS . 'W' . DS . 'day.csv';
         $dist = distrib::loadFromCSV($infile, header:false);
         [$html_markup, $file_contents] = bar::svg(
-            data: $dist,
-            title: "$titleUCString day",
+            data:           $dist,
+            title:          "$titleUCString day",
             svg_separate:   $params['svg-separate'],
             img_src:        $params['svg-path'] . "/W/day.svg",
-            barW: 2,
-            xlegends: ['min', 'max'],
-            ylegends: ['min', 'max', 'mean'],
-            ylegendsRound: 1,
-            meanLine: true,
+            img_alt:        "$titleUCString day",
+            barW:           2,
+            xlegends:       ['min', 'max'],
+            ylegends:       ['min', 'max', 'mean'],
+            ylegendsRound:  1,
+            meanLine:       true,
         );
         $res .= '<div id="birthday"></div>';
         $res .= $html_markup;
@@ -144,14 +146,15 @@ class W {
             $infile = $dirname . DS . $planet . '.csv';
             $dist = distrib::loadFromCSV($infile, header:false);
             [$html_markup, $file_contents] = bar::svg(
-                data: $dist,
-                title: "$planetName at wedding date",
+                data:           $dist,
+                title:          "$planetName at wedding date",
                 svg_separate:   $params['svg-separate'],
                 img_src:        $params['svg-path'] . "/W/planets/$planet.svg",
-                barW: 2,
-                xlegends: ['min', 'max'],
-                ylegends: ['min', 'max', 'mean'],
-                ylegendsRound: 1,
+                img_alt:        "$planetName at wedding date",
+                barW:           2,
+                xlegends:       ['min', 'max'],
+                ylegends:       ['min', 'max', 'mean'],
+                ylegendsRound:  1,
             );
             $res .= '<div id="planet-' . $planet . '"></div>';
             $res .= $html_markup;
@@ -180,14 +183,15 @@ class W {
                 $infile = $dirname . DS . $aspectCode . '.csv';
                 $dist = distrib::loadFromCSV($infile, header:false);
                 [$html_markup, $file_contents] = bar::svg(
-                    data: $dist,
-                    title: "Aspects $planetName1 / $planetName2 at wedding date",
+                    data:           $dist,
+                    title:          "Aspects $planetName1 / $planetName2 at wedding date",
                     svg_separate:   $params['svg-separate'],
                     img_src:        $params['svg-path'] . "/W/aspects/$aspectCode.svg",
-                    barW: 2,
-                    xlegends: ['min', 'max'],
-                    ylegends: ['min', 'max', 'mean'],
-                    ylegendsRound: 1,
+                    img_alt:        "Aspects $planetName1 / $planetName2 at wedding date",
+                    barW:           2,
+                    xlegends:       ['min', 'max'],
+                    ylegends:       ['min', 'max', 'mean'],
+                    ylegendsRound:  1,
                 );
                 $res .= '<div id="aspect-' . $aspectCode . '"></div>';
                 $res .= $html_markup;

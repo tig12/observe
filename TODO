@@ -1,4 +1,5 @@
 
+- remove class="svg" from html and suppress svg.css (include style in svg style)
 
 - param svg_path : confusion between img src and filesystem in commands/mfc/pages
 

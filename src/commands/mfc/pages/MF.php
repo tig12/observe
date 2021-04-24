@@ -90,6 +90,7 @@ class MF {
             svg_separate:   $params['svg-separate'],
 // HERE - confusion between img src and filesystem
             img_src:        $params['svg-path'] . "/$MF/year.svg",
+            img_alt:        "$MFucstring - year of birth",
             barW:           8,
             xlegends:       ['min', 'max', 'top'],
             ylegends:       ['min', 'max', 'mean'],
@@ -107,15 +108,16 @@ class MF {
         $infile = $params['in-dir'] . DS . 'distrib' . DS . $MF . DS . 'day.csv';
         $dist = distrib::loadFromCSV($infile, header:false);
         [$html_markup, $file_contents] = bar::svg(
-            data: $dist,
-            title: "$MFucstring - day of birth",
+            data:           $dist,
+            title:          "$MFucstring - day of birth",
             svg_separate:   $params['svg-separate'],
             img_src:        $params['svg-path'] . "/$MF/day.svg",
-            barW: 2,
-            xlegends: ['min', 'max'],
-            ylegends: ['min', 'max', 'mean'],
-            ylegendsRound: 1,
-            meanLine: true,
+            img_alt:        "$MFucstring - day of birth",
+            barW:           2,
+            xlegends:       ['min', 'max'],
+            ylegends:       ['min', 'max', 'mean'],
+            ylegendsRound:  1,
+            meanLine:       true,
         );
         $res .= '<div id="birthday"></div>';
         $res .= $html_markup;
@@ -128,15 +130,16 @@ class MF {
         $infile = $params['in-dir'] . DS . 'distrib' . DS . $MF . DS . 'age-child.csv';
         $dist = distrib::loadFromCSV($infile, header:false);
         [$html_markup, $file_contents] = bar::svg(
-            data: $dist,
-            title: "$MFucstring - age at child birth",
+            data:           $dist,
+            title:          "$MFucstring - age at child birth",
             svg_separate:   $params['svg-separate'],
             img_src:        $params['svg-path'] . "/$MF/age-child.svg",
-            barW: 8,
-            xlegends: ['min', 'max', 'top'],
-            ylegends: ['min', 'max', 'mean'],
-            ylegendsRound: 1,
-            meanLine: true,
+            img_alt:        "$MFucstring - age at child birth",
+            barW:           8,
+            xlegends:       ['min', 'max', 'top'],
+            ylegends:       ['min', 'max', 'mean'],
+            ylegendsRound:  1,
+            meanLine:       true,
         );
         $res .= '<div id="age-C"></div>' . "\n";
         $res .= '<div style="float:left;">' . "\n";
@@ -152,15 +155,16 @@ class MF {
             $infile = $params['in-dir'] . DS . 'distrib' . DS . $MF . DS . 'age-wed.csv';
             $dist = distrib::loadFromCSV($infile, header:false);
             [$html_markup, $file_contents] = bar::svg(
-                data: $dist,
-                title: "$MFucstring - age at wedding",
+                data:           $dist,
+                title:          "$MFucstring - age at wedding",
                 svg_separate:   $params['svg-separate'],
                 img_src:        $params['svg-path'] . "/$MF/has-wedding.svg",
-                barW: 8,
-                xlegends: ['min', 'max', 'top'],
-                ylegends: ['min', 'max', 'mean'],
-                ylegendsRound: 1,
-                meanLine: true,
+                img_alt:        "$MFucstring - age at wedding",
+                barW:           8,
+                xlegends:       ['min', 'max', 'top'],
+                ylegends:       ['min', 'max', 'mean'],
+                ylegendsRound:  1,
+                meanLine:       true,
             );
             $res .= '<div id="age-W"></div>';
             $res .= '<div style="float:left;">' . "\n";
@@ -188,14 +192,15 @@ class MF {
             $infile = $indir . DS . $planet . '.csv';
             $dist = distrib::loadFromCSV($infile, header:false);
             [$html_markup, $file_contents] = bar::svg(
-                data: $dist,
-                title: "$MFucstring - $planetName at birth",
+                data:           $dist,
+                title:          "$MFucstring - $planetName at birth",
                 svg_separate:   $params['svg-separate'],
                 img_src:        $params['svg-path'] . "/$MF/planets/$planet.svg",
-                barW: 2,
-                xlegends: ['min', 'max'],
-                ylegends: ['min', 'max', 'mean'],
-                ylegendsRound: 1,
+                img_alt:        "$MFucstring - $planetName at birth",
+                barW:           2,
+                xlegends:       ['min', 'max'],
+                ylegends:       ['min', 'max', 'mean'],
+                ylegendsRound:  1,
             );
             $res .= '<div id="planet-' . $planet . '"></div>';
             $res .= $html_markup;
@@ -225,14 +230,15 @@ class MF {
                 $infile = $indir . DS . $aspectCode . '.csv';
                 $dist = distrib::loadFromCSV($infile, header:false);
                 [$html_markup, $file_contents] = bar::svg(
-                    data: $dist,
-                    title: "$MFucstring - Aspects $planetName1 / $planetName2 at birth",
+                    data:           $dist,
+                    title:          "$MFucstring - Aspects $planetName1 / $planetName2 at birth",
                     svg_separate:   $params['svg-separate'],
                     img_src:        $params['svg-path'] . "/$MF/aspects/$aspectCode.svg",
-                    barW: 2,
-                    xlegends: ['min', 'max'],
-                    ylegends: ['min', 'max', 'mean'],
-                    ylegendsRound: 1,
+                    img_alt:        "$MFucstring - Aspects $planetName1 / $planetName2 at birth",
+                    barW:           2,
+                    xlegends:       ['min', 'max'],
+                    ylegends:       ['min', 'max', 'mean'],
+                    ylegendsRound:  1,
                 );
                 $res .= '<div id="aspect-' . $aspectCode . '"></div>';
                 $res .= $html_markup;

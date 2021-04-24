@@ -16,7 +16,7 @@ class bar {
     
     
     /** 
-        Computes the svg markup of a distribution.
+        Computes the svg markup of a distribution (one distribution only).
         
         Layout : the image is composed of {legends ang gaps} and a bar area (containing only the bars).
         Bar area height is imposed (parameter $barH) ; bar width is computed.
@@ -30,6 +30,8 @@ class bar {
         @param  $svg_separate       Save in a separate .svg file ?
         @param  $img_src            Useful only if $svg_separate = true
                                     In generated client page : <img src="$img_src">
+        @param  $img_alt            Useful only if $svg_separate = true
+                                    In generated client page : <img alt="$img_alt">
         @param  $hGap               in px - horizontal (left and right) gap of the image.
         @param  $vGap               in px - vertical (left and right) gap of the image.
         @param  $background         Background color of the image.
@@ -81,6 +83,7 @@ class bar {
             // image, general
             bool    $svg_separate,
             string  $img_src = '',
+            string  $img_alt = '',
             int     $hGap = 25,
             int     $vGap = 15,
             string  $background = 'moccasin',
@@ -148,37 +151,62 @@ class bar {
         $h = $yEnd + $xlegendsTopGap + $xlegendsH + $vGap;
         //
         $barDelta = $barW + $barGap; 
-        $barStyle = "stroke:$barColor;stroke-width:$barW;";
         //
         //
         //
-        $svgStyle = "";
+        $style = <<<SVG
+<style type="text/css"><![CDATA[
+.bl { /* bar line */
+    stroke:$barColor;
+    stroke-width:$barW;
+}
+.title{
+    text-anchor:left;
+    font-weight:bold;
+    font-size:{$titleH}px;
+}
+.xAxis{ $xAxisStyle }
+.yAxis{ $yAxisStyle }
+.xLegends{
+    text-anchor:middle;
+    font-size:{$xlegendsH}px;
+}
+.yLegends{
+    text-anchor:end;
+    dominant-baseline:middle;
+    font-size:{$ylegendsH}px;
+}
+.meanLine{
+    stroke:black;
+    stroke-dasharray:5,20;
+}
+]]></style>
+
+SVG;
         $svg .= svg::header(
             separate: $svg_separate,
             width: $w,
             height: $h,
-            style: $svgStyle,
         );
-//        $svg .= "<svg width=\"$w\" height=\"$h\" style=\"$svgStyle\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\">\n";
+        $svg .= $style;
         $svg .= "<rect width=\"100%\" height=\"100%\" fill=\"$background\" />\n"; // hack for bg color 
         //
         // title
         //
         [$x, $y] = [$hGap, $vGap + $titleH];
-        $text = $title;
-        $svg .= "<text x=\"$x\" y=\"$y\" style=\"text-anchor:left; font-weight:bold; font-size:{$titleH}px;\">$text</text>\n";
+        $svg .= "<text x=\"$x\" y=\"$y\" class=\"title\">$title</text>\n";
         //
         // axis
         //
         if($xAxis){
             [$x1, $y1] = [$xBegin, $yEnd];
             [$x2, $y2] = [$xEnd, $yEnd];
-            $svg .= "<line x1=\"$x1\" y1=\"$y1\" x2=\"$x2\" y2=\"$y2\" style=\"$xAxisStyle\" />\n";
+            $svg .= "<line x1=\"$x1\" y1=\"$y1\" x2=\"$x2\" y2=\"$y2\" class=\"xAxis\" />\n";
         }
         if($yAxis){
             [$x1, $y1] = [$xBegin, $yBegin];
             [$x2, $y2] = [$xBegin, $yEnd];
-            $svg .= "<line x1=\"$x1\" y1=\"$y1\" x2=\"$x2\" y2=\"$y2\" style=\"$yAxisStyle\" />\n";
+            $svg .= "<line x1=\"$x1\" y1=\"$y1\" x2=\"$x2\" y2=\"$y2\" class=\"yAxis\" />\n";
         }
         //
         // bars
@@ -193,7 +221,7 @@ class bar {
             if($barHover === true){
                 $svg .= "<g><title>$key: $val</title>";
             }
-            $svg .= "<line x1=\"$x1\" y1=\"$y1\" x2=\"$x2\" y2=\"$y2\" style=\"$barStyle\" />";
+            $svg .= "<line x1=\"$x1\" y1=\"$y1\" x2=\"$x2\" y2=\"$y2\" class=\"bl\" />";
             if($barHover === true){
                 $svg .= '</g>';
             }
@@ -205,22 +233,20 @@ class bar {
         //
         if(!empty($xlegends)){
             $y = $yEnd + $xlegendsTopGap + $xlegendsH;
-            $xlegendsStyle = "text-anchor:middle; font-size:{$xlegendsH}px;";
             if(in_array('min', $xlegends)){
                 $x = $xBegin;
                 $text = $dataKeys[0];
-                $svg .= "<text x=\"$x\" y=\"$y\" style=\"$xlegendsStyle\">$text</text>\n";
+                $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">$text</text>\n";
             }
             if(in_array('max', $xlegends)){
                 $x = $xBegin + $barAreaW;
                 $text = $dataKeys[count($dataKeys)-1];
-                $svg .= "<text x=\"$x\" y=\"$y\" style=\"$xlegendsStyle\">$text</text>\n";
+                $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">$text</text>\n";
             }
             if(in_array('top', $xlegends)){
                 [$top, $place] = self::compute_top($data);
                 $x = $xBegin + ($place-1)*$barGap + $place*$barW;
-                $text = $top;
-                $svg .= "<text x=\"$x\" y=\"$y\" style=\"$xlegendsStyle\">$text</text>\n";
+                $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">$top</text>\n";
             }
         }
         //
@@ -228,24 +254,21 @@ class bar {
         //
         if(!empty($ylegends)){
             $x = $vGap + $ylegendsW;
-            $xlegendsStyle = "text-anchor:end; dominant-baseline:middle; font-size:{$ylegendsH}px;";
             if(!empty($ylegends)){
                 if(in_array('min', $ylegends)){
                     $y = $yEnd;
-                    $text = $min;
-                    $svg .= "<text x=\"$x\" y=\"$y\" style=\"$xlegendsStyle\">$text</text>\n";
+                    $svg .= "<text x=\"$x\" y=\"$y\" class=\"yLegends\">$min</text>\n";
                 }
                 if(in_array('max', $ylegends)){
                     $y = $yBegin;
-                    $text = $max;
-                    $svg .= "<text x=\"$x\" y=\"$y\" style=\"$xlegendsStyle\">$text</text>\n";
+                    $svg .= "<text x=\"$x\" y=\"$y\" class=\"yLegends\">$max</text>\n";
                 }
                 if(in_array('mean', $ylegends)){
                     $mean = distrib::mean($data);
                     $yMean = round($yBegin + $deltaY*($max-$mean)/$maxMin);
                     $y = $yMean;
                     $text = round($mean, $ylegendsRound);
-                    $svg .= "<text x=\"$x\" y=\"$y\" style=\"$xlegendsStyle\">$text</text>\n";
+                    $svg .= "<text x=\"$x\" y=\"$y\" class=\"yLegends\">$text</text>\n";
                 }
             }
         }
@@ -256,31 +279,24 @@ class bar {
             $y1 = $y2 = $yMean;
             $x1 = $xBegin;
             $x2 = $xEnd;
-//            $svg .= "<line x1=\"$x1\" y1=\"$y1\" x2=\"$x2\" y2=\"$y2\" style=\"$barStyle\" />\n";
-            $svg .= <<<SVG
-"<g fill="none">
-    <path
-        stroke="black"
-        stroke-dasharray="5,20"
-        d="M$x1 $y1 H$x2 $y2 Z"
-    />
-</g>
-\n";
-SVG;
+            $svg .= "<g fill=\"none\"><path class=\"meanLine\" d=\"M$x1 $y1 H$x2 $y2 Z\" /></g>";
         }
         //
-        return svg::result($svg, $svg_separate, $img_src);
+        return svg::result(
+            svg:            $svg,
+            svg_separate:   $svg_separate,
+            img_src:        $img_src,
+            img_alt:        $img_alt,
+        );
     }
     
     // ******************************************************
     /**
-        TODO Put in parts/stats
-    
         Computes the "top key".
         In key / value array $data, means the key having the highest value.
         Returns an array with 2 elements :
             - the top key
-            - the place of this key in the array (0 = first keyof the array...)
+            - the place of this key in the array (0 = first key of the array...)
     **/
     private static function compute_top(&$data) {
         $max = max($data);
@@ -294,6 +310,5 @@ SVG;
         }
         return [$top, $place];
     }
-    
     
 } // end class

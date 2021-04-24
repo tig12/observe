@@ -16,16 +16,24 @@ class svg {
         Follows a call to svg::header() depending on $svg_separate
         @param  $svg            svg markup of the image.
         @param  $svg_separate   Save in a separate .svg file ?
-        @param  $img_src       Attribute src of img tag - only for $svg_separate = true
+        @param  $img_src       Attribute "src" of img tag - only for $svg_separate = true
+        @param  $img_alt       Attribute "alt" of img tag - only for $svg_separate = true
         @return
             $res[0]: html code to include in the page.
             $res[1]: only for $svg_separate = true
                      svg markup to write in a separate .svg file
     **/
-    public static function result(string $svg, bool $svg_separate, $img_src) {
+    public static function result(
+        string  $svg,
+        bool    $svg_separate,
+        string  $img_src = '',
+        string  $img_alt = '',
+    ) {
         $svg .= "</svg>\n";
         if($svg_separate){
-            $res[0] = '<img loading="lazy" class="svg" src="' . $img_src . '">' . "\n";
+            $res[0] = '<img loading="lazy" class="svg" src="' . $img_src . '"'
+                    . ($img_alt ? ' alt="' . $img_alt . '"' : '')
+                    . ">\n";
             $res[1] = $svg;
         }
         else {
@@ -38,15 +46,16 @@ class svg {
     /** 
         TODO Useless ? (as separate header works also when svg is inside the html)
     **/
-    public static function header(bool $separate, $width, $height, $style): string {
+    public static function header(bool $separate, $width, $height): string {
         return $separate
-            ? self::header_separate($width, $height, $style)
-            : self::header_inside($width, $height, $style);
+            ? self::header_separate($width, $height)
+            : self::header_inside($width, $height);
     }
     
-    /** 
+    /**
+        SVG header when the svg is stored in a separate .svg file
     **/
-    public static function header_separate($width, $height, $style): string {
+    public static function header_separate($width, $height): string {
         return <<<SVG
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
@@ -57,20 +66,19 @@ class svg {
     xmlns="http://www.w3.org/2000/svg"
     width="$width"
     height="$height"    
-    style="$style"
 >
 
 SVG;
     }
     
     /**
+        SVG header when the svg is stored in the html
     **/
-    public static function header_inside($width, $height, $style): string {
+    public static function header_inside($width, $height): string {
         return <<<SVG
 <svg
     width="$width"
     height="$height"
-    style="$style"
 >
 
 SVG;
