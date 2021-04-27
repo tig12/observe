@@ -7,12 +7,13 @@
 ********************************************************************************/
 namespace observe\commands\mfc\distrib;
 
-use observe\app\Command;
+use observe\app\Observe;
 use observe\app\ObserveException;
+use observe\app\Command;
 use tiglib\arrays\csvAssociative;
 
 use observe\parts\fileSystem;
-use observe\parts\distrib\distrib;
+use observe\parts\distrib\csvDistrib;
 use observe\parts\distrib\degrees;
 
 class planets implements Command {
@@ -42,7 +43,7 @@ class planets implements Command {
             $outdir = $dirDistrib . DS . $member . DS . 'planets'; // ex distrib/F/planets/
             fileSystem::mkdir($outdir);
             foreach($distribs as $planet => $distrib){
-                $csv = distrib::distrib2csv($distrib);
+                $csv = csvDistrib::distrib2csv($distrib, Observe::CSV_SEP);
                 $outfile = $outdir . DS . $planet . '.csv';
                 fileSystem::saveFile($outfile, $csv);
             }

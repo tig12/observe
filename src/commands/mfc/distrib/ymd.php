@@ -8,13 +8,14 @@
 ********************************************************************************/
 namespace observe\commands\mfc\distrib;
 
-use observe\app\Command;
+use observe\app\Observe;
 use observe\app\ObserveException;
+use observe\app\Command;
 use tiglib\arrays\csvAssociative;
 use tiglib\time\diff;
 
 use observe\parts\fileSystem;
-use observe\parts\distrib\distrib;
+use observe\parts\distrib\csvDistrib;
 
 class ymd implements Command {
     
@@ -45,51 +46,51 @@ class ymd implements Command {
         //
         $outFile = $dirDistrib . DS . 'M' . DS . 'year.csv';
         fileSystem::mkdir(dirname($outFile));
-        fileSystem::saveFile($outFile, distrib::distrib2csv($distribs['M']['year']));
+        fileSystem::saveFile($outFile, csvDistrib::distrib2csv($distribs['M']['year'], Observe::CSV_SEP));
         //
         $outFile = $dirDistrib . DS . 'M' . DS . 'day.csv';
-        fileSystem::saveFile($outFile, distrib::distrib2csv($distribs['M']['day']));
+        fileSystem::saveFile($outFile, csvDistrib::distrib2csv($distribs['M']['day'], Observe::CSV_SEP));
         //
         if($params['experience']['has-wedding']){
             $outFile = $dirDistrib . DS . 'M' . DS . 'age-wed.csv';
-            fileSystem::saveFile($outFile, distrib::distrib2csv($distribs['M']['age-wed']));
+            fileSystem::saveFile($outFile, csvDistrib::distrib2csv($distribs['M']['age-wed'], Observe::CSV_SEP));
         }
         //
         $outFile = $dirDistrib . DS . 'M' . DS . 'age-child.csv';
-        fileSystem::saveFile($outFile, distrib::distrib2csv($distribs['M']['age-child']));
+        fileSystem::saveFile($outFile, csvDistrib::distrib2csv($distribs['M']['age-child'], Observe::CSV_SEP));
         //
         // F
         //
         $outFile = $dirDistrib . DS . 'F' . DS . 'year.csv';
         fileSystem::mkdir(dirname($outFile));
-        fileSystem::saveFile($outFile, distrib::distrib2csv($distribs['F']['year']));
+        fileSystem::saveFile($outFile, csvDistrib::distrib2csv($distribs['F']['year'], Observe::CSV_SEP));
         //
         $outFile = $dirDistrib . DS . 'F' . DS . 'day.csv';
-        fileSystem::saveFile($outFile, distrib::distrib2csv($distribs['F']['day']));
+        fileSystem::saveFile($outFile, csvDistrib::distrib2csv($distribs['F']['day'], Observe::CSV_SEP));
         //
         if($params['experience']['has-wedding']){
             $outFile = $dirDistrib . DS . 'F' . DS . 'age-wed.csv';
-            fileSystem::saveFile($outFile, distrib::distrib2csv($distribs['F']['age-wed']));
+            fileSystem::saveFile($outFile, csvDistrib::distrib2csv($distribs['F']['age-wed'], Observe::CSV_SEP));
         }
         //
         $outFile = $dirDistrib . DS . 'F' . DS . 'age-child.csv';
-        fileSystem::saveFile($outFile, distrib::distrib2csv($distribs['F']['age-child']));
+        fileSystem::saveFile($outFile, csvDistrib::distrib2csv($distribs['F']['age-child'], Observe::CSV_SEP));
         //
         // C
         //
         $outFile = $dirDistrib . DS . 'C' . DS . 'year.csv';
         fileSystem::mkdir(dirname($outFile));
-        fileSystem::saveFile($outFile, distrib::distrib2csv($distribs['C']['year']));
+        fileSystem::saveFile($outFile, csvDistrib::distrib2csv($distribs['C']['year'], Observe::CSV_SEP));
         //
         $outFile = $dirDistrib . DS . 'C' . DS . 'day.csv';
-        fileSystem::saveFile($outFile, distrib::distrib2csv($distribs['C']['day']));
+        fileSystem::saveFile($outFile, csvDistrib::distrib2csv($distribs['C']['day'], Observe::CSV_SEP));
         //
         $outFile = $dirDistrib . DS . 'C' . DS . 'rank.csv';
-        fileSystem::saveFile($outFile, distrib::distrib2csv($distribs['C']['rank']));
+        fileSystem::saveFile($outFile, csvDistrib::distrib2csv($distribs['C']['rank'], Observe::CSV_SEP));
         //
         if($params['experience']['has-wedding']){
             $outFile = $dirDistrib . DS . 'C' . DS . 'wed-birth.csv';
-            fileSystem::saveFile($outFile, distrib::distrib2csv($distribs['C']['wed-birth']));
+            fileSystem::saveFile($outFile, csvDistrib::distrib2csv($distribs['C']['wed-birth'], Observe::CSV_SEP));
         }
         //
         // W
@@ -97,10 +98,10 @@ class ymd implements Command {
         if($params['experience']['has-wedding']){
             $outFile = $dirDistrib . DS . 'W' . DS . 'year.csv';
             fileSystem::mkdir(dirname($outFile));
-            fileSystem::saveFile($outFile, distrib::distrib2csv($distribs['W']['year']));
+            fileSystem::saveFile($outFile, csvDistrib::distrib2csv($distribs['W']['year'], Observe::CSV_SEP));
             //
             $outFile = $dirDistrib . DS . 'W' . DS . 'day.csv';
-            fileSystem::saveFile($outFile, distrib::distrib2csv($distribs['W']['day']));
+            fileSystem::saveFile($outFile, csvDistrib::distrib2csv($distribs['W']['day'], Observe::CSV_SEP));
             //
             // N is not a distribution but a constant => in txt file
             $outFile = $dirDistrib . DS . 'W' . DS . 'N.txt';

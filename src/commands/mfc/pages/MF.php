@@ -8,6 +8,7 @@
 ********************************************************************************/
 namespace observe\commands\mfc\pages;
 
+use observe\app\Observe;
 use observe\commands\mfc\MFC;
 use observe\parts\page\header;
 use observe\parts\page\footer;
@@ -15,7 +16,7 @@ use observe\parts\page\toc;
 use observe\parts\page\tocPlanets;
 use observe\parts\page\tocAspects;
 use observe\parts\page\nav;
-use observe\parts\stats\distrib;
+use observe\parts\distrib\csvDistrib;
 use observe\parts\draw\bar;
 use observe\parts\fileSystem;
 use tigeph\model\IAA;
@@ -83,7 +84,7 @@ class MF {
         // year
         //
         $infile = $params['in-dir'] . DS . 'distrib' . DS . $MF . DS . 'year.csv';
-        $dist = distrib::loadFromCSV($infile, header:false);
+        $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
         [$html_markup, $file_contents] = bar::svg(
             data:           $dist,
             title:          "$MFucstring - year of birth",
@@ -106,7 +107,7 @@ class MF {
         // day
         //
         $infile = $params['in-dir'] . DS . 'distrib' . DS . $MF . DS . 'day.csv';
-        $dist = distrib::loadFromCSV($infile, header:false);
+        $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
         [$html_markup, $file_contents] = bar::svg(
             data:           $dist,
             title:          "$MFucstring - day of birth",
@@ -128,7 +129,7 @@ class MF {
         // age at child birth
         //
         $infile = $params['in-dir'] . DS . 'distrib' . DS . $MF . DS . 'age-child.csv';
-        $dist = distrib::loadFromCSV($infile, header:false);
+        $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
         [$html_markup, $file_contents] = bar::svg(
             data:           $dist,
             title:          "$MFucstring - age at child birth",
@@ -153,7 +154,7 @@ class MF {
         //
         if($params['experience']['has-wedding'] === true){
             $infile = $params['in-dir'] . DS . 'distrib' . DS . $MF . DS . 'age-wed.csv';
-            $dist = distrib::loadFromCSV($infile, header:false);
+            $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
             [$html_markup, $file_contents] = bar::svg(
                 data:           $dist,
                 title:          "$MFucstring - age at wedding",
@@ -190,7 +191,7 @@ class MF {
         foreach($params['planets'] as $planet){
             $planetName = IAA::PLANET_NAMES[$planet];
             $infile = $indir . DS . $planet . '.csv';
-            $dist = distrib::loadFromCSV($infile, header:false);
+            $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
             [$html_markup, $file_contents] = bar::svg(
                 data:           $dist,
                 title:          "$MFucstring - $planetName at birth",
@@ -228,7 +229,7 @@ class MF {
                 $planetName2 = IAA::PLANET_NAMES[$planet2];
                 $aspectCode = "$planet1-$planet2";
                 $infile = $indir . DS . $aspectCode . '.csv';
-                $dist = distrib::loadFromCSV($infile, header:false);
+                $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
                 [$html_markup, $file_contents] = bar::svg(
                     data:           $dist,
                     title:          "$MFucstring - Aspects $planetName1 / $planetName2 at birth",

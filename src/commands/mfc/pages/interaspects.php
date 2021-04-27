@@ -11,12 +11,13 @@ namespace observe\commands\mfc\pages;
 
 use tigeph\model\IAA;
 
+use observe\app\Observe;
 use observe\commands\mfc\MFC;
 use observe\parts\page\header;
 use observe\parts\page\footer;
 use observe\parts\page\tocInteraspects;
 use observe\parts\page\nav;
-use observe\parts\stats\distrib;
+use observe\parts\distrib\csvDistrib;
 use observe\parts\draw\bar;
 use observe\parts\fileSystem;
 
@@ -59,7 +60,7 @@ class interaspects {
                 $strM1P1M2P2 = "$member1-$planet1--$member2-$planet2"; // ex "C-JU--F-JU"
                 $infile = "$indir/$planet1-$planet2.csv";
                 $planetName2 = IAA::PLANET_NAMES[$planet2];
-                $dist = distrib::loadFromCSV($infile, header:false);
+                $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
                 [$html_markup, $file_contents] = bar::svg(
                     data:           $dist,
                     title:          "$label1 $planetName1 / $label2 $planetName2 inter-aspects",

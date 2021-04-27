@@ -8,13 +8,13 @@
 namespace observe\commands\mfc\distrib;
 
 use observe\app\Observe;
-use observe\app\Command;
 use observe\app\ObserveException;
+use observe\app\Command;
 use tiglib\arrays\csvAssociative;
 
 use observe\commands\mfc\MFC;
 use observe\parts\fileSystem;
-use observe\parts\distrib\distrib;
+use observe\parts\distrib\csvDistrib;
 use observe\parts\distrib\degrees;
 use observe\parts\astro\aspects as aspects2;
 
@@ -62,7 +62,7 @@ class interaspects implements Command {
             fileSystem::mkdir($outsubdir);
             foreach($distribs as $aspectCode => $distrib){
                 $outfile = $outsubdir . DS . $aspectCode . '.csv';
-                fileSystem::saveFile($outfile, distrib::distrib2csv($distrib));
+                fileSystem::saveFile($outfile, csvDistrib::distrib2csv($distrib, Observe::CSV_SEP));
             }
         }
     }

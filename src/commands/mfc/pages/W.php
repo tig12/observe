@@ -10,6 +10,7 @@ namespace observe\commands\mfc\pages;
 
 use tigeph\model\IAA;
 
+use observe\app\Observe;
 use observe\commands\mfc\MFC;
 use observe\parts\page\header;
 use observe\parts\page\footer;
@@ -17,7 +18,7 @@ use observe\parts\page\toc;
 use observe\parts\page\tocPlanets;
 use observe\parts\page\tocAspects;
 use observe\parts\page\nav;
-use observe\parts\stats\distrib;
+use observe\parts\distrib\csvDistrib;
 use observe\parts\stats\constant;
 use observe\parts\draw\bar;
 use observe\parts\fileSystem;
@@ -88,7 +89,7 @@ class W {
         // year
         //
         $infile = $params['in-dir'] . DS . 'distrib' . DS . 'W' . DS . 'year.csv';
-        $dist = distrib::loadFromCSV($infile, header:false);
+        $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
         [$html_markup, $file_contents] = bar::svg(
             data:           $dist,
             title:          "$titleUCString year",
@@ -111,7 +112,7 @@ class W {
         // day
         //
         $infile = $params['in-dir'] . DS . 'distrib' . DS . 'W' . DS . 'day.csv';
-        $dist = distrib::loadFromCSV($infile, header:false);
+        $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
         [$html_markup, $file_contents] = bar::svg(
             data:           $dist,
             title:          "$titleUCString day",
@@ -144,7 +145,7 @@ class W {
         foreach($params['planets'] as $planet){
             $planetName = IAA::PLANET_NAMES[$planet];
             $infile = $dirname . DS . $planet . '.csv';
-            $dist = distrib::loadFromCSV($infile, header:false);
+            $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
             [$html_markup, $file_contents] = bar::svg(
                 data:           $dist,
                 title:          "$planetName at wedding date",
@@ -181,7 +182,7 @@ class W {
                 $planetName2 = IAA::PLANET_NAMES[$planet2];
                 $aspectCode = "$planet1-$planet2";
                 $infile = $dirname . DS . $aspectCode . '.csv';
-                $dist = distrib::loadFromCSV($infile, header:false);
+                $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
                 [$html_markup, $file_contents] = bar::svg(
                     data:           $dist,
                     title:          "Aspects $planetName1 / $planetName2 at wedding date",

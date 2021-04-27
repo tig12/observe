@@ -8,6 +8,7 @@
 ********************************************************************************/
 namespace observe\commands\mfc\pages;
 
+use observe\app\Observe;
 use observe\commands\mfc\MFC;
 use observe\parts\page\header;
 use observe\parts\page\footer;
@@ -15,7 +16,7 @@ use observe\parts\page\toc;
 use observe\parts\page\tocPlanets;
 use observe\parts\page\tocAspects;
 use observe\parts\page\nav;
-use observe\parts\stats\distrib;
+use observe\parts\distrib\csvDistrib;
 use observe\parts\draw\bar;
 use observe\parts\fileSystem;
 use tigeph\model\IAA;
@@ -84,7 +85,7 @@ class C {
         //
         if($params['child-by-year'] === true){
             $infile = $params['in-dir'] . DS . 'distrib' . DS . 'C' . DS . 'year.csv';
-            $dist = distrib::loadFromCSV($infile, header:false);
+            $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
             [$html_markup, $file_contents] = bar::svg(
                 data:           $dist,
                 title:          "$titleUCString - year of birth",
@@ -108,7 +109,7 @@ class C {
         // day
         //
         $infile = $params['in-dir'] . DS . 'distrib' . DS . 'C' . DS . 'day.csv';
-        $dist = distrib::loadFromCSV($infile, header:false);
+        $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
         [$html_markup, $file_contents] = bar::svg(
             data:           $dist,
             title:          "$titleUCString - day of birth",
@@ -131,7 +132,7 @@ class C {
         //
         if($params['experience']['has-wedding'] === true){
             $infile = $params['in-dir'] . DS . 'distrib' . DS . 'C' . DS . 'wed-birth.csv';
-            $dist = distrib::loadFromCSV($infile, header:false);
+            $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
             [$html_markup, $file_contents] = bar::svg(
                 data:           $dist,
                 title:          "$titleUCString - Duration between parents' wedding and birth (in months)",
@@ -165,7 +166,7 @@ class C {
         foreach($params['planets'] as $planet){
             $planetName = IAA::PLANET_NAMES[$planet];
             $infile = $dirname . DS . $planet . '.csv';
-            $dist = distrib::loadFromCSV($infile, header:false);
+            $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
             [$html_markup, $file_contents] = bar::svg(
                 data:           $dist,
                 title:          "Child - $planetName at birth",
@@ -202,7 +203,7 @@ class C {
                 $planetName2 = IAA::PLANET_NAMES[$planet2];
                 $aspectCode = "$planet1-$planet2";
                 $infile = $dirname . DS . $aspectCode . '.csv';
-                $dist = distrib::loadFromCSV($infile, header:false);
+                $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
                 [$html_markup, $file_contents] = bar::svg(
                     data:           $dist,
                     title:          "Child - Aspects $planetName1 / $planetName2 at birth",

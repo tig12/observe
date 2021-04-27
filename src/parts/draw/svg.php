@@ -16,8 +16,8 @@ class svg {
         Follows a call to svg::header() depending on $svg_separate
         @param  $svg            svg markup of the image.
         @param  $svg_separate   Save in a separate .svg file ?
-        @param  $img_src       Attribute "src" of img tag - only for $svg_separate = true
-        @param  $img_alt       Attribute "alt" of img tag - only for $svg_separate = true
+        @param  $img_src        Attribute "src" of img tag - only for $svg_separate = true
+        @param  $img_alt        Attribute "alt" of img tag - only for $svg_separate = true
         @return
             $res[0]: html code to include in the page.
             $res[1]: only for $svg_separate = true

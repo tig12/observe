@@ -9,12 +9,12 @@
 namespace observe\commands\mfc\distrib;
 
 use observe\app\Observe;
-use observe\app\Command;
 use observe\app\ObserveException;
+use observe\app\Command;
 use tiglib\arrays\csvAssociative;
 
 use observe\parts\fileSystem;
-use observe\parts\distrib\distrib;
+use observe\parts\distrib\csvDistrib;
 use observe\parts\distrib\degrees;
 use observe\parts\astro\aspects as aspects2;
 
@@ -51,7 +51,7 @@ class aspects implements Command {
             fileSystem::mkdir($outDir);
             foreach($distribs as $aspectCode => $distrib){
                 $outFile = $outDir . DS . $aspectCode . '.csv';
-                fileSystem::saveFile($outFile, distrib::distrib2csv($distrib));
+                fileSystem::saveFile($outFile, csvDistrib::distrib2csv($distrib, Observe::CSV_SEP));
             }
         }
     }

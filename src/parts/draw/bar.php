@@ -1,24 +1,20 @@
 <?php
 /******************************************************************************
     Generates SVG horizontal bar chart from a distribution.
-    
-    TODO        Philosophical question : this class may store a file on disk
-    
+    A distribution is an associative array, see param $data. 
+        
     @license    GPL
     @history    2021-02-28 23:08:04+01:00, Thierry Graff : refactor, moved from commands to parts
     @history    2020-12-20 18:48:55+01:00, Thierry Graff : Creation
 ********************************************************************************/
 namespace observe\parts\draw;
 
-use observe\parts\stats\distrib;
-
 class bar {
-    
     
     /** 
         Computes the svg markup of a distribution (one distribution only).
         
-        Layout : the image is composed of {legends ang gaps} and a bar area (containing only the bars).
+        Layout : the image is composed of legends, gaps and a bar area (containing only the bars).
         Bar area height is imposed (parameter $barH) ; bar width is computed.
         Image total height and width ($w and $h) are computed (= bar size + lengends and gaps).
         @return See {@link observe\parts\draw\svg::result()} documentation 
@@ -165,8 +161,8 @@ class bar {
     font-weight:bold;
     font-size:{$titleH}px;
 }
-.xAxis{ $xAxisStyle }
-.yAxis{ $yAxisStyle }
+.xAxis{$xAxisStyle}
+.yAxis{$yAxisStyle}
 .xLegends{
     text-anchor:middle;
     font-size:{$xlegendsH}px;
@@ -244,7 +240,7 @@ SVG;
                 $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">$text</text>\n";
             }
             if(in_array('top', $xlegends)){
-                [$top, $place] = self::compute_top($data);
+                [$top, $place] = distrib::topKey($data);
                 $x = $xBegin + ($place-1)*$barGap + $place*$barW;
                 $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">$top</text>\n";
             }
@@ -288,27 +284,6 @@ SVG;
             img_src:        $img_src,
             img_alt:        $img_alt,
         );
-    }
-    
-    // ******************************************************
-    /**
-        Computes the "top key".
-        In key / value array $data, means the key having the highest value.
-        Returns an array with 2 elements :
-            - the top key
-            - the place of this key in the array (0 = first key of the array...)
-    **/
-    private static function compute_top(&$data) {
-        $max = max($data);
-        $place = 0;
-        foreach($data as $k => $v){
-            if($v == $max){
-                $top = $k;
-                break;
-            }
-            $place++;
-        }
-        return [$top, $place];
     }
     
 } // end class
