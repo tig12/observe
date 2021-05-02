@@ -17,6 +17,7 @@ use observe\parts\page\tocPlanets;
 use observe\parts\page\tocAspects;
 use observe\parts\page\nav;
 use observe\parts\distrib\csvDistrib;
+use observe\parts\stats\misc;
 use observe\parts\draw\bar;
 use observe\parts\fileSystem;
 use tigeph\model\IAA;
@@ -85,6 +86,10 @@ class MF {
         //
         $infile = $params['in-dir'] . DS . 'distrib' . DS . $MF . DS . 'year.csv';
         $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
+        $stats = [
+            'mean' => misc::mean($dist),
+        ];
+        [$stats['top-key'], $stats['top-key-index']] = misc::topKey($dist);
         [$html_markup, $file_contents] = bar::svg(
             data:           $dist,
             title:          "$MFucstring - year of birth",
@@ -96,7 +101,8 @@ class MF {
             xlegends:       ['min', 'max', 'top'],
             ylegends:       ['min', 'max', 'mean'],
             ylegendsRound:  1,
-            meanLine: true,
+            stats:          $stats,
+            meanLine:       true,
         );
         $res .= '<div id="birthyear"></div>';
         $res .= $html_markup;
@@ -108,6 +114,9 @@ class MF {
         //
         $infile = $params['in-dir'] . DS . 'distrib' . DS . $MF . DS . 'day.csv';
         $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
+        $stats = [
+            'mean' => misc::mean($dist),
+        ];
         [$html_markup, $file_contents] = bar::svg(
             data:           $dist,
             title:          "$MFucstring - day of birth",
@@ -118,6 +127,7 @@ class MF {
             xlegends:       ['min', 'max'],
             ylegends:       ['min', 'max', 'mean'],
             ylegendsRound:  1,
+            stats:          $stats,
             meanLine:       true,
         );
         $res .= '<div id="birthday"></div>';
@@ -130,6 +140,10 @@ class MF {
         //
         $infile = $params['in-dir'] . DS . 'distrib' . DS . $MF . DS . 'age-child.csv';
         $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
+        $stats = [
+            'mean' => misc::mean($dist),
+        ];
+        [$stats['top-key'], $stats['top-key-index']] = misc::topKey($dist);
         [$html_markup, $file_contents] = bar::svg(
             data:           $dist,
             title:          "$MFucstring - age at child birth",
@@ -141,6 +155,7 @@ class MF {
             ylegends:       ['min', 'max', 'mean'],
             ylegendsRound:  1,
             meanLine:       true,
+            stats:          $stats,
         );
         $res .= '<div id="age-C"></div>' . "\n";
         $res .= '<div style="float:left;">' . "\n";
@@ -155,6 +170,10 @@ class MF {
         if($params['experience']['has-wedding'] === true){
             $infile = $params['in-dir'] . DS . 'distrib' . DS . $MF . DS . 'age-wed.csv';
             $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
+            $stats = [
+                'mean' => misc::mean($dist),
+            ];
+            [$stats['top-key'], $stats['top-key-index']] = misc::topKey($dist);
             [$html_markup, $file_contents] = bar::svg(
                 data:           $dist,
                 title:          "$MFucstring - age at wedding",
@@ -166,6 +185,7 @@ class MF {
                 ylegends:       ['min', 'max', 'mean'],
                 ylegendsRound:  1,
                 meanLine:       true,
+                stats:          $stats,
             );
             $res .= '<div id="age-W"></div>';
             $res .= '<div style="float:left;">' . "\n";
@@ -192,6 +212,9 @@ class MF {
             $planetName = IAA::PLANET_NAMES[$planet];
             $infile = $indir . DS . $planet . '.csv';
             $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
+            $stats = [
+                'mean' => misc::mean($dist),
+            ];
             [$html_markup, $file_contents] = bar::svg(
                 data:           $dist,
                 title:          "$MFucstring - $planetName at birth",
@@ -202,6 +225,7 @@ class MF {
                 xlegends:       ['min', 'max'],
                 ylegends:       ['min', 'max', 'mean'],
                 ylegendsRound:  1,
+                stats:          $stats,
             );
             $res .= '<div id="planet-' . $planet . '"></div>';
             $res .= $html_markup;
@@ -230,6 +254,9 @@ class MF {
                 $aspectCode = "$planet1-$planet2";
                 $infile = $indir . DS . $aspectCode . '.csv';
                 $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
+                $stats = [
+                    'mean' => misc::mean($dist),
+                ];
                 [$html_markup, $file_contents] = bar::svg(
                     data:           $dist,
                     title:          "$MFucstring - Aspects $planetName1 / $planetName2 at birth",
@@ -240,6 +267,7 @@ class MF {
                     xlegends:       ['min', 'max'],
                     ylegends:       ['min', 'max', 'mean'],
                     ylegendsRound:  1,
+                    stats:          $stats,
                 );
                 $res .= '<div id="aspect-' . $aspectCode . '"></div>';
                 $res .= $html_markup;

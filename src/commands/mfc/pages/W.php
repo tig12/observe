@@ -19,6 +19,7 @@ use observe\parts\page\tocPlanets;
 use observe\parts\page\tocAspects;
 use observe\parts\page\nav;
 use observe\parts\distrib\csvDistrib;
+use observe\parts\stats\misc;
 use observe\parts\stats\constant;
 use observe\parts\draw\bar;
 use observe\parts\fileSystem;
@@ -90,6 +91,9 @@ class W {
         //
         $infile = $params['in-dir'] . DS . 'distrib' . DS . 'W' . DS . 'year.csv';
         $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
+        $stats = [
+            'mean' => misc::mean($dist),
+        ];
         [$html_markup, $file_contents] = bar::svg(
             data:           $dist,
             title:          "$titleUCString year",
@@ -101,6 +105,7 @@ class W {
             ylegends:       ['min', 'max', 'mean'],
             ylegendsRound:  1,
             meanLine:       true,
+            stats:          $stats,
         );
         $res .= '<div id="birthyear"></div>';
         $res .= $html_markup;
@@ -113,6 +118,9 @@ class W {
         //
         $infile = $params['in-dir'] . DS . 'distrib' . DS . 'W' . DS . 'day.csv';
         $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
+        $stats = [
+            'mean' => misc::mean($dist),
+        ];
         [$html_markup, $file_contents] = bar::svg(
             data:           $dist,
             title:          "$titleUCString day",
@@ -124,6 +132,7 @@ class W {
             ylegends:       ['min', 'max', 'mean'],
             ylegendsRound:  1,
             meanLine:       true,
+            stats:          $stats,
         );
         $res .= '<div id="birthday"></div>';
         $res .= $html_markup;
@@ -146,6 +155,9 @@ class W {
             $planetName = IAA::PLANET_NAMES[$planet];
             $infile = $dirname . DS . $planet . '.csv';
             $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
+            $stats = [
+                'mean' => misc::mean($dist),
+            ];
             [$html_markup, $file_contents] = bar::svg(
                 data:           $dist,
                 title:          "$planetName at wedding date",
@@ -156,6 +168,7 @@ class W {
                 xlegends:       ['min', 'max'],
                 ylegends:       ['min', 'max', 'mean'],
                 ylegendsRound:  1,
+                stats:          $stats,
             );
             $res .= '<div id="planet-' . $planet . '"></div>';
             $res .= $html_markup;
@@ -183,6 +196,9 @@ class W {
                 $aspectCode = "$planet1-$planet2";
                 $infile = $dirname . DS . $aspectCode . '.csv';
                 $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
+                $stats = [
+                    'mean' => misc::mean($dist),
+                ];
                 [$html_markup, $file_contents] = bar::svg(
                     data:           $dist,
                     title:          "Aspects $planetName1 / $planetName2 at wedding date",
@@ -193,6 +209,7 @@ class W {
                     xlegends:       ['min', 'max'],
                     ylegends:       ['min', 'max', 'mean'],
                     ylegendsRound:  1,
+                    stats:          $stats,
                 );
                 $res .= '<div id="aspect-' . $aspectCode . '"></div>';
                 $res .= $html_markup;

@@ -17,6 +17,7 @@ use observe\parts\page\tocPlanets;
 use observe\parts\page\tocAspects;
 use observe\parts\page\nav;
 use observe\parts\distrib\csvDistrib;
+use observe\parts\stats\misc;
 use observe\parts\draw\bar;
 use observe\parts\fileSystem;
 use tigeph\model\IAA;
@@ -86,6 +87,10 @@ class C {
         if($params['child-by-year'] === true){
             $infile = $params['in-dir'] . DS . 'distrib' . DS . 'C' . DS . 'year.csv';
             $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
+            $stats = [
+                'mean' => misc::mean($dist),
+            ];
+            [$stats['top-key'], $stats['top-key-index']] = misc::topKey($dist);
             [$html_markup, $file_contents] = bar::svg(
                 data:           $dist,
                 title:          "$titleUCString - year of birth",
@@ -97,6 +102,7 @@ class C {
                 ylegends:       ['min', 'max', 'mean'],
                 ylegendsRound:  1,
                 meanLine:       true,
+                stats:          $stats,
             );
             $res .= '<div id="birthyear"></div>';
             $res .= $html_markup;
@@ -110,6 +116,9 @@ class C {
         //
         $infile = $params['in-dir'] . DS . 'distrib' . DS . 'C' . DS . 'day.csv';
         $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
+        $stats = [
+            'mean' => misc::mean($dist),
+        ];
         [$html_markup, $file_contents] = bar::svg(
             data:           $dist,
             title:          "$titleUCString - day of birth",
@@ -121,6 +130,7 @@ class C {
             ylegends:       ['min', 'max', 'mean'],
             ylegendsRound:  1,
             meanLine:       true,
+            stats:          $stats,
         );
         $res .= '<div id="birthday"></div>';
         $res .= $html_markup;
@@ -133,6 +143,9 @@ class C {
         if($params['experience']['has-wedding'] === true){
             $infile = $params['in-dir'] . DS . 'distrib' . DS . 'C' . DS . 'wed-birth.csv';
             $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
+            $stats = [
+                'mean' => misc::mean($dist),
+            ];
             [$html_markup, $file_contents] = bar::svg(
                 data:           $dist,
                 title:          "$titleUCString - Duration between parents' wedding and birth (in months)",
@@ -144,6 +157,7 @@ class C {
                 ylegends:       ['min', 'max', 'mean'],
                 ylegendsRound:  1,
                 meanLine:       true,
+                stats:          $stats,
             );
             $res .= '<div id="age-W"></div>';
             $res .= $html_markup;
@@ -167,6 +181,9 @@ class C {
             $planetName = IAA::PLANET_NAMES[$planet];
             $infile = $dirname . DS . $planet . '.csv';
             $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
+            $stats = [
+                'mean' => misc::mean($dist),
+            ];
             [$html_markup, $file_contents] = bar::svg(
                 data:           $dist,
                 title:          "Child - $planetName at birth",
@@ -177,6 +194,7 @@ class C {
                 xlegends:       ['min', 'max'],
                 ylegends:       ['min', 'max', 'mean'],
                 ylegendsRound:  1,
+                stats:          $stats,
             );
             $res .= '<div id="planet-' . $planet . '"></div>';
             $res .= $html_markup;
@@ -204,6 +222,9 @@ class C {
                 $aspectCode = "$planet1-$planet2";
                 $infile = $dirname . DS . $aspectCode . '.csv';
                 $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
+                $stats = [
+                    'mean' => misc::mean($dist),
+                ];
                 [$html_markup, $file_contents] = bar::svg(
                     data:           $dist,
                     title:          "Child - Aspects $planetName1 / $planetName2 at birth",
@@ -214,6 +235,7 @@ class C {
                     xlegends:       ['min', 'max'],
                     ylegends:       ['min', 'max', 'mean'],
                     ylegendsRound:  1,
+                    stats:          $stats,
                 );
                 $res .= '<div id="aspect-' . $aspectCode . '"></div>';
                 $res .= $html_markup;

@@ -22,6 +22,11 @@ class bar {
                                     Must be an associative array.
                                     keys = x, values on the x axis.
                                     values = y, corresponding values on the y axis, = nb of occurences of x in the distribution.
+        @param  $stats              Associative array containing statistical informations on the distribution.
+                                    Possible keys:
+                                        - mean
+                                        - top-key
+                                        - top-key-index
         // image, general
         @param  $svg_separate       Save in a separate .svg file ?
         @param  $img_src            Useful only if $svg_separate = true
@@ -109,6 +114,7 @@ class bar {
             int     $ylegendsRightGap = 5,
             int     $ylegendsRound = 0,
             // other
+            array   $stats = [],
             bool    $meanLine = false,
         ){
         $svg = '';
@@ -161,8 +167,8 @@ class bar {
     font-weight:bold;
     font-size:{$titleH}px;
 }
-.xAxis{$xAxisStyle}
-.yAxis{$yAxisStyle}
+.xAxis{{$xAxisStyle}}
+.yAxis{{$yAxisStyle}}
 .xLegends{
     text-anchor:middle;
     font-size:{$xlegendsH}px;
@@ -240,9 +246,14 @@ SVG;
                 $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">$text</text>\n";
             }
             if(in_array('top', $xlegends)){
-                [$top, $place] = distrib::topKey($data);
+                $x = $xBegin + ($stats['top-key-index']-1)*$barGap + $stats['top-key-index']*$barW;
+                $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">{$stats['top-key']}</text>\n";
+/* 
+                [$top, $place] = self::compute_top($data);
                 $x = $xBegin + ($place-1)*$barGap + $place*$barW;
-                $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">$top</text>\n";
+                $text = $top;
+                $svg .= "<text x=\"$x\" y=\"$y\" style=\"$xlegendsStyle\">$text</text>\n";
+*/
             }
         }
         //
@@ -260,10 +271,9 @@ SVG;
                     $svg .= "<text x=\"$x\" y=\"$y\" class=\"yLegends\">$max</text>\n";
                 }
                 if(in_array('mean', $ylegends)){
-                    $mean = distrib::mean($data);
-                    $yMean = round($yBegin + $deltaY*($max-$mean)/$maxMin);
+                    $yMean = round($yBegin + $deltaY*($max-$stats['mean'])/$maxMin);
                     $y = $yMean;
-                    $text = round($mean, $ylegendsRound);
+                    $text = round($stats['mean'], $ylegendsRound);
                     $svg .= "<text x=\"$x\" y=\"$y\" class=\"yLegends\">$text</text>\n";
                 }
             }

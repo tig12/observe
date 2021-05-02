@@ -18,6 +18,7 @@ use observe\parts\page\footer;
 use observe\parts\page\tocInteraspects;
 use observe\parts\page\nav;
 use observe\parts\distrib\csvDistrib;
+use observe\parts\stats\misc;
 use observe\parts\draw\bar;
 use observe\parts\fileSystem;
 
@@ -61,6 +62,9 @@ class interaspects {
                 $infile = "$indir/$planet1-$planet2.csv";
                 $planetName2 = IAA::PLANET_NAMES[$planet2];
                 $dist = csvDistrib::csv2distrib($infile, header:false, sep:Observe::CSV_SEP);
+                $stats = [
+                    'mean' => misc::mean($dist),
+                ];
                 [$html_markup, $file_contents] = bar::svg(
                     data:           $dist,
                     title:          "$label1 $planetName1 / $label2 $planetName2 inter-aspects",
@@ -72,6 +76,7 @@ class interaspects {
                     ylegends:       ['min', 'max', 'mean'],
                     ylegendsRound:  1,
                     meanLine:       true,
+                    stats:          $stats,
                 );
                 $res .= '<div id="' . $strM1P1M2P2 . '"></div>';
                 $res .= $html_markup;
