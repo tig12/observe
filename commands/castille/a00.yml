@@ -1,0 +1,165 @@
+
+#
+# 1 - variables used in several commands
+#
+variables: 
+  data-dir: &data-dir data/experiences/castille/a00
+  tmp-dir:  &tmp-dir  tmp/experiences/castille/a00
+  out-dir:  &out-dir  output/experiences/castille/a00
+  
+  experience: &experience
+    type: MFC
+    code: a00
+    has-wedding: true
+    'N': 591936 # N without quote is interpreted as 0
+    title: a00 - Births in France, year 2000
+    subtitle: '591 936 { mother, father, child, mariage }'
+    description: Astrological statistical tests on file a00 (births in France in 2000)
+    intro: |
+      Births that occured in France in 2000.
+      Each line contains (untimed) birth dates of mother, father, child, and mariage date, if any.
+      Data are anonymous (non nominative).
+      Origin: File built by Didier Castille from INSEE data (Institut National des Etudes Statistiques - French National Institue of Statistical Studies).
+
+#
+# 2 - commands
+#
+
+all:
+  command: chain
+  commands:
+    - convert
+    - planets
+    - distrib-ymd
+    - distrib-planets
+    - distrib-aspects
+    - distrib-interaspects
+    - pages
+
+# ===========================================================
+# Extracts interesting information from raw file and formats for use in next commands
+convert:
+  command: convertFile
+  in-dir: *data-dir
+  in-file: a00.csv
+  out-dir: *tmp-dir
+  out-file: data/ymd.csv
+  #
+  actions:
+    - ymd2iso anais00 mnais00 jnais00 -> C
+    - ymd2iso ANAISM MNAISM JNAISM    -> M
+    - ymd2iso ANAISP MNAISP JNAISP    -> F
+    - ymd2iso AMAR MMAR JMAR          -> W
+    - copy    rangmar00               -> CRANK
+
+# Computes planet coordinates in data/planets/
+planets:
+  command: computeAstro
+  # input, relative to global variable out-dir
+  in-dir: *tmp-dir
+  in-file: ymd.csv
+  # output, relative to global variable out-dir
+  out-dir: *tmp-dir
+  out-subdir: planets # TODO suppress, replace by convention
+  #
+  engine: meeus1
+  skip: '0000-00-00' # if a date = skip, empty strings will be output instead
+  actions:
+    - C SO MO ME VE MA JU SA UR NE PL NN
+    - M SO MO ME VE MA JU SA UR NE PL NN
+    - F SO MO ME VE MA JU SA UR NE PL NN
+    - W SO MO ME VE MA JU SA UR NE PL NN
+
+# Compute distributions using data/ymd.csv (year, day, age etc.)
+distrib-ymd:
+  command: mfc.distrib.ymd
+  in-dir: *tmp-dir
+  out-dir: *tmp-dir       # by convention, goes to tmp-dir/distrib
+  experience: *experience
+  # When column W has this value, don't include the line in distributions involving W
+  # Used only if experience / has-wedding = true
+  skip-W: '0000-00-00'
+
+distrib-planets:
+  command: mfc.distrib.planets
+  in-dir: *tmp-dir
+  out-dir: *tmp-dir       # by convention, goes to tmp-dir/distrib
+  experience: *experience
+
+distrib-aspects:
+  command: mfc.distrib.aspects
+  in-dir: *tmp-dir
+  out-dir: *tmp-dir
+  experience: *experience
+  aspects:
+    skip: '' # if a longitude = skip, don't compute, empty strings will be output instead
+    precision: 1 # precision of aspects (nb of decimal digits)
+
+distrib-interaspects:
+  command: mfc.distrib.interaspects
+  in-dir: *tmp-dir
+  out-dir: *tmp-dir
+  experience: *experience
+  interaspects:
+    skip: '' # if a longitude = skip, don't compute, empty strings will be output instead
+    precision: 1 # precision of aspects (nb of decimal digits)
+
+split-wedding:
+  command: mfc.split.ageAtWedding
+
+# Builds the html pages showing distributions and analysis
+pages:
+  command: mfc.pages.all
+  in-dir: *tmp-dir
+  out-dir: *out-dir
+  experience: *experience
+  # include wedding proportion in page generation ?
+  # useful only if experience / has-wedding = true
+  wedding-proportion: true
+  # display distribution of child birth year ?
+  child-by-year: false
+  # for planets and aspects distributions 
+  planets: SO MO ME VE MA JU SA UR NE PL NN
+  # true: svg are stored as autonomous images on disk
+  # false: svg are included in the html pages
+  svg-separate: true;
+  
+# ==================== obsolete ==================
+
+# Computes distributions in distrib/
+# TODO split this commands in several commands :
+# distrib-ymd, distrib-planets, distrib-aspects, distrib-synastry
+distrib:
+  command: mfc.distrib
+  # input, relative to global variable out-dir
+  in-dir: *out-dir
+  # output, relative to global variable out-dir
+  out-dir: *out-dir
+  experience: *experience
+  # Should distributions involving weddings be computed ?
+  process-wedding: true
+  #
+  # distributions
+  #
+  ymd:
+    # When column W has this value, don't include the line in distributions involving W
+    # Used only if process-wedding = true
+    skip-W: '0000-00-00'
+  planets: SO MO ME VE MA JU SA UR NE PL NN
+  aspects:
+    skip: '' # if a longitude = skip, don't compute, empty strings will be output instead
+    precision: 1 # precision of aspects (nb of decimal digits)
+  
+# Computes aspect values in data/aspects/
+aspects:
+  command: mfc.aspects
+  # input, relative to global variable out-dir
+  in-dir: *out-dir
+  # output, relative to global variable out-dir
+  out-dir: *out-dir
+  #
+  skip: '' # if a longitude = skip, don't compute, empty strings will be output instead
+  # Should aspects involving weddings be computed ?
+  process-wedding: true
+  precision: 1 # precision of aspects (nb of decimal digits)
+
