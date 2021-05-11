@@ -1,5 +1,6 @@
 
-- remove class="svg" from html and suppress svg.css (include style in svg style)
+- Use generators to generate the distributions
+  https://wiki.php.net/rfc/generators
 
 - param svg_path : confusion between img src and filesystem in commands/mfc/pages
 
@@ -11,3 +12,4 @@
 
 - remove $titleString and self::$toc in commands/mfc/pages/ 
   (compute directly in the function and then call parts/parge/toc)
+

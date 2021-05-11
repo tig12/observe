@@ -34,9 +34,10 @@ all:
     - distrib-planets
     - distrib-aspects
     - distrib-interaspects
+#   - split-wedding
     - pages
 
-# ===========================================================
+# --------------------------------------------------------------------------
 # Extracts interesting information from raw file and formats for use in next commands
 convert:
   command: convertFile
@@ -52,6 +53,7 @@ convert:
     - ymd2iso AMAR MMAR JMAR          -> W
     - copy    rangmar00               -> CRANK
 
+# --------------------------------------------------------------------------
 # Computes planet coordinates in data/planets/
 planets:
   command: computeAstro
@@ -70,6 +72,9 @@ planets:
     - F SO MO ME VE MA JU SA UR NE PL NN
     - W SO MO ME VE MA JU SA UR NE PL NN
 
+# --------------------------------------------------------------------------
+
+# --------------------------------------------------------------------------
 # Compute distributions using data/ymd.csv (year, day, age etc.)
 distrib-ymd:
   command: mfc.distrib.ymd
@@ -80,12 +85,14 @@ distrib-ymd:
   # Used only if experience / has-wedding = true
   skip-W: '0000-00-00'
 
+# --------------------------------------------------------------------------
 distrib-planets:
   command: mfc.distrib.planets
   in-dir: *tmp-dir
   out-dir: *tmp-dir       # by convention, goes to tmp-dir/distrib
   experience: *experience
 
+# --------------------------------------------------------------------------
 distrib-aspects:
   command: mfc.distrib.aspects
   in-dir: *tmp-dir
@@ -95,6 +102,7 @@ distrib-aspects:
     skip: '' # if a longitude = skip, don't compute, empty strings will be output instead
     precision: 1 # precision of aspects (nb of decimal digits)
 
+# --------------------------------------------------------------------------
 distrib-interaspects:
   command: mfc.distrib.interaspects
   in-dir: *tmp-dir
@@ -104,9 +112,11 @@ distrib-interaspects:
     skip: '' # if a longitude = skip, don't compute, empty strings will be output instead
     precision: 1 # precision of aspects (nb of decimal digits)
 
+# --------------------------------------------------------------------------
 split-wedding:
   command: mfc.split.ageAtWedding
 
+# --------------------------------------------------------------------------
 # Builds the html pages showing distributions and analysis
 pages:
   command: mfc.pages.all
@@ -124,6 +134,7 @@ pages:
   # false: svg are included in the html pages
   svg-separate: true;
   
+
 # ==================== obsolete ==================
 
 # Computes distributions in distrib/

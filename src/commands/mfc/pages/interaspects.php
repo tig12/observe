@@ -19,8 +19,8 @@ use observe\parts\page\tocInteraspects;
 use observe\parts\page\nav;
 use observe\parts\distrib\csvDistrib;
 use observe\parts\stats\misc;
-use observe\parts\draw\bar;
 use observe\parts\fileSystem;
+use tigdraw\bar;
 
 class interaspects {
     

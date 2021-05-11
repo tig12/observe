@@ -1,6 +1,4 @@
 
-See https://tig12.github.io/observe
-
 Observe program is a small generic tool to execute commands.
 Based on yaml command files, containing the commands and their parameters.
 
@@ -8,24 +6,18 @@ Unstable draft, under construction
 
 Developed to analyze files containing mother - father - child birth data
 - Births in France of year 2000 (N = 591 936).
+See https://g5.tig12.net/observe/experiences/castille/a00
 - Gauquelin heredity data (N = 20 916)
+See https://g5.tig12.net/observe/experiences/gauquelin/heredity-newalch-20916
 
-Current commands implemented :
-- convertFile   : clean the input and have standard formats
-                  Start with 3 columns
-- computeAstro  : compute the ecliptic longitudes of the planets at mother, father, child birth day (takes 12:00 UT)
-                  (11 planets => 33 columns)
-- aspects       : For each couple (Mother Child, Father Child, Mother Father), compute angular distance between planets.
-                  Ex : compute distance between mother's sun and child's sun.
-                  This makes 11 x 11 x 3 = 363 columns
-- group         : Group the angular distances by degree (0 - 360)
-- view.pages    : Generate html pages containing svg bar charts
-                  3 pages with 121 drawings.
+Usage :
+git clone --recurse-submodules https://github.com/tig12/observe
 
-Generated pages :
+Then issue commands like:
+php run-observe.php castille/a00 pages
 
-Y2000 births in France
-https://g5.tig12.net/observe/experiences/castille/a00
+See https://tig12.github.io/observe
 
-Gauquelin data
-https://g5.tig12.net/observe/experiences/gauquelin/heredity-newalch-20916
+Released under the General Public Licence
+
+Repository created in december 2020 by Thierry Graff
