@@ -85,7 +85,7 @@ catch(observe\app\ObserveException $e){
     echo "ERROR: " . $e->getMessage() . "\n";
 }
 catch(Exception $e){
+    echo $e->getTraceAsString() . "\n";
     echo 'Exception: ' . $e->getMessage() . "\n";
     echo $e->getFile() . ' - line ' . $e->getLine() . "\n";
-    echo $e->getTraceAsString() . "\n";
 }

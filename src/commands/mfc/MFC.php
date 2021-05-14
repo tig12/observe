@@ -59,6 +59,8 @@ class MFC {
         foreach($couples as $couple){
         }
         $res = [];
+// TODO put url in config
+        $res[] = ['https://g5.tig12.net', 'g5.tig12.net'];
         $res[] = ['index.html', $params['experience']['title']];
         foreach($members as $member){
             $href = strToLower(self::LABELS[$member]) . '.html';

@@ -3,26 +3,25 @@
 # 1 - variables used in several commands
 #
 variables: 
-  data-dir: &data-dir data/experiences/castille/a00
-  tmp-dir:  &tmp-dir  tmp/experiences/castille/a00
-  out-dir:  &out-dir  output/experiences/castille/a00
+  data-dir: &data-dir data/experiences/gauquelin/heredity-newalch-20916
+  tmp-dir:  &tmp-dir  tmp/experiences/gauquelin/heredity-newalch-20916
+  out-dir:  &out-dir  output/experiences/gauquelin/heredity-newalch-20916
   
   experience: &experience
     type: MFC
-    code: a00
-    has-wedding: true
+    code: gq20916
+    has-wedding: false
     'N': 591936 # N without quote is interpreted as 0
-    title: a00 - Births in France, year 2000
-    subtitle: '591 936 { mother, father, child, mariage }'
-    description: Astrological statistical tests on file a00 (births in France in 2000)
+    title: Gauquelin heredity data
+    subtitle: '20 916 { mother, father, child }'
+    description: Extract from Gauquelin heredity data
     intro: |
-      Births that occured in France in 2000.
-      Each line contains (untimed) birth dates of mother, father, child, and mariage date, if any.
+      Each line contains timed birth dates of mother, father, child.
       Data are anonymous (non nominative).
     origin: |
-      File built by Didier Castille from INSEE data
-      Institut National des Etudes Statistiques, French National Institue of Statistical Studies
-
+      Data assembled and made available by Nick Kollerstrom
+      https://newalchemypress.com/gauquelin/gauquelin_docs/mom_dad_kid_final20916_3a-m_column_first.pdf
+      converted to csv by Thierry Graff
 #
 # 2 - commands
 #
@@ -44,17 +43,21 @@ all:
 normalize:
   command: normalize
   in-dir: *data-dir
-  in-file: a00.csv
-  in-file-associative: true
+  in-file: gq-heredity-newalch-20916.csv
+  in-file-associative: false
   out-dir: *tmp-dir
   out-file: data/ymd.csv
   #
   actions:
-    - ymd2iso anais00 mnais00 jnais00 -> C
-    - ymd2iso ANAISM MNAISM JNAISM    -> M
-    - ymd2iso ANAISP MNAISP JNAISP    -> F
-    - ymd2iso AMAR MMAR JMAR          -> W
-    - copy    rangmar00               -> CRANK
+    - ymdhms2iso    4 3 2 5 6 7 -> M-DATE
+    - lat_ddmm2dec  8 -> M-LAT
+    - lg_ddmm2dec   9 -> M-LG
+    - ymdhms2iso    13 12 11 14 15 16 -> F-DATE
+    - lat_ddmm2dec  17 -> F-LAT
+    - lg_ddmm2dec   18 -> F-LG
+    - ymdhms2iso    22 21 20 23 24 25 -> C-DATE
+    - lat_ddmm2dec  26 -> C-LAT
+    - lg_ddmm2dec   27 -> C-LG
 
 # --------------------------------------------------------------------------
 # Computes planet coordinates in data/planets/

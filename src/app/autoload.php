@@ -7,7 +7,9 @@
     @history    2020-12-15 21:39:47+01:00, Thierry Graff : Creation 
 **/
 
-// autoload for vendor code
+/** 
+    Autoload for vendor code
+**/
 $rootdir = dirname(dirname(__DIR__));
 require_once implode(DS, [$rootdir, 'src', 'vendor', 'tig12', 'tiglib', 'autoload.php']);
 require_once implode(DS, [$rootdir, 'src', 'vendor', 'tig12', 'tigeph', 'php', 'autoload.php']);
@@ -26,6 +28,8 @@ spl_autoload_register(
         $classname = str_replace($namespace . '\\', '', $full_classname);
         $classname = str_replace('\\', DS, $classname);
         $filename = $root_dir . DS . $classname . '.php';
+// echo "filename = $filename\n";
+// echo "classnama = $classname\n";
         $ok = include_once($filename);
         if(!$ok){
             throw new \Exception("AUTOLOAD FAILS for class $full_classname");
