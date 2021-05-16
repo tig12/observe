@@ -178,9 +178,13 @@ HTML;
 <td class="vertical-align-top border-left padding-top">
     <div class="padding-left bold">Download</div>
     <ul class="naked spaced margin0 padding0 padding-left">
-        <li>
-            <a href="data/a00.csv.zip">a00.csv.zip</a> : Original file from Didier Castille
-        </li>
+HTML;
+        if(isset($params['index-download-links'])){
+            foreach($params['index-download-links'] as $link){
+                $res .= "<li><a href=\"{$link['url']}\">{$link['label']}</a></li>\n";
+            }
+        }
+        $res .= <<<HTML
         <li>
             <a href="tmp/distrib.zip">distrib.zip</a> : Distributions computed by the program
         </li>

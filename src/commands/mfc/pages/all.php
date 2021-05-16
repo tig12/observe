@@ -56,6 +56,7 @@ class all implements Command {
         //
 //fileSystem::saveFile($outdir . DS . 'mother.html',  MF::computePage($params, MF:'M'));
 //fileSystem::saveFile($outdir . DS . 'child.html',   C::computePage($params));
+//fileSystem::saveFile($outdir . DS . 'index.html',   index::computePage($params));
 //exit;
         fileSystem::mkdir($outdir . DS . $params['svg-path']);
         fileSystem::saveFile($outdir . DS . 'index.html',   index::computePage($params));

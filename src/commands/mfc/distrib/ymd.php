@@ -28,7 +28,7 @@ class ymd implements Command {
         
         $dirDistrib = $params['out-dir'] . DS . 'distrib';
         
-        $inFile = $params['in-dir'] . DS . 'ymd.csv';
+        $inFile = $params['in-dir'] . DS . 'data' . DS . 'ymd.csv';
         if(!file_exists($inFile)){
             throw new ObserveException("File $inFile does not exist");
         }
@@ -40,6 +40,7 @@ class ymd implements Command {
             data:       $data,
             processW:   $params['experience']['has-wedding'],
             skipW:      $params['skip-W'],
+            inCols:     $params['in-columns'],
         );
         //
         // M
@@ -122,6 +123,7 @@ class ymd implements Command {
         &$data,
         bool $processW,
         $skipW = false,
+        $inCols,
     ){
         $res = [
             'M' => [
@@ -159,23 +161,30 @@ class ymd implements Command {
         $nW = 0;
         $n = 0;
         
+        $colM = $inCols['M'];
+        $colF = $inCols['F'];
+        $colC = $inCols['C'];
+        if($processW){
+            $colW = $inCols['W'];
+        }
+        
         $lineHasWedding = function($line) use ($skipW) {
-            return $line['W'] != $skipW;
+            return $line[$colW] != $skipW;
         };
         
         foreach($data as $line){
             $n++; 
-            [$yM, $mM, $dM] = explode('-', $line['M']);
-            [$yF, $mF, $dF] = explode('-', $line['F']);
-            [$yC, $mC, $dC] = explode('-', $line['C']);
-            $dateM = date_create($line['M']);
-            $dateF = date_create($line['F']);
-            $dateC = date_create($line['C']);
+            [$yM, $mM, $dM] = explode('-', $line[$colM]);
+            [$yF, $mF, $dF] = explode('-', $line[$colF]);
+            [$yC, $mC, $dC] = explode('-', $line[$colC]);
+            $dateM = date_create($line[$colM]);
+            $dateF = date_create($line[$colF]);
+            $dateC = date_create($line[$colC]);
 //            $doy = $dateM->format('z');
             if($processW && $lineHasWedding($line)){
                 $nW++;                                                                      
-                [$yW, $mW, $dW] = explode('-', $line['W']);
-                $dateW = date_create($line['W']);
+                [$yW, $mW, $dW] = explode('-', $line[$colW]);
+                $dateW = date_create($line[$colW]);
             }
             //
             // M
@@ -228,9 +237,11 @@ class ymd implements Command {
             if(!isset($res['C']['day'][$doy])){ $res['C']['day'][$doy] = 0; }
             $res['C']['day'][$doy]++;
             // child rank
-            $rank = $line['CRANK'];
-            if(!isset($res['C']['rank'][$rank])){ $res['C']['rank'][$rank] = 0; }
-            $res['C']['rank'][$rank]++;
+            if(isset($line['CRANK'])){
+                $rank = $line['CRANK'];
+                if(!isset($res['C']['rank'][$rank])){ $res['C']['rank'][$rank] = 0; }
+                $res['C']['rank'][$rank]++;
+            }
             // interval wedding - birth
             if($processW && $lineHasWedding($line)){
                 $diff = diff::compute($dateW, $dateC, unit:'M');
@@ -242,7 +253,7 @@ class ymd implements Command {
             //
             if($processW && $lineHasWedding($line)){
                 // N
-                $res['W']['N']++;
+                $res[$colW]['N']++;
                 // year
                 if(!isset($res['W']['year'][$yW])){ $res['W']['year'][$yW] = 0; }
                 $res['W']['year'][$yW]++;

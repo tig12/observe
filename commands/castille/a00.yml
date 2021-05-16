@@ -71,23 +71,42 @@ planets:
   has-time: false
   skip: '0000-00-00' # if a date = skip, empty strings will be output instead
   actions:
-    - C SO MO ME VE MA JU SA UR NE PL NN -> C
-    - M SO MO ME VE MA JU SA UR NE PL NN -> M
-    - F SO MO ME VE MA JU SA UR NE PL NN -> F
-    - W SO MO ME VE MA JU SA UR NE PL NN -> W
-
-# --------------------------------------------------------------------------
+    -
+      input: 
+        date: C
+      compute: [SO, MO, ME, VE, MA, JU, SA, UR, NE, PL, NN]
+      output: C
+    -
+      input: 
+        date: M
+      compute: [SO, MO, ME, VE, MA, JU, SA, UR, NE, PL, NN]
+      output: M
+    -
+      input: 
+        date: F
+      compute: [SO, MO, ME, VE, MA, JU, SA, UR, NE, PL, NN]
+      output: F
+    -
+      input: 
+        date: W
+      compute: [SO, MO, ME, VE, MA, JU, SA, UR, NE, PL, NN]
+      output: W
 
 # --------------------------------------------------------------------------
 # Compute distributions using data/ymd.csv (year, day, age etc.)
 distrib-ymd:
   command: mfc.distrib.ymd
-  in-dir: *tmp-dir
+  in-dir: *tmp-dir        # by convention,in tmp-dir/data
   out-dir: *tmp-dir       # by convention, goes to tmp-dir/distrib
   experience: *experience
   # When column W has this value, don't include the line in distributions involving W
   # Used only if experience / has-wedding = true
   skip-W: '0000-00-00'
+  in-columns:
+    M: M
+    F: F
+    C: C
+    W: W
 
 # --------------------------------------------------------------------------
 distrib-planets:
@@ -137,44 +156,8 @@ pages:
   # true: svg are stored as autonomous images on disk
   # false: svg are included in the html pages
   svg-separate: true;
-  
-
-# ==================== obsolete ==================
-
-# Computes distributions in distrib/
-# TODO split this commands in several commands :
-# distrib-ymd, distrib-planets, distrib-aspects, distrib-synastry
-distrib:
-  command: mfc.distrib
-  # input, relative to global variable out-dir
-  in-dir: *out-dir
-  # output, relative to global variable out-dir
-  out-dir: *out-dir
-  experience: *experience
-  # Should distributions involving weddings be computed ?
-  process-wedding: true
-  #
-  # distributions
-  #
-  ymd:
-    # When column W has this value, don't include the line in distributions involving W
-    # Used only if process-wedding = true
-    skip-W: '0000-00-00'
-  planets: SO MO ME VE MA JU SA UR NE PL NN
-  aspects:
-    skip: '' # if a longitude = skip, don't compute, empty strings will be output instead
-    precision: 1 # precision of aspects (nb of decimal digits)
-  
-# Computes aspect values in data/aspects/
-aspects:
-  command: mfc.aspects
-  # input, relative to global variable out-dir
-  in-dir: *out-dir
-  # output, relative to global variable out-dir
-  out-dir: *out-dir
-  #
-  skip: '' # if a longitude = skip, don't compute, empty strings will be output instead
-  # Should aspects involving weddings be computed ?
-  process-wedding: true
-  precision: 1 # precision of aspects (nb of decimal digits)
-
+  index-download-links:
+    -
+      url: data/a00.csv.zip
+      label: Original file from Didier Castille (a00.csv.zip)
+    
