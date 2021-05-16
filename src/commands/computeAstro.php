@@ -4,6 +4,8 @@
     Input : a csv file with columns containing YYYY-MM-DD dates.
     Output : one csv file per input column, containing longitudes of planets
     
+    Based on parameter "actions" of command file ; see self::checkActions() documentation.
+    
     @license    GPL
     @history    2021-03-09 04:34:44+01:00, Thierry Graff : Creation from computeAstro1
 ********************************************************************************/
@@ -13,7 +15,8 @@ use observe\app\Observe;
 use observe\app\Config;
 use observe\app\Command;
 use observe\app\ObserveException;
-use tiglib\arrays\csvAssociative;
+//use tiglib\arrays\csvAssociative;
+use tiglib\arrays\yieldCsvAsso;
 
 use tigeph\Tigeph;
 use tigeph\model\SysolC;
@@ -56,6 +59,11 @@ class computeAstro implements Command {
         $outdir = $params['out-dir'] . DS . $params['out-subdir'];
         fileSystem::mkdir($outdir);
         //
+        // has-time
+        if(!isset($params['has-time'])){
+            throw new ObserveException("$classname needs a parameter 'has-time' (boolean)");
+        }
+        //
         // astro engines
         $engines = Tigeph::getEngines();
         if(!isset($params['engine'])){
@@ -76,7 +84,7 @@ class computeAstro implements Command {
         if(!isset($params['actions'])){
             throw new ObserveException("$classname needs a parameter 'actions'");
         }
-        $actions = self::computeActions($params['actions']);
+        $actions = self::checkActions($params['actions']);
         //
         //  initialize tigeph
         //
@@ -84,33 +92,33 @@ class computeAstro implements Command {
             Swetest::init(Config::$data['swetest']['bin'], Config::$data['swetest']['dir']);
         }
         //
-        //  initialize result, output file names and output columns
+        //  initialize output
         //
-        $res = [];
+        $outkeys = [];
         $outfiles = [];
+        $fps = []; // file pointers
         $outcols = [];
-        $outkeys = []; // = names of output colums
         $emptyCoords = []; // useful when a date = $skip
         foreach($actions as $action){
-            $key = $action['in-col'];
-            $outkeys[] = $key;
-            $res[$key] = [];
-            $outfiles[$key] = $outdir . DS . $key . '.csv';
-            foreach($action['tigeph-codes'] as $planetCode){
-                if(!isset($outcols[$key])){
-                    $outcols[$key] = [];
+            $outkey = $action['output'];
+            $outkeys[] = $outkey;
+            $outfiles[$outkey] = $outdir . DS . $outkey . '.csv';
+            $fps[$outkey] = fopen($outfiles[$outkey], 'w');
+            foreach($action['compute'] as $planetCode){
+                if(!isset($outcols[$outkey])){
+                    $outcols[$outkey] = [];
                 }
-                $outcols[$key][] = IAA::TIGEPH_IAA[$planetCode];
+                $outcols[$outkey][] = $planetCode;
             }
-            $emptyCoords[$key] = array_fill_keys($outcols[$key], '');
+            $emptyCoords[$outkey] = array_fill_keys($outcols[$outkey], '');
         }
-        foreach($outkeys as $k){
-            $res[$k] = implode(Observe::CSV_SEP, $outcols[$k]) . "\n";
+        foreach($outkeys as $outkey){
+            fputcsv($fps[$outkey], $outcols[$outkey], Observe::CSV_SEP);
         }
         //
         //  execute
         //
-        $in = csvAssociative::compute($infile);
+        $in = yieldCsvAsso::loop($infile);
         //
         $N =0;
         $t1 = microtime(true);
@@ -118,56 +126,102 @@ class computeAstro implements Command {
         foreach($in as $line){
             $new = $emptyNew;
             foreach($actions as $action){
-                $currentKey = $action['in-col'];
-                $date = $line[$currentKey];
+                $outkey = $action['output'];
+                $date = $line[$action['input']['date']];
                 if($date === $skip){
-                    $coords = $emptyCoords[$currentKey];
+                    $coords = $emptyCoords[$outkey];
                 }
                 else{
-                    $coords = self::ephem($date, $action['tigeph-codes']);
+                    $coords = self::ephem(
+                        date:       $date,
+                        iaaCodes:   $action['tigeph-codes'],
+                        hasTime:    $params['has-time'],
+                        lg:         $line[$action['input']['lg']],
+                        lat:        $line[$action['input']['lat']],
+                    );
                 }
                 foreach($coords as $planetCode => $coord){
-                    $new[$currentKey][$planetCode] = $coord;
+                    $new[$outkey][$planetCode] = $coord;
                 }
             }
-            foreach($outkeys as $key){
-                $res[$key] .= implode(Observe::CSV_SEP, $new[$key]) . "\n";
+            foreach($outkeys as $outkey){
+                fputcsv($fps[$outkey], $new[$outkey], Observe::CSV_SEP);
             }
             $N++;
+//if($N == 10) break;
             if($N % 1000 == 0) echo "$N\n";
         }
         $t2 = microtime(true);
         $dt = round($t2 - $t1, 3);
         
-        foreach($outkeys as $key){
-            fileSystem::saveFile($outfiles[$key], $res[$key], message: "Wrote $N lines in {$outfiles[$key]}\n");
+        foreach($outkeys as $outkey){
+            fclose($fps[$outkey]);
+            echo "Wrote $N lines in {$outfiles[$outkey]}\n";
         }
         echo "Execution time: $dt s\n";
     }
     
     /**
-        Parses lines expressing actions, like
-            C SO MO ME VE MA JU SA UR NE PL NN SN
-        The first word is the name of column of input file (must contain a ISO 8601 date)
-        Following words are IAA codes of astrological factors to compute
+        Checks actions
+        @param  $actions Parsed content of entry "actions" of the command file
+                Example of corresponding yaml:
+                  actions:
+                    -
+                      date: C-DATE
+                      lg: C-LG
+                      lat: C-LAT
+                      planets: [SO, MO, ME, VE, MA, JU, SA, UR, NE, PL, NN]
+                      generated-file: C
+                Meaning:
+                - Use column C-DATE of input file and consider that it is the date
+                - Use column C-LG of input file and consider that it is the longitude
+                - Use column C-LAT of input file and consider that it is the latitude
+                - Compute planets SO ... NN
+                - Generate file C.csv
+        @return Actions checked and completed with default values
     **/
-    private static function computeActions($param){
+    private static function checkActions($actions){
         $res = [];
-        foreach($param as $line){
-            $action = [];
-            // TODO this preg_split for planet codes should be in a function (see commands.mfc.pages.all) 
-            $tmp = preg_split('/\s+/', $line);
-            if(count($tmp) < 2){
-                throw new ObserveException("Invalid syntax : $line");
-            }
-            $action['in-col'] = array_shift($tmp);
-            // convert IAA codes to tigeph codes
-            $action['tigeph-codes'] = [];
-            foreach($tmp as $iaaCode){
-                if(!isset(IAA::IAA_TIGEPH[$iaaCode])){
-                    throw new ObserveException("Invalid IAA code '$iaaCode' in line : $line");
+        $keys = ['input', 'compute', 'output'];
+        $inputKeys = ['date', 'lg', 'lat'];
+        foreach($actions as $action){
+            $msg = print_r($action, true);
+            // check main keys
+            foreach($keys as $k){
+                if(!isset($action[$k])){
+                    throw new ObserveException("In action {$msg}Missing parameter '$k'");
                 }
-                $action['tigeph-codes'][] = IAA::IAA_TIGEPH[$iaaCode];
+            }
+            foreach($action as $k => $v){
+                if(!in_array($k, $keys)){
+                    throw new ObserveException("In action {$msg}Invalid parameter '$k'");
+                }
+            }
+            // check and complete input
+            foreach($action['input'] as $k => $v){
+                if(!in_array($k, $inputKeys)){
+                    throw new ObserveException("In action {$msg}Invalid parameter '$k'");
+                }
+            }
+            if(!isset($action['input']['date'])){
+                throw new ObserveException("In action {$msg}Parameter 'date' is required in 'input' section");
+            }
+            if(!isset($action['input']['lg'])){
+                $action['input']['lg'] = false;
+            }
+            if(!isset($action['input']['lat'])){
+                $action['input']['lat'] = false;
+            }
+            // check and complete compute
+            if(!is_array($action['compute'])){
+                throw new ObserveException("In action {$msg}Parameter 'compute' must be an array");
+            }
+            $action['tigeph-codes'] = [];
+            foreach($action['compute'] as $planetCode){
+                if(!in_array($planetCode, IAA::PLANETS)){
+                    throw new ObserveException("In action {$msg}Invalid planet code '$planetCode'");
+                }
+                $action['tigeph-codes'][] = IAA::IAA_TIGEPH[$planetCode];
             }
             $res[] = $action;
         }
@@ -177,16 +231,25 @@ class computeAstro implements Command {
     /** 
         Calls ephemeris computation engine
     **/
-    private static function ephem($date, $iaaCodes){
-        // TODO compute also time - current code only works for untimed dates
-        $day = $date;
-        $time = '12:00:00';
-        $day_time = "$day $time";
+    private static function ephem(
+        string      $date,
+        array       $iaaCodes,
+        bool        $hasTime,
+        float|bool  $lg = false,
+        float|bool  $lat = false,
+    ){
+        if($hasTime){
+            $day_time = $date;
+        }
+        else {
+            $day_time = $date . ' 12:00:00';
+        }
         switch(self::$engine){
         	case 'meeus1':  $coords = Meeus1::ephem($day_time, $iaaCodes); break;
         	case 'swetest': $coords = Swetest::ephem($day_time, $iaaCodes); break;
         }
         $res = [];
+//echo "\n<pre>"; print_r(IAA::TIGEPH_IAA); echo "</pre>\n"; exit;
         foreach($coords as $iaaCode => $coord){
             $res[IAA::TIGEPH_IAA[$iaaCode]] = $coord;
         }

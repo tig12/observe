@@ -62,18 +62,19 @@ planets:
   command: computeAstro
   # input, relative to global variable out-dir
   in-dir: *tmp-dir
-  in-file: ymd.csv
+  in-file: data/ymd.csv
   # output, relative to global variable out-dir
   out-dir: *tmp-dir
   out-subdir: planets # TODO suppress, replace by convention
   #
   engine: meeus1
+  has-time: false
   skip: '0000-00-00' # if a date = skip, empty strings will be output instead
   actions:
-    - C SO MO ME VE MA JU SA UR NE PL NN
-    - M SO MO ME VE MA JU SA UR NE PL NN
-    - F SO MO ME VE MA JU SA UR NE PL NN
-    - W SO MO ME VE MA JU SA UR NE PL NN
+    - C SO MO ME VE MA JU SA UR NE PL NN -> C
+    - M SO MO ME VE MA JU SA UR NE PL NN -> M
+    - F SO MO ME VE MA JU SA UR NE PL NN -> F
+    - W SO MO ME VE MA JU SA UR NE PL NN -> W
 
 # --------------------------------------------------------------------------
 

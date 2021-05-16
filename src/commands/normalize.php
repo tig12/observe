@@ -201,6 +201,37 @@ class normalize implements Command {
         ];
     }
     
+    /**
+        Converts the content of 6 columns containing year, month, day, hour, minute, timezone offset
+        To a column containing a YYYY-MM-DD HH:MM:00sHH:MM string
+        @param  $inCols Array containing 6 elements,
+                designating the columns containing year, month, day, hour, minute, timezone offset
+    **/
+    private static function ymdhm_tzo2iso(array $inLine, array $inCols, string $outCol){
+        // hack to manage Gauquelin data
+        // TODO write more general code
+        if($inLine[$inCols[5]] == 0){
+            $tzo = '+00:00';
+        }
+        else if($inLine[$inCols[5]] == -1){
+            $tzo = '+01:00';
+        }
+        else{
+            throw new ObserveException("Timezone offset not handled : " . $inLine[$inCols[5]]);
+        }
+        $res = [
+            $outCol =>
+                        $inLine[$inCols[0]]                                 // Y
+                . '-' . str_pad($inLine[$inCols[1]], 2, '0', STR_PAD_LEFT)  // M
+                . '-' . str_pad($inLine[$inCols[2]], 2, '0', STR_PAD_LEFT)  // D
+                . ' ' . str_pad($inLine[$inCols[3]], 2, '0', STR_PAD_LEFT)  // H
+                . ':' . str_pad($inLine[$inCols[4]], 2, '0', STR_PAD_LEFT)  // M
+                . ':00'                                                     // S
+                . $tzo                                                      // TZO
+        ];
+        return $res;
+    }
+    
     /** 
         Converts a string like "2E20" to a decimal latitude.
         Separating letter can be "E" or "W"

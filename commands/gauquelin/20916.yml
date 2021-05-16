@@ -49,13 +49,13 @@ normalize:
   out-file: data/ymd.csv
   #
   actions:
-    - ymdhms2iso    4 3 2 5 6 7 -> M-DATE
+    - ymdhm_tzo2iso 4 3 2 5 6 7 -> M-DATE
     - lat_ddmm2dec  8 -> M-LAT
     - lg_ddmm2dec   9 -> M-LG
-    - ymdhms2iso    13 12 11 14 15 16 -> F-DATE
+    - ymdhm_tzo2iso 13 12 11 14 15 16 -> F-DATE
     - lat_ddmm2dec  17 -> F-LAT
     - lg_ddmm2dec   18 -> F-LG
-    - ymdhms2iso    22 21 20 23 24 25 -> C-DATE
+    - ymdhm_tzo2iso 22 21 20 23 24 25 -> C-DATE
     - lat_ddmm2dec  26 -> C-LAT
     - lg_ddmm2dec   27 -> C-LG
 
@@ -65,20 +65,36 @@ planets:
   command: computeAstro
   # input, relative to global variable out-dir
   in-dir: *tmp-dir
-  in-file: ymd.csv
+  in-file: data/ymd.csv
   # output, relative to global variable out-dir
   out-dir: *tmp-dir
   out-subdir: planets # TODO suppress, replace by convention
   #
-  engine: meeus1
-  skip: '0000-00-00' # if a date = skip, empty strings will be output instead
+  engine: swetest
+  has-time: true
+#  skip: '0000-00-00' # if a date = skip, empty strings will be output instead
   actions:
-    - C SO MO ME VE MA JU SA UR NE PL NN
-    - M SO MO ME VE MA JU SA UR NE PL NN
-    - F SO MO ME VE MA JU SA UR NE PL NN
-    - W SO MO ME VE MA JU SA UR NE PL NN
-
-# --------------------------------------------------------------------------
+    -
+      input: 
+        date: C-DATE
+        lg: C-LG
+        lat: C-LAT
+      compute: [SO, MO, ME, VE, MA, JU, SA, UR, NE, PL, NN]
+      output: C
+    -
+      input: 
+        date: M-DATE
+        lg: M-LG
+        lat: M-LAT
+      compute: [SO, MO, ME, VE, MA, JU, SA, UR, NE, PL, NN]
+      output: M
+    -
+      input: 
+        date: F-DATE
+        lg: F-LG
+        lat: F-LAT
+      compute: [SO, MO, ME, VE, MA, JU, SA, UR, NE, PL, NN]
+      output: F
 
 # --------------------------------------------------------------------------
 # Compute distributions using data/ymd.csv (year, day, age etc.)
