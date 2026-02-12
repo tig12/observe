@@ -12,7 +12,10 @@ class CommandFile {
     /** Array reflecting the contents of the yaml file **/
     private $data;
     
-    /** String corresponding to this command file **/
+    /**
+        String corresponding to this command file.
+        Ex: $commandFileString = 'test/toto' (corresponds to command file commands/test/toto.yml)
+    **/
     private $commandFileString;
     
     /** 
@@ -51,17 +54,35 @@ class CommandFile {
     
     /**
         Executes one command
+        @param  $commandStr Main entry within a command file.
+                            Indicates which command in a command file should be executed.
+                            Ex: if a yaml command file contains:
+                                planets:
+                                  command: prepareAstro
+                                  # (other params)
+                                distrib:
+                                  command: computeDistrib
+                                  # (other params)
+                            Then $commandStr can be "planets" or "distrib"
+        @param  $otherParams Optional parameters passed to method execute() of the command.
     **/
-    public function executeCommand($commandStr){
+    public function executeCommand($commandStr, $optionalParams = []){
         if(!$this->commandExists($commandStr)){
             throw new ObserveException("The command '$commandStr' does not exist in command file " . $this->$commandFileString . '.');
         }
+        // $command contains the parameters of the command within the command file.
+        // ex: if $commandStr is "planets" and the command file contains:
+        // planets:
+        //   command: prepareAstro
+        //   tmp-dir: *tmp-dir
+        //   engine: meeus1
+        // Then $command is this array: ['command' => 'prepareAstro', 'tmp-dir' => 'var/tmp/planets', 'engine' => 'meeus1']
         $command =& $this->data[$commandStr];
         if(!isset($command['command'])){
             throw new ObserveException("Invalid command '$commandStr': key 'command' is missing.");
         }
         // build class implementing Command
-        // classname : "3p.prepare' gives "observe\commands\3p\prepare"
+        // classname : "p3.prepare' gives "observe\commands\p3\prepare"
         $classname = 'observe\\commands\\' . str_replace('.', '\\', $command['command']);
         if(!class_exists($classname)){
             throw new ObserveException("Invalid key 'command' in command '$commandStr' : class $classname does not exist.");
@@ -70,7 +91,9 @@ class CommandFile {
         //$class = new \ReflectionClass($classname);
         $method = new \ReflectionMethod("$classname::execute");
         // method parameters = current command except 'command' entry
-        array_shift($command);
+        unset($command['command']);
+        // Add optional parameters
+        $command = array_merge($command, [Observe::PARAM_OPTIONAL_STRING => $optionalParams]);
         $method->invoke(null, $command);
     }
     

@@ -12,14 +12,11 @@
 
 define('DS', DIRECTORY_SEPARATOR);
 
-//require_once __DIR__ . DS . 'src' . DS . 'init' . DS . 'init.php';
 require_once implode(DS, [__DIR__, 'src', 'app', 'init.php']);
 
 use observe\app\Run;
 use observe\app\ObserveException;
 use observe\app\CommandFile;
-
-//echo "\n<pre>"; print_r($argv); echo "</pre>\n"; exit;
 
 //
 // parameter checking
@@ -79,7 +76,9 @@ if(!$cmdFile->commandExists($argv[2])){
 // --- run ---
 //
 try{
-    $cmdFile-> executeCommand($argv[2]);
+    // other cli arguments are also passed to executeCommand()
+    $optional = array_slice($argv, 3);
+    $cmdFile-> executeCommand($argv[2], $optional);
 }
 catch(observe\app\ObserveException $e){
     echo "ERROR: " . $e->getMessage() . "\n";
