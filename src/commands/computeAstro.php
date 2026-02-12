@@ -15,7 +15,6 @@ use observe\app\Observe;
 use observe\app\Config;
 use observe\app\Command;
 use observe\app\ObserveException;
-//use tiglib\arrays\csvAssociative;
 use tiglib\arrays\yieldCsvAsso;
 
 use tigeph\Tigeph;
@@ -148,7 +147,6 @@ class computeAstro implements Command {
                 fputcsv($fps[$outkey], $new[$outkey], Observe::CSV_SEP);
             }
             $N++;
-//if($N == 10) break;
             if($N % 1000 == 0) echo "$N\n";
         }
         $t2 = microtime(true);
@@ -245,11 +243,10 @@ class computeAstro implements Command {
             $day_time = $date . ' 12:00:00';
         }
         switch(self::$engine){
-        	case 'meeus1':  $coords = Meeus1::ephem($day_time, $iaaCodes); break;
-        	case 'swetest': $coords = Swetest::ephem($day_time, $iaaCodes); break;
+        	case 'meeus1':  $coords = Meeus1::ephem($day_time, $iaaCodes)['planets']; break;
+        	case 'swetest': $coords = Swetest::ephem($day_time, $iaaCodes)['planets']; break;
         }
         $res = [];
-//echo "\n<pre>"; print_r(IAA::TIGEPH_IAA); echo "</pre>\n"; exit;
         foreach($coords as $iaaCode => $coord){
             $res[IAA::TIGEPH_IAA[$iaaCode]] = $coord;
         }

@@ -87,7 +87,7 @@ class Meeus1 implements Ephem {
         $sphereCart=SpaceTimeC::SPHERICAL;
         $onlyLongitude=true;
         $meeus = new Meeus1($what, $jd);
-        return $meeus->calcPlanets($frame, $sphereCart);
+        return ['planets' => $meeus->calcPlanets($frame, $sphereCart)];
     }
     
     
