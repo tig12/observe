@@ -4,7 +4,7 @@
 #
 variables: 
   data-dir: &data-dir data/experiences/castille/a00
-  tmp-dir:  &tmp-dir  tmp/experiences/castille/a00
+  tmp-dir:  &tmp-dir  var/tmp/experiences/castille/a00
   out-dir:  &out-dir  output/experiences/castille/a00
   
   experience: &experience

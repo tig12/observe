@@ -8,53 +8,54 @@
 
 @import url("style.css");
 
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
 body{
-    padding:0 0 .5rem 0;
+    font-family:"roboto flex",sans-serif;
+    line-height:1.4;
 }
 
-/* ================ Site layout ================ */
-html{height:100%;}
-
-body{
-    display:flex;
-    flex-direction:column;
-    height:100%;
+.container {
+    display: flex;
+    flex-direction: row-reverse; /* sidebar appears on the left */
+    height: 100vh; /* the full window height */
 }
 
-/* container and footer = direct children of body */
-.container{
-   flex:1 0 auto;
-   display:flex;   
-   flex-flow:row wrap;
-}
-/* in the html, write .left sidebar after .main area */
-.container :nth-child(2) { order: 1; }
-.container :nth-child(1) { order: 2; }
-
-/* left and main = direct children of container */
-.main{
-    flex:1 1 85%;
+/* MAIN SECTION */
+.main {
+    flex: 1;                     /* takes remaining width */
+    overflow-y: auto;            /* independent vertical scroll */
     padding:1rem .5rem 2rem 1rem;
+    background: #f9f9f9;
 }
 
-aside li{list-style:none;}
-.left{
-    flex:1 1 15%;
-}
-.left{
-    padding-top:5rem;
-    border-left:1px solid grey;
+/* LEFT SIDEBAR */
+.left {
+    width: 300px;
+    overflow-y: auto;            /* independent vertical scroll */
     background:lightgoldenrodyellow;
     font-size:.9rem;
     border-right:1px solid grey;
+    padding-top:1rem;
+}
+.left li{
+    list-style:none;
 }
 .left ul{
     padding-left:1rem;
 }
-.left>ul{
+.left>nav>ul{
     padding-left:0.5rem;
+    position:relative;
+    top:.5rem;
 }
-.left>ul>li{
+.left>nav>ul>li{
+    padding-bottom:0.3rem;
+}
+.left>nav>ul>li>ul>li{
     padding-bottom:0.3rem;
 }
 

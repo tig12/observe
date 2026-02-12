@@ -3,10 +3,8 @@ config.yml
 1.local
 
 #commands
-data
-log
+var
 output
-tmp
 
 
 TODO
