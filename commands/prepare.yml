@@ -1,0 +1,21 @@
+
+#
+# Command to precompute planetary positions, for a range of dates.
+#
+
+#
+# 1 - variables used in several commands
+#
+variables: 
+  tmp-dir: &tmp-dir  var/tmp/planets
+
+#
+# 2 - commands
+#
+
+# Computes planet coordinates
+# --------------------------------------------------------------------------
+planets:
+  command: prepareAstro
+  tmp-dir: *tmp-dir
+  compute: [SO, MO, ME, VE, MA, JU, SA, UR, NE, PL, NN]
