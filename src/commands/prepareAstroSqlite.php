@@ -2,23 +2,23 @@
 /******************************************************************************
     Computes planetary positions for a date range.
     
-    Parameters defined in commands/prepare.yml, in section "planets"
+    Parameters defined in commands/prepare.yml, in section "planets-sqlite"
     
-    Stores the results in var/planets/
-    
+    Stores the results in var/tmp/planets.sqlite3
     
     @license    GPL
-    @history    2026-02-10 20:16:02+01:00, Thierry Graff : Creation
+    @history    2026-02-13 20:51:50+01:00, Thierry Graff : Creation
 ********************************************************************************/
 namespace observe\commands;
 
 use observe\app\Command;
 use observe\app\Observe;
+use observe\parts\astro\ephem;
+use observe\parts\astro\time;
 use observe\app\ObserveException;
 use tigeph\ephem\meeus1\Meeus1;
-use tigeph\model\IAA;
 
-class prepareAstro implements Command {
+class prepareAstroSqlite implements Command {
         
     public static function execute($params=[]){
         //
@@ -45,51 +45,38 @@ class prepareAstro implements Command {
         }
         $dir = $params['tmp-dir'];
         if(!is_dir($dir)){
-            echo "ERROR directory '$dir'\n"
+            echo "ERROR directory '$dir' does not exist\n"
                 . "Create this directory before executing this command.\n";
             return;
         }
+        // sqlite path
+        if(!isset($params['sqlite-file'])){
+            echo "MISSING 'path-sqlite' PARAMETER IN COMMAND FILE\n"
+                . "Add this parameter in commands/prepare.yml.\n";
+            return;
+        }
+        // TODO check planets
+        //$planets = ['SO', 'MO', 'ME', 'VE', 'MA', 'JU', 'SA', 'UR', 'NE', 'PL', 'NN'];
+        $planets = $params['planets'];
         //
         // compute $years
         //
-        $str_range = $params[Observe::PARAM_OPTIONAL_STRING][0];
-        $years = [];
-        $p_year = '/^\d{4}$/';
-        $p_range = '/^\d{4}-\d{4}$/';
-        preg_match($p_year, $str_range, $m);
-        if(count($m) == 1){
-            $years[] = $m[0];
-        }
-        else {
-            preg_match($p_range, $str_range, $m);
-            if(count($m) == 1){
-                $from = substr($m[0], 0, 4);
-                $to = substr($m[0], 5);
-                // here, should check:
-                // - that $from < $to
-                // - that $from >= min(available years)
-                // - that $to >= max(available years)
-                // - that all dates between $from and $to correspond to existing dates
-                // not done because it's a build command, executed by a person supposed to be careful
-                $years = range($from, $to);
-            }
-            else {
-                echo "INVALID PARAMETER: {$str_range}\n$msg";
-                return;
-            }
-        }
+        $years = time::yearRange($params[Observe::PARAM_OPTIONAL_STRING][0]);
+        //
+        // Initialize sqlite database
+        //
+        $sqlite_path = $params['tmp-dir'] . DS . $params['path-sqlite'];
+        self::initalizeSqlite($sqlite_path);
+        
         //
         // compute planet positions
         //
-        // TODO put $planets in command file
-        $planets = ['SO', 'MO', 'ME', 'VE', 'MA', 'JU', 'SA', 'UR', 'NE', 'PL', 'NN'];
-        $tigephPlanets = array_values(array_intersect_key(IAA::IAA_TIGEPH, array_flip($planets))); // Convert to constants of SolarSystemC
+        $tigephPlanets = ephem::iaa2tigeph($planets);
         //
-        $file_header = 'DAY' . Observe::CSV_SEP . implode(Observe::CSV_SEP, $planets) . "\n"; 
         foreach($years as $year){
             $file = $dir . DS . $year . '.csv';
             $contents = $file_header;
-            $days = self::listDays($year);
+            $days = time::listDays($year);
             foreach($days as $day){
                 $datetime = $day . ' 12:00:00';
                 // note: $coords is an associative array with keys expressed with constants of SolarSystemC
@@ -101,21 +88,14 @@ class prepareAstro implements Command {
             echo "Generated $file\n";
         }
     }
-
+    
     /**
-        Returns a list of days YYYY-MM-DD of a given year.
-        @param  $year   ex: 1985
+        @param  $
     **/
-    private static function listDays($year) {
-        $res = [];
-        $start = new \DateTime("$year-01-01");
-        $end   = (new \DateTime("$year-12-31"))->modify('+1 day');
-        $period = new \DatePeriod($start, new \DateInterval('P1D'), $end);
-        foreach ($period as $date) {
-            $res[] = $date->format('Y-m-d');
+    public static function initalizeSqlite(string $sqlite_path): void {
+        if(!is_file($sqlite_path)){
         }
-        return $res;
+
     }
-    
-    
+
 }// end class

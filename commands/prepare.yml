@@ -7,15 +7,27 @@
 # 1 - variables used in several commands
 #
 variables: 
-  tmp-dir: &tmp-dir  var/tmp/planets
+  tmp-dir: &tmp-dir  var/tmp
 
 #
 # 2 - commands
 #
 
-# Computes planet coordinates
+# Compute planet coordinates in csv files
 # --------------------------------------------------------------------------
-planets:
-  command: prepareAstro
+planets-csv:
+  command: prepareAstroCsv
+  # the resulting csv files will be stored in tmp-dir/tmp-subdir
   tmp-dir: *tmp-dir
-  compute: [SO, MO, ME, VE, MA, JU, SA, UR, NE, PL, NN]
+  tmp-subdir: planets
+  planets: [SO, MO, ME, VE, MA, JU, SA, UR, NE, PL, NN]
+
+# Compute planet coordinates in a sqlite database
+# --------------------------------------------------------------------------
+planets-sqlite:
+  command: prepareAstroSqlite
+  # The resulting sqlite database will be stored in tmp-dir/sqlite-file
+  tmp-dir: *tmp-dir
+  sqlite-file: planets.sqlite3
+  planets: [SO, MO, ME, VE, MA, JU, SA, UR, NE, PL, NN]
+
