@@ -19,7 +19,7 @@ use observe\app\ObserveException;
 use tigeph\ephem\meeus1\Meeus1;
 use tigeph\model\IAA;
 
-class prepareAstroSqlite implements Command {
+class prepareAstro implements Command {
         
     public static function execute($params=[]){
         //
@@ -38,27 +38,19 @@ class prepareAstroSqlite implements Command {
             echo "USELESS PARAMETER: $useless\n$msg";
             return;
         }
-        // tmp dir
-        if(!isset($params['tmp-dir'])){
-            echo "MISSING 'tmp-dir' PARAMETER IN COMMAND FILE\n"
-                . "Add this parameter in commands/prepare.yml.\n";
-            return;
-        }
-        $dir = $params['tmp-dir'];
-        if(!is_dir($dir)){
-            echo "ERROR directory '$dir' does not exist\n"
-                . "Create this directory before executing this command.\n";
-            return;
-        }
         // sqlite path
-        if(!isset($params['sqlite-file'])){
-            echo "MISSING 'path-sqlite' PARAMETER IN COMMAND FILE\n"
+        if(!isset($params['sqlite-path'])){
+            echo "MISSING 'sqlite-path' PARAMETER IN COMMAND FILE\n"
                 . "Add this parameter in commands/prepare.yml.\n";
             return;
         }
-        // TODO check planets
-        //$planets = ['SO', 'MO', 'ME', 'VE', 'MA', 'JU', 'SA', 'UR', 'NE', 'PL', 'NN'];
-        $planets = $params['planets'];
+        // planet codes
+        $msg = IAA::checkCodes($params['planets']);
+        if($msg != ''){
+            echo $msg . "\n";
+            return;
+        }
+        $planets = $params['planets']; // = ['SO', 'MO', 'ME', 'VE', 'MA', 'JU', 'SDA', 'UR', 'NE', 'PL', 'NN']
         //
         // compute $years
         //
@@ -66,8 +58,7 @@ class prepareAstroSqlite implements Command {
         //
         // Initialize sqlite database
         //
-        $sqlite_path = $params['tmp-dir'] . DS . $params['sqlite-file'];
-        $sqlite = self::initalizeSqlite($sqlite_path, $planets);
+        $sqlite = self::initalizeSqlite($params['sqlite-path'], $planets);
         //
         // compute planet positions and store in sqlite
         //
