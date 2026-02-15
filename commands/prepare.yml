@@ -1,6 +1,7 @@
 
 #
 # Command to precompute planetary positions, for a range of dates.
+# Usable by all studies that use untimed dates.
 #
 
 #

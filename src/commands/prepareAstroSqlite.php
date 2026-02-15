@@ -17,6 +17,7 @@ use observe\parts\astro\ephem;
 use observe\parts\astro\time;
 use observe\app\ObserveException;
 use tigeph\ephem\meeus1\Meeus1;
+use tigeph\model\IAA;
 
 class prepareAstroSqlite implements Command {
         
@@ -65,37 +66,42 @@ class prepareAstroSqlite implements Command {
         //
         // Initialize sqlite database
         //
-        $sqlite_path = $params['tmp-dir'] . DS . $params['path-sqlite'];
-        self::initalizeSqlite($sqlite_path);
-        
+        $sqlite_path = $params['tmp-dir'] . DS . $params['sqlite-file'];
+        $sqlite = self::initalizeSqlite($sqlite_path, $planets);
         //
-        // compute planet positions
+        // compute planet positions and store in sqlite
         //
         $tigephPlanets = ephem::iaa2tigeph($planets);
-        //
+        // insert into planets(day,SO,MO,ME,VE,MA,JU,SA,UR,NE,PL,NN) values(:day,:SO,:MO,:ME,:VE,:MA,:JU,:SA,:UR,:NE,:PL,:NN)
+        $sql = 'insert into planets(day,' . implode(',', $planets) .') values(:day,:' . implode(',:', $planets) . ')';
+        $insert_stmt = $sqlite->prepare($sql);
         foreach($years as $year){
-            $file = $dir . DS . $year . '.csv';
-            $contents = $file_header;
+            echo "======= Processing year $year =======\n";
             $days = time::listDays($year);
             foreach($days as $day){
                 $datetime = $day . ' 12:00:00';
-                // note: $coords is an associative array with keys expressed with constants of SolarSystemC
-                // but $planets and $tigephPlanets share the same order, so it's no use to convert back to IAA keys
                 $coords = Meeus1::ephem($datetime, $tigephPlanets)['planets'];
-                $contents .= $day . Observe::CSV_SEP . implode(Observe::CSV_SEP, $coords) . "\n";
+                $fields = [];
+                $fields['day'] = $day;
+                foreach($coords as $tigephCode => $coord){
+                    $fields[IAA::TIGEPH_IAA[$tigephCode]] = $coord;
+                }
+                $insert_stmt->execute($fields);
             }
-            file_put_contents($file, $contents);
-            echo "Generated $file\n";
         }
     }
     
-    /**
-        @param  $
-    **/
-    public static function initalizeSqlite(string $sqlite_path): void {
-        if(!is_file($sqlite_path)){
+    public static function initalizeSqlite(string $sqlite_path, array $planets): \PDO {
+        $sqlite_exists = is_file($sqlite_path);
+        $sqlite = new \PDO('sqlite:' . $sqlite_path);
+        if(!$sqlite_exists){
+            // create table planets(day character(10),SO real,MO real,ME real,VE real,MA real,JU real,SA real,UR real,NE real,PL real,NN real)
+            $sql1 = 'create table planets(day character(10),' . implode(' real,', $planets) . ' real)';
+            $sql2 = 'create unique index idx_bday ON planets(day)';
+            $sqlite->exec($sql1);
+            $sqlite->exec($sql2);
         }
-
+        return $sqlite;
     }
 
 }// end class

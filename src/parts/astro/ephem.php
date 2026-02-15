@@ -17,7 +17,7 @@ class ephem {
         @return Array of equivalent tigeph codes that can be used to call an implementation of tigeph.Ephem.ephem()
     **/
     public static function iaa2tigeph(array $iaaCodes): array {
-        return array_values(array_intersect_key(IAA::IAA_TIGEPH, array_flip($planets)));
+        return array_values(array_intersect_key(IAA::IAA_TIGEPH, array_flip($iaaCodes)));
     }
     
 }// end class

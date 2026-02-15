@@ -96,7 +96,7 @@ planets:
 # Compute distributions using data/ymd.csv (year, day, age etc.)
 distrib-ymd:
   command: mfc.distrib.ymd
-  in-dir: *tmp-dir        # by convention,in tmp-dir/data
+  in-dir: *tmp-dir        # by convention, in tmp-dir/data
   out-dir: *tmp-dir       # by convention, goes to tmp-dir/distrib
   experience: *experience
   # When column W has this value, don't include the line in distributions involving W
