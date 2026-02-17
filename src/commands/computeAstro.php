@@ -23,7 +23,7 @@ use tigeph\model\IAA;
 use tigeph\ephem\swetest\Swetest;
 use tigeph\ephem\meeus1\Meeus1;
 
-use observe\parts\fileSystem;
+use observe\shared\fileSystem;
 
 class computeAstro implements Command {
     

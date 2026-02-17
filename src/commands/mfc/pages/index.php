@@ -13,9 +13,9 @@ use observe\app\ObserveException;
 use tiglib\arrays\csvAssociative;
 
 use observe\commands\mfc\MFC;
-use observe\parts\page\header;
-use observe\parts\page\footer;
-use observe\parts\page\nav;
+use observe\shared\page\header;
+use observe\shared\page\footer;
+use observe\shared\page\nav;
 
 class index {
     

@@ -5,7 +5,7 @@
     @license    GPL
     @history    2026-02-13 21:05:57+01:00, Thierry Graff : Creation
 ********************************************************************************/
-namespace observe\parts\astro;
+namespace observe\shared\astro;
 
 use tigeph\model\IAA;
 

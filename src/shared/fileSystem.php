@@ -6,7 +6,7 @@
     @license    GPL
     @history    2021-02-27 23:39:08+01:00, Thierry Graff : Creation
 ********************************************************************************/
-namespace observe\parts;
+namespace observe\shared;
 
 class fileSystem {
     

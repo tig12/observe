@@ -13,10 +13,10 @@ use observe\app\Command;
 use tiglib\arrays\csvAssociative;
 
 use observe\commands\mfc\MFC;
-use observe\parts\fileSystem;
-use observe\parts\distrib\csvDistrib;
-use observe\parts\distrib\degrees;
-use observe\parts\astro\aspects as aspects2;
+use observe\shared\fileSystem;
+use observe\shared\distrib\csvDistrib;
+use observe\shared\distrib\degrees;
+use observe\shared\astro\aspects as aspects2;
 
 class interaspects implements Command {
     

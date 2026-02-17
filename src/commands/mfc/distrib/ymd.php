@@ -14,8 +14,8 @@ use observe\app\Command;
 use tiglib\arrays\csvAssociative;
 use tiglib\time\diff;
 
-use observe\parts\fileSystem;
-use observe\parts\distrib\csvDistrib;
+use observe\shared\fileSystem;
+use observe\shared\distrib\csvDistrib;
 
 class ymd implements Command {
     

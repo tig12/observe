@@ -9,7 +9,7 @@
     @license    GPL
     @history    2021-03-09 10:09:46+01:00, Thierry Graff : Creation
 ********************************************************************************/
-namespace observe\parts\astro;
+namespace observe\shared\astro;
 
 use tiglib\math\mod360;
 

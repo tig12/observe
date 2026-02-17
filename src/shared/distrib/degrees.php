@@ -6,7 +6,7 @@
     @history    2021-03-14 20:15:29+01:00, Thierry Graff : Big refactor
     @history    2021-03-10 04:31:53+01:00, Thierry Graff : Creation
 ********************************************************************************/
-namespace observe\parts\distrib;
+namespace observe\shared\distrib;
 
 class degrees {
     

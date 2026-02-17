@@ -13,8 +13,8 @@ namespace observe\commands;
 
 use observe\app\Command;
 use observe\app\Observe;
-use observe\parts\astro\ephem;
-use observe\parts\astro\time;
+use observe\shared\astro\ephem;
+use observe\shared\astro\time;
 use observe\app\ObserveException;
 use tigeph\ephem\meeus1\Meeus1;
 use tigeph\model\IAA;

@@ -9,7 +9,7 @@
     @license    GPL
     @history    2021-02-28 23:03:00+01:00, Thierry Graff : Creation
 ********************************************************************************/
-namespace observe\parts\distrib;
+namespace observe\shared\distrib;
 
 class csvDistrib {
     

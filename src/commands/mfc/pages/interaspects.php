@@ -13,13 +13,13 @@ use tigeph\model\IAA;
 
 use observe\app\Observe;
 use observe\commands\mfc\MFC;
-use observe\parts\page\header;
-use observe\parts\page\footer;
-use observe\parts\page\tocInteraspects;
-use observe\parts\page\nav;
-use observe\parts\distrib\csvDistrib;
-use observe\parts\stats\misc;
-use observe\parts\fileSystem;
+use observe\shared\page\header;
+use observe\shared\page\footer;
+use observe\shared\page\tocInteraspects;
+use observe\shared\page\nav;
+use observe\shared\distrib\csvDistrib;
+use observe\shared\stats\misc;
+use observe\shared\fileSystem;
 use tigdraw\bar;
 
 class interaspects {

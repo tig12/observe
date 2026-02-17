@@ -5,7 +5,7 @@
     @license    GPL
     @history    2021-03-14 17:59:59+01:00, Thierry Graff : Creation from existing code
 ********************************************************************************/
-namespace observe\parts\stats;
+namespace observe\shared\stats;
 
 class misc {
     

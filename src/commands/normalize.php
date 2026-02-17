@@ -23,7 +23,7 @@ namespace observe\commands;
 use observe\app\Observe;
 use observe\app\Command;
 use observe\app\ObserveException;
-use observe\parts\fileSystem;
+use observe\shared\fileSystem;
 use tiglib\arrays\yieldCsv;
 use tiglib\arrays\yieldCsvAsso;
 

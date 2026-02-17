@@ -12,7 +12,7 @@ use observe\app\ObserveException;
 use observe\commands\mfc\MFC;
 use tiglib\arrays\csvAssociative;
 
-use observe\parts\fileSystem;
+use observe\shared\fileSystem;
 
 class all implements Command {
     

@@ -6,7 +6,7 @@
     @license    GPL
     @history    2021-03-15 18:06:11+01:00, Thierry Graff : Creation
 ********************************************************************************/
-namespace observe\parts\page;
+namespace observe\shared\page;
 
 use tigeph\model\IAA;
 

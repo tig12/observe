@@ -15,7 +15,7 @@
     @license    GPL
     @history    2021-02-01 03:32:45+01:00, Thierry Graff : Creation
 ********************************************************************************/
-namespace observe\parts\stats;
+namespace observe\shared\stats;
 
 class student {
     public static function execute($params=[]){

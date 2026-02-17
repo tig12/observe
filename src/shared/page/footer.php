@@ -7,7 +7,7 @@
     @history    2021-03-15 18:29:56+01:00, Thierry Graff : Creation from former class headfoot
     @history    2021-02-27 23:05:44+01:00, Thierry Graff : Creation
 ********************************************************************************/
-namespace observe\parts\page;
+namespace observe\shared\page;
 
 class footer {
     

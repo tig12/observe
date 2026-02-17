@@ -4,7 +4,7 @@
     @license    GPL
     @history    2021-03-07 18:30:03+01:00, Thierry Graff : Creation
 ********************************************************************************/
-namespace observe\parts\stats;
+namespace observe\shared\stats;
 
 class constant {
     

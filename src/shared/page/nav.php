@@ -7,7 +7,7 @@
     @license    GPL
     @history    2021-03-11 16:30:45+01:00, Thierry Graff : Creation
 ********************************************************************************/
-namespace observe\parts\page;
+namespace observe\shared\page;
 
 class nav {
     
