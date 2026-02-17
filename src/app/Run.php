@@ -41,8 +41,8 @@ class Run{
         return $res;
     }
     
-    /**  Returns the directory containing the command filess **/
-    public static function commandsDir(){
+    /**  Returns the directory containing the command files **/
+    private static function commandsDir(){
         return dirname(dirname(__DIR__)) . DS . 'commands';
     }
     

@@ -2,14 +2,11 @@
 config.yml
 1.local
 
-#commands
 var
 output
 
-
 TODO
 ENCOURS
-
 
 # files marked for deletion
 z.*

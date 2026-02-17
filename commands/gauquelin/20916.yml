@@ -4,8 +4,8 @@
 #
 variables: 
   data-dir: &data-dir data/experiences/gauquelin/heredity-newalch-20916
-  tmp-dir:  &tmp-dir  tmp/experiences/gauquelin/heredity-newalch-20916
-  out-dir:  &out-dir  output/experiences/gauquelin/heredity-newalch-20916
+  tmp-dir:  &tmp-dir  var/studies/gauquelin/heredity-newalch-20916
+  out-dir:  &out-dir  output/studies/gauquelin/heredity-newalch-20916
   
   experience: &experience
     type: MFC
