@@ -13,6 +13,7 @@ namespace observe\commands;
 
 use observe\app\Command;
 use observe\app\Observe;
+use observe\app\Config;
 use observe\shared\astro\ephem;
 use observe\shared\astro\time;
 use observe\app\ObserveException;
@@ -38,13 +39,11 @@ class prepareAstro implements Command {
             echo "USELESS PARAMETER: $useless\n$msg";
             return;
         }
-        // sqlite path
-        if(!isset($params['sqlite-path'])){
-            echo "MISSING 'sqlite-path' PARAMETER IN COMMAND FILE\n"
-                . "Add this parameter in commands/prepare.yml.\n";
+        // planet codes
+        if(!isset($params['planets'])){
+            echo "MISSING 'planets' PARAMETER IN commands/prepare.yml\n";
             return;
         }
-        // planet codes
         $msg = IAA::checkCodes($params['planets']);
         if($msg != ''){
             echo $msg . "\n";
@@ -52,16 +51,17 @@ class prepareAstro implements Command {
         }
         $planets = $params['planets']; // = ['SO', 'MO', 'ME', 'VE', 'MA', 'JU', 'SDA', 'UR', 'NE', 'PL', 'NN']
         //
-        // compute $years
-        //
-        $years = time::yearRange($params[Observe::PARAM_OPTIONAL_STRING][0]);
-        //
         // Initialize sqlite database
         //
-        $sqlite = self::initalizeSqlite($params['sqlite-path'], $planets);
+        if(!isset(Config::$data['sqlite-planets'])){
+            echo "MISSING 'sqlite-planets' PARAMETER IN config.yml\n";
+            return;
+        }
+        $sqlite = self::initalizeSqlite(Config::$data['sqlite-planets'], $planets);
         //
         // compute planet positions and store in sqlite
         //
+        $years = time::yearRange($params[Observe::PARAM_OPTIONAL_STRING][0]);
         $tigephPlanets = ephem::iaa2tigeph($planets);
         // insert into planets(day,SO,MO,ME,VE,MA,JU,SA,UR,NE,PL,NN) values(:day,:SO,:MO,:ME,:VE,:MA,:JU,:SA,:UR,:NE,:PL,:NN)
         $sql = 'insert into planets(day,' . implode(',', $planets) .') values(:day,:' . implode(',:', $planets) . ')';
@@ -82,7 +82,7 @@ class prepareAstro implements Command {
         }
     }
     
-    public static function initalizeSqlite(string $sqlite_path, array $planets): \PDO {
+    private static function initalizeSqlite(string $sqlite_path, array $planets): \PDO {
         $sqlite_exists = is_file($sqlite_path);
         $sqlite = new \PDO('sqlite:' . $sqlite_path);
         if(!$sqlite_exists){

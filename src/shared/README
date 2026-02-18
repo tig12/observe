@@ -1,2 +1,2 @@
 
-Directory parts/ contains code that can be used by several commands.
+Directory shared/ contains code that can be used by several commands.

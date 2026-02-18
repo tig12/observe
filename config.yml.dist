@@ -6,3 +6,7 @@ swetest:
   bin: /path/to/swetest-binary
   # directory containing data files (like seas_00.se1)
   dir:  /path/to/sweph
+
+# Path to the local database containing the planet positions.
+# Usable by all comands which need positions with a precision of one day.
+sqlite-planets: var/planets.sqlite3

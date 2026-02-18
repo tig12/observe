@@ -8,8 +8,7 @@
 # --------------------------------------------------------------------------
 planets:
   command: prepareAstro
-  # Path to the generated sqlite database
-  sqlite-path: var/planets.sqlite3
   # Planets to compute, using IAA codes
   planets: [SO, MO, ME, VE, MA, JU, SA, UR, NE, PL, NN]
 
+  # The path to the generated sqlite database is in entry sqlite-planets of config.yml
