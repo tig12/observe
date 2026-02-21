@@ -43,7 +43,7 @@ class Run{
     
     /**  Returns the directory containing the command files **/
     private static function commandsDir(){
-        return dirname(dirname(__DIR__)) . DS . 'commands';
+        return 'commands';
     }
     
     /**

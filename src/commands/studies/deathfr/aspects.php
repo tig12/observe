@@ -62,7 +62,7 @@ class aspects implements Command {
         //
         // Prepare
         //
-//        $stmt_persons = $sqlite_planets->prepare("select bday,dday from person");
+//        $stmt_persons = $sqlite_persons->prepare("select bday,dday from person");
         $stmt_persons = $sqlite_persons->prepare("select bday,dday from person limit 10");
         $stmt_planets = $sqlite_planets->prepare("select * from planets where day=:day");
         // $distrib = assoc array
@@ -88,19 +88,38 @@ class aspects implements Command {
             foreach($planets as $planet_birth){
                 foreach($planets as $planet_death){
                     $key = $planet_birth . '-' . $planet_death;
-echo "$key\n";
+//echo "$key\n";
                     $angle = floor(mod360::compute($planets_birth[$planet_birth] - $planets_death[$planet_death]));
                     $distrib[$key][$angle]++;
-echo $planets_birth[$planet_birth] . "\n";
-echo $planets_death[$planet_death] . "\n";
-echo "$angle\n";
+// echo $planets_birth[$planet_birth] . "\n";
+// echo $planets_death[$planet_death] . "\n";
+// echo "$angle\n";
 break;
                 }
 break;
             }
-print_r($distrib['SO-SO']); exit;
+//print_r($distrib['SO-SO']); exit;
         }
-        
+        //
+        // Store result
+        //
+        $keys = [];
+        foreach($planets as $p1){
+            foreach($planets as $p2){
+                $keys[] = "$p1-$p2";
+            }
+        }
+        $res = implode(';', $keys) . "\n";
+        for($i=0; $i < 360; $i++){
+            $line = [];
+            foreach($planets as $p1){
+                foreach($planets as $p2){
+                    $line[] = $distrib["$p1-$p2"][$i];
+                }
+            }
+            $res .= implode(';', $line) . "\n";
+        }
+echo "$res\n"; exit;
     }
     
 } // end class

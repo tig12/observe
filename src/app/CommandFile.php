@@ -34,6 +34,13 @@ class CommandFile {
     }
     
     /**
+        Retruns $this->data
+    **/
+    public function getData(){
+        return $this->data;
+    }
+    
+    /**
         Checks if a string corresponds to a valid command
     **/
     public function commandExists($str){

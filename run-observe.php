@@ -22,7 +22,7 @@ use observe\app\CommandFile;
 // parameter checking
 //
 $commandFiles = Run::getCommandFiles();
-$commandFiles_str = implode(", ", $commandFiles);
+$commandFiles_str = "\n  - " . implode("\n  - ", $commandFiles);
 
 $USAGE = <<<USAGE
 -------                                                                                               
@@ -36,7 +36,7 @@ USAGE;
 
 if($argc == 1){
     echo "WRONG USAGE - {$argv[0]} needs 2 arguments\n";
-    echo "Possible values for argument1:\n     $commandFiles_str\n";
+    echo "Possible values for argument1:$commandFiles_str\n";
     echo $USAGE;
     exit;
 }
@@ -46,7 +46,7 @@ if($argc == 1){
 //
 if(!in_array($argv[1], $commandFiles)){
     echo "WRONG USAGE - INVALID COMMAND FILE: {$argv[1]}\n";
-    echo "Possible values for argument1:\n     $commandFiles_str\n";
+    echo "Possible values for argument1:$commandFiles_str\n";
     echo $USAGE;
     exit;
 }
@@ -56,7 +56,7 @@ $cmdFile = new CommandFile($argv[1]);
 
 if($argc == 2){
     echo "WRONG USAGE - {$argv[0]} needs 2 arguments\n";
-    echo "Possible values for argument2: " . implode(', ', $cmdFile->getAllCommands())  . "\n";
+    echo "Possible values for argument2:\n  - " . implode("\n  - ", $cmdFile->getAllCommands())  . "\n";
     echo $USAGE;
     exit;
 }
@@ -66,7 +66,7 @@ if($argc == 2){
 //
 if(!$cmdFile->commandExists($argv[2])){
     echo "WRONG USAGE - INVALID COMMAND: {$argv[2]}\n";
-    echo "Possible values for argument2: " . implode(', ', $cmdFile->getAllCommands())  . "\n";
+    echo "Possible values for argument2:\n  - " . implode("\n  - ", $cmdFile->getAllCommands())  . "\n";
     echo $USAGE;
     exit;
 }
