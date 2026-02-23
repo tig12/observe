@@ -1,0 +1,130 @@
+/** 
+    CSS specific to <mysite.org> site
+    Contains site layout
+    
+    @history    2018-11-25 23:39:21+01:00, Thierry Graff : Creation ; copy flex from index.html
+    @history    2019-02-22 09:41:28+01:00, Thierry Graff : New flex layout
+**/
+
+@import url("style.css");
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+body{
+    font-family:"roboto flex",sans-serif;
+    line-height:1.4;
+}
+h1{
+    text-align:center;
+    margin:3rem 0;
+}
+code, pre{
+    border-radius: .25rem;
+    background: #2c333f;
+    font-size: .875em;
+    font-weight: 400;
+	font-family: "roboto flex mono", ui-monospace, monospace;
+    padding: 2px;
+}
+pre{
+    display:table;
+    white-space:pre-wrap;
+    margin:1rem;
+    padding:.5rem;
+    border-radius:2px;
+    border:1px solid #717a9f;
+    line-height:1.15;
+}
+
+a{
+    color:#4b83f1;
+}
+a:hover{
+    text-decoration:underline;
+}
+
+/* ================ Site structure ================ */
+.container {
+    display: flex;
+    flex-direction: row-reverse; /* sidebar appears on the left */
+    height: 100vh; /* the full window height */
+}
+
+/* MAIN SECTION */
+.main {
+    flex: 1;                     /* takes remaining width */
+    overflow-y: auto;            /* independent vertical scroll */
+    padding:1rem .5rem 2rem 1rem;
+    background:#1e2129;
+    color:#d9e5fc;
+}
+
+/* LEFT SIDEBAR */
+.left {
+    width: 300px;
+    overflow-y: auto;            /* independent vertical scroll */
+    background-color:#333;
+    font-size:.9rem;
+    border-right:1px solid grey;
+    padding-top:1rem;
+}
+.left a{
+    color:#eee;
+}
+.left .title{
+    font-weight:bold;
+    color:#ddd;
+}
+.left li{
+    list-style:none;
+}
+.left ul{
+    padding-left:1rem;
+}
+.left>nav>ul{
+    padding-left:0.5rem;
+    position:relative;
+    top:.5rem;
+}
+.left>nav>ul>li{
+    padding-bottom:0.3rem;
+}
+.left>nav>ul>li>ul>li{
+    padding-bottom:0.3rem;
+}
+
+table.wikitable > tr > th, table.wikitable > * > tr > th {
+    background-color:#333;
+}
+
+/* ================ Particular elements ================ */
+.intro{
+    margin-bottom:2rem;
+}
+
+/* ================ Table of contents ================ */
+.pagetoc{
+    display:inline-block;
+    background: #2c333f;
+    margin:1rem 2rem;
+    padding:1rem 1rem 1rem 1rem;
+    border:1px dotted black;
+    border-radius:5px;
+    font-family:Arial,Helvetica,sans-serif;
+    line-height:1.6;
+}
+.pagetoc a{
+    color:lightyellow;
+}
+.pagetoc ul{
+    list-style-type:none;
+    padding-left:1rem;
+    margin:0;
+}
+.pagetoc ul>li{}
+.pagetoc>ul>li>a{
+    font-weight:bold;
+}

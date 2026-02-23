@@ -10,6 +10,7 @@ namespace observe\commands\studies\deathfr;
 use observe\app\CommandFile;
 use observe\app\Run;
 use observe\app\ObserveException;
+use tigeph\model\IAA;
 
 DeathFr::init();
 
@@ -58,6 +59,10 @@ class DeathFr {
             throw new ObserveException("Missing key variables.planets in file " . self::$COMMAND_FILE_PATH);
         }
         self::$PLANETS = $data['variables']['planets'];
+        $msg = IAA::checkCodes(self::$PLANETS);
+        if($msg != ''){
+            throw new ObserveException("Invalid key in variables.planets in file " . self::$COMMAND_FILE_PATH . ":\n$msg\n");
+        }
     }
     
     /** Returns a PDO link to death-fr.sqlite3 **/

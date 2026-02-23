@@ -10,7 +10,6 @@ namespace observe\shared;
 
 class fileSystem {
     
-    // ******************************************************
     /**
         file_put_contents + log
     **/
@@ -26,7 +25,6 @@ class fileSystem {
         }
     }
     
-    // ******************************************************
     /**
         mkdir + log
         The directory is created only if it does not exist

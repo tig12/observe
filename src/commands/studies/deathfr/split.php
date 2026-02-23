@@ -10,16 +10,7 @@ use observe\app\Command;
 use tiglib\time\diff;
 
 class split implements Command {
-    
-    /** Name of the file README generated in output directory **/
-    const string README_FILENAME = 'README';
-    
-    /** Contents of the file README generated in output directory **/
-    const string README_CONTENTS = <<<README
-The files in this directory contains csv files.
-Each line of these files contains birth day and death day, format YYYY-MM-DD.
-README;
-    
+        
     public static function execute($params=[]){
         //
         // Parameter check
@@ -30,8 +21,7 @@ README;
             return;
         }
         $split = $params['split'];
-        $msg = DeathFr::checkParam_split($split);
-        if($msg !== true){
+        if(($msg = DeathFr::checkParam_split($split)) !== true){
             echo $msg;
             return;
         }
@@ -76,7 +66,6 @@ README;
         // Store result
         //
         echo "Generated $outFile\n";
-        file_put_contents($outDir . DS . self::README_FILENAME, self::README_CONTENTS);
     }
 
     /** 
@@ -138,7 +127,6 @@ README;
             bzclose($bz2s[$i]);
             echo "Generated {$nValues[$i]} lines in {$filenames[$i]}\n";
         }
-        file_put_contents($outDir . DS . self::README_FILENAME, self::README_CONTENTS);
     }
 
     

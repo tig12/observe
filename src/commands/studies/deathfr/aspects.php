@@ -7,8 +7,9 @@
 namespace observe\commands\studies\deathfr;
 
 use observe\app\Command;
-use observe\app\Config;
-use tigeph\model\IAA;
+use observe\shared\astro\sqlitePlanets;
+use observe\shared\astro\aspects as aspectUtils;
+use observe\shared\distrib\degrees as degreeUtils;
 use tiglib\math\mod360;
 
 class aspects implements Command {
@@ -17,51 +18,93 @@ class aspects implements Command {
         //
         // Parameter check
         //
-        if(!isset($params['work-dir'])){
-            echo "Missing parameter 'work-dir' in command file commands/death-fr/death-fr.yml\n";
+        if(!isset($params['split'])){
+            echo "Missing parameter 'split' in command file commands/death-fr/death-fr.yml\n";
+            echo "Possible values:\n  - " . implode("\n  - ", DeathFr::$POSSIBLE_SPLITS) . "\n";
             return;
         }
+        $split = $params['split'];
+        if(($msg = DeathFr::checkParam_split($split)) !== true){
+            echo $msg;
+            return;
+        }
+        //
         if(!isset($params['out-subdir'])){
-            echo "Missing parameter 'out-subdir' in command file commands/death-fr/death-fr.yml\n";
+            echo "Missing parameter 'out-subdir' in command file " . DeathFr::$COMMAND_FILE_PATH . "\n";
             return;
         }
-        $outDir = $params['work-dir'] . DS . $params['out-subdir'];
+        $outDir = DeathFr::$WORKING_DIR . DS . $params['out-subdir'];
         if(!is_dir($outDir)){
             echo "Directory $outDir does not exist. Create it before executing this command\n";
             return;
         }
+        //
+        if(!isset($params['in-subdir'])){
+            echo "Missing parameter 'in-subdir' in command file " . DeathFr::$COMMAND_FILE_PATH . "\n";
+            return;
+        }
+        $dataDir = DeathFr::$WORKING_DIR . DS . $params['in-subdir'];
+        if(!is_dir($dataDir)){
+            echo "Directory $dataDir does not exist - Check the value in " . DeathFr::$COMMAND_FILE_PATH . "\n";
+            return;
+        }
         // sqlite database containing the planet positions
-        if(!is_file(Config::$data['sqlite-planets'])){
-            echo 'Sqlite database ' . Config::$data['sqlite-planets'] . "does not exist\n"
-                . "You first need to create it using php run-observe.php prepare planets <date range>\n";
-                return;
-        }
-        $sqlite_planets = new \PDO('sqlite:' . Config::$data['sqlite-planets']);
-        // sqlite database containing data coming from data.gouv.fr
-        if(!isset($params['sqlite-death-fr'])){
-            echo "Missing parameter 'sqlite-death-fr' in command file commands/death-fr/death-fr.yml\n";
-            return;
-        }
-        if(!is_file($params['sqlite-death-fr'])){
-            echo 'Sqlite database ' . $params['sqlite-death-fr'] . "does not exist\n"
-                . "You first need to create it (using g5 program)\n";
-                return;
-        }
-        $sqlite_persons = new \PDO('sqlite:' . $params['sqlite-death-fr']);
+        $sqlite_planets = sqlitePlanets::getSqlite();
         // planet codes
-        if(!isset($params['planets'])){
-            echo "MISSING 'planets' PARAMETER IN commands/prepare.yml\n";
-            return;
-        }
-        $msg = IAA::checkCodes($params['planets']);
-        if($msg != ''){
-            echo $msg . "\n";
-            return;
-        }
-        $planets = $params['planets'];
+        $allPlanets = DeathFr::$PLANETS;
         //
         // Prepare
         //
+$nPlanets = count($allPlanets);
+        // select SO,MO,ME,VE,MA,JU,SA,UR,NE,PL,NN from planets where day=:day
+        $stmt_planets = $sqlite_planets->prepare('select ' . implode(',', $allPlanets) . ' from planets where day=:day');
+        
+        $filename = $dataDir . DS . '04--1year-2years.csv.bz2';
+        $handle = fopen('compress.bzip2://' . $filename, 'r');
+        if ($handle === false) {
+            die('Unable to open file');
+        }
+        //
+        // Execute
+        //
+        $planets_birth = [];
+        $planets_death = [];
+        while(($line = fgets($handle)) !== false) {
+            [$bday, $dday] = explode(';', trim($line));
+            /* 
+            $stmt_planets->execute([':day' => $bday]);
+            $planets_birth[] = $stmt_planets->fetch(\PDO::FETCH_ASSOC);
+            $stmt_planets->execute([':day' => $dday]);
+            $planets_death[] = $stmt_planets->fetch(\PDO::FETCH_ASSOC);
+            */
+            $stmt_planets->execute([':day' => $bday]);
+            $tmp_birth = $stmt_planets->fetch(\PDO::FETCH_ASSOC);
+            $stmt_planets->execute([':day' => $dday]);
+            $tmp_death = $stmt_planets->fetch(\PDO::FETCH_ASSOC);
+//if(count($tmp_birth) != $nPlanets || count($tmp_death) != $nPlanets){
+if(!is_array($tmp_birth) || !is_array($tmp_death)){
+    echo "'''$bday, $dday'''\n";
+    print_r($tmp_birth); echo "\n";
+    print_r($tmp_death); echo "\n";
+    exit;
+}
+        }
+        if(!feof($handle)){
+            echo "Error: unexpected fgets() failure\n";
+        }
+        fclose($handle);
+exit;
+        // Here, we compute the angles between birth and death = death - birth => param 1 = death and param 2 = birth
+        $angles = aspectUtils::computeDouble($planets_death, $planets_birth, $allPlanets, $allPlanets);
+        //$distrib = degreeUtils::computeDistrib($angles);
+//print_r($angles);
+exit;
+
+
+
+
+
+
 //        $stmt_persons = $sqlite_persons->prepare("select bday,dday from person");
         $stmt_persons = $sqlite_persons->prepare("select bday,dday from person limit 10");
         $stmt_planets = $sqlite_planets->prepare("select * from planets where day=:day");
@@ -69,10 +112,10 @@ class aspects implements Command {
         // keys: ex [SU-ME] ; planet code at birth - planet code at death
         // values : regular array of 360 elements containing the distribution
         $distrib = [];
-        $nPlanets = count($planets);
+        $nPlanets = count($allPlanets);
         for($i=0; $i < $nPlanets; $i++){
             for($j=0; $j < $nPlanets; $j++){
-                $key = $planets[$i] . '-' . $planets[$j];
+                $key = $allPlanets[$i] . '-' . $allPlanets[$j];
                 $distrib[$key] = array_fill(0, 360, 0); // regular array, from idx = 0 to 359
             }
         }
@@ -85,8 +128,9 @@ class aspects implements Command {
             $planets_birth = $stmt_planets->fetch(\PDO::FETCH_ASSOC);
             $stmt_planets->execute([':day' => $person['dday']]);
             $planets_death = $stmt_planets->fetch(\PDO::FETCH_ASSOC);
-            foreach($planets as $planet_birth){
-                foreach($planets as $planet_death){
+// TODO See if observe\shared\astro\aspects::computeDouble() could be used instead (avoid code repetition)
+            foreach($allPlanets as $planet_birth){
+                foreach($allPlanets as $planet_death){
                     $key = $planet_birth . '-' . $planet_death;
 //echo "$key\n";
                     $angle = floor(mod360::compute($planets_birth[$planet_birth] - $planets_death[$planet_death]));

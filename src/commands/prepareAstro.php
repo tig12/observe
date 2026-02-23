@@ -19,6 +19,8 @@ use observe\shared\astro\time;
 use observe\app\ObserveException;
 use tigeph\ephem\meeus1\Meeus1;
 use tigeph\model\IAA;
+use tiglib\time\yearRange;
+use tiglib\time\daysOfYear;
 
 class prepareAstro implements Command {
         
@@ -61,14 +63,14 @@ class prepareAstro implements Command {
         //
         // compute planet positions and store in sqlite
         //
-        $years = time::yearRange($params[Observe::PARAM_OPTIONAL_STRING][0]);
+        $years = yearRange::compute($params[Observe::PARAM_OPTIONAL_STRING][0]);
         $tigephPlanets = ephem::iaa2tigeph($planets);
         // insert into planets(day,SO,MO,ME,VE,MA,JU,SA,UR,NE,PL,NN) values(:day,:SO,:MO,:ME,:VE,:MA,:JU,:SA,:UR,:NE,:PL,:NN)
         $sql = 'insert into planets(day,' . implode(',', $planets) .') values(:day,:' . implode(',:', $planets) . ')';
         $insert_stmt = $sqlite->prepare($sql);
         foreach($years as $year){
             echo "======= Processing year $year =======\n";
-            $days = time::listDays($year);
+            $days = daysOfYear::compute($year);
             foreach($days as $day){
                 $datetime = $day . ' 12:00:00';
                 $coords = Meeus1::ephem($datetime, $tigephPlanets)['planets'];

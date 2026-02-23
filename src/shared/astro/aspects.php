@@ -82,6 +82,13 @@ class aspects {
         @param  $cols2      Same as $cols1 for $data2
         @param  $skip       See {@link computeSingle()}
         @param  $precision  See {@link computeSingle()}
+        @return Same format as {@link computeSingle()}, but contains aspects between the two datasets.
+                ex : [
+                    0 => ['SO-MO' => 253.312 ... ],
+                    ...
+                ]
+                Here, SO is from data set 1, and MO is from data set 2.
+
     **/
     public static function computeDouble(
         &$data1,
@@ -122,6 +129,12 @@ class aspects {
             $new = [];
             for($j=0; $j < $NinKeys1; $j++){
                 for($k=0; $k < $NinKeys2; $k++){
+if(!is_array($line1)){
+    die("\n<br>die here " . __FILE__ . ' - line ' . __LINE__ . "\n");
+}
+if(!is_array($line2)){
+    die("\n<br>die here " . __FILE__ . ' - line ' . __LINE__ . "\n");
+}
                     $new[$inKeys1[$j] . '-' . $inKeys2[$k]]
                         = round(mod360::compute($line1[$inKeys1[$j]] - $line2[$inKeys2[$k]]), $precision);
                 }
