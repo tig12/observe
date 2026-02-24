@@ -115,6 +115,7 @@ class aspects implements Command {
         $t2 = microtime(true);
         $dt = round($t2 - $t1, 3);
         echo "Execution time: $dt s\n";
+// 09--50years-150years: Execution time: 10497.907 s
     }
     
     /**

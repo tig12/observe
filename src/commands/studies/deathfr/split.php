@@ -36,6 +36,9 @@ class split implements Command {
             echo "Directory $outDir does not exist. Create it before executing this command\n";
             return;
         }
+        //
+        // Prepare
+        //
         // sqlite database containing data coming from data.gouv.fr
         $sqlite_persons = DeathFr::getSqlite();
         //

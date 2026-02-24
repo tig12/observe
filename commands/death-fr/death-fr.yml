@@ -81,6 +81,6 @@ control:
   n-controls: 10
   # Number used to start naming controls
   # useful when performing several executions
-  n-start: 11
+  n-start: 1
   # Control distributions are generated in working-dir/out-subdir
   out-subdir: control
