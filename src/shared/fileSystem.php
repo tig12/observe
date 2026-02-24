@@ -27,7 +27,7 @@ class fileSystem {
     
     /**
         mkdir + log
-        The directory is created only if it does not exist
+        The directory is created only if it does not exist.
     **/
     public static function mkdir(
         string $path,

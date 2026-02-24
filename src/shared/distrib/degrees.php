@@ -28,7 +28,6 @@ class degrees {
                     'MO' => [ 0 => 1142, ... 359 => 1154 ],
                     ...
                 ]
-
     **/
     public static function computeDistrib(&$data){
         $allDegrees = array_fill_keys(range(0, 359), 0); // [0 => 0, 1 => 0, ... 359 => 0]
@@ -45,6 +44,26 @@ class degrees {
                     $value = 0;
                 }
                 $res[$key][$value]++;
+            }
+        }
+        return $res;
+    }
+    
+    /**
+        @param  $codes1 and $codes2 are arrays containing keys
+                ex: ['SO', 'MO', 'ME' ...]
+        @return Array initialized with compound keys.
+                ex: [
+                    'SO-SO' => [0 => 0, ... 359 => 0],
+                    ...
+                    'NN-NN' => [0 => 0, ... 359 => 0]
+                ]
+    **/
+    public static function emptyDoubleDistrib(array $codes1, array $codes2) {
+        $res = [];
+        foreach($codes1 as $code1){
+            foreach($codes2 as $code2){
+                $res["$code1-$code2"] = array_fill(0, 360, 0);
             }
         }
         return $res;

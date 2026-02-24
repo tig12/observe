@@ -1,5 +1,6 @@
 <?php
 /******************************************************************************
+    Computes the distribution of aspects between planets at birth and planets at death
     
     @license    GPL
     @history    2026-02-17 00:44:29+01:00, Thierry Graff : Creation
@@ -10,7 +11,9 @@ use observe\app\Command;
 use observe\shared\astro\sqlitePlanets;
 use observe\shared\astro\aspects as aspectUtils;
 use observe\shared\distrib\degrees as degreeUtils;
-use tiglib\math\mod360;
+use observe\shared\distrib\csvDistrib;
+use observe\shared\fileSystem;
+use tiglib\filesystem\yieldFile;
 
 class aspects implements Command {
     
@@ -35,6 +38,7 @@ class aspects implements Command {
         }
         $outDir = DeathFr::$WORKING_DIR . DS . $params['out-subdir'];
         if(!is_dir($outDir)){
+            // Not created to avoid mistakes
             echo "Directory $outDir does not exist. Create it before executing this command\n";
             return;
         }
@@ -45,126 +49,110 @@ class aspects implements Command {
         }
         $dataDir = DeathFr::$WORKING_DIR . DS . $params['in-subdir'];
         if(!is_dir($dataDir)){
+            // Not created to avoid mistakes
             echo "Directory $dataDir does not exist - Check the value in " . DeathFr::$COMMAND_FILE_PATH . "\n";
             return;
         }
-        // sqlite database containing the planet positions
-        $sqlite_planets = sqlitePlanets::getSqlite();
-        // planet codes
-        $allPlanets = DeathFr::$PLANETS;
         //
         // Prepare
         //
-$nPlanets = count($allPlanets);
+        // planet codes
+        $allPlanets = DeathFr::$PLANETS;
+        // sqlite database containing the planet positions
+        $sqlite_planets = sqlitePlanets::getSqlite();
         // select SO,MO,ME,VE,MA,JU,SA,UR,NE,PL,NN from planets where day=:day
         $stmt_planets = $sqlite_planets->prepare('select ' . implode(',', $allPlanets) . ' from planets where day=:day');
-        
-        $filename = $dataDir . DS . '04--1year-2years.csv.bz2';
-        $handle = fopen('compress.bzip2://' . $filename, 'r');
-        if ($handle === false) {
-            die('Unable to open file');
-        }
         //
         // Execute
         //
-        $planets_birth = [];
-        $planets_death = [];
-        while(($line = fgets($handle)) !== false) {
-            [$bday, $dday] = explode(';', trim($line));
-            /* 
-            $stmt_planets->execute([':day' => $bday]);
-            $planets_birth[] = $stmt_planets->fetch(\PDO::FETCH_ASSOC);
-            $stmt_planets->execute([':day' => $dday]);
-            $planets_death[] = $stmt_planets->fetch(\PDO::FETCH_ASSOC);
-            */
-            $stmt_planets->execute([':day' => $bday]);
-            $tmp_birth = $stmt_planets->fetch(\PDO::FETCH_ASSOC);
-            $stmt_planets->execute([':day' => $dday]);
-            $tmp_death = $stmt_planets->fetch(\PDO::FETCH_ASSOC);
-//if(count($tmp_birth) != $nPlanets || count($tmp_death) != $nPlanets){
-if(!is_array($tmp_birth) || !is_array($tmp_death)){
-    echo "'''$bday, $dday'''\n";
-    print_r($tmp_birth); echo "\n";
-    print_r($tmp_death); echo "\n";
-    exit;
-}
-        }
-        if(!feof($handle)){
-            echo "Error: unexpected fgets() failure\n";
-        }
-        fclose($handle);
-exit;
-        // Here, we compute the angles between birth and death = death - birth => param 1 = death and param 2 = birth
-        $angles = aspectUtils::computeDouble($planets_death, $planets_birth, $allPlanets, $allPlanets);
-        //$distrib = degreeUtils::computeDistrib($angles);
-//print_r($angles);
-exit;
-
-
-
-
-
-
-//        $stmt_persons = $sqlite_persons->prepare("select bday,dday from person");
-        $stmt_persons = $sqlite_persons->prepare("select bday,dday from person limit 10");
-        $stmt_planets = $sqlite_planets->prepare("select * from planets where day=:day");
-        // $distrib = assoc array
-        // keys: ex [SU-ME] ; planet code at birth - planet code at death
-        // values : regular array of 360 elements containing the distribution
-        $distrib = [];
-        $nPlanets = count($allPlanets);
-        for($i=0; $i < $nPlanets; $i++){
-            for($j=0; $j < $nPlanets; $j++){
-                $key = $allPlanets[$i] . '-' . $allPlanets[$j];
-                $distrib[$key] = array_fill(0, 360, 0); // regular array, from idx = 0 to 359
+        $t1 = microtime(true);
+        $pName = '#.*' . DS . '(.*?).csv.bz2#';
+        $files = glob($dataDir . DS . '*.bz2');
+        foreach($files as $file){
+            // distributions of each split are stored in a separate directory
+            preg_match($pName, $file, $m);
+            if(count($m) != 2){
+                throw new \Exception("Unable to compute directory name for distributions of $file");
             }
-        }
-        //
-        // Compute
-        //
-        $stmt_persons->execute();
-        foreach($stmt_persons->fetchAll(\PDO::FETCH_ASSOC) as $person){
-            $stmt_planets->execute([':day' => $person['bday']]);
-            $planets_birth = $stmt_planets->fetch(\PDO::FETCH_ASSOC);
-            $stmt_planets->execute([':day' => $person['dday']]);
-            $planets_death = $stmt_planets->fetch(\PDO::FETCH_ASSOC);
-// TODO See if observe\shared\astro\aspects::computeDouble() could be used instead (avoid code repetition)
-            foreach($allPlanets as $planet_birth){
-                foreach($allPlanets as $planet_death){
-                    $key = $planet_birth . '-' . $planet_death;
-//echo "$key\n";
-                    $angle = floor(mod360::compute($planets_birth[$planet_birth] - $planets_death[$planet_death]));
-                    $distrib[$key][$angle]++;
-// echo $planets_birth[$planet_birth] . "\n";
-// echo $planets_death[$planet_death] . "\n";
-// echo "$angle\n";
-break;
-                }
-break;
-            }
-//print_r($distrib['SO-SO']); exit;
-        }
-        //
-        // Store result
-        //
-        $keys = [];
-        foreach($planets as $p1){
-            foreach($planets as $p2){
-                $keys[] = "$p1-$p2";
-            }
-        }
-        $res = implode(';', $keys) . "\n";
-        for($i=0; $i < 360; $i++){
-            $line = [];
-            foreach($planets as $p1){
-                foreach($planets as $p2){
-                    $line[] = $distrib["$p1-$p2"][$i];
+            $outSubdir = $outDir . DS . $m[1];
+            fileSystem::mkdir($outSubdir);
+            //
+            echo "Processing $file\n";
+            $planets_birth = [];
+            $planets_death = [];
+            $distrib = degreeUtils::emptyDoubleDistrib($allPlanets, $allPlanets);
+            $i = 0;
+            foreach(yieldFile::loop('compress.bzip2://' . $file) as $line){
+                $i++;
+                [$bday, $dday] = explode(';', trim($line));
+                $stmt_planets->execute([':day' => $bday]);
+                $planets_birth[] = $stmt_planets->fetch(\PDO::FETCH_ASSOC);
+                $stmt_planets->execute([':day' => $dday]);
+                $planets_death[] = $stmt_planets->fetch(\PDO::FETCH_ASSOC);
+                if($i % 10000 == 0){
+                    // intermediate computations to flush memory
+                    echo "  line $i\n";
+                    $aspects = aspectUtils::computeDouble($planets_birth, $planets_death, $allPlanets, $allPlanets);
+                    $newDistrib = degreeUtils::computeDistrib($aspects);
+                    $distrib = self::addDistrib($distrib, $newDistrib);
+                    unset($aspects);
+                    $planets_birth = [];
+                    $planets_death = [];
                 }
             }
-            $res .= implode(';', $line) . "\n";
+            // computes angles between birth and death = planet death - planet birth
+            $aspects = aspectUtils::computeDouble($planets_birth, $planets_death, $allPlanets, $allPlanets);
+            $newDistrib = degreeUtils::computeDistrib($aspects);
+            $distrib = self::addDistrib($distrib, $newDistrib);
+            unset($aspects);
+            // store result
+            foreach($distrib as $key => $values){
+                $outFile = $outSubdir . DS . $key . '.csv';
+                $contents = csvDistrib::distrib2csv($values);
+                fileSystem::saveFile($outFile, $contents);
+            }
         }
-echo "$res\n"; exit;
+        $t2 = microtime(true);
+        $dt = round($t2 - $t1, 3);
+        echo "Execution time: $dt s\n";
     }
+    
+    /**
+        Adds 2 distributions.
+        @param  $new and $orig must have the same structure.
+                ex: [
+                    'SO-SO' => [0 => 1230, ... 359 => 1342],
+                    ...
+                    'NN-NN' => [0 => 1158, ... 359 => 1356]
+                ]
+        @return Distribution containing the sum of $d1 and $d2
+    **/
+    private static function addDistrib(array &$d1, array &$d2): array {
+        $res = [];
+        $codes = array_keys($d1);
+        foreach($codes as $code){ // $code = 'SO-SO' etc.
+            $res[$code] = [];
+            foreach($d1[$code] as $k => $v){ // here $k = 0 ... 359
+                $res[$code][$k] = $d1[$code][$k] + $d2[$code][$k];
+            }
+        }
+        return $res;
+    }
+    
+    // useful only during dev, not called anymore
+    private static function test_addDistrib() {
+        $d1 = [
+            'SO-SO' => [0 => 3, 1 => 4, 2 => 5],
+            'SO-MO' => [0 => 13, 1 => 14, 2 => 15],
+        ];
+        $d2 = [
+            'SO-SO' => [0 => 23, 1 => 24, 2 => 25],
+            'SO-MO' => [0 => 33, 1 => 34, 2 => 35],
+        ];
+        $d3 = self::addDistrib($d1, $d2);
+        print_r($d3); exit;
+    }
+    
     
 } // end class
                                                                                                                                

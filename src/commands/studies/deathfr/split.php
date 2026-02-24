@@ -32,6 +32,7 @@ class split implements Command {
         }
         $outDir = DeathFr::$WORKING_DIR . DS . $params['out-subdir'];
         if(!is_dir($outDir)){
+            // Not created to avoid mistakes
             echo "Directory $outDir does not exist. Create it before executing this command\n";
             return;
         }

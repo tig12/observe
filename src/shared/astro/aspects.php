@@ -75,6 +75,8 @@ class aspects {
     
     /** 
         Computes the aspects between 2 data sets.
+        WARNING: Computes the angles between planet 1 and planet 2
+                 => computes planet 2 longitude - planet 1 longitude.
         $data1 and $data2 must have the same structure : see parameter $data of {@link computeSingle()}
         $data1 and $data2 must have the same length : aspects are computed between $data1[$i] and $data2[$i].
         Each element must be an assoc. array with keys = planet codes (IAA) and values = longitudes
@@ -136,7 +138,7 @@ if(!is_array($line2)){
     die("\n<br>die here " . __FILE__ . ' - line ' . __LINE__ . "\n");
 }
                     $new[$inKeys1[$j] . '-' . $inKeys2[$k]]
-                        = round(mod360::compute($line1[$inKeys1[$j]] - $line2[$inKeys2[$k]]), $precision);
+                        = round(mod360::compute($line2[$inKeys2[$k]] - $line1[$inKeys1[$j]]), $precision);
                 }
             }
             $res[] = $new;
