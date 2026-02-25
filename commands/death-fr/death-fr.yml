@@ -84,3 +84,12 @@ control:
   n-start: 1
   # Control distributions are generated in working-dir/out-subdir
   out-subdir: control
+
+# Computes the average distributions of control groups
+# --------------------------------------------------------------------------
+average:
+  # Control distributions are taken from working-dir/in-subdir
+  in-subdir: control
+  # Average is generated in working-dir/out-subdir
+  out-subdir: control/average
+  

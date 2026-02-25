@@ -11,6 +11,7 @@ use observe\app\Command;
 use observe\shared\astro\sqlitePlanets;
 use observe\shared\astro\aspects as aspectUtils;
 use observe\shared\distrib\degrees as degreeUtils;
+use observe\shared\distrib\addDistrib;
 use observe\shared\distrib\csvDistrib;
 use observe\shared\fileSystem;
 use tiglib\filesystem\yieldFile;
@@ -94,7 +95,7 @@ class aspects implements Command {
                     echo "  line $i\n";
                     $aspects = aspectUtils::computeDouble($planets_birth, $planets_death, $allPlanets, $allPlanets);
                     $newDistrib = degreeUtils::computeDistrib($aspects);
-                    $distrib = self::addDistrib($distrib, $newDistrib);
+                    $distrib = addDistrib::compute($distrib, $newDistrib);
                     unset($aspects);
                     $planets_birth = [];
                     $planets_death = [];
@@ -103,7 +104,7 @@ class aspects implements Command {
             // computes angles between birth and death = planet death - planet birth
             $aspects = aspectUtils::computeDouble($planets_birth, $planets_death, $allPlanets, $allPlanets);
             $newDistrib = degreeUtils::computeDistrib($aspects);
-            $distrib = self::addDistrib($distrib, $newDistrib);
+            $distrib = addDistrib::compute($distrib, $newDistrib);
             unset($aspects);
             // store result
             foreach($distrib as $key => $values){
@@ -117,43 +118,6 @@ class aspects implements Command {
         echo "Execution time: $dt s\n";
 // 09--50years-150years: Execution time: 10497.907 s
     }
-    
-    /**
-        Adds 2 distributions.
-        @param  $new and $orig must have the same structure.
-                ex: [
-                    'SO-SO' => [0 => 1230, ... 359 => 1342],
-                    ...
-                    'NN-NN' => [0 => 1158, ... 359 => 1356]
-                ]
-        @return Distribution containing the sum of $d1 and $d2
-    **/
-    private static function addDistrib(array &$d1, array &$d2): array {
-        $res = [];
-        $codes = array_keys($d1);
-        foreach($codes as $code){ // $code = 'SO-SO' etc.
-            $res[$code] = [];
-            foreach($d1[$code] as $k => $v){ // here $k = 0 ... 359
-                $res[$code][$k] = $d1[$code][$k] + $d2[$code][$k];
-            }
-        }
-        return $res;
-    }
-    
-    // useful only during dev, not called anymore
-    private static function test_addDistrib() {
-        $d1 = [
-            'SO-SO' => [0 => 3, 1 => 4, 2 => 5],
-            'SO-MO' => [0 => 13, 1 => 14, 2 => 15],
-        ];
-        $d2 = [
-            'SO-SO' => [0 => 23, 1 => 24, 2 => 25],
-            'SO-MO' => [0 => 33, 1 => 34, 2 => 35],
-        ];
-        $d3 = self::addDistrib($d1, $d2);
-        print_r($d3); exit;
-    }
-    
     
 } // end class
                                                                                                                                

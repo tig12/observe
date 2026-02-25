@@ -131,12 +131,14 @@ class aspects {
             $new = [];
             for($j=0; $j < $NinKeys1; $j++){
                 for($k=0; $k < $NinKeys2; $k++){
-if(!is_array($line1)){
-    die("\n<br>die here " . __FILE__ . ' - line ' . __LINE__ . "\n");
-}
-if(!is_array($line2)){
-    die("\n<br>die here " . __FILE__ . ' - line ' . __LINE__ . "\n");
-}
+                    if(!is_array($line1)){
+                        echo "INVALID LINE1\n"; print_r($line1); echo "\n";
+                        die("\n<br>die here " . __FILE__ . ' - line ' . __LINE__ . "\n");
+                    }
+                    if(!is_array($line2)){
+                        echo "INVALID LINE2\n"; print_r($line2); echo "\n";
+                        die("\n<br>die here " . __FILE__ . ' - line ' . __LINE__ . "\n");
+                    }
                     $new[$inKeys1[$j] . '-' . $inKeys2[$k]]
                         = round(mod360::compute($line2[$inKeys2[$k]] - $line1[$inKeys1[$j]]), $precision);
                 }

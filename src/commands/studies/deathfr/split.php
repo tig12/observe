@@ -66,6 +66,7 @@ class split implements Command {
         foreach($stmt_persons->fetchAll(\PDO::FETCH_ASSOC) as $person){
             bzwrite($bz2, $person['bday'] . ';' . $person['dday'] . "\n");
         }
+        bzclose($bz);
         //
         // Store result
         //
