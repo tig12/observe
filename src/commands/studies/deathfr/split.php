@@ -40,7 +40,7 @@ class split implements Command {
         // Prepare
         //
         // sqlite database containing data coming from data.gouv.fr
-        $sqlite_persons = DeathFr::getSqlite();
+        $sqlite_persons = DeathFr::getPersonSqlite();
         //
         // Execute
         //

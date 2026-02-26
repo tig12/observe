@@ -124,21 +124,13 @@ class aspects {
         for($i=0; $i < $N1; $i++){
             $line1 =& $data1[$i];
             $line2 =& $data2[$i];
-            if($skip !== false && ($line1 == $inEmptyLine1 || $line2 == $inEmptyLine2) ){
+            if($skip !== false && ( $line1 == $inEmptyLine1 || $line2 == $inEmptyLine2 || !is_array($line1) || !is_array($line2) )){
                 $res[] = $outEmptyLine;
                 continue;
             }
             $new = [];
             for($j=0; $j < $NinKeys1; $j++){
                 for($k=0; $k < $NinKeys2; $k++){
-                    if(!is_array($line1)){
-                        echo "INVALID LINE1\n"; print_r($line1); echo "\n";
-                        die("\n<br>die here " . __FILE__ . ' - line ' . __LINE__ . "\n");
-                    }
-                    if(!is_array($line2)){
-                        echo "INVALID LINE2\n"; print_r($line2); echo "\n";
-                        die("\n<br>die here " . __FILE__ . ' - line ' . __LINE__ . "\n");
-                    }
                     $new[$inKeys1[$j] . '-' . $inKeys2[$k]]
                         = round(mod360::compute($line2[$inKeys2[$k]] - $line1[$inKeys1[$j]]), $precision);
                 }

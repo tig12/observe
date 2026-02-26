@@ -28,8 +28,11 @@ class DeathFr {
     /**  Array of splits handled in this study **/
     public static array $POSSIBLE_SPLITS;
     
-    /** Path to the sqlite database containing the data coming fro data.gouv.fr **/
-    public static string $SQLITE_PATH;
+    /** Path to the sqlite database containing the data coming from data.gouv.fr **/
+    public static string $SQLITE_PERSON_PATH;
+    
+    /** Path to the sqlite database containing temporary data to assist long command execution **/
+    public static string $SQLITE_TMP_PATH;
     
     /**  list of planets involved in this study **/
     public static array $PLANETS;
@@ -53,7 +56,12 @@ class DeathFr {
         if(!isset($data['variables']['sqlite-death-fr'])){
             throw new ObserveException("Missing key variables.sqlite-death-fr in file " . self::$COMMAND_FILE_PATH);
         }
-        self::$SQLITE_PATH = $data['variables']['sqlite-death-fr'];
+        self::$SQLITE_PERSON_PATH = $data['variables']['sqlite-death-fr'];
+        
+        if(!isset($data['variables']['sqlite-tmp'])){
+            throw new ObserveException("Missing key variables.sqlite-tmp in file " . self::$COMMAND_FILE_PATH);
+        }
+        self::$SQLITE_TMP_PATH = $data['variables']['sqlite-tmp'];
         
         if(!isset($data['variables']['planets'])){
             throw new ObserveException("Missing key variables.planets in file " . self::$COMMAND_FILE_PATH);
@@ -66,12 +74,21 @@ class DeathFr {
     }
     
     /** Returns a PDO link to death-fr.sqlite3 **/
-    public static function getSqlite(): \PDO {
-        if(!is_file(self::$SQLITE_PATH)){
-            throw new ObserveException('Sqlite database ' . self::$SQLITE_PATH . "does not exist\n"
+    public static function getPersonSqlite(): \PDO {
+        if(!is_file(self::$SQLITE_PERSON_PATH)){
+            throw new ObserveException('Sqlite database ' . self::$SQLITE_PERSON_PATH . "does not exist\n"
                 . "You first need to create it (using g5 program)\n");
         }
-        return new \PDO('sqlite:' . self::$SQLITE_PATH);
+        return new \PDO('sqlite:' . self::$SQLITE_PERSON_PATH);
+    }
+    
+    /** Returns a PDO link to death-fr.sqlite3 **/
+    public static function getTmpSqlite(): \PDO {
+        if(!is_file(self::$SQLITE_TMP_PATH)){
+            throw new ObserveException('Sqlite database ' . self::$SQLITE_TMP_PATH . "does not exist\n"
+                . "You first need to create it with this command:\nphp run-observe.php death-fr/death-fr init\n");
+        }
+        return new \PDO('sqlite:' . self::$SQLITE_TMP_PATH);
     }
     
     /**
