@@ -1,7 +1,7 @@
 <?php
 /******************************************************************************
     
-    Builds distributions from control groups
+    Builds average distributions from control groups.
     
     @license    GPL
     @history    2026-02-25 21:50:52+01:00, Thierry Graff : Creation

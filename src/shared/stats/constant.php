@@ -16,5 +16,4 @@ class constant {
         return trim(file_get_contents($filename));
     }
     
-    
 } // end class

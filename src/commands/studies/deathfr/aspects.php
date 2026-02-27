@@ -23,7 +23,7 @@ class aspects implements Command {
         // Parameter check
         //
         if(!isset($params['split'])){
-            echo "Missing parameter 'split' in command file commands/death-fr/death-fr.yml\n";
+            echo "Missing parameter 'split' in command file " . DeathFr::$COMMAND_FILE_PATH . "\n";
             echo "Possible values:\n  - " . implode("\n  - ", DeathFr::$POSSIBLE_SPLITS) . "\n";
             return;
         }
@@ -116,8 +116,11 @@ class aspects implements Command {
         $t2 = microtime(true);
         $dt = round($t2 - $t1, 3);
         echo "Execution time: $dt s\n";
-// 09--50years-150years: Execution time: 10497.907 s
     }
+/* 
+all                     : Execution time: 8774.392 s  - 2 h 25
+09--50years-150years    : Execution time: 10497.907 s - 3 h
+*/
     
 } // end class
                                                                                                                                

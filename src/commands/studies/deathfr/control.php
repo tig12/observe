@@ -58,18 +58,16 @@ class control implements Command {
         //
         // Prepare
         //
-        
-        // planet codes
-        $allPlanets = DeathFr::$PLANETS;
-        
+        $allPlanets = DeathFr::$PLANETS; // planet codes
+        //
         // sqlite database containing the planet positions
         $sqlite_planets = sqlitePlanets::getSqlite();
         // select SO,MO,ME,VE,MA,JU,SA,UR,NE,PL,NN from planets where day=:day
         $stmt_planets = $sqlite_planets->prepare('select ' . implode(',', $allPlanets) . ' from planets where day=:day');
-        
+        //
         // sqlite database containing temporary data
         $sqlite_tmp = DeathFr::getTmpSqlite();
-        
+        //
         // sqlite database containing data coming from data.gouv.fr
         $sqlite_persons = DeathFr::getPersonSqlite();
         $stmt = $sqlite_persons->query('select max(rowid) from person');
@@ -184,6 +182,7 @@ control-001:  execution time 25370.55 s - 7.04 h
     
     //
     // tmp sqlite management
+    // Added to permit to stop and resume execution
     //
 
     /** Inserts a line in tmp sqlite database for a given control **/

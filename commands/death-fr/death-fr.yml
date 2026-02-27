@@ -34,10 +34,11 @@ variables:
 # 2 - commands
 #
 
+# Execute several commands
+# --------------------------------------------------------------------------
 all:
   command: chain
-  commands:
-    - distrib-aspects
+  commands: []
 
 # Initializes the temporary database containing temporary data to assist long command execution
 # --------------------------------------------------------------------------
@@ -100,4 +101,29 @@ average:
   in-subdir: control
   # Relative to working-dir - Average is generated in working-dir/out-subdir
   out-subdir: distrib-average
+
+# Computes chi square and p values by comparing average and observed distributions for split death-age
+# --------------------------------------------------------------------------
+chi2-age:
+  command: studies.deathfr.chi2
+  split: death-age
+  # Relative to working-dir - The expected distributions are in working-dir/in-expected-subdir
+  in-expected-subdir: distrib-average
+  # Relative to working-dir - The observed distributions of the split are in working-dir/in-observed-subdir
+  in-observed-subdir: split-death-age/distrib-aspects
+  # Relative to working-dir - Results are generated in working-dir/out-subdir
+  out-subdir: split-death-age/chi2
+  
+# Computes chi square and p values by comparing average and observed distributions for split all
+# --------------------------------------------------------------------------
+chi2-all:
+  command: studies.deathfr.chi2
+  split: all
+  # Relative to working-dir - The expected distributions are in working-dir/in-expected-subdir
+  in-expected-subdir: distrib-average
+  # Relative to working-dir - The observed distributions of the split are in working-dir/in-observed-subdir
+  in-observed-subdir: split-all/distrib-aspects
+  # Relative to working-dir - Results are generated in working-dir/out-subdir
+  out-subdir: split-all/chi2
+  
   
