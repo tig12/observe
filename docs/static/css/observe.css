@@ -16,6 +16,7 @@ html, body {
 body{
     font-family:"roboto flex",sans-serif;
     line-height:1.8;
+    color:#d9e5fc;
 }
 h1{
     text-align:center;
@@ -44,7 +45,7 @@ a{
     color:#4b83f1;
 }
 a:hover{
-    font-weight:bold;
+    color:lightyellow;
 }
 
 /* ================ Site structure ================ */
@@ -60,7 +61,6 @@ a:hover{
     overflow-y: auto;            /* independent vertical scroll */
     padding:1rem .5rem 2rem 1rem;
     background:#1e2129;
-    color:#d9e5fc;
 }
 
 /* LEFT SIDEBAR */
@@ -73,11 +73,9 @@ a:hover{
     padding-top:1rem;
 }
 .left a{
-    color:#eee;
 }
 .left .title{
     font-weight:bold;
-    color:#ddd;
 }
 .left li{
     list-style:none;
@@ -118,7 +116,7 @@ table.wikitable > tr > th, table.wikitable > * > tr > th {
     line-height:1.6;
 }
 .pagetoc a{
-    color:lightyellow;
+    color:lightblue;
 }
 .pagetoc ul{
     list-style-type:none;

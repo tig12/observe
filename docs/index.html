@@ -17,131 +17,39 @@
 
 <div class="main">
 
-<a name="topage"></a>
-<header>
+<header id="topage">
 <h1 class="margin-bottom2">
-Observe documentation
-<div class="subtitle margin">Program to observe and analyze data</div>
+Observe
 </h1>
 
 <div class="intro">
-Tool developed to assist persons who perform statistical tests on astrology.
-<br>Used to generate the graphics of <a href="https://g5.tig12.net/observe">https://g5.tig12.net/observe</a>
-
-<br><br>Status : draft under development.
+This software is used to perform statistical tests on astrology.
+<br>It is organized around the notions of <b>studies</b> and <b>commands</b>.
 </div>
 </header>
 
 <article>
-This software has been developed and tested under Linux. A priori, it should also work under Windows and Macintosh.
 
-<!-- ********************************************************************************* -->
-<h2>Overview</h2>
-Observe is based on a small generic mechanism which permits to invoke <b>commands</b>.
-<br>Commands are specified in YAML <b>command files</b>, located in directory <code>commands/</code>.
-<br>A command file contains the specifications of one or more commands.
-<br>Observe is used through the CLI (command line interface = console), and takes 2 parameters :
-<pre>php run-observe.php &lt;command file> &lt;command></pre>
-Ex: 
-<pre>php run-observe.php insee/a00 prepare</pre>
-will execute the command <code>prepare</code> described in file <code>commands/insee/a00.yml</code>
-
-
-<!-- 
-Observe program is a small generic tool to execute commands.
-Based on command files, containing the command and its parameter. 
-
-Developed to observe a file containing all births in France of year 2000
-N = 591 936
-
-Each line contains untimed birth days of mother, father, child, mariage.
-
-Current commands implemented :
-- convertFile   : clean the input and have standard formats
-                  Start with 3 columns (Mother Father Child)
-- computeAstro  : compute the ecliptic longitudes of the planets at mother,
-                  father, child birth day (takes 12:00 UT)
-                  (11 planets => 33 columns)
-- aspects       : For each couple (Mother Child, Father Child, Mother Father),
-                  compute angular distance between planets.
-                  Ex : compute distance between mother's sun and child's sun.
-                  This makes 11 x 11 x 3 = 363 columns
-- group         : Group the angular distances by degree (0 - 360)
-- view.pages    : Generate html pages containing svg bar charts
-                  3 pages with 121 drawings.
--->
-
-
-<!-- ********************************************************************************* -->
-<h2>Installation</h2>
-
-<ol class="spaced">
-    <li>
-        Open a terminal and clone the repository on your local machine :
-        <pre>git clone https://github.com/tig12/observe</pre>
-        (or <a href="https://github.com/tig12/observe/archive/master.zip">download the code</a>).
-    </li>
-    
-    <li>
-        Install php (version 8.0 or higher) on your machine.
-    </li>
-    
-    <li>
-        Install PECL extension "yaml".
-        <br>On debian-based systems :
-        <pre>sudo apt install php-yaml</pre>
-        For other systems, see <a href="https://www.php.net/manual/en/install.pecl.php">php manual</a>.
-    </li>
-</ol>   
-
-<!-- ************************************* -->
-<h3><a name="1-2-directory-structure">Directory structure</a></h3>
-The important files and directories are :
-<pre>
-observe/
-    ├── <b>commands/</b>
-    ├── docs/
-    ├── src/
-    ├── vendor/
-    ├── <b>config.yml.dist</b>
-    └── <b>run-observe.php</b>
-</pre>
-
-In the rest of this doc, directory <code>observe/</code> is called the <b><i>root directory</i></b>.
-<br>All the commands issued to run the program are done from the root directory.
-<br>
-<br>The files you need to know about are :
-<ul class="simple">
-    <li><code><b>run-observe.php</b></code> is the entry point to use the program.</li>
-    <li><code><b>commands/</b></code> contains the the commands that you need to edit.</li>
-    <li><code><b>config.yml.dist</b></code> needs to be copied (see below).</li>
+A study is always related to a data set, but a data set can be used for several studies.
+<br>Sudies are defined in <i>study files</i>, which permit to specify the commands to run.
+<br>The commands to run vary from a study to another, but it's globally always the same process :
+<ul class="spaced">
+    <li>Compute the planetary positions</li>
+    <li>Build sub-groups, called <i>splits</i>. In general, there is at least one split containing the whele data set.</li>
+    <li>For each split, compute the distributions of planetary positions</li>
+    <li>Compute control groups and build expected distributions for each split</li>
+    <li>Apply statistical tests to compare observed and expected distributions</li>
+    <li>Generate output to present the results of the study</li>
 </ul>
 
-<!-- ************************************* -->
-<h3>Configuration</h3>
-Create a file <code>config.yml</code> by copying <code>config.yml.dist</code> :
-<pre>cp config.yml.dist config.yml</pre>
-Configuration is only needed for some commands.
-
-
-<!-- ********************************************************************************* -->
-<h2>Usage</h2>
-To check that the program works, open a terminal, go to observe root directory and type :
-<pre>php run-observe.php</pre>
-<pre>
-WRONG USAGE - run-observes.php needs 2 arguments
--------                                                                                               
-Usage : 
-    php run-observe.php <command> <step>
-Example :
-    php run-observe.php test/toto command1
--------
-Possible values for argument1 : insee/a00, gauquelin/heredity
-</pre>
-If a similar error message is displayed, it means that the installation was OK.
-
+Observe contains code to handle two types of sutdies :
+<ul class="spaced">
+    <li><a href="mfc.html">MFC - Mother Father Child</a> - to handle datasets containing birth dates of a couple and a child, and optionnaly wedding dates.</li>
+    <li><a href="bd.html">BD - Birth Death</a> - to handle datasets containing persons withe their birth and death dates.</li>
+</ul>
 
 <!-- ********************************************************************************* -->
+<!-- 
 <h2>Command files</h2>
 Program usage is based on <b>command files</b>
 <br>They are created by users ; they are used to describe what the program should do.
@@ -151,66 +59,17 @@ Program usage is based on <b>command files</b>
 <br><br>Each command file contains description of commands.
 <br>One run of the program permits to execute one command ; usage of the program is then
 <pre>php run-observe.php &lt;command file> &lt;command></pre>
-
-<!-- ************************************* -->
-<!-- 
-<h3>Example</h3>
-<div class="big3">See example <a href="exp-mfc.html">file insee/a00.csv</a></div>
-
-<br>Each command file contains a serie of commands, which are the main keys of the command file.
-
-<br><br>Example of file a00 command file :
-<pre>
-convert:
-  command: convertFile
-  input-file: data/a00.csv
-  actions:
-    - ymd2iso anais00 mnais00 jnais00 -> C
-    - ymd2iso ANAISM MNAISM JNAISM    -> M
-    - ymd2iso ANAISP MNAISP JNAISP    -> F
-  output-file: tmp/a00-ymd.csv
-
-planets:
-  command: computeAstro
-  input-file: tmp/a00-ymd.csv
-  actions:
-    - planets C SO MO ME VE MA JU SA UR NE PL NN
-    - planets M SO MO ME VE MA JU SA UR NE PL NN
-    - planets F SO MO ME VE MA JU SA UR NE PL NN
-  output-file: tmp/a00-coords.csv
-
-aspects:
-  command: aspects
-  input-file: tmp/a00-coords.csv
-  actions:
-    - C-* M-*
-    - C-* F-*
-    - M-* F-*
-  output-file: tmp/a00-aspects.csv
-
-group:
-  command: groupByNumber
-  input-file: tmp/a00-aspects.csv
-  range: 360
-  output-dir: tmp/a00-aspects
-</pre>
-
-This command file contains 4 steps : <code>convert</code>, <code>planets</code>, <code>aspects</code>, <code>group</code>.
-
-<br><br>Example of command to issue :
-<pre><b>php run-observe.php sample/a00 convert</b></pre>
-
-Each step has one compulsory parameter : <code>command</code>, which is the full name (with namespace) of a php class located in <code>src/commands</code>.
-<br>All other parameters are transmitted to the command class and are specific to a given command.
-
-<br><br>Commands written so far have input and output file of directory as parameters.
 -->
+
 
 <!-- ********************************************************************************* -->
 <h2>About</h2>
-Program started in december 2020 by Thierry Graff to compute <a href="xperiences/a00.html">a00 distributions</a>, so Nick Kollerstrom can see if there are statistical anomalies.
+Program started in december 2020 by Thierry Graff to compute <a href="studies/a00.html">a00 distributions</a> for Nick Kollerstrom, who studied if these data show statistical anomalies.
+
+<br><br>Program developed and tested under Linux (Debian). A priori, it should also work under Windows and Macintosh.
 
 <!-- ********************************************************************************* -->
+<!-- 
 <h2>TODO</h2>
 
 <ul>
@@ -220,6 +79,7 @@ Program started in december 2020 by Thierry Graff to compute <a href="xperiences
         <br>If the main synastry is Mars-Venus that signifies 'ardent passion' which should be stronger in the young married couples group.
     </li>
 </ul>
+-->
 
 </article>
 </div><!-- end class="main" -->
@@ -229,9 +89,30 @@ Program started in december 2020 by Thierry Graff to compute <a href="xperiences
 <aside class="left">
 
 <ul class="spaced">
-    <li class="bold big2"><a href="./index.html">Home</a></li>
-    <li class="bold big1"><a href="https://larzac.info/observe/output">Output</a></li>
-    <li class="bold big1"><a href="https://github.com/tig12/observe">Code repository</a></li>
+    <li class="bold big1"><a href="./index.html">Home</a></li>
+    
+    <li><a href="./install.html">Installation</a></li>
+    
+    <li><a href="./usage.html">Usage</a></li>
+    
+    <li>
+        <div class="bold big1">Studies</div>
+        <ul>
+            <li>
+                <a class="big1" href="./mfc.html">MFC - Mother Father Child</a>
+                <ul>
+                    <li><a href="./studies/a00.html">a00 - birth in France in 2000</a></li>
+                    <li><a href="./studies/gauquelin.html">Gauquelin heredity data</a></li>
+                </ul>
+            </li>
+            <li class="padding-top">
+                <a class="big1" href="./bd.html">BD - Birth Death</a>
+                <ul>
+                    <li><a href="./studies/death-fr.html">Deaths in France 1970 - 2025</a></li>
+                </ul>
+            </li>
+        </ul>
+    </li>
     
     <li>
         <div class="bold big1 padding-top05">Commands</div>
@@ -243,15 +124,9 @@ Program started in december 2020 by Thierry Graff to compute <a href="xperiences
         </ul>
     </li>
     
-    <li>
-        <div class="bold big1 padding-top05">Studies</div>
-        <ul>
-            <li><a href="./studies/death-fr.html">death-fr - deaths in France</a></li>
-            <li><a href="./studies/a00.html">a00 - birth in France in 2000</a></li>
-            <li><a href="./studies/gauquelin.html">Gauquelin heredity data</a></li>
-        </ul>
-    </li>
+    <li class="bold big1"><a href="https://larzac.info/observe/output">Output</a></li>
     
+    <li class="bold big1"><a href="https://github.com/tig12/observe">Code repository</a></li>
 </ul>
 </aside>
 

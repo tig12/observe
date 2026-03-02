@@ -95,32 +95,37 @@ control:
 
 # Computes the average distributions from control groups
 # --------------------------------------------------------------------------
-average:
-  command: studies.deathfr.average
+expected:
+  command: studies.deathfr.expected
   # Relative to working-dir - Control distributions are taken from working-dir/in-subdir
   in-subdir: control
   # Relative to working-dir - Average is generated in working-dir/out-subdir
-  out-subdir: distrib-average
+  out-subdir: expected
 
-# Computes chi square and p values by comparing average and observed distributions for split death-age
+# Checks if expected and observed distributions have the same total
+# --------------------------------------------------------------------------
+check:
+  command: studies.deathfr.check
+
+# Computes chi square and p values by comparing expected and observed distributions for split death-age
 # --------------------------------------------------------------------------
 chi2-age:
   command: studies.deathfr.chi2
   split: death-age
   # Relative to working-dir - The expected distributions are in working-dir/in-expected-subdir
-  in-expected-subdir: distrib-average
+  in-expected-subdir: expected
   # Relative to working-dir - The observed distributions of the split are in working-dir/in-observed-subdir
   in-observed-subdir: split-death-age/distrib-aspects
   # Relative to working-dir - Results are generated in working-dir/out-subdir
   out-subdir: split-death-age/chi2
   
-# Computes chi square and p values by comparing average and observed distributions for split all
+# Computes chi square and p values by comparing expected and observed distributions for split all
 # --------------------------------------------------------------------------
 chi2-all:
   command: studies.deathfr.chi2
   split: all
   # Relative to working-dir - The expected distributions are in working-dir/in-expected-subdir
-  in-expected-subdir: distrib-average
+  in-expected-subdir: expected
   # Relative to working-dir - The observed distributions of the split are in working-dir/in-observed-subdir
   in-observed-subdir: split-all/distrib-aspects
   # Relative to working-dir - Results are generated in working-dir/out-subdir
