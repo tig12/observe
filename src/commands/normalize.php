@@ -21,9 +21,9 @@
 namespace observe\commands;
 
 use observe\app\Observe;
-use observe\app\Command;
 use observe\app\ObserveException;
 use observe\shared\fileSystem;
+use tiglib\patterns\command\Command;
 use tiglib\arrays\yieldCsv;
 use tiglib\arrays\yieldCsvAsso;
 

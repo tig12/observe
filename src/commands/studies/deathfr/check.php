@@ -11,8 +11,8 @@
 ********************************************************************************/
 namespace observe\commands\studies\deathfr;
 
-use observe\app\Command;
 use observe\shared\distrib\csvDistrib;
+use tiglib\patterns\command\Command;
 
 class check implements Command {
     

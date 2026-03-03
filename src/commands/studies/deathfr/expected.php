@@ -8,7 +8,7 @@
 ********************************************************************************/
 namespace observe\commands\studies\deathfr;
 
-use observe\app\Command;
+use tiglib\patterns\command\Command;
 
 class expected implements Command {
     

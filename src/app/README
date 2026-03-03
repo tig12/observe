@@ -1,4 +1,2 @@
 
-app/ contains code managing execution
-
-init.php must be called by client code
+app/ contains auxiliary code to run the application

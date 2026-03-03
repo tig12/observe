@@ -9,7 +9,7 @@ namespace observe\commands\mfc\distrib;
 
 use observe\app\Observe;
 use observe\app\ObserveException;
-use observe\app\Command;
+use tiglib\patterns\command\Command;
 use tiglib\arrays\csvAssociative;
 
 use observe\shared\fileSystem;

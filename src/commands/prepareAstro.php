@@ -11,16 +11,17 @@
 ********************************************************************************/
 namespace observe\commands;
 
-use observe\app\Command;
 use observe\app\Observe;
 use observe\app\Config;
 use observe\shared\astro\ephem;
 use observe\shared\astro\time;
 use observe\app\ObserveException;
-use tigeph\ephem\meeus1\Meeus1;
-use tigeph\model\IAA;
+use tiglib\patterns\command\Command;
 use tiglib\time\yearRange;
 use tiglib\time\daysOfYear;
+
+use tigeph\ephem\meeus1\Meeus1;
+use tigeph\model\IAA;
 
 class prepareAstro implements Command {
         

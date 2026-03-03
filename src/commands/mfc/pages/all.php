@@ -7,9 +7,9 @@
 ********************************************************************************/
 namespace observe\commands\mfc\pages;
 
-use observe\app\Command;
 use observe\app\ObserveException;
 use observe\commands\mfc\MFC;
+use tiglib\patterns\command\Command;
 use tiglib\arrays\csvAssociative;
 
 use observe\shared\fileSystem;

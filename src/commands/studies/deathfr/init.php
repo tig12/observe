@@ -9,8 +9,8 @@
 ********************************************************************************/
 namespace observe\commands\studies\deathfr;
 
-use observe\app\Command;
 use observe\shared\distrib\degrees as degreeUtils;
+use tiglib\patterns\command\Command;
 
 class init implements Command {
     

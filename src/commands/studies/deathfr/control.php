@@ -8,13 +8,13 @@
 ********************************************************************************/
 namespace observe\commands\studies\deathfr;
 
-use observe\app\Command;
 use observe\shared\astro\sqlitePlanets;
 use observe\shared\astro\aspects as aspectUtils;
 use observe\shared\distrib\degrees as degreeUtils;
 use observe\shared\distrib\addDistrib;
 use observe\shared\distrib\csvDistrib;
 use observe\shared\fileSystem;
+use tiglib\patterns\command\Command;
 use tiglib\math\modN;
 use tiglib\misc\smallDump;
 

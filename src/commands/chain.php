@@ -8,8 +8,8 @@
 namespace observe\commands;
 
 use observe\Observe;
-use observe\patterns\Command;
 use observe\ObserveException;
+use tiglib\patterns\patterns\Command;
 
 class chain implements Command {
     

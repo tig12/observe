@@ -13,8 +13,8 @@ namespace observe\commands;
 
 use observe\app\Observe;
 use observe\app\Config;
-use observe\app\Command;
 use observe\app\ObserveException;
+use tiglib\patterns\command\\Command;
 use tiglib\arrays\yieldCsvAsso;
 
 use tigeph\Tigeph;
