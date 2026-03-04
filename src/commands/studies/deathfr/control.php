@@ -17,6 +17,7 @@ use observe\shared\fileSystem;
 use tiglib\patterns\command\Command;
 use tiglib\math\modN;
 use tiglib\misc\smallDump;
+use tiglib\time\seconds2HHMMSS;
 
 class control implements Command {
     
@@ -135,10 +136,11 @@ class control implements Command {
         
         $t2 = microtime(true);
         $dt = round($t2 - $t1, 3);
-        echo "(execution time $dt s)\n";
+        $dth = seconds2HHMMSS::compute($dt);
+        echo "Execution time $dt s - $dth\n";
     }
 /* 
-control-001:  execution time 25370.55 s - 7.04 h
+control-001: execution time 25370.55 s - 7.04 h
 */
     
     /**

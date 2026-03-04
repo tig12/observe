@@ -19,6 +19,7 @@ use observe\app\ObserveException;
 use tiglib\patterns\command\Command;
 use tiglib\time\yearRange;
 use tiglib\time\daysOfYear;
+use tiglib\time\seconds2HHMMSS;
 
 use tigeph\ephem\meeus1\Meeus1;
 use tigeph\model\IAA;
@@ -64,10 +65,11 @@ class prepareAstro implements Command {
         //
         // compute planet positions and store in sqlite
         //
+        $t1 = microtime(true);
         $years = yearRange::compute($params[Observe::PARAM_OPTIONAL_STRING][0]);
         $tigephPlanets = ephem::iaa2tigeph($planets);
-        // insert into planets(day,SO,MO,ME,VE,MA,JU,SA,UR,NE,PL,NN) values(:day,:SO,:MO,:ME,:VE,:MA,:JU,:SA,:UR,:NE,:PL,:NN)
-        $sql = 'insert into planets(day,' . implode(',', $planets) .') values(:day,:' . implode(',:', $planets) . ')';
+        // insert into planet(day,SO,MO,ME,VE,MA,JU,SA,UR,NE,PL,NN) values(:day,:SO,:MO,:ME,:VE,:MA,:JU,:SA,:UR,:NE,:PL,:NN)
+        $sql = 'insert into planet(day,' . implode(',', $planets) .') values(:day,:' . implode(',:', $planets) . ')';
         $insert_stmt = $sqlite->prepare($sql);
         foreach($years as $year){
             echo "======= Processing year $year =======\n";
@@ -83,15 +85,19 @@ class prepareAstro implements Command {
                 $insert_stmt->execute($fields);
             }
         }
+        $t2 = microtime(true);
+        $dt = round($t2 - $t1, 3);
+        $dth = seconds2HHMMSS::compute($dt);
+        echo "Execution time $dt s - $dth\n";
     }
     
     private static function initalizeSqlite(string $sqlite_path, array $planets): \PDO {
         $sqlite_exists = is_file($sqlite_path);
         $sqlite = new \PDO('sqlite:' . $sqlite_path);
         if(!$sqlite_exists){
-            // create table planets(day character(10),SO real,MO real,ME real,VE real,MA real,JU real,SA real,UR real,NE real,PL real,NN real)
-            $sql1 = 'create table planets(day character(10),' . implode(' real,', $planets) . ' real)';
-            $sql2 = 'create unique index idx_bday ON planets(day)';
+            // create table planet(day character(10),SO real,MO real,ME real,VE real,MA real,JU real,SA real,UR real,NE real,PL real,NN real)
+            $sql1 = 'create table planet(day character(10),' . implode(' real,', $planets) . ' real)';
+            $sql2 = 'create unique index idx_day on planet(day)';
             $sqlite->exec($sql1);
             $sqlite->exec($sql2);
         }

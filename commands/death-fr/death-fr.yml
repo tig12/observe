@@ -4,6 +4,7 @@
 #
 study:
   slug: death-fr
+  type: bd
   
 #
 # 1 - variables used in several commands

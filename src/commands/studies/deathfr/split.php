@@ -8,6 +8,7 @@ namespace observe\commands\studies\deathfr;
 
 use tiglib\patterns\command\Command;
 use tiglib\time\diff;
+use tiglib\time\seconds2HHMMSS;
 
 class split implements Command {
         
@@ -51,7 +52,8 @@ class split implements Command {
         }
         $t2 = microtime(true);
         $dt = round($t2 - $t1, 3);
-        echo "(execution time $dt s)\n";
+        $dth = seconds2HHMMSS::compute($dt);
+        echo "Execution time $dt s - $dth\n";
         
     }
     
@@ -59,12 +61,21 @@ class split implements Command {
         Builds one split containing all persons
     **/
     private static function split_all(\PDO $sqlite_persons, string $outDir): void {
+        $stmt = $sqlite_persons->query('select max(rowid) from person');
+        $MAXROWID = $stmt->fetch(\PDO::FETCH_ASSOC)['max(rowid)']; // = select count(*) from person
+        $OFFSET = 0;
+        $LIMIT = 100000;
+        $stmt_persons = $sqlite_persons->prepare("select bday,dday from person order by rowid limit :limit offset :offset");
+        
         $outFile = $outDir . DS . 'all.csv.bz2';
         $bz2 = bzopen($outFile, 'w');
-        $stmt_persons = $sqlite_persons->prepare("select bday,dday from person");
-        $stmt_persons->execute();
-        foreach($stmt_persons->fetchAll(\PDO::FETCH_ASSOC) as $person){
-            bzwrite($bz2, $person['bday'] . ';' . $person['dday'] . "\n");
+        while($OFFSET < $MAXROWID){
+continue;
+            $stmt_persons->execute([':offset' => $OFFSET, ':limit' => $LIMIT]);
+            foreach($stmt_persons->fetchAll(\PDO::FETCH_ASSOC) as $person){
+                bzwrite($bz2, $person['bday'] . ';' . $person['dday'] . "\n");
+            }
+            $OFFSET += $LIMIT;
         }
         bzclose($bz);
         //
@@ -87,12 +98,11 @@ class split implements Command {
             '0'           => '0',
             '60'          => '2months',
             '182.625'     => '6months',
-            '365.25'      => '1year',
             '730.5'       => '2years',
             '1826.25'     => '5years',
-            '3652.5'      => '10years',
             '7305'        => '20years',
             '18262.5'     => '50years',
+            '32872.5'     => '90years',
             '54787.5'     => '150years',
         ];
         $keys = array_keys($limits);
