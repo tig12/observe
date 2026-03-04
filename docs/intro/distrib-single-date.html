@@ -2,7 +2,7 @@
 <html lang="fr" lang="en">
 <head>
     <meta charset="utf-8">
-    <title>convertFile command | Observe software</title>
+    <title>Single date distributions | Observe</title>
     <link rel="icon" type="image/jpg" href="../static/img/favicon.jpg">
     <link href="../static/css/observe.css" rel="stylesheet" type="text/css">
     <meta name="description" content="">
@@ -10,7 +10,7 @@
     <link rel="schema.dcterms" href="http://purl.org/dc/terms/">
     <meta name="dcterms.rights" content="Creative commons by-sa 4.0">
     <meta name="dcterms.rightsHolder" content="Thierry Graff">
-    <meta name="dcterms.dateCopyrighted" content="2020">
+    <meta name="dcterms.dateCopyrighted" content="2026-03-04 11:52:05+01:00">
 </head>
 
 <body>
@@ -19,69 +19,47 @@
 <div class="main">
 
 <header id="topage">
-<h1>convertFile</h1>
+<h1>
+Distributions of a single date
+</h1>
+
 <div class="intro">
-Command <code>convertFile</code> is used to "clean" input files.
-<br>It takes a csv file in input and generates a csv file.
+For any date (birth, death, wedding date...), the program can build a certain number of distributions.
+<br>Many other distibutions could be drawn.
 </div>
 </header>
 
 <article>
 
-Example of use :
-<pre>
-convert:
-  command: convertFile
-  input-file: data/insee/a00.csv
-  output-file: tmp/insee/a00/a00-ymd.csv
-  actions:
-    - ymd2iso anais00 mnais00 jnais00 -> C
-    - ymd2iso ANAISM MNAISM JNAISM    -> M
-    - ymd2iso ANAISP MNAISP JNAISP    -> F
-    - ymd2iso AMAR MMAR JMAR          -> W
-    - copy    rangmar00               -> WRANK
-</pre>
 
 <!-- ********************************************************************************* -->
-<h2>input-file</h2>
-Absolute or relative path to the csv file to transform.
-<br>Relative paths are relative to the root directory of <code>observe</code>, containing <code>run-observe.php</code> and <code>config.yml</code>.
+<h2>Distribution by year</h2>
+<img height="250px" class="margin" src="img/year.svg" alt="Distribution: Mother, year of birth">
+Here, birth dates are grouped by year.
+<br>It represents the number of persons born each year
 
 <!-- ********************************************************************************* -->
-<h2>output-file</h2>
-Absolute or relative path to the generated csv file.
-<br>Relative paths are relative to the root directory of <code>observe</code>, containing <code>run-observe.php</code> and <code>config.yml</code>.
+<h2>Distribution by day</h2>
+<img height="250px" class="margin" src="img/day.svg" alt="Distribution: Child, day of birth">
+The dates are grouped in 366 packets of 1 day.
+<br>Here we can see that there are less births during the week-ends.
 
 <!-- ********************************************************************************* -->
-<h2>actions</h2>
-Describe the transformations done to convert the file.
-<br>The program executes all the actions on each line of the input file to generate one line of the output file.
-<br>The syntax is :
-<pre>&lt;action to execute> &lt;input column(s)> -> &lt;generated column></pre>
+<h2>Planetary positions</h2>
 
-For example :
-<pre>ymd2iso anais00 mnais00 jnais00 -> C</pre>
+For each planet, we represent the distributions of its position (ecliptic longitude).
+Data are groupe in 360 packets of 1 degree.
 
-means : "execute action <code>ymd2iso</code>, using input columns <code>anais00</code>, <code>mnais00</code>, <code>jnais00</code>, and generate column <code>C</code> in the output file".
+<img height="250px" class="margin" src="img/SA.svg" alt="Distribution: Child, day of birth">
 
-<br><br>For csv files without header (a first line containing the names of the columns), column indexes (starting with 0) are used.
-<pre>- ymdhms2iso 13 12 11 14 15 16  -> F_DATE</pre>
+It sometimes shows strange distibutions, expressing astronomical condiderations.
 
-<br>The actions are methods of class <code>observe\commands\convertFile</code>
-<br>Supported actions are :
+<br>This gives one distribution per planet.
 
-<!-- ************************************* -->
-<h3>ymd2iso</h3>
-Takes 3 column names in input (containing year, month, day) to generate a column containing a <code>YYYY-MM-DD</code> date.
+<!-- ********************************************************************************* -->
+<h2>Planetary aspects</h2>
 
-<!-- ************************************* -->
-<h3>ymdhms2iso</h3>
-Takes 6 column names in input (containing year, month, day, hour, minute, seconds) to generate a column containing a <code>YYYY-MM-DD HH:MM:SS</code> date and time.
-
-<!-- ************************************* -->
-<h3>copy</h3>
-Takes one column name in input to generate a column containing a copy of the value.
-
+For a given date, we compute the planetary positions, and we consider the <b>angles</b> between 2 planets. These angles are called <b>aspects</b>.
 
 </article>
 </div><!-- end class="main" -->

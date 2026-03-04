@@ -71,11 +71,14 @@ a:hover{
     font-size:.9rem;
     border-right:1px solid grey;
     padding-top:1rem;
+    padding-left:1rem;
 }
 .left a{
+    color:lightblue;
 }
 .left .title{
     font-weight:bold;
+    font-size:1.2rem;
 }
 .left li{
     list-style:none;
@@ -83,16 +86,18 @@ a:hover{
 .left ul{
     padding-left:1rem;
 }
-.left>nav>ul{
+.left>ul{
     padding-left:0.5rem;
     position:relative;
     top:.5rem;
 }
-.left>nav>ul>li{
-    padding-bottom:0.3rem;
+.left>ul>li{
+    font-size:1.1rem;
+    padding-bottom:0.1rem;
 }
-.left>nav>ul>li>ul>li{
-    padding-bottom:0.3rem;
+.left>ul>li>ul>li{
+    padding-bottom:0.1rem;
+    color:yellow;
 }
 
 table.wikitable > tr > th, table.wikitable > * > tr > th {
