@@ -2,7 +2,7 @@
 <html lang="fr" lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Usage | Observe</title>
+    <title>Organisation | Observe</title>
     <link rel="icon" type="image/jpg" href="static/img/favicon.jpg">
     <link href="static/css/observe.css" rel="stylesheet" type="text/css">
     <meta name="description" content="">
@@ -10,7 +10,7 @@
     <link rel="schema.dcterms" href="http://purl.org/dc/terms/">
     <meta name="dcterms.rights" content="Creative commons by-sa 4.0">
     <meta name="dcterms.rightsHolder" content="Thierry Graff">
-    <meta name="dcterms.dateCopyrighted" content="2026-03-02 22:07:39+01:00">
+    <meta name="dcterms.dateCopyrighted" content="2026-03-05 08:31:51+01:00">
 </head>
 
 <body>
@@ -20,7 +20,7 @@
 
 <header id="topage">
 <h1>
-Usage
+Organisation
 </h1>
 
 <div class="intro">
@@ -29,32 +29,32 @@ Usage
 
 <article>
 
-Observe is based on a small generic mechanism which permits to invoke <b>commands</b>.
-<br>Commands are specified in YAML <b>command files</b>, located in directory <code>commands/</code>.
-<br>A command file contains the specifications of one or more commands.
-<br>Observe is used through the CLI (command line interface = console), and takes 2 parameters :
-<pre>php run-observe.php &lt;command file> &lt;command></pre>
-Ex: 
-<pre>php run-observe.php insee/a00 prepare</pre>
-will execute the command <code>prepare</code> described in file <code>commands/insee/a00.yml</code>
-
+<!-- ********************************************************************************* -->
+<h2>Study</h2>
+A study is always related to a data set, but a data set can be used for several studies.
+<br>Studies are defined in <i>study files</i>, which permit to specify the commands to run.
+<br>The commands to run vary from a study to another, but it's globally always the same process :
+<ol class="spaced">
+    <li>Compute the planetary positions</li>
+    <li>Build sub-groups, called <i>splits</i>. In general, there is at least one split containing the whole data set.</li>
+    <li>For each split, compute the distributions of planetary positions</li>
+    <li>Compute control groups and build expected distributions for each split</li>
+    <li>Apply statistical tests to compare observed and expected distributions</li>
+    <li>Generate outputs to present the results of the study</li>
+</ol>
 
 <!-- ********************************************************************************* -->
-<h2>Usage</h2>
-To check that the program works, open a terminal, go to observe root directory and type :
-<pre>php run-observe.php</pre>
-<pre>
-WRONG USAGE - run-observes.php needs 2 arguments
--------                                                                                               
-Usage : 
-    php run-observe.php <command> <step>
-Example :
-    php run-observe.php test/toto command1
--------
-Possible values for argument1 : insee/a00, gauquelin/heredity
-</pre>
-If a similar error message is displayed, it means that the installation was OK.
+<!-- 
+<h2>Command files</h2>
+Program usage is based on <b>command files</b>
+<br>They are created by users ; they are used to describe what the program should do.
+<br>They are located in directory <code>commands/</code>.
+<br>They are written using YAML syntax.
 
+<br><br>Each command file contains description of commands.
+<br>One run of the program permits to execute one command ; usage of the program is then
+<pre>php run-observe.php &lt;command file> &lt;command></pre>
+-->
 
 </article>
 </div><!-- end class="main" -->

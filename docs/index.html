@@ -29,19 +29,18 @@ This software is used to perform statistical tests on astrology.
 
 <br><br>Note: here, "planet" is used in its etymological meaning (= "moving body"), so the sun and the moon are also called planets.
 <!--
-<br><br>Draft under construction
 -->
+<br><br>Draft under construction
 </div>
 
 </header>
 
 <article>
 
-<!-- ********************************************************************************* -->
-<h2>What are we doing ?</h2>
+<div style="font-size:2rem;">What are we doing ?</div>
 
-<!-- ************************************* -->
-<h3>Data</h3>
+<!-- ********************************************************************************* -->
+<h2>Data</h2>
 We are processing <b>dates</b>, for example <a href="studies/a00.html">the data sent by Didier Castille</a>:
 
 <img class="margin" src="static/img/a00.jpg" alt="Screenshot of a00.csv, sent by Didier Castille">
@@ -63,10 +62,10 @@ It contains 591 936 lines with 3 or 4 dates:
 </div>
 <br class="clear-left">
 
-<!-- ************************************* -->
-<h3>Planets</h3>
+<!-- ********************************************************************************* -->
+<h2>Planets</h2>
 <div class="margin-bottom">
-For each date, we compute <b>planetary positions</b>. These are the ecliptic longitudes of planets at a given date, expressed in degrees, between 0 and 360.
+For each date, we compute <b>planetary positions</b>. These are the ecliptic longitudes of the planets at a given date, expressed in degrees, between 0 and 360.
 </div>
 <div style="float:left;">
 <img class="margin" src="static/img/grothendieck-astrology-300.jpg" alt="Astrological chart of Grothendieck">
@@ -90,42 +89,6 @@ For each date, we compute <b>planetary positions</b>. These are the ecliptic lon
 | NN  | 73.017     |
 +-----+------------+
 </pre>
-<!-- 
-<pre>
-+------------+-------+--------+---------+---------+---------+--------+---------+-------+---------+---------+--------+
-|    day     |  SO   |   MO   |   ME    |   VE    |   MA    |   JU   |   SA    |  UR   |   NE    |   PL    |   NN   |
-+------------+-------+--------+---------+---------+---------+--------+---------+-------+---------+---------+--------+
-| 1928-03-28 | 7.577 | 97.618 | 340.585 | 342.739 | 322.279 | 14.344 | 259.157 | 3.626 | 146.828 | 103.775 | 73.017 |
-+------------+-------+--------+---------+---------+---------+--------+---------+-------+---------+---------+--------+
-</pre>
-<pre>
-SELECT 'day' AS key, day AS value
-FROM planet
-WHERE day = '1928-03-28'
-UNION ALL
-SELECT 'SO', SO FROM planet WHERE day = '1928-03-28'
-UNION ALL
-SELECT 'MO', MO FROM planet WHERE day = '1928-03-28'
-UNION ALL
-SELECT 'ME', ME FROM planet WHERE day = '1928-03-28'
-UNION ALL
-SELECT 'VE', VE FROM planet WHERE day = '1928-03-28'
-UNION ALL
-SELECT 'MA', MA FROM planet WHERE day = '1928-03-28'
-UNION ALL
-SELECT 'JU', JU FROM planet WHERE day = '1928-03-28'
-UNION ALL
-SELECT 'SA', SA FROM planet WHERE day = '1928-03-28'
-UNION ALL
-SELECT 'UR', UR FROM planet WHERE day = '1928-03-28'
-UNION ALL
-SELECT 'NE', NE FROM planet WHERE day = '1928-03-28'
-UNION ALL
-SELECT 'PL', PL FROM planet WHERE day = '1928-03-28'
-UNION ALL
-SELECT 'NN', NN FROM planet WHERE day = '1928-03-28';
-</pre>
--->
 </div>
 <br class="clear-left">
 
@@ -191,55 +154,53 @@ Here are the main planets:
 </table>
 
 
-<!-- ************************************* -->
-<h3>Distributions</h3>
+<!-- ********************************************************************************* -->
+<h2>Distributions</h2>
 Then we compute <b>distributions</b>:
 <br>
 <div style="float:left;">
-    <img height="250px" class="margin" src="static/img/group-astro-mars-300.jpg" alt="Distribution">
+    <figure>
+        <img height="250px" class="margin" src="static/img/group-astro-mars-300.jpg" alt="Distribution where each planet is represented individually">
+        <figcaption>1</figcaption>
+    </figure>
 </div>
 <div style="float:left;">
-    <img height="250px" class="margin" src="static/img/distrib-gauquelin.jpg" alt="Distribution example: planets in Gauquelin sectors">
+    <figure>
+        <img height="250px" class="margin" src="static/img/distrib-gauquelin.jpg" alt="Distribution example: planets in Gauquelin sectors">
+        <figcaption>2</figcaption>
+    </figure>
+</div>
+<div style="float:left;">
+    <figure>
+        <img height="250px" class="margin" src="static/img/year-csv.jpg" alt="Distribution: example of csv file">
+        <figcaption>3</figcaption>
+    </figure>
 </div>
 <br class="clear-left">
 
 For example, we take each planet separately and represent their positions in a single drawing.
-<br>Then we group the positions by packets (36 packets of 10° in the example).
+<br>Then we group the positions by packets (36 packets of 10° in example 2).
 <br>This grouping is called a <b>distribution</b>.
-
-<!-- ********************************************************************************* -->
-<h2>Study</h2>
-A study is always related to a data set, but a data set can be used for several studies.
-<br>Studies are defined in <i>study files</i>, which permit to specify the commands to run.
-<br>The commands to run vary from a study to another, but it's globally always the same process :
-<ol class="spaced">
-    <li>Compute the planetary positions</li>
-    <li>Build sub-groups, called <i>splits</i>. In general, there is at least one split containing the whole data set.</li>
-    <li>For each split, compute the distributions of planetary positions</li>
-    <li>Compute control groups and build expected distributions for each split</li>
-    <li>Apply statistical tests to compare observed and expected distributions</li>
-    <li>Generate outputs to present the results of the study</li>
-</ol>
-
-Observe contains code to handle two types of sutdies :
-<ul class="spaced">
-    <li><a href="mfc.html">MFC - Mother Father Child</a> - to handle datasets containing birth dates of a couple and a child, and optionnaly wedding dates.</li>
-    <li><a href="bd.html">BD - Birth Death</a> - to handle datasets containing persons withe their birth and death dates.</li>
+<br>Distributions are stored in csv files with two columns:
+<ul class="naled margin0">
+    <li>The first column contains a key to identify the value (birth year in example 3).</li>
+    <li>The second column contains the number of times the value occurs in the data set.</li>
 </ul>
 
 <!-- ********************************************************************************* -->
-<!-- 
-<h2>Command files</h2>
-Program usage is based on <b>command files</b>
-<br>They are created by users ; they are used to describe what the program should do.
-<br>They are located in directory <code>commands/</code>.
-<br>They are written using YAML syntax.
+<h2>Control groups</h2>
+The distributions computed to represent our data set are called the <b>observed distributions</b>.
+<br>To see if these distributions show anomalies, we must compare them to the <b>expected distributions</b>, which are the distributions that we should observe in the "chance hypothesis".
+<br>Expected distributions are built by shuffling the data, which permits to obtain fictional groups.
+<br>This is a delicate problem because it can introduce unintentional bias.
 
-<br><br>Each command file contains description of commands.
-<br>One run of the program permits to execute one command ; usage of the program is then
-<pre>php run-observe.php &lt;command file> &lt;command></pre>
--->
+<!-- ********************************************************************************* -->
+<h2>Statistical tests</h2>
+Once the distributions are computed, it is possible to use statistical tests to see if the observed distributions show anomalies compared with the expected distributions.
+<br>The first test is the <b>chi-square test</b>, which indicates if the difference between observed and expected distributions is significant.
+<br>If a difference is significant, the <b>effect size</b> is computed to know how much the anomaly affects the individuals of the group.
 
+<div class="prevnext">Next: <a href="intro/distrib-single-date.html">Single date distributions</a></div>
 
 <!-- ********************************************************************************* -->
 <h2>About</h2>
@@ -278,6 +239,8 @@ Program started in december 2020 by Thierry Graff to compute <a href="studies/a0
             <li><a href="./intro/statistical-tests.html">Statistical tests</a></li>
         </ul>
     </li>
+    
+    <li><a href="./organisation.html">Organisation</a></li>
     
     <li><a href="./install.html">Installation</a></li>
     

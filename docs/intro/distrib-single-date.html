@@ -25,18 +25,17 @@ Distributions of a single date
 
 <div class="intro">
 For any date (birth, death, wedding date...), the program can build a certain number of distributions.
-<br>Many other distibutions could be drawn.
+<br>Many other distributions could be drawn, this page lists the distributions handled by the program.
 </div>
 </header>
 
 <article>
 
-
 <!-- ********************************************************************************* -->
 <h2>Distribution by year</h2>
 <img height="250px" class="margin" src="img/year.svg" alt="Distribution: Mother, year of birth">
 Here, birth dates are grouped by year.
-<br>It represents the number of persons born each year
+<br>It represents the number of persons born each year.
 
 <!-- ********************************************************************************* -->
 <h2>Distribution by day</h2>
@@ -47,12 +46,12 @@ The dates are grouped in 366 packets of 1 day.
 <!-- ********************************************************************************* -->
 <h2>Planetary positions</h2>
 
-For each planet, we represent the distributions of its position (ecliptic longitude).
-Data are groupe in 360 packets of 1 degree.
+For each planet, we represent the distributions of their positions (ecliptic longitudes).
+<br>Data are grouped in 360 packets of 1 degree.
 
 <img height="250px" class="margin" src="img/SA.svg" alt="Distribution: Child, day of birth">
 
-It sometimes shows strange distibutions, expressing astronomical condiderations.
+It sometimes shows strange distributions, expressing astronomical or demographical condiderations.
 
 <br>This gives one distribution per planet.
 
@@ -60,6 +59,28 @@ It sometimes shows strange distibutions, expressing astronomical condiderations.
 <h2>Planetary aspects</h2>
 
 For a given date, we compute the planetary positions, and we consider the <b>angles</b> between 2 planets. These angles are called <b>aspects</b>.
+<br>They also vary from 0 to 360 degrees.
+
+<img height="250px" class="margin" src="img/SO-UR.svg" alt="Distribution: Aspect sun-uranus">
+
+<!-- ********************************************************************************* -->
+<h2>Summary</h2>
+Finally, for each date processed by the program, the following hierarchy of files is generated:
+<pre>
+distrib-one-date
+    ├── aspects
+    │   ├── JU-NE.csv
+    │   ├── ...
+    │   └── VE-UR.csv
+    ├── planets
+    │   ├── JU.csv
+    │   ├── ...
+    │   └── VE.csv
+    ├── day.csv
+    └── year.csv
+</pre>
+
+<div class="prevnext">Next: <a href="distrib-two-dates.html">Two dates distributions</a></div>
 
 </article>
 </div><!-- end class="main" -->
@@ -79,6 +100,8 @@ For a given date, we compute the planetary positions, and we consider the <b>ang
             <li><a href="../intro/statistical-tests.html">Statistical tests</a></li>
         </ul>
     </li>
+    
+    <li><a href="../organisation.html">Organisation</a></li>
     
     <li><a href="../install.html">Installation</a></li>
     
