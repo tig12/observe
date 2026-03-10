@@ -4,7 +4,7 @@
 #
 study:
   slug: death-fr
-  type: bd
+  type: distrib2
   
 #
 # 1 - variables used in several commands
@@ -26,11 +26,6 @@ variables:
   # list of planets involved in this study
   planets: &planets [SO, MO, ME, VE, MA, JU, SA, UR, NE, PL, NN]
   
-  # possible-splits
-  possible-splits:
-    - all           # contains the full dataset
-    - death-age     # dataset split by age at death - age limits are defined in observe\commands\studies\deathfr\split
-
 #
 # 2 - commands
 #
@@ -58,9 +53,9 @@ split-all:
 # --------------------------------------------------------------------------
 split-age:
   command: studies.deathfr.split
-  split: death-age
+  split: age
   # Relative to working-dir - Splits are generated in working-dir/out-subdir
-  out-subdir: split-death-age/data
+  out-subdir: split-age/data
 
 # Computes the distribution of aspects between planets at birth and planets at death for split "all"
 # --------------------------------------------------------------------------
@@ -70,17 +65,17 @@ distrib-aspect-all:
   # Data containing the bz2 splits are in working-dir/in-subdir
   in-subdir: split-all/data
   # Relative to working-dir - Aspect distributions are generated in working-dir/out-subdir
-  out-subdir: split-all/distrib-aspects
+  out-subdir: split-all/observed
 
-# Computes the distribution of aspects between planets at birth and planets at death for split "death-age"
+# Computes the distribution of aspects between planets at birth and planets at death for split "age"
 # --------------------------------------------------------------------------
 distrib-aspect-age:
   command: studies.deathfr.aspects
-  split: death-age
+  split: age
   # Relative to working-dir - Data containing the bz2 splits are in working-dir/in-subdir
-  in-subdir: split-death-age/data
+  in-subdir: split-age/data
   # Relative to working-dir - Aspect distributions are generated in working-dir/out-subdir
-  out-subdir: split-death-age/distrib-aspects
+  out-subdir: split-age/observed
 
 # Computes the control groups
 # --------------------------------------------------------------------------
@@ -94,33 +89,30 @@ control:
   # Relative to working-dir - Control distributions are generated in working-dir/out-subdir
   out-subdir: control
 
-# Computes the average distributions from control groups
+# Computes the expected distributions for split "all"
 # --------------------------------------------------------------------------
-expected:
+expected-all:
   command: studies.deathfr.expected
   # Relative to working-dir - Control distributions are taken from working-dir/in-subdir
   in-subdir: control
   # Relative to working-dir - Average is generated in working-dir/out-subdir
-  out-subdir: expected
+  out-subdir: split-all/expected
+
+# Computes the expected distributions for split "age"
+# --------------------------------------------------------------------------
+expected-age:
+  command: studies.deathfr.expected
+  # Relative to working-dir - Control distributions are taken from working-dir/in-subdir
+  in-subdir: control
+  # Relative to working-dir - Average is generated in working-dir/out-subdir
+  out-subdir: split-age/expected
 
 # Checks if expected and observed distributions have the same total
 # --------------------------------------------------------------------------
 check:
   command: studies.deathfr.check
 
-# Computes chi square and p values by comparing expected and observed distributions for split death-age
-# --------------------------------------------------------------------------
-chi2-age:
-  command: studies.deathfr.chi2
-  split: death-age
-  # Relative to working-dir - The expected distributions are in working-dir/in-expected-subdir
-  in-expected-subdir: expected
-  # Relative to working-dir - The observed distributions of the split are in working-dir/in-observed-subdir
-  in-observed-subdir: split-death-age/distrib-aspects
-  # Relative to working-dir - Results are generated in working-dir/out-subdir
-  out-subdir: split-death-age/chi2
-  
-# Computes chi square and p values by comparing expected and observed distributions for split all
+# Computes chi square and p values by comparing expected and observed distributions for split "all"
 # --------------------------------------------------------------------------
 chi2-all:
   command: studies.deathfr.chi2
@@ -128,8 +120,18 @@ chi2-all:
   # Relative to working-dir - The expected distributions are in working-dir/in-expected-subdir
   in-expected-subdir: expected
   # Relative to working-dir - The observed distributions of the split are in working-dir/in-observed-subdir
-  in-observed-subdir: split-all/distrib-aspects
+  in-observed-subdir: split-all/observed
   # Relative to working-dir - Results are generated in working-dir/out-subdir
   out-subdir: split-all/chi2
   
-  
+# Computes chi square and p values by comparing expected and observed distributions for split "age"
+# --------------------------------------------------------------------------
+chi2-age:
+  command: studies.deathfr.chi2
+  split: age
+  # Relative to working-dir - The expected distributions are in working-dir/in-expected-subdir
+  in-expected-subdir: expected
+  # Relative to working-dir - The observed distributions of the split are in working-dir/in-observed-subdir
+  in-observed-subdir: split-age/observed
+  # Relative to working-dir - Results are generated in working-dir/out-subdir
+  out-subdir: split-age/chi2

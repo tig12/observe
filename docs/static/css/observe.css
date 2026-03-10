@@ -65,7 +65,7 @@ a:hover{
 
 /* LEFT SIDEBAR */
 .left {
-    width: 300px;
+    width: 320px;
     overflow-y: auto;            /* independent vertical scroll */
     background-color:#333;
     font-size:.9rem;
@@ -111,6 +111,13 @@ table.wikitable > tr > th, table.wikitable > * > tr > th {
     margin:1rem;
 }
 
+.question{
+    background:lightyellow;
+    color: purple;
+    margin:1rem;
+    padding:1rem;
+    display:table;
+}
 /* ================ Table of contents ================ */
 .pagetoc{
     display:inline-block;

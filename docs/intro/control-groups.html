@@ -24,10 +24,35 @@ Control groups
 </h1>
 
 <div class="intro">
+The distributions computed from the original data set are called the <b>observed distributions</b>. The next step is to build the <b>expected distributions</b>. The comparison between observed and expected distribution will permit to see if the observed distributions show anomalies.
+<br>In this program, the expected distributions are built with control groups.
 </div>
 </header>
 
 <article>
+
+<!-- ********************************************************************************* -->
+<h2>Definition</h2>
+A control group is a fictional group built from the observed group.
+<br>Here, it is important to note that precautions need to be taken, and that the way control groups are built implies arbitrary choices.
+<br>For example, to build a control group of a data set containing birth and death dates, the simplest idea would be to:
+<ul class="simple margin-top0">
+    <li>take the birth date of a record,</li>
+    <li>randomly select an other record,</li>
+    <li>build a record of the control group with the birth date of the first record and the death date of the second record.</li>
+</ul>
+Obviously, a precaution is needed, because the birth date of the newly created record must be anterior to its death date.
+
+<br><br>And other questions arise: Do we want to keep properties of the observed group ? For example, do we want that the control groups respect the seasonal distribution of births ? Do we want to respect the age at death distribution ?
+
+<br><br>The answers to these questions imply arbitrary choices which must be identify. These answer affect the way we compute the control groups and may affect the comparison with the expected distributions.
+
+
+<!-- ********************************************************************************* -->
+<h2>Expected distributions</h2>
+To build the expected distributions, several control groups are computed, and the average distributions of these controls are computed.
+
+<div class="prevnext">Next: <a href="statistical-tests.html">Statistical tests</a></div>
 
 
 </article>
@@ -43,7 +68,7 @@ Control groups
         <div class="title">Introduction</div>
         <ul>
             <li><a href="../intro/distrib-single-date.html">Single date distributions</a></li>
-            <li><a href="../intro/distrib-two-dates.html">Two dates distributions</a></li>
+            <li><a href="../intro/distrib-several-dates.html">Several dates distributions</a></li>
             <li><a href="../intro/control-groups.html">Control groups</a></li>
             <li><a href="../intro/statistical-tests.html">Statistical tests</a></li>
             <li><a href="../intro/studies.html">Studies</a></li>
@@ -61,17 +86,16 @@ Control groups
         <div class="title">Studies</div>
         <ul>
             <li>
-                <a class="big1" href="../mfc.html">MFC - Mother Father Child</a>
-                <ul>
-                    <li><a href="../studies/a00.html">a00 - birth in France in 2000</a></li>
-                    <li><a href="../studies/gauquelin.html">Gauquelin heredity data</a></li>
-                </ul>
+                <a href="../studies/death-fr.html">Deaths in France 1970 - 2025</a>
+                <div class="small8 padding-left">28 803 835 { birth, death }</div>
             </li>
-            <li class="padding-top">
-                <a class="big1" href="../bd.html">BD - Birth Death</a>
-                <ul>
-                    <li><a href="../studies/death-fr.html">Deaths in France 1970 - 2025</a></li>
-                </ul>
+            <li>
+                <a href="../studies/a00.html">a00 - birth in France in 2000</a>
+                <div class="small8 padding-left">591 936 { mother, father, child, mariage }</div>
+            </li>
+            <li>
+                <a href="../studies/gauquelin.html">Gauquelin heredity data</a>
+                <div class="small8 padding-left">20 916 { mother, father, child }</div>
             </li>
         </ul>
     </li>

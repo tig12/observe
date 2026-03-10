@@ -60,9 +60,8 @@ ul.simple{
 
 img{display:block;}
 
-figure{
-  margin:auto;
-  display:inline-block;
+figure {
+    float: left;
 }
 figcaption{
     text-align:center;

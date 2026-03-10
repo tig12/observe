@@ -25,9 +25,6 @@ class DeathFr {
     /** Contains all intermediate files of this study **/
     public static string $WORKING_DIR;
     
-    /**  Array of splits handled in this study **/
-    public static array $POSSIBLE_SPLITS;
-    
     /** Path to the sqlite database containing the data coming from data.gouv.fr **/
     public static string $SQLITE_PERSON_PATH;
     
@@ -47,11 +44,6 @@ class DeathFr {
             throw new ObserveException("Missing key variables.working-dir in file " . self::$COMMAND_FILE_PATH);
         }
         self::$WORKING_DIR = $data['variables']['working-dir'];
-        
-        if(!isset($data['variables']['possible-splits'])){
-            throw new ObserveException("Missing key variables.possible-splits in file " . self::$COMMAND_FILE_PATH);
-        }
-        self::$POSSIBLE_SPLITS = $data['variables']['possible-splits'];
         
         if(!isset($data['variables']['sqlite-death-fr'])){
             throw new ObserveException("Missing key variables.sqlite-death-fr in file " . self::$COMMAND_FILE_PATH);
@@ -96,9 +88,9 @@ class DeathFr {
         Otherwise returns an error message.
     **/
     public static function checkParam_split(string $split): string|true {
-        if(!in_array($split, self::$POSSIBLE_SPLITS)){
+        if(!in_array($split, array_keys(split::SPLITS))){
             $msg = "Invalid value for parameter 'split': '$split',  in command file " . DeathFr::$COMMAND_FILE_PATH . "\n"
-                 . "Possible values:\n  - " . implode("\n  - ", DeathFr::$POSSIBLE_SPLITS) . "\n";
+                 . "Possible values:\n  - " . implode("\n  - ", array_keys(split::SPLITS)) . "\n";
             return $msg;
         }
         return true;

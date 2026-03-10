@@ -76,11 +76,14 @@ class control implements Command {
         self::$stmt_one_person = $sqlite_persons->prepare('select bday,dday from person where rowid=:rowid');
         // order by rowid : to respect age at death distribution, see comment of otherPerson()
         $stmt_many_persons = $sqlite_persons->prepare("select rowid,bday from person order by rowid limit :limit offset :offset");
+        $t1 = microtime(true);
+        $LIMIT = 1000;
         //
         // Execute
         //
-        $t1 = microtime(true);
-        $LIMIT = 1000;
+        // The person database is processed by small packets of size $LIMIT
+        // At the end of each iteration, the distributions are stored in tmp database
+        // This permits to stop and restart execution without re-computing from the beginning of person database
         for($i=$params['n-start']; $i < $params['n-controls'] + $params['n-start']; $i++){
             $controlName = 'control-' . str_pad($i, 3, '0', STR_PAD_LEFT);
             $controlDir = $outDir . DS . $controlName;

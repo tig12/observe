@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:cc="http://creativecommons.org/ns#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:svg="http://www.w3.org/2000/svg"
+    xmlns="http://www.w3.org/2000/svg"
+    width="355"
+    height="334"    
+>
+<style type="text/css"><![CDATA[
+.bl { /* bar line */
+    stroke:slategray;
+    stroke-width:8;
+}
+.title{
+    text-anchor:left;
+    font-weight:bold;
+    font-size:22px;
+}
+.xAxis{stroke:black;stroke-width:1;}
+.yAxis{stroke:black;stroke-width:1;}
+.xLegends{
+    text-anchor:middle;
+    font-size:12px;
+}
+.yLegends{
+    text-anchor:end;
+    dominant-baseline:middle;
+    font-size:12px;
+}
+.meanLine{
+    stroke:black;
+    stroke-dasharray:5,20;
+}
+]]></style>
+<rect width="100%" height="100%" fill="moccasin" />
+<text x="25" y="37" class="title">Mother - age at wedding</text>
+<line x1="70" y1="302" x2="330" y2="302" class="xAxis" />
+<line x1="70" y1="52" x2="70" y2="302" class="yAxis" />
+<g><title>13: 2</title><line x1="70" y1="302" x2="70" y2="302" class="bl" /></g>
+<g><title>14: 57</title><line x1="79" y1="302" x2="79" y2="301.6" class="bl" /></g>
+<g><title>15: 378</title><line x1="88" y1="302" x2="88" y2="299.6" class="bl" /></g>
+<g><title>16: 335</title><line x1="97" y1="302" x2="97" y2="299.9" class="bl" /></g>
+<g><title>17: 757</title><line x1="106" y1="302" x2="106" y2="297.2" class="bl" /></g>
+<g><title>18: 2318</title><line x1="115" y1="302" x2="115" y2="287.3" class="bl" /></g>
+<g><title>19: 5573</title><line x1="124" y1="302" x2="124" y2="266.5" class="bl" /></g>
+<g><title>20: 10254</title><line x1="133" y1="302" x2="133" y2="236.7" class="bl" /></g>
+<g><title>21: 15667</title><line x1="142" y1="302" x2="142" y2="202.3" class="bl" /></g>
+<g><title>22: 23600</title><line x1="151" y1="302" x2="151" y2="151.8" class="bl" /></g>
+<g><title>23: 30907</title><line x1="160" y1="302" x2="160" y2="105.3" class="bl" /></g>
+<g><title>24: 36739</title><line x1="169" y1="302" x2="169" y2="68.2" class="bl" /></g>
+<g><title>25: 39281</title><line x1="178" y1="302" x2="178" y2="52" class="bl" /></g>
+<g><title>26: 36328</title><line x1="187" y1="302" x2="187" y2="70.8" class="bl" /></g>
+<g><title>27: 29716</title><line x1="196" y1="302" x2="196" y2="112.9" class="bl" /></g>
+<g><title>28: 23099</title><line x1="205" y1="302" x2="205" y2="155" class="bl" /></g>
+<g><title>29: 17286</title><line x1="214" y1="302" x2="214" y2="192" class="bl" /></g>
+<g><title>30: 13160</title><line x1="223" y1="302" x2="223" y2="218.3" class="bl" /></g>
+<g><title>31: 9401</title><line x1="232" y1="302" x2="232" y2="242.2" class="bl" /></g>
+<g><title>32: 7250</title><line x1="241" y1="302" x2="241" y2="255.9" class="bl" /></g>
+<g><title>33: 5443</title><line x1="250" y1="302" x2="250" y2="267.4" class="bl" /></g>
+<g><title>34: 4078</title><line x1="259" y1="302" x2="259" y2="276.1" class="bl" /></g>
+<g><title>35: 3174</title><line x1="268" y1="302" x2="268" y2="281.8" class="bl" /></g>
+<g><title>36: 2282</title><line x1="277" y1="302" x2="277" y2="287.5" class="bl" /></g>
+<g><title>37: 1673</title><line x1="286" y1="302" x2="286" y2="291.4" class="bl" /></g>
+<g><title>38: 1154</title><line x1="295" y1="302" x2="295" y2="294.7" class="bl" /></g>
+<g><title>39: 874</title><line x1="304" y1="302" x2="304" y2="296.4" class="bl" /></g>
+<g><title>40: 970</title><line x1="313" y1="302" x2="313" y2="295.8" class="bl" /></g>
+<g><title>41: 82</title><line x1="322" y1="302" x2="322" y2="301.5" class="bl" /></g>
+<text x="70" y="319" class="xLegends">13</text>
+<text x="330" y="319" class="xLegends">41</text>
+<text x="177" y="319" class="xLegends">25</text>
+<text x="55" y="302" class="yLegends">2</text>
+<text x="55" y="52" class="yLegends">39281</text>
+<text x="55" y="231" class="yLegends">11097.9</text>
+<g fill="none"><path class="meanLine" d="M70 231 H330 231 Z" /></g></svg>
