@@ -1,25 +1,8 @@
 
-Observe program is a small generic tool to execute commands.
-Based on yaml command files, containing the commands and their parameters.
-
-Unstable draft, under construction
-
-Developed to analyze files containing mother - father - child birth data
-
-- Births in France of year 2000 (N = 591 936).
-See https://g5.tig12.net/observe/experiences/castille/a00
-
-- Gauquelin heredity data (N = 20 916)
-See https://g5.tig12.net/observe/experiences/gauquelin/heredity-newalch-20916
-
-Usage :
-git clone --recurse-submodules https://github.com/tig12/observe
-
-Then issue commands like:
-php run-observe.php castille/a00 pages
+Observe program is a tool to perform statistical tests on astrology.
 
 See https://tig12.github.io/observe for more details
 
-Released under the General Public Licence
+Released under the General Public Licence v3 or later
 
 Repository created in december 2020 by Thierry Graff

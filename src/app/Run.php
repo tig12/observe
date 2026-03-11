@@ -1,66 +1,63 @@
 <?php
 /********************************************************************************
-    Auxiliary code for run-observe.php, observe CLI frontend.
+    Auxiliary code for run-observe.php.
     
-    @license    GPL
+    @license    GPL - conforms to file LICENCE located in root directory of current repository.
+    @copyright  Thierry Graff
     @history    2020-12-15 21:42:03+01:00, Thierry Graff : creation
+    @history    2026-03-11 14:46:44+01:00, Thierry Graff : new version
 ********************************************************************************/
 namespace observe\app;
 
-use tiglib\filesystem\globRecursive;
+use observe\model\Studies;
 
 class Run{
-    
-    /** 
-        Returns the available command files = relative paths of YAML files located in commands/
-        
-        Possible values for CLI argument 1
-        
-        Ex : if commands/ contains
-            commands
-                ├── test
-                │   └── toto.yml
-                └── titi.yml
-        It will return :
-            Array(
-                [0] => titi
-                [1] => test/toto
-            )
-        This gives the list of possible strings which can be used as first argument to run-observe.php
+
+    /**
+        Computes the parameters passed to run-observe.php
+        Returns an associative array with the following keys:
+            - 'message':    string ; error message, or empty string if no error.
+            - 'study-slug': string ; slug of the study
+            - 'command':    string ; command to run
+            - 'params':     array ; optional array of parameters to pass to the command
+            
+        @param  $argv   Array of parameters passed to run-observe.php
     **/
-    public static function getCommandFiles(){
-        $res = [];
-        $tmp = globRecursive::execute(self::commandsDir() . DS . '*.yml');
-        foreach($tmp as $elt){
-            // TODO keep paths ending by yml and not starting with z.
-            if(!\str_ends_with($elt, '.yml')){
-                continue;
-            }
-            $res[] = self::file2command($elt);
+    public static function parseInput(array $argv): array {
+        $scriptName = array_shift($argv);
+        $usage = "Usage: php $scriptName <study> <commmand> [args]\n"
+               . "   or: php $scriptName prepare planets\n";
+        $res = [
+            'message'       => '',
+            'study-slug'    => '',
+            'command'       => '',
+            'params'        => [],
+        ];
+        if(count($argv) < 2){
+            $res['message'] = "INVALID CALL: $scriptName needs at least two arguments\n" . $usage;
+            return $res;
         }
+        //
+        $studySlug = $argv[0];
+        $command = $argv[1];
+        // Particular case
+        if($studySlug == 'prepare' && $command == 'planets'){
+            $res['study'] = $studySlug;
+            $res['command'] = $command;
+            return $res;
+        }
+        // Normal case, $studySlug should correspond to an existing study slug
+        $allSlugs = Studies::getAllStudySlugs();
+        if(!in_array($studySlug, $allSlugs)){
+            $res['message'] = "INVALID STUDY: \"$studySlug\"\n"
+                . "Possible studies: \"" . implode('", "', $allSlugs) . "\"\n";
+            return $res;
+        }
+        // ok, valid study
+        $res['study'] = $studySlug;
+        $res['command'] = $command;
+        $res['params'] = array_slice($argv, 2);
         return $res;
     }
     
-    /**  Returns the directory containing the command files **/
-    private static function commandsDir(){
-        return 'commands';
-    }
-    
-    /**
-        Computes the file of a command string
-        Ex : $cmdStr = 'test/toto' returns '/path/to/commands/test/toto.yml'
-    **/
-    public static function command2file($cmdStr){
-        return self::commandsDir() . DS . $cmdStr . '.yml';
-    }
-    
-    /**
-        Computes command string from the path of a file
-        Ex : $path = '/path/to/commands/test/toto.yml' returns 'test/toto'
-    **/
-    public static function file2command($path){
-        $path = str_replace(self::commandsDir() . DS, '', $path);
-        return str_replace('.yml', '', $path);
-    }
-    
-}// end class
+} // end class

@@ -1,5 +1,4 @@
 
-
 # Swiss Ephemeris swetest
 swetest:
   # executable file
@@ -7,6 +6,10 @@ swetest:
   # directory containing data files (like seas_00.se1)
   dir:  /path/to/sweph
 
-# Path to the local database containing the planet positions.
-# Usable by all comands which need positions with a precision of one day.
-sqlite-planets: var/planets.sqlite3
+# Parameters related to the planetary positions, pre-computed in a sqlite database,
+# and available for all studies
+one-day-ephemeris:
+  # Planets to compute, using IAA codes
+  planets: [SO, MO, ME, VE, MA, JU, SA, UR, NE, PL, NN]
+  # Path to the local database containing the planet positions.
+  sqlite-planets: var/planets.sqlite3
