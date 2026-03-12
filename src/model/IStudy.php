@@ -3,20 +3,17 @@
 
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
     @copyright  Thierry Graff
-    @history    2026-03-11 17:50:55+01:00, Thierry Graff : Creation
+    @history    2026-03-12 00:42:19+01:00, Thierry Graff : Creation
 ********************************************************************************/
 
-namespace observe\studies\shared;
+namespace observe\model;
 
-use observe\model\ICommand;
-
-class output implements ICommand {
+interface IStudy {
     
-    /**
+    /** 
+        @param  $studyFile  Associative array containing the contents of a yaml command file
     **/
-    public static function execute(array $studyConfig, array $params): string {
-    
-        return 'observe\studies\shared\output';
-    }
+    public static function init(array &$studyConfig): void;
     
 } // end class
+

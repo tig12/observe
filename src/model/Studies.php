@@ -13,7 +13,9 @@ use tiglib\filesystem\globRecursive;
 
 class Studies {
     
+    /** All commands that can be run on a study **/
     const AVAILABLE_COMMANDS = [
+        'init',
         'split',
         'distrib',
         'control',
@@ -26,7 +28,7 @@ class Studies {
             Keys: slugs of the studies
             Values: Contents of the corresponding yaml files located in studies/
     **/
-    private static $studyFiles = [];
+    private static $studyConfigs = [];
     
     /**
         Returns the slugs of all available studies.
@@ -35,14 +37,19 @@ class Studies {
     public static function getAllStudySlugs(): array {
         $files = globRecursive::execute('studies/*.yml');
         foreach($files as $file){
-            $studyFileContents = yaml_parse_file($file);
+            $studyConfig = yaml_parse_file($file);
             // At this step, doesn't check if the yaml file is valid
-            if(isset($studyFileContents['slug'])){
-                self::$studyFiles[$studyFileContents['slug']] = $studyFileContents;
-                $res[] = $studyFileContents['slug'];
+            if(isset($studyConfig['slug'])){
+                $slug = $studyConfig['slug'];
+                //
+                // HERE store the contents of the yaml in self::$studyFile
+                // (with a supplementary entry: 'study-file')
+                //
+                self::$studyConfigs[$slug] = [...$studyConfig, ...['study-file' => $file]];
+                $res[] = $slug;
             }
         }
-        return array_keys(self::$studyFiles);
+        return array_keys(self::$studyConfigs);
     }
     
     /**
@@ -57,63 +64,109 @@ class Studies {
                 . implode("\n    - ", self::AVAILABLE_COMMANDS) . "\n";
         }
         
-        $studyNamespace = 'observe\\studies\\' . str_replace('-', '_', $studySlug);
+        $studyDir = str_replace('-', '_', $studySlug);
+        $studyNamespace = 'observe\\studies\\' . $studyDir;
         $sharedNamespace = 'observe\\studies\\shared';
         
-        // Here we cheat because we know that this function is called after self::getAllStudySlugs()
-        // then self::self::$studyFiles is already computed
-        $studyFile = self::$studyFiles[$studySlug];
+        // Here we cheat because we know that current function is called after self::getAllStudySlugs()
+        // then self::self::$studyConfigs is already computed
+        $studyConfig = self::$studyConfigs[$studySlug];
+        if(($msg = self::checkStudyFile($studyConfig)) != ''){
+            return "ERROR in study file {$studyConfig['study-file']}:\n$msg\n";
+        }
         
+        // Before calling the command, handle the computations specific to each study:
+        // call method init() of a class implementing IStudy located in the package specific to the command
+        if(($msg = self::initializeStudy($studyDir, $studyNamespace, $studyConfig)) != ''){
+            return "$msg\n";
+        }
         switch($command){
             // commands with implementation specific to each study
+        	case 'init': 
         	case 'split': 
         	case 'control': 
         	    $class = $studyNamespace . '\\' . $command;
-        	    return $class::execute($studyFile, $params);
+        	    return $class::execute($studyConfig, $params);
         	break;
         	// commands with implementation shared by all studies
             default:
         	    $class = $sharedNamespace . '\\' . $command;
-        	    return $class::execute($studyFile, $params);
+        	    return $class::execute($studyConfig, $params);
         	break;
         }
         // No return as normally here is never reached
-    }
-    
-    /** 
-        Returns the contents of a study file.
-        @return Error message if problem, empty message if ok.
-    **/
-    private static function computeStudyFile(string $studySlug): array {
-        // Here we cheat because we know that this function is called after self::getAllStudySlugs()
-        // which cached the study files it read
-        return self::$studyFiles[$studySlug];
     }
     
     /**
         @param  $studyConfig    Contains the contents of a yaml study file
         @return Error message if problem, empty message if ok.
     **/
-    private static function checkStudyFile(array $studyFileContents): string {
-        if(!isset($studyFileContents['slug'])){
+    private static function checkStudyFile(array $studyConfig): string {
+        if(!isset($studyConfig['slug'])){
             return "Missing entry \"slug\"";
         }
-        if(!isset($studyFileContents['working-dir'])){
+        //
+        if(!isset($studyConfig['working-dir'])){
             return "Missing entry \"working-dir\"";
         }
-        if(!isset($studyFileContents['out-dir'])){
+        if(!is_dir($studyConfig['working-dir'])){
+            return "Working directory {$studyConfig['working-dir']} does not exist. Create it before executing this command";
+        }
+        //
+        if(!isset($studyConfig['out-dir'])){
             return "Missing entry \"out-dir\"";
         }
-        if(!isset($studyFileContents['planets'])){
+        if(!is_dir($studyConfig['out-dir'])){
+            return "Output directory {$studyConfig['out-dir']} does not exist. Create it before executing this command";
+        }
+        //
+        if(!isset($studyConfig['planets'])){
             return "Missing entry \"planets\"";
         }
-        if(!isset($studyFileContents['splits'])){
+        //
+        if(!isset($studyConfig['splits'])){
             return "Missing entry \"splits\"";
         }
-        if(!isset($studyFileContents['n-controls'])){
+        //
+        if(!isset($studyConfig['n-controls'])){
             return "Missing entry \"n-controls\"";
         }
+        //
         return '';
     }
-
+    
+    /**
+        Finds a class implementing IStudy, and executes its method init().
+        @param  $
+    **/
+    private static function initializeStudy(string $studyDir, string $studyNamespace, array &$studyConfig): string {
+        $files = glob(implode(DS, ['src', 'studies', $studyDir, '*.php']));
+        $classes = [];
+        foreach($files as $file){
+            $basename = basename($file, '.php');
+            try{
+                $classpath = $studyNamespace . '\\' . $basename;
+                $class = new \ReflectionClass($classpath);
+                if($class->implementsInterface("observe\\model\\IStudy")){
+                    $classes[] = $class;
+                }
+            }
+            catch(\Exception $e){
+                // silently ignore php files present in the directory, but containing errors
+                // echo "ERR new \\ReflectionClass($baseClasspath) \n" . $e->getMessage() . "\n";
+            }
+        }
+        if(count($classes) == 0){
+            return "The namespace $studyNamespace doesn't contain a class implementing interface observe\\model\\IStudy";
+        }
+        if(count($classes) > 1){
+            return "The namespace $studyNamespace doesn't contain more than one class implementing interface observe\\model\\IStudy";
+        }
+        // ok, one class implements IStudy, call its method init();
+        $method = new \ReflectionMethod($classes[0]->name, 'init');
+        // use invokeArgs() instead of invoke() to pass $studyConfig by reference
+        $method->invokeArgs(null, [&$studyConfig]);
+        return '';
+    }
+    
 } // end class

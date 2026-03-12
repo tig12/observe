@@ -16,6 +16,7 @@ require_once implode(DS, [__DIR__, 'src', 'app', 'init.php']);
 
 use observe\app\Run;
 use observe\model\Studies;
+use observe\app\ObserveException;
 
 $input = Run::parseInput($argv);
 
@@ -24,5 +25,18 @@ if($input['message'] != ''){
     exit;
 }
 
-$msg = Studies::runCommand($input['study'], $input['command'], $input['params']);
-echo $msg; // empty if execution ok
+//
+// Run
+//
+try{
+    $msg = Studies::runCommand($input['study'], $input['command'], $input['params']);
+    echo $msg; // $msg is empty if execution is ok
+}
+catch(ObserveException $e){
+    echo "ERROR: " . $e->getMessage() . "\n";
+}
+catch(Exception $e){
+    echo $e->getTraceAsString() . "\n";
+    echo 'EXCEPTION: ' . $e->getMessage() . "\n";
+    echo $e->getFile() . ' - line ' . $e->getLine() . "\n";
+}

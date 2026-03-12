@@ -16,7 +16,6 @@ class Config{
     **/
     public static $data = null;
     
-    
     // ******************************************************
     public static function init(){
         $filename = dirname(dirname(__DIR__)) . DS . 'config.yml';

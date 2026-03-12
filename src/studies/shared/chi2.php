@@ -14,7 +14,7 @@ class chi2 implements ICommand {
     
     /**
     **/
-    public static function execute(array $studyFile, array $params): string {
+    public static function execute(array $studyConfig, array $params): string {
     
         return 'observe\studies\shared\chi2';
     }

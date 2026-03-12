@@ -14,7 +14,7 @@ class control implements ICommand {
     
     /**
     **/
-    public static function execute(array $studyFile, array $params): string {
+    public static function execute(array $studyConfig, array $params): string {
     
         return 'observe\studies\death_fr\control';
     }
