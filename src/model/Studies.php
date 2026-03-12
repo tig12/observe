@@ -10,6 +10,7 @@
 namespace observe\model;
 
 use tiglib\filesystem\globRecursive;
+use tigeph\model\IAA;
 
 class Studies {
     
@@ -123,6 +124,9 @@ class Studies {
         if(!isset($studyConfig['planets'])){
             return "Missing entry \"planets\"";
         }
+        if(($msg = IAA::checkCodes($params['planets'])) != ''){
+            return $msg;
+        }
         //
         if(!isset($studyConfig['splits'])){
             return "Missing entry \"splits\"";
@@ -137,7 +141,7 @@ class Studies {
     
     /**
         Finds a class implementing IStudy, and executes its method init().
-        @param  $
+        @return Error message if problem, empty message if ok.
     **/
     private static function initializeStudy(string $studyDir, string $studyNamespace, array &$studyConfig): string {
         $files = glob(implode(DS, ['src', 'studies', $studyDir, '*.php']));

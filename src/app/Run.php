@@ -28,10 +28,10 @@ class Run{
         $usage = "Usage: php $scriptName <study> <commmand> [args]\n"
                . "   or: php $scriptName prepare planets\n";
         $res = [
-            'message'       => '',
             'study-slug'    => '',
             'command'       => '',
             'params'        => [],
+            'message'       => '',
         ];
         if(count($argv) < 2){
             $res['message'] = "INVALID CALL: $scriptName needs at least two arguments\n" . $usage;
@@ -40,13 +40,18 @@ class Run{
         //
         $studySlug = $argv[0];
         $command = $argv[1];
-        // Particular case
+        //
+        // Particular case of prepare planets, not related to a specific study
+        //
         if($studySlug == 'prepare' && $command == 'planets'){
-            $res['study'] = $studySlug;
+            $res['study-slug'] = $studySlug;
             $res['command'] = $command;
+            $res['params'] = array_slice($argv, 2);
             return $res;
         }
+        //
         // Normal case, $studySlug should correspond to an existing study slug
+        //
         $allSlugs = Studies::getAllStudySlugs();
         if(!in_array($studySlug, $allSlugs)){
             $res['message'] = "INVALID STUDY: \"$studySlug\"\n"
@@ -54,7 +59,7 @@ class Run{
             return $res;
         }
         // ok, valid study
-        $res['study'] = $studySlug;
+        $res['study-slug'] = $studySlug;
         $res['command'] = $command;
         $res['params'] = array_slice($argv, 2);
         return $res;

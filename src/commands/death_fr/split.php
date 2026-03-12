@@ -6,9 +6,11 @@
     @history    2026-03-11 17:47:41+01:00, Thierry Graff : Creation
 ********************************************************************************/
 
-namespace observe\studies\death_fr;
+namespace observe\commands\death_fr;
 
 use observe\model\ICommand;
+use tiglib\time\diff;
+use tiglib\time\seconds2HHMMSS;
 
 class split implements ICommand {
     
@@ -38,8 +40,6 @@ class split implements ICommand {
     /**
     **/
     public static function execute(array $studyConfig, array $params): string {
-        
-print_r(Death_fr::getTmpSqlite()); echo "\n"; exit;
         //
         // Parameter check
         //
@@ -65,7 +65,7 @@ print_r(Death_fr::getTmpSqlite()); echo "\n"; exit;
         $filenames = [];
         $bz2s = [];
         // sqlite database containing data coming from data.gouv.fr
-        $sqlite_persons = DeathFr::getPersonSqlite();
+        $sqlite_persons = Death_Fr::getPersonSqlite();
         $stmt_persons = $sqlite_persons->prepare("select rowid,bday from person order by rowid limit :limit offset :offset");
         $LIMIT = 1000;
         //
@@ -124,7 +124,7 @@ print_r(Death_fr::getTmpSqlite()); echo "\n"; exit;
         $stmt = $sqlite_persons->query('select max(rowid) from person');
         $MAXROWID = $stmt->fetch(\PDO::FETCH_ASSOC)['max(rowid)']; // = select count(*) from person
         $OFFSET = 0;
-        $LIMIT = 100000;
+        $LIMIT = 1000;
         $stmt_persons = $sqlite_persons->prepare("select bday,dday from person order by rowid limit :limit offset :offset");
         
         $outFile = $outDir . DS . 'all.csv.bz2';

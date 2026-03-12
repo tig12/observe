@@ -7,10 +7,11 @@
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
     @history    2026-02-26 09:09:06+01:00, Thierry Graff : creation
 ********************************************************************************/
-namespace observe\studies\death_fr;
 
-use observe\shared\distrib\degrees as degreeUtils;
+namespace observe\commands\death_fr;
+
 use observe\model\ICommand;
+use observe\util\distrib\EmptyDistrib;
 
 class init implements ICommand {
     
@@ -19,7 +20,13 @@ class init implements ICommand {
         @return Empty string, echoes its output
     **/
     public static function execute(array $studyConfig, array $params): string {
-        $path_sqlite = DeathFr::$SQLITE_TMP_PATH;
+        //
+        // Parameter check
+        //
+        if(count($params) != 0){
+            return "INVALID PARAMETER: \"{$params[0]}\". This command must be called without parameter\n";
+        }
+        $path_sqlite = $studyConfig['sqlite-tmp'];
         if(is_file($path_sqlite)) {
             $answer = readline("WARNING: File $path_sqlite already exists.\n         This operation will delete it permanently. Are you sure (y/n)? ");
             if(strtolower($answer) != 'y') {
@@ -29,7 +36,7 @@ class init implements ICommand {
                 else {
                     echo "OK, nothing was modified\n";
                 }
-                return;
+                return '';
             }
             unlink($path_sqlite);
             echo "Deleted file $path_sqlite\n";
@@ -41,7 +48,7 @@ class init implements ICommand {
             echo "Created directory $dir\n";
         }
         
-        $distrib = degreeUtils::emptyDoubleDistrib(DeathFr::$PLANETS, DeathFr::$PLANETS);
+        $distrib = EmptyDistrib::emptyDoubleDistrib($studyConfig['planets'], $studyConfig['planets']);
         $json = json_encode($distrib);
         $sql = <<<SQL
 create table control(
@@ -53,6 +60,7 @@ SQL;
         $sqlite = new \PDO('sqlite:' . $path_sqlite);
         $sqlite->exec($sql);
         echo "Initialized local sqlite database $path_sqlite\n";
+        return '';
     }
     
 }// end class    

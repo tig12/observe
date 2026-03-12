@@ -5,7 +5,7 @@
     @license    GPL
     @history    2026-02-21 18:17:03+01:00, Thierry Graff : Creation
 ********************************************************************************/
-namespace observe\studies\death_fr;
+namespace observe\commands\death_fr;
 
 use observe\model\IStudy;
 use observe\app\ObserveException;
@@ -16,7 +16,6 @@ class Death_fr implements IStudy {
     private static string $SQLITE_TMP_PATH;
     
     /**
-        @param  $
     **/
     public static function init(array &$studyConfig): void {
         if(!isset($studyConfig['sqlite-death-fr'])){
