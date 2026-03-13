@@ -18,8 +18,9 @@ class Studies {
     const AVAILABLE_COMMANDS = [
         'init',
         'split',
-        'distrib',
+        'observed'
         'control',
+        'expected',
         'chi2',
         'output',
     ];
@@ -65,7 +66,7 @@ class Studies {
                 . implode("\n    - ", self::AVAILABLE_COMMANDS) . "\n";
         }
         
-        $studyDir = str_replace('-', '_', $studySlug);
+        $studyDir = str_replace('-', '_', $studySlug); // === WARNING === Here, use of an implicit convention
         $studyNamespace = 'observe\\studies\\' . $studyDir;
         $sharedNamespace = 'observe\\studies\\shared';
         

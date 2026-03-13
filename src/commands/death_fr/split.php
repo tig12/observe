@@ -15,7 +15,8 @@ use tiglib\time\seconds2HHMMSS;
 class split implements ICommand {
     
     /** 
-        Arbitrary values used to build the splits, in days
+        Arbitrary values used to build the splits, in days.
+        The splits in this study concern the age at death.
         keys = limits of the interval, in days
         values = corresponding names, used to build file names
     **/

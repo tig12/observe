@@ -31,6 +31,7 @@ class Config{
             echo "Check syntax and try again\n";
             exit;
         }
+        // TODO Check the validity of config.yml
     }
     
     

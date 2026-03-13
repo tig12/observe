@@ -46,7 +46,7 @@ For any date (birth, death, wedding date...), the program can build a certain nu
             <a href="#4-planetary-aspects">Planetary aspects</a>
         </li>
         <li>
-            <a href="#5-summary">Summary</a>
+            <a href="#5-file-hierarchy">File hierarchy</a>
         </li>
     </ul>
 </nav>
@@ -84,10 +84,45 @@ For a given date, we compute the planetary positions, and we consider the <b>ang
 <img height="250px" class="margin" src="img/SO-UR.svg" alt="Distribution: Aspect sun-uranus">
 
 <!-- ********************************************************************************* -->
-<h2 id="5-summary">Summary</h2>
+<h2 id="5-file-hierarchy">File hierarchy</h2>
+In this program, distributions are stored in CSV files.
+<br>Such CSV file has 2 columns:
+<ul class="margin-top0 single">
+    <li>First column designates a packet.</li>
+    <li>Second column designates the number of occurences found in this packet.</li>
+</ul>
+For example, a distribution representing the position of a planet:
+
+<br><div class="float-left">
+<table class="wikitable center margin">
+    <tr>
+        <td>0</td>
+        <td>1543</td>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>1548</td>
+    </tr>
+    <tr>
+        <td colspan="2">...</td>
+    </tr>
+    <tr>
+        <td>359</td>
+        <td>1571</td>
+    </tr>
+</table>
+</div>
+<div class="float-left margin">
+    1543 records have a planet with longitude between 0° and 1°,
+    <br>1548 records have a planet with longitude between 1° and 2°
+    <br>etc.
+</div>
+<br class="clear-left">
+
+
 Finally, for each date processed by the program, the following hierarchy of files is generated:
 <pre>
-distrib-one-date
+distributions
     ├── aspects
     │   ├── JU-NE.csv
     │   ├── ...
@@ -99,6 +134,8 @@ distrib-one-date
     ├── day.csv
     └── year.csv
 </pre>
+
+This hierarchy of files is called <b>distrib1</b>.
 
 <div class="prevnext">Next: <a href="distrib-several-dates.html">Several dates distributions</a></div>
 

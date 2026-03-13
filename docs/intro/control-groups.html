@@ -24,33 +24,138 @@ Control groups
 </h1>
 
 <div class="intro">
-The distributions computed from the original data set are called the <b>observed distributions</b>. The next step is to build the <b>expected distributions</b>. The comparison between observed and expected distribution will permit to see if the observed distributions show anomalies.
-<br>In this program, the expected distributions are built with control groups.
+The distributions computed from the original data set are called the <b>observed distributions</b>.
+<br>The next step is to build the <b>expected distributions</b>.
+<br>The comparison between observed and expected distribution will permit to see if the observed distributions show anomalies.
+<br>In this program, the expected distributions are built with <b>control groups</b>.
 </div>
 </header>
 
 <article>
 
+<nav class="pagetoc" aria-label="Table of contents">
+    <ul>
+        <li>
+            <a href="#1-definition">Definition</a>
+        </li>
+        <li>
+            <a href="#2-expected-distributions">Expected distributions</a>
+        </li>
+        <li>
+            <a href="#3-file-hierarchy">File hierarchy</a>
+        </li>
+    </ul>
+</nav>
+
 <!-- ********************************************************************************* -->
-<h2>Definition</h2>
-A control group is a fictional group built from the observed group.
-<br>Here, it is important to note that precautions need to be taken, and that the way control groups are built implies arbitrary choices.
-<br>For example, to build a control group of a data set containing birth and death dates, the simplest idea would be to:
+<h2 id="1-definition">Definition</h2>
+A control group is a fictional group built by shuffling the data of the observed group.
+<br>For example, for a group of 500 persons with birth and death dates (B and D):
+
+<img class="margin2" src="img/shuffle.svg" alt="Construction of a control group by shuffling">
+
+We build a fictional person of the control group:
 <ul class="simple margin-top0">
     <li>take the birth date of a record,</li>
     <li>randomly select an other record,</li>
-    <li>build a record of the control group with the birth date of the first record and the death date of the second record.</li>
+    <li>build a record with the birth date of the first record and the death date of the second record.</li>
 </ul>
-Obviously, a precaution is needed, because the birth date of the newly created record must be anterior to its death date.
 
-<br><br>And other questions arise: Do we want to keep properties of the observed group ? For example, do we want that the control groups respect the seasonal distribution of births ? Do we want to respect the age at death distribution ?
+Here, precautions are needed: for example, the birth date of the newly created record must be anterior to its death date.
 
-<br><br>The answers to these questions imply arbitrary choices which must be identify. These answer affect the way we compute the control groups and may affect the comparison with the expected distributions.
+<br>And questions arise:
+<ul class="simple margin-top0">
+    <li>Do we want to keep properties of the observed group ?</li>
+    <li>For example, should the control groups respect the seasonal distribution of births ?</li>
+    <li>Should it respect the age at death distribution ?</li>
+</ul>
+Answering these questions affect the way the control groups are computed.
+<br>Can it affect the results of the satistical tests ?
+<div class="question">
+    More rigorous statistical knowledge is needed to build correct control groups and avoid unintentional bias due to arbitrary choices.
+</div>
 
 
 <!-- ********************************************************************************* -->
-<h2>Expected distributions</h2>
-To build the expected distributions, several control groups are computed, and the average distributions of these controls are computed.
+<h2 id="2-expected-distributions">Expected distributions</h2>
+To build the expected distributions,
+<ul class="simple margin-top0">
+    <li>several control groups are computed ;</li>
+    <li>for each distribution, an <b>average distribution</b> is computed ;</li>
+    <li>these average distributions are called the expected distributions.</li>
+</ul>
+
+<!-- ********************************************************************************* -->
+<h2 id="3-file-hierarchy">File hierarchy</h2>
+For each control, the full hierarchy of the observed distributions is reproduced.
+
+<br>In the example of a group containing birth and death dates:
+
+<pre class="tree">
+observed
+    <span class="distrib1">├── birth
+    │   ├── aspects
+    │   │   ├── JU-NE.csv
+    │   │   ├── ...
+    │   │   └── VE-UR.csv
+    │   ├── planets
+    │   │   ├── JU.csv
+    │   │   ├── ...
+    │   │   └── UR.csv
+    │   ├── day.csv
+    │   └── year.csv</span>
+    <span class="distrib2">├── birth-death
+    │   ├── interaspects
+    │   │   ├── JU-JU.csv
+    │   │   ├── ...
+    │   │   └── VE-VE.csv
+    │   └── age.csv</span>
+    <span class="distrib1">└── death
+        ├── aspects
+        │   ├── JU-NE.csv
+        │   ├── ...
+        │   └── VE-UR.csv
+        ├── planets
+        │   ├── JU.csv
+        │   ├── ...
+        │   └── UR.csv
+        ├── day.csv
+        └── year.csv</span>
+</pre>
+<!-- 
+If we call <b>distrib1</b> the single date distributions (in green)
+<br>and <b>distrib2</b> the distributions generated by the relations beween two dates (in yellow),
+-->
+
+If we use a short notation :
+<pre class="tree">
+observed
+    <span class="distrib1">├── B</span>
+    <span class="distrib2">├── B-D</span>
+    <span class="distrib1">└── D</span>
+</pre>
+Then the hierarchy of controls will be:
+<pre class="tree">
+control
+    ├── control-001
+    │   <span class="distrib1">├── B</span>
+    │   <span class="distrib2">├── B-D</span>
+    │   <span class="distrib1">└── D</span>
+    ├── ...
+    │
+    └── control-100
+        <span class="distrib1">├── B</span>
+        <span class="distrib2">├── B-D</span>
+        <span class="distrib1">└── D</span>
+</pre>
+
+And the expected distributions, containing the average of all control distributions:
+<pre class="tree">
+expected
+    <span class="distrib1">├── B</span>
+    <span class="distrib2">├── B-D</span>
+    <span class="distrib1">└── D</span>
+</pre>
 
 <div class="prevnext">Next: <a href="statistical-tests.html">Statistical tests</a></div>
 

@@ -39,6 +39,9 @@ pre{
     border:1px solid #717a9f;
     line-height:1.15;
 }
+pre.tree{
+    line-height: 1.2rem;
+}
 
 a{
     text-decoration:none;
@@ -97,10 +100,6 @@ a:hover{
 .left>ul>li>ul>li{
 }
 
-table.wikitable > tr > th, table.wikitable > * > tr > th {
-    background-color:#333;
-}
-
 /* ================ Particular elements ================ */
 .intro{
     margin-bottom:2rem;
@@ -112,12 +111,20 @@ table.wikitable > tr > th, table.wikitable > * > tr > th {
 }
 
 .question{
-    background:lightyellow;
-    color: purple;
+    background:#5bd;
+    color: black;
     margin:1rem;
     padding:1rem;
     display:table;
 }
+.distrib1{
+    color:olive;
+}
+.distrib2{
+    color:yellow;
+}
+
+
 /* ================ Table of contents ================ */
 .pagetoc{
     display:inline-block;
@@ -141,3 +148,23 @@ table.wikitable > tr > th, table.wikitable > * > tr > th {
 .pagetoc>ul>li>a{
     font-weight:bold;
 }
+
+/* ================ wikitable ================ */
+table.wikitable{
+    border-collapse:collapse;
+}
+table.wikitable > tr > th,
+table.wikitable > * > tr > th {
+    background-color:#333;
+    text-align:center;
+    vertical-align:top;
+}
+table.wikitable > tr > th,
+table.wikitable > tr > td,
+table.wikitable > * > tr > th,
+table.wikitable > * > tr > td {
+    border:1px solid #a2a9b1;
+    padding:0.2rem 0.4rem;
+    vertical-align:top;
+}
+
