@@ -13,6 +13,7 @@ use observe\app\ObserveException;
 class Death_fr implements IStudy {
     
     private static string $SQLITE_PERSON_PATH;
+    
     private static string $SQLITE_TMP_PATH;
     
     /**

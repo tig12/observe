@@ -57,33 +57,36 @@ Studies
 We often need to divide the original dataset in different subgroups to see if they show different distributions.
 <br>For example, how do the distributions of babies who died a few days after their birth compare with the distributions of general population ?
 <br>In this program, this is handled by the notion of <b>split</b>.
+<br>A split permits to generate subgroups from the original groups.
+<br>In general, a study has a split with only one subgroup containing the whole dataset.
 
 <!-- ********************************************************************************* -->
 <h2>The working directory</h2>
-Taking the example of a dataset with birth and death dates:
+Taking the example of a dataset with birth and death dates, and a study which defines one split, called "age" (making sub-groups depending on the age at death):
 <pre class="tree">
 working-dir
-    ├── all
-    │   ├── chi2
-    │   ├── data.bz2
-    │   ├── expected
-    │   └── observed
-    ├── control
-    │   ├── control-001
-    │   ├── ...
-    │   └── control-100
-    └── split-age
-        ├── 01--0-2days
-        │   ├── chi2
-        │   ├── data.bz2
-        │   ├── expected
-        │   └── observed
-        ├── ...
-        └── 08--90years-150years
-            ├── chi2
-            ├── data.bz2
-            ├── expected
-            └── observed
+├── control
+│   ├── control-001
+│   ├── ...
+│   └── control-100
+├── split-age
+│   ├── 01--0-2days
+│   │   ├── chi2
+│   │   ├── data.bz2
+│   │   ├── expected
+│   │   └── observed
+│   ├── ...
+│   └── 08--90years-150years
+│       ├── chi2
+│       ├── data.bz2
+│       ├── expected
+│       └── observed
+└── split-all
+    └── 01--0-150years
+        ├── chi2
+        ├── data.bz2
+        ├── expected
+        └── observed
 </pre>
 
 <!-- ********************************************************************************* -->

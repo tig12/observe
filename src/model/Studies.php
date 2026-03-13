@@ -18,7 +18,7 @@ class Studies {
     const AVAILABLE_COMMANDS = [
         'init',
         'split',
-        'observed'
+        'observed',
         'control',
         'expected',
         'chi2',
@@ -67,8 +67,8 @@ class Studies {
         }
         
         $studyDir = str_replace('-', '_', $studySlug); // === WARNING === Here, use of an implicit convention
-        $studyNamespace = 'observe\\studies\\' . $studyDir;
-        $sharedNamespace = 'observe\\studies\\shared';
+        $studyNamespace = 'observe\\commands\\' . $studyDir;
+        $sharedNamespace = 'observe\\commands\\shared';
         
         // Here we cheat because we know that current function is called after self::getAllStudySlugs()
         // then self::self::$studyConfigs is already computed
@@ -125,7 +125,7 @@ class Studies {
         if(!isset($studyConfig['planets'])){
             return "Missing entry \"planets\"";
         }
-        if(($msg = IAA::checkCodes($params['planets'])) != ''){
+        if(($msg = IAA::checkCodes($studyConfig['planets'])) != ''){
             return $msg;
         }
         //
@@ -137,6 +137,7 @@ class Studies {
             return "Missing entry \"n-controls\"";
         }
         //
+// TODO check entry 'dates'
         return '';
     }
     
@@ -145,7 +146,7 @@ class Studies {
         @return Error message if problem, empty message if ok.
     **/
     private static function initializeStudy(string $studyDir, string $studyNamespace, array &$studyConfig): string {
-        $files = glob(implode(DS, ['src', 'studies', $studyDir, '*.php']));
+        $files = glob(implode(DS, ['src', 'commands', $studyDir, '*.php']));
         $classes = [];
         foreach($files as $file){
             $basename = basename($file, '.php');

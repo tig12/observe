@@ -8,6 +8,7 @@
 
 namespace observe\commands\death_fr;
 
+use observe\model\Observe;
 use observe\model\ICommand;
 use tiglib\time\diff;
 use tiglib\time\seconds2HHMMSS;
@@ -27,6 +28,7 @@ class split implements ICommand {
         ],
         'age' => [
             '0'           => '0',
+            '2'           => '2days',
             '60'          => '2months',
             '182.625'     => '6months',
             '730.5'       => '2years',
@@ -67,18 +69,27 @@ class split implements ICommand {
         $bz2s = [];
         // sqlite database containing data coming from data.gouv.fr
         $sqlite_persons = Death_Fr::getPersonSqlite();
-        $stmt_persons = $sqlite_persons->prepare("select rowid,bday from person order by rowid limit :limit offset :offset");
+        $stmt_many_persons = $sqlite_persons->prepare("select rowid,bday,dday from person order by rowid limit :limit offset :offset");
         $LIMIT = 1000;
+        $stmt = $sqlite_persons->query('select max(rowid) from person');
+        $MAXROWID = $stmt->fetch(\PDO::FETCH_ASSOC)['max(rowid)']; // = select count(*) from person
+        // $baseOutdir = directory of the split, containing the sub-directories of each subgroup
+// TODO put computation of $baseOutdir in a function
+        $baseOutdir = $studyConfig['working-dir'] . DS . 'split-' . $split;
         //
         // Execute
         //
         $t1 = microtime(true);
-        // Note: obliged to open the bz2s of all splits because we don't know in which split a line of the database will go.
-        // Possible to change the algo : treat each split one by one, but would oblige to loop over the whole database for each split.
+        // Note: obliged to open the bz2s of all splits because we don't know in which subgroup a line of the database will go.
+        // Possible to change the algo : treat each subgroup one by one, but would oblige to loop over the whole database for each subgroup.
         for($i=0; $i < $nSplits; $i++){
             $froms[$i] = $keys[$i];
             $tos[$i] = $keys[$i + 1];
-            $filenames[$i] = $outDir . DS . sprintf("%02d", $i + 1) . '--' . $values[$i] . '-' . $values[$i+1] . '.csv.bz2';
+            // $subdirName = directory specific to one subgroup of the split.
+            $subdirName = sprintf("%02d", $i + 1) . '--' . $values[$i] . '-' . $values[$i+1];
+            $subdir = $baseOutdir . DS . $subdirName;
+            @mkdir($subdir, 0755, true);
+            $filenames[$i] = $subdir . DS . 'data.csv.bz2';
             $bz2s[$i] = bzopen($filenames[$i], 'w');
         }
         //
@@ -88,13 +99,12 @@ class split implements ICommand {
         while($OFFSET < $MAXROWID){
         
             $stmt_many_persons->execute([':offset' => $OFFSET, ':limit' => $LIMIT]);
-            $stmt_persons->execute();
-            foreach($stmt_persons->fetchAll(\PDO::FETCH_ASSOC) as $person){
+            foreach($stmt_many_persons->fetchAll(\PDO::FETCH_ASSOC) as $person){
                 $diff = diff::compute(new \Datetime($person['bday']), new \Datetime($person['dday']), 'D', 2);
                 // find the split corresponding to $diff
                 for($i=0; $i < $nSplits; $i++){
                     if($diff >= $froms[$i] && $diff < $tos[$i]){
-                        bzwrite($bz2s[$i], $person['bday'] . ';' . $person['dday'] . "\n");
+                        bzwrite($bz2s[$i], $person['bday'] . Observe::CSV_SEP . $person['dday'] . "\n");
                         $nValues[$i]++;
                         break;
                     }
@@ -118,31 +128,4 @@ class split implements ICommand {
         return '';
     }
     
-    /** 
-        Builds one split containing all persons
-    **/
-    private static function split_all(\PDO $sqlite_persons, string $outDir): void {
-        $stmt = $sqlite_persons->query('select max(rowid) from person');
-        $MAXROWID = $stmt->fetch(\PDO::FETCH_ASSOC)['max(rowid)']; // = select count(*) from person
-        $OFFSET = 0;
-        $LIMIT = 1000;
-        $stmt_persons = $sqlite_persons->prepare("select bday,dday from person order by rowid limit :limit offset :offset");
-        
-        $outFile = $outDir . DS . 'all.csv.bz2';
-        $bz2 = bzopen($outFile, 'w');
-        while($OFFSET < $MAXROWID){
-continue;
-            $stmt_persons->execute([':offset' => $OFFSET, ':limit' => $LIMIT]);
-            foreach($stmt_persons->fetchAll(\PDO::FETCH_ASSOC) as $person){
-                bzwrite($bz2, $person['bday'] . ';' . $person['dday'] . "\n");
-            }
-            $OFFSET += $LIMIT;
-        }
-        bzclose($bz);
-        //
-        // Store result
-        //
-        echo "Generated $outFile\n";
-    }
-
 } // end class
