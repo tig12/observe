@@ -18,7 +18,7 @@ class diff {
     /**
         Returns the duration from $d1 to $d2 (computes $d2 - $d1)
         @pre    $d1 < $d2
-        @param  $unit   'D', 'M' or 'Y'
+        @param  $unit   Unit of the result: 'D', 'M' or 'Y'
         @param  $precision Nb of decimal digits of the result 
         @return Decimal or integer number
     **/

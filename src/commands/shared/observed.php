@@ -11,7 +11,7 @@
 namespace observe\commands\shared;
 
 use observe\model\ICommand;
-use observe\model\distrib\Distribs
+use observe\model\distrib\Distribs;
 ;
 class observed implements ICommand {
     

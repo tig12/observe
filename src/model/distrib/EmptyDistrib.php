@@ -24,7 +24,7 @@ class EmptyDistrib {
     public static function emptyDistrib1(array &$studyConfig): array {
         return [
             'planets'=> self::emptySingleDistrib($studyConfig['planets']),
-            'aspects' => self::emptyDoubleDistrib($studyConfig['planets'], $studyConfig['planets']),
+            'aspects' => self::emptyDoubleDistrib_triangle($studyConfig['planets'], $studyConfig['planets']),
             'day' => self::emptyDayDistrib(),
             'year' => [],
         ];
@@ -35,7 +35,7 @@ class EmptyDistrib {
     **/
     public static function emptyDistrib2(array &$studyConfig): array {
         return [
-            'interaspects' => self::emptyDoubleDistrib($studyConfig['planets'], $studyConfig['planets']),
+            'interaspects' => self::emptyDoubleDistrib_square($studyConfig['planets'], $studyConfig['planets']),
             'age' => [],
         ];
     }
@@ -58,6 +58,7 @@ class EmptyDistrib {
                 ]
     **/
     public static function emptySingleDistrib(array &$codes, int $N = 360): array {
+//    public static function emptySingleDistrib(array &$codes, int $N = 3): array {
         $res = [];
         foreach($codes as $code){
             $res[$code] = array_fill(0, $N, 0);
@@ -66,6 +67,13 @@ class EmptyDistrib {
     }
     
     /**
+        Initialization adapted to interaspects, full combination of the keys.
+        Called square because the array can be represented like that (Z represents the zero values):
+            SO MO ME MA
+        SO  Z  Z  Z  Z
+        MO  Z  Z  Z  Z
+        ME  Z  Z  Z  Z
+        MA  Z  Z  Z  Z
         @param  $codes1 and $codes2     Arrays containing keys
                 ex: ['SO', 'MO', 'ME' ...]
         @param  $N The number of elements in the values of the result.
@@ -77,7 +85,8 @@ class EmptyDistrib {
                     'NN-NN' => [0 => 0, ... 359 => 0]
                 ]
     **/
-    public static function emptyDoubleDistrib(array &$codes1, array &$codes2, int $N = 360): array {
+    public static function emptyDoubleDistrib_square(array &$codes1, array &$codes2, int $N = 360): array {
+//    public static function emptyDoubleDistrib_square(array &$codes1, array &$codes2, int $N = 3): array {
         $res = [];
         foreach($codes1 as $code1){
             foreach($codes2 as $code2){
@@ -88,18 +97,51 @@ class EmptyDistrib {
     }
     
     /**
+        Initialization adapted to aspects, partial combination of the keys.
+        Called triangle because the array can be represented like that (Z represents the zero values):
+            SO MO ME MA
+        SO  
+        MO  Z
+        ME  Z  Z
+        MA  Z  Z  Z
+        @param  $codes1 and $codes2     Arrays containing keys
+                ex: ['SO', 'MO', 'ME' ...]
+        @param  $N The number of elements in the values of the result.
+        @return Associative array   keys = combination of $codes1 and $codes2
+                                    values = array with $N values initialzed to 0.
+                ex: [
+                    'SO-SO' => [0 => 0, ... 359 => 0],
+                    ...
+                    'NN-NN' => [0 => 0, ... 359 => 0]
+                ]
+    **/
+    public static function emptyDoubleDistrib_triangle(array &$codes1, array &$codes2, int $N = 360): array {
+//    public static function emptyDoubleDistrib_triangle(array &$codes1, array &$codes2, int $N = 3): array {
+        $res = [];
+        for($i=0; $i < count($codes1); $i++){
+            for($j=$i+1; $j < count($codes2); $j++){
+                $key = $codes1[$i] . '-' . $codes2[$j];
+                $res[$key] = array_fill(0, $N, 0);
+            }
+        }
+        return $res;
+    }
+    
+    /**
         @return Associative array   keys = days in format MM-DD
                                     values = array with $N values initialzed to 0.
                 [
-                    '01-01' => [0 => 0, ... 359 => 0],
-                    '01-02' => [0 => 0, ... 359 => 0],
+                    '01-01' => 0,
+                    '01-02' => 0,
                     ...
-                    '12-31' => [0 => 0, ... 359 => 0]
+                    '02-29' => 0
+                    ...
+                    '12-31' => 0
                 ]
     **/
-    public static function emptyDayDistrib(int $N = 360): array {
+    public static function emptyDayDistrib(): array {
         $res = [];
-        $days = daysOfYear::compute(2000, false); // bissextile year
+        $days = daysOfYear::compute(2004, false); // 2004 because bissextile year is needed
         foreach($days as $day){
             $res[$day] = 0;
         }

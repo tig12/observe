@@ -48,7 +48,7 @@ class init implements ICommand {
             echo "Created directory $dir\n";
         }
         
-        $distrib = EmptyDistrib::emptyDoubleDistrib($studyConfig['planets'], $studyConfig['planets']);
+        $distrib = EmptyDistrib::initializeDistributions($studyConfig['planets'], $studyConfig['planets']);
         $json = json_encode($distrib);
         $sql = <<<SQL
 create table control(
