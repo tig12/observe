@@ -16,4 +16,5 @@ z.*
 .~lock.*
 \#*
 *.bkp
+.phpunit.result.cache
 

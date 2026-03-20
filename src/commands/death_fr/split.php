@@ -10,6 +10,7 @@ namespace observe\commands\death_fr;
 
 use observe\model\Observe;
 use observe\model\ICommand;
+use observe\model\Splits;
 use tiglib\time\diff;
 use tiglib\time\seconds2HHMMSS;
 
@@ -74,8 +75,7 @@ class split implements ICommand {
         $stmt = $sqlite_persons->query('select max(rowid) from person');
         $MAXROWID = $stmt->fetch(\PDO::FETCH_ASSOC)['max(rowid)']; // = select count(*) from person
         // $baseOutdir = directory of the split, containing the sub-directories of each subgroup
-// TODO put computation of $baseOutdir in a function
-        $baseOutdir = $studyConfig['working-dir'] . DS . 'split-' . $split;
+        $baseOutdir = Splits::getSplitDirectory($studyConfig, $split);
         //
         // Execute
         //

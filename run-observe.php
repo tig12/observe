@@ -10,9 +10,7 @@
     @history    2020-12-15 21:38:32+01:00, Thierry Graff : creation
 ********************************************************************************/
 
-define('DS', DIRECTORY_SEPARATOR);
-
-require_once implode(DS, [__DIR__, 'src', 'app', 'init.php']);
+require_once implode(DIRECTORY_SEPARATOR, [__DIR__, 'src', 'app', 'init.php']);
 
 use observe\app\Run;
 use observe\model\Studies;

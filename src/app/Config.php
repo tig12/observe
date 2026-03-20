@@ -34,6 +34,4 @@ class Config{
         // TODO Check the validity of config.yml
     }
     
-    
 }// end class
-

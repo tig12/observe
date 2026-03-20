@@ -30,7 +30,20 @@ class Studies {
             Keys: slugs of the studies
             Values: Contents of the corresponding yaml files located in studies/
     **/
-    private static $studyConfigs = [];
+    private static array $studyConfigs = [];
+    
+    /**
+        Function written for phpunit.
+        @param  $
+    **/
+    public static function getStudyConfig(string $studySlug) {
+        if(count(self::$studyConfigs) == 0){
+            // call getAllStudySlugs() to have self::$studyConfigs computed
+            $allSlugs = self::getAllStudySlugs();
+        }
+        return self::$studyConfigs[$studySlug];
+    }
+    
     
     /**
         Returns the slugs of all available studies.

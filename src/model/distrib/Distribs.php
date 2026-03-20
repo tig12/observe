@@ -27,7 +27,14 @@ class Distribs {
     
     private static function init(array &$studyConfig): void {
         self::$sqlite_planets = SqlitePlanets::getSqlite();
-        self::$stmt_planets = self::$sqlite_planets->prepare('select ' . implode(',', $studyConfig['planets']) . ' from planet where day=:day');
+        $planets = implode(',', $studyConfig['planets']);
+        $days = '';
+        for($i=0; $i < count($studyConfig['dates']); $i++){
+            $days .= ":d$i,";
+        }
+        $days = substr($days, 0, -1);
+        // select SO,MO,ME,VE,MA,JU,SA,UR,NE,PL,NN from planet where day in(:d0,:d1)
+        self::$stmt_planets = self::$sqlite_planets->prepare("select $planets from planet where day in($days)");
         self::$codePlanets = $studyConfig['planets'];
         self::$nPlanets = count(self::$codePlanets);
         self::$initOK = true;
@@ -37,15 +44,15 @@ class Distribs {
         Conductor of distribution omputation.
         @param  $func Function which yields the data whose distributions need to be computed.
     **/
-    public static function computeDistributions(callable $func, array &$studyConfig) {
+    public static function computeDistributions(callable $func, array &$studyConfig): array {
         if(!self::$initOK){
             self::init($studyConfig);
         }
         $res = self::initializeDistributions($studyConfig);
-print_r($res); exit;
         foreach($func() as $line){
             self::fillDistributionsWithLine($res, trim($line), $studyConfig);
         }
+        return $res;
     }
     
     /**
@@ -53,58 +60,58 @@ print_r($res); exit;
         $res of the calling code is modified because passed by reference.
     **/
     public static function fillDistributionsWithLine(array &$res, string $line, array &$studyConfig): void {
-        $res = [];
-        $n = count($studyConfig['dates']);
+        $nDates = count($studyConfig['dates']);
         $dates = explode(Observe::CSV_SEP, trim($line));
+        $execArray = [];
+        for($i=0; $i < count($dates); $i++){
+            $execArray[":d$i"] = $dates[$i];
+        }
+        self::$stmt_planets->execute($execArray);
+        $planets = self::$stmt_planets->fetchAll(\PDO::FETCH_ASSOC);
         //
         // distributions of type distrib1
         //
-        for($i=0; $i < $n; $i++){
+        for($i=0; $i < $nDates; $i++){
             $name = $studyConfig['dates'][$i]; // "birth", "death", "mother", "father" etc.
-echo "date = " . $dates[$i] . "\n";
-echo "name = $name\n";
-            self::$stmt_planets->execute([':day' => $dates[$i]]);
-            $planets = self::$stmt_planets->fetch(\PDO::FETCH_ASSOC);
-echo "\n"; print_r($planets); echo "\n";
-echo "day = " . substr($dates[$i], 5) . "\n";
             // day
             $res[$name]['day'][substr($dates[$i], 5)]++;
-echo "res['name']['day']\n"; print_r($res[$name]['day']); echo "\n";
             //year
             $y = substr($dates[$i], 0, 4);
-            $res[$name]['year'][$y] = $res[$name]['year'][$y] + 1 ?? 1;
+            if(!isset($res[$name]['year'][$y])){
+                $res[$name]['year'][$y] = 0;
+            }
+            $res[$name]['year'][$y]++;
             // planets
-            foreach($planets as $codePlanet => $longitude){
+            foreach($planets[$i] as $codePlanet => $longitude){
                 $res[$name]['planets'][$codePlanet][floor($longitude)]++;
             }
-echo "res['name']['planets']\n"; print_r($res[$name]['planets']); echo "\n";
             // aspects
             for($j=0; $j < self::$nPlanets; $j++){
                 for($k=$j+1; $k < self::$nPlanets; $k++){
-                    $res[$name]['aspects'][self::$codePlanets[$j] . '-' . self::$codePlanets[$k]][floor(mod360::compute($planets[self::$codePlanets[$j]] - $planets[self::$codePlanets[$k]]))]++;
+                    // Take $planets[$i] to have the aspects between planets of $dates[$i]
+                    // Warning: mod360::compute($k - $j) to have the angle from planet j to planet k
+                    $res[$name]['aspects'][self::$codePlanets[$j] . '-' . self::$codePlanets[$k]][floor(mod360::compute($planets[$i][self::$codePlanets[$k]] - $planets[$i][self::$codePlanets[$j]]))]++;
                 }
             }
-echo "res['name']['aspects']\n"; print_r($res[$name]['aspects']); echo "\n";
-break;
         }
-exit;
-        
         //
         // distributions of type distrib2
         //
-        for($i=0; $i < $n; $i++){
-            self::$stmt_planets->execute([':day' => $dates[$i]]);
-            $planets1 = self::$stmt_planets->fetch(\PDO::FETCH_ASSOC);
-            for($j=$i+1; $j < $n; $j++){
+        for($i=0; $i < $nDates; $i++){
+            for($j=$i+1; $j < $nDates; $j++){
                 $name = $studyConfig['dates'][$i] . '-' . $studyConfig['dates'][$j]; // "birth-death", "mother-father" etc.
-                self::$stmt_planets->execute([':day' => $dates[$j]]);
-                $planets2 = self::$stmt_planets->fetch(\PDO::FETCH_ASSOC);
                 // age
-                $res[$name]['age'] = diff::compute(new \DateTime($dates[$i], $dates[$j], $studyConfig['unit-distrib-age']));
+                $age = diff::compute(new \DateTime($dates[$i]), new \DateTime($dates[$j]), $studyConfig['unit-distrib-age']);
+                if(!isset($res[$name]['age'][$age])){
+                    $res[$name]['age'][$age] = 0;
+                }
+                $res[$name]['age'][$age]++;
                 // interaspect
-                for($k=0; $k < self::$nPlanets; $k++){
-                    for($l=0; $l < self::$nPlanets; $l++){
-                        $res[$name]['interaspects'][self::$codePlanets[$k] . '-' . self::$codePlanets[$l]][floor(mod360::compute($planets1[self::$codePlanets[$k]] - $planets2[self::$codePlanets[$l]]))]++;
+                for($k=0; $k < self::$nPlanets; $k++){ // $k loop on $planets[$i]
+                    for($l=0; $l < self::$nPlanets; $l++){ // $l loop on $planets[$j]
+                        // Take $planets[$i] and $planets[$j] to have the interaspects between planets of $dates[$i] and $dates[$j]
+                        // Warning; mod360::compute($l - $k) to have the angle from planet k to planet l
+                        $res[$name]['interaspects'][self::$codePlanets[$k] . '-' . self::$codePlanets[$l]][floor(mod360::compute($planets[$j][self::$codePlanets[$l]] - $planets[$i][self::$codePlanets[$k]]))]++;
                     }
                 }
             }
@@ -117,18 +124,18 @@ exit;
     **/
     public static function initializeDistributions(array &$studyConfig): array {
         $res = [];
-        $n = count($studyConfig['dates']);
+        $nDates = count($studyConfig['dates']);
         // distributions of type distrib1
-        for($i=0; $i < $n; $i++){
+        for($i=0; $i < $nDates; $i++){
             $name = $studyConfig['dates'][$i];
-            $res[$name] = EmptyDistrib::emptyDistrib1($studyConfig);
+            $res[$name] = EmptyDistribs::emptyDistrib1($studyConfig);
         }
         // distributions of type distrib2
-        for($i=0; $i < $n; $i++){
-            for($j=$i+1; $j < $n; $j++){
+        for($i=0; $i < $nDates; $i++){
+            for($j=$i+1; $j < $nDates; $j++){
                 $name1 = $studyConfig['dates'][$i];
                 $name2 = $studyConfig['dates'][$j];
-                $res["$name1-$name2"] = EmptyDistrib::emptyDistrib2($studyConfig);
+                $res["$name1-$name2"] = EmptyDistribs::emptyDistrib2($studyConfig);
             }
         }
         return $res;

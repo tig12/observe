@@ -12,7 +12,7 @@ namespace observe\model\distrib;
 
 use tiglib\time\daysOfYear;
 
-class EmptyDistrib {
+class EmptyDistribs {
     
     // ***********************************************************************************
     // 1 - Functions aware of study structure    
@@ -58,7 +58,6 @@ class EmptyDistrib {
                 ]
     **/
     public static function emptySingleDistrib(array &$codes, int $N = 360): array {
-//    public static function emptySingleDistrib(array &$codes, int $N = 3): array {
         $res = [];
         foreach($codes as $code){
             $res[$code] = array_fill(0, $N, 0);
@@ -86,7 +85,6 @@ class EmptyDistrib {
                 ]
     **/
     public static function emptyDoubleDistrib_square(array &$codes1, array &$codes2, int $N = 360): array {
-//    public static function emptyDoubleDistrib_square(array &$codes1, array &$codes2, int $N = 3): array {
         $res = [];
         foreach($codes1 as $code1){
             foreach($codes2 as $code2){
@@ -116,7 +114,6 @@ class EmptyDistrib {
                 ]
     **/
     public static function emptyDoubleDistrib_triangle(array &$codes1, array &$codes2, int $N = 360): array {
-//    public static function emptyDoubleDistrib_triangle(array &$codes1, array &$codes2, int $N = 3): array {
         $res = [];
         for($i=0; $i < count($codes1); $i++){
             for($j=$i+1; $j < count($codes2); $j++){

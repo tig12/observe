@@ -12,6 +12,7 @@ namespace observe\commands\shared;
 
 use observe\model\ICommand;
 use observe\model\distrib\Distribs;
+use observe\model\Splits;
 ;
 class observed implements ICommand {
     
@@ -30,9 +31,7 @@ class observed implements ICommand {
         if(!in_array($split, $studyConfig['splits'])){
             return "INVALID PARAMETER split: \"$split\".\n$usage";
         }
-        
-// TODO put computation of $baseOutdir in a function
-        $baseOutdir = $studyConfig['working-dir'] . DS . 'split-' . $split;
+        $baseOutdir = Splits::getSplitDirectory($studyConfig, $split);
         $dirs = glob($baseOutdir . DS . '*');
         foreach($dirs as $dir){
             $filename = 'compress.bzip2://' . $dir . DS . 'data.csv.bz2';

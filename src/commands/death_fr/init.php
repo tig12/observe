@@ -11,7 +11,7 @@
 namespace observe\commands\death_fr;
 
 use observe\model\ICommand;
-use observe\util\distrib\EmptyDistrib;
+use observe\util\distrib\EmptyDistribs;
 
 class init implements ICommand {
     
@@ -48,7 +48,7 @@ class init implements ICommand {
             echo "Created directory $dir\n";
         }
         
-        $distrib = EmptyDistrib::initializeDistributions($studyConfig['planets'], $studyConfig['planets']);
+        $distrib = EmptyDistribs::initializeDistributions($studyConfig['planets'], $studyConfig['planets']);
         $json = json_encode($distrib);
         $sql = <<<SQL
 create table control(
