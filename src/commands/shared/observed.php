@@ -1,7 +1,7 @@
 <?php
 /******************************************************************************
     
-    Computes the observed distributions fo a given split.
+    Computes the observed distributions for a given split.
     
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
     @copyright  Thierry Graff
@@ -16,8 +16,6 @@ use observe\model\Splits;
 ;
 class observed implements ICommand {
     
-    /**
-    **/
     public static function execute(array $studyConfig, array $params): string {
         //
         // Parameter check
@@ -48,7 +46,9 @@ class observed implements ICommand {
                 }
                 fclose($fileHandle);
             };
-            Distribs::computeDistributions($f, $studyConfig);
+            $distribs = Distribs::computeDistributions($f, $studyConfig);
+            $outDir = $dir . DS . 'observed';
+            Distribs::storeDistributions($outDir, $distribs, $studyConfig);
         }
         return '';
     }

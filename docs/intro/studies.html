@@ -62,31 +62,58 @@ We often need to divide the original dataset in different subgroups to see if th
 
 <!-- ********************************************************************************* -->
 <h2>The working directory</h2>
+<!-- 
+Finally, the working directory of a study contains the r
+-->
 Taking the example of a dataset with birth and death dates, and a study which defines one split, called "age" (making sub-groups depending on the age at death):
 <pre class="tree">
 working-dir
 ├── control
 │   ├── control-001
+│   │   <span class="distrib1">├── birth</span>
+│   │   <span class="distrib2">├── birth-death</span>
+│   │   <span class="distrib1">└── death</span>
 │   ├── ...
 │   └── control-100
+│       <span class="distrib1">├── birth</span>
+│       <span class="distrib2">├── birth-death</span>
+│       <span class="distrib1">└── death</span>
 ├── split-age
 │   ├── 01--0-2days
 │   │   ├── chi2
 │   │   ├── data.bz2
 │   │   ├── expected
+│   │   │    <span class="distrib1">├── birth</span>
+│   │   │    <span class="distrib2">├── birth-death</span>
+│   │   │    <span class="distrib1">└── death</span>
 │   │   └── observed
+│   │        <span class="distrib1">├── birth</span>
+│   │        <span class="distrib2">├── birth-death</span>
+│   │        <span class="distrib1">└── death</span>
 │   ├── ...
 │   └── 08--90years-150years
 │       ├── chi2
 │       ├── data.bz2
 │       ├── expected
+│       │    <span class="distrib1">├── birth</span>
+│       │    <span class="distrib2">├── birth-death</span>
+│       │    <span class="distrib1">└── death</span>
 │       └── observed
+│            <span class="distrib1">├── birth</span>
+│            <span class="distrib2">├── birth-death</span>
+│            <span class="distrib1">└── death</span>
 └── split-all
     └── 01--0-150years
         ├── chi2
         ├── data.bz2
         ├── expected
+        │    <span class="distrib1">├── birth</span>
+        │    <span class="distrib2">├── birth-death</span>
+        │    <span class="distrib1">└── death</span>
         └── observed
+             <span class="distrib1">├── birth</span>
+             <span class="distrib2">├── birth-death</span>
+             <span class="distrib1">└── death</span>
 </pre>
 
 <!-- ********************************************************************************* -->

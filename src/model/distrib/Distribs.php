@@ -12,7 +12,7 @@ use observe\model\Observe;
 use observe\model\SqlitePlanets;
 use tiglib\time\diff;
 use tiglib\math\mod360;
-
+use tiglib\filesystem\mkdir;
 class Distribs {
     
     private static $initOK = false;
@@ -68,29 +68,33 @@ class Distribs {
         }
         self::$stmt_planets->execute($execArray);
         $planets = self::$stmt_planets->fetchAll(\PDO::FETCH_ASSOC);
+        if(count($planets) == 1){
+            // particular case: death day = birth day
+            $planets[1] = $planets[0];
+        }
         //
         // distributions of type distrib1
         //
         for($i=0; $i < $nDates; $i++){
-            $name = $studyConfig['dates'][$i]; // "birth", "death", "mother", "father" etc.
+            $dateName = $studyConfig['dates'][$i]; // "birth", "death", "mother", "father" etc.
             // day
-            $res[$name]['day'][substr($dates[$i], 5)]++;
+            $res[$dateName]['day'][substr($dates[$i], 5)]++;
             //year
             $y = substr($dates[$i], 0, 4);
-            if(!isset($res[$name]['year'][$y])){
-                $res[$name]['year'][$y] = 0;
+            if(!isset($res[$dateName]['year'][$y])){
+                $res[$dateName]['year'][$y] = 0;
             }
-            $res[$name]['year'][$y]++;
+            $res[$dateName]['year'][$y]++;
             // planets
             foreach($planets[$i] as $codePlanet => $longitude){
-                $res[$name]['planets'][$codePlanet][floor($longitude)]++;
+                $res[$dateName]['planets'][$codePlanet][floor($longitude)]++;
             }
             // aspects
             for($j=0; $j < self::$nPlanets; $j++){
                 for($k=$j+1; $k < self::$nPlanets; $k++){
                     // Take $planets[$i] to have the aspects between planets of $dates[$i]
                     // Warning: mod360::compute($k - $j) to have the angle from planet j to planet k
-                    $res[$name]['aspects'][self::$codePlanets[$j] . '-' . self::$codePlanets[$k]][floor(mod360::compute($planets[$i][self::$codePlanets[$k]] - $planets[$i][self::$codePlanets[$j]]))]++;
+                    $res[$dateName]['aspects'][self::$codePlanets[$j] . '-' . self::$codePlanets[$k]][floor(mod360::compute($planets[$i][self::$codePlanets[$k]] - $planets[$i][self::$codePlanets[$j]]))]++;
                 }
             }
         }
@@ -99,19 +103,19 @@ class Distribs {
         //
         for($i=0; $i < $nDates; $i++){
             for($j=$i+1; $j < $nDates; $j++){
-                $name = $studyConfig['dates'][$i] . '-' . $studyConfig['dates'][$j]; // "birth-death", "mother-father" etc.
+                $dateName = $studyConfig['dates'][$i] . '-' . $studyConfig['dates'][$j]; // "birth-death", "mother-father" etc.
                 // age
                 $age = diff::compute(new \DateTime($dates[$i]), new \DateTime($dates[$j]), $studyConfig['unit-distrib-age']);
-                if(!isset($res[$name]['age'][$age])){
-                    $res[$name]['age'][$age] = 0;
+                if(!isset($res[$dateName]['age'][$age])){
+                    $res[$dateName]['age'][$age] = 0;
                 }
-                $res[$name]['age'][$age]++;
+                $res[$dateName]['age'][$age]++;
                 // interaspect
                 for($k=0; $k < self::$nPlanets; $k++){ // $k loop on $planets[$i]
                     for($l=0; $l < self::$nPlanets; $l++){ // $l loop on $planets[$j]
                         // Take $planets[$i] and $planets[$j] to have the interaspects between planets of $dates[$i] and $dates[$j]
                         // Warning; mod360::compute($l - $k) to have the angle from planet k to planet l
-                        $res[$name]['interaspects'][self::$codePlanets[$k] . '-' . self::$codePlanets[$l]][floor(mod360::compute($planets[$j][self::$codePlanets[$l]] - $planets[$i][self::$codePlanets[$k]]))]++;
+                        $res[$dateName]['interaspects'][self::$codePlanets[$k] . '-' . self::$codePlanets[$l]][floor(mod360::compute($planets[$j][self::$codePlanets[$l]] - $planets[$i][self::$codePlanets[$k]]))]++;
                     }
                 }
             }
@@ -127,18 +131,54 @@ class Distribs {
         $nDates = count($studyConfig['dates']);
         // distributions of type distrib1
         for($i=0; $i < $nDates; $i++){
-            $name = $studyConfig['dates'][$i];
-            $res[$name] = EmptyDistribs::emptyDistrib1($studyConfig);
+            $dateName = $studyConfig['dates'][$i];
+            $res[$dateName] = EmptyDistribs::emptyDistrib1($studyConfig);
         }
         // distributions of type distrib2
         for($i=0; $i < $nDates; $i++){
             for($j=$i+1; $j < $nDates; $j++){
-                $name1 = $studyConfig['dates'][$i];
-                $name2 = $studyConfig['dates'][$j];
-                $res["$name1-$name2"] = EmptyDistribs::emptyDistrib2($studyConfig);
+                $dateName1 = $studyConfig['dates'][$i];
+                $dateName2 = $studyConfig['dates'][$j];
+                $res["$dateName1-$dateName2"] = EmptyDistribs::emptyDistrib2($studyConfig);
             }
         }
         return $res;
+    }
+    
+    /**
+        Stores the distributions of a study in csv files.
+        @param  $distribs   The dis
+    **/
+    public static function storeDistributions(string $baseDir, array &$distribs, array &$studyConfig): void {
+        $nDates = count($studyConfig['dates']);
+        // distributions of type distrib1
+        for($i=0; $i < $nDates; $i++){
+            $dateName = $studyConfig['dates'][$i];
+            $outDir = $baseDir . DS . $dateName;
+            // aspects
+            $dir = $outDir . DS . 'aspects';
+            mkdir::execute($dir, 0755, true);
+            foreach($distribs[$dateName]['aspects'] as $distribName => $distribValues){
+                $filename = $dir . DS . $distribName . '.csv';
+                $contents = CsvDistrib::distrib2csv($distribValues);
+                file_put_contents($filename, $contents);
+            }
+exit;
+            // planets
+            $dir = $outDir . DS . 'planets';
+            mkdir::execute($dir, 0755, true);
+            // day
+            // year
+        }
+exit;
+        // distributions of type distrib2
+        for($i=0; $i < $nDates; $i++){
+            for($j=$i+1; $j < $nDates; $j++){
+                $dateName = $studyConfig['dates'][$i] . '-' . $studyConfig['dates'][$j];
+                $outDir = $baseDir . DS . $dateName;
+                mkdir::execute($outDir, 0755, true);
+            }
+        }
     }
     
 } // end class
