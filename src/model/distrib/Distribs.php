@@ -47,7 +47,7 @@ class Distribs {
         if(!self::$initOK){
             self::init($studyConfig);
         }
-        $res = self::initializeDistributions($studyConfig);
+        $res = EmptyDistribs::initializeDistributions($studyConfig);
         foreach($func() as $dates){
             self::fillDistributionsWithLine($res, $dates, $studyConfig);
         }
@@ -118,29 +118,6 @@ class Distribs {
                 }
             }
         }
-    }
-    
-    /**
-        Initializes the distributions of a study.
-        The knowledge of $studyConfig['date'] permits to deduce the distributions of type distrib1 and distrib2 to initialize.
-    **/
-    public static function initializeDistributions(array &$studyConfig): array {
-        $res = [];
-        $nDates = count($studyConfig['dates']);
-        // distributions of type distrib1
-        for($i=0; $i < $nDates; $i++){
-            $dateName = $studyConfig['dates'][$i];
-            $res[$dateName] = EmptyDistribs::emptyDistrib1($studyConfig);
-        }
-        // distributions of type distrib2
-        for($i=0; $i < $nDates; $i++){
-            for($j=$i+1; $j < $nDates; $j++){
-                $dateName1 = $studyConfig['dates'][$i];
-                $dateName2 = $studyConfig['dates'][$j];
-                $res["$dateName1-$dateName2"] = EmptyDistribs::emptyDistrib2($studyConfig);
-            }
-        }
-        return $res;
     }
     
     /**

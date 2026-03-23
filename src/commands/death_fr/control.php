@@ -15,6 +15,7 @@ use observe\model\distrib\Distribs;
 use observe\model\distrib\AddDistribs;
 use tiglib\filesystem\mkdir;
 use tiglib\time\seconds2HHMMSS;
+use tiglib\math\modN;
 
 class control implements ICommand {
     
@@ -64,13 +65,6 @@ class control implements ICommand {
         //
         $outDir = Studies::getControlsDirectory($studyConfig); // ex: var/studies/death-fr/controls
         //
-        $allPlanets = $studyConfig['planets']; // planet codes
-        //
-// // sqlite database containing the planet positions
-// $sqlite_planets = SqlitePlanets::getSqlite();
-// // select SO,MO,ME,VE,MA,JU,SA,UR,NE,PL,NN from planets where day=:day
-// $stmt_planets = $sqlite_planets->prepare('select ' . implode(',', $allPlanets) . ' from planets where day=:day');
-        //
         // sqlite database containing temporary data
         $sqlite_tmp = Death_Fr::getTmpSqlite();
         //
@@ -92,6 +86,7 @@ class control implements ICommand {
         foreach($controls as $control){
             $controlName = 'control-' . str_pad($control, 3, '0', STR_PAD_LEFT);
             echo "======================== Generating $controlName ==================================\n";
+            self::prepareTmpSqlite($sqlite_tmp, $controlName);
             $controlDir = $outDir . DS . $controlName; // ex: var/studies/death-fr/controls/control-003
             $testFiles = glob($controlDir . DS . '*');
             if(count($testFiles) != 0){
@@ -121,16 +116,17 @@ class control implements ICommand {
                 $f = function() use ($stmt_many_persons, $OFFSET, $LIMIT) {
                     $stmt_many_persons->execute([':offset' => $OFFSET, ':limit' => $LIMIT]);
                     foreach($stmt_many_persons->fetchAll(\PDO::FETCH_ASSOC) as $person){
-                        yield self::otherPerson($person);
+                        yield array_values(self::otherPerson($person));
                     }
                 };
                 $newDistribs = Distribs::computeDistributions($f, $studyConfig);
-                $distribs = AddDistribs::add($distribs, $newDistrib, $studyConfig);
+                $distribs = AddDistribs::add($distribs, $newDistribs, $studyConfig);
                 self::storeDistribsAndOffsetInTmpSqlite($sqlite_tmp, $controlName, $OFFSET, $distribs);
                 unset($newDistribs);
                 $OFFSET += $LIMIT;
             } // end while($OFFSET < self::$maxRowid)
             
+            Distribs::storeDistributions($controlDir, $distribs, $studyConfig);
             
         } // end loop on controls
         
@@ -204,7 +200,7 @@ class control implements ICommand {
     public static function getLastDistribsAndOffsetFromTmpSqlite(\PDO $sqlite_tmp, string $controlName): array {
         $stmt = $sqlite_tmp->query("select distribs,last_offset from control where slug='$controlName'");
         $value = $stmt->fetch(\PDO::FETCH_ASSOC);
-        return [ json_decode($value['distribs']), $value['last_offset'] ];
+        return [ json_decode($value['distribs'], true), $value['last_offset'] ];
     }
 
     public static function storeDistribsAndOffsetInTmpSqlite(\PDO $sqlite_tmp, string $controlName, int $offset, array &$distrib): void {

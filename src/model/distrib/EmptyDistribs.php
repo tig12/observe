@@ -18,6 +18,29 @@ class EmptyDistribs {
     // 1 - Functions aware of study structure    
     // ***********************************************************************************
     
+    /**
+        Initializes the distributions of a study.
+        The knowledge of $studyConfig['date'] permits to deduce the distributions of type distrib1 and distrib2 to initialize.
+    **/
+    public static function initializeDistributions(array &$studyConfig): array {
+        $res = [];
+        $nDates = count($studyConfig['dates']);
+        // distributions of type distrib1
+        for($i=0; $i < $nDates; $i++){
+            $dateName = $studyConfig['dates'][$i];
+            $res[$dateName] = self::emptyDistrib1($studyConfig);
+        }
+        // distributions of type distrib2
+        for($i=0; $i < $nDates; $i++){
+            for($j=$i+1; $j < $nDates; $j++){
+                $dateName1 = $studyConfig['dates'][$i];
+                $dateName2 = $studyConfig['dates'][$j];
+                $res["$dateName1-$dateName2"] = self::emptyDistrib2($studyConfig);
+            }
+        }
+        return $res;
+    }
+    
     /** 
         Prepares an array containing empty distributions of type 1 (single date).
     **/

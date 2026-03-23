@@ -11,7 +11,7 @@
 namespace observe\commands\death_fr;
 
 use observe\model\ICommand;
-use observe\util\distrib\EmptyDistribs;
+use observe\model\distrib\EmptyDistribs;
 
 class init implements ICommand {
     
@@ -48,13 +48,13 @@ class init implements ICommand {
             echo "Created directory $dir\n";
         }
         //
-        $distribs = EmptyDistribs::initializeDistributions($studyConfig['planets'], $studyConfig['planets']);
+        $distribs = EmptyDistribs::initializeDistributions($studyConfig);
         $json = json_encode($distribs);
         $sql = <<<SQL
 create table control(
     slug varchar(255) unique,
     last_offset int default 0,
-    distrib text default '$json'
+    distribs text default '$json'
 )
 SQL;
         $sqlite = new \PDO('sqlite:' . $path_sqlite);
