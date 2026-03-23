@@ -11,7 +11,6 @@ namespace observe\model\distrib;
 
 use PHPUnit\Framework\TestCase;
 use observe\model\Studies;
-use observe\model\Splits;
 use observe\model\distrib\Distribs;
 use observe\model\distrib\EmptyDistribs;
 
@@ -27,7 +26,7 @@ class DistribsTest extends TestCase{
     }
     
     public function testComputeDistributions(){
-        $baseOutdir = Splits::getSplitDirectory(self::$studyConfig, 'all');
+        $baseOutdir = Studies::getSplitDirectory(self::$studyConfig, 'all');
         $filename = 'compress.bzip2://' . $baseOutdir . DS . '01--0-150years' . DS . 'data.csv.bz2';
         $f = function() use ($filename) {
             if (!$fileHandle = fopen($filename, 'r')) {

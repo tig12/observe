@@ -41,15 +41,15 @@ class init implements ICommand {
             unlink($path_sqlite);
             echo "Deleted file $path_sqlite\n";
         }
-        
+        //
         $dir = dirname($path_sqlite);
         if(!is_dir($dir)) {
             mkdir($dir, 0777, true);
             echo "Created directory $dir\n";
         }
-        
-        $distrib = EmptyDistribs::initializeDistributions($studyConfig['planets'], $studyConfig['planets']);
-        $json = json_encode($distrib);
+        //
+        $distribs = EmptyDistribs::initializeDistributions($studyConfig['planets'], $studyConfig['planets']);
+        $json = json_encode($distribs);
         $sql = <<<SQL
 create table control(
     slug varchar(255) unique,

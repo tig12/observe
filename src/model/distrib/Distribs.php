@@ -8,7 +8,6 @@
 ********************************************************************************/
 namespace observe\model\distrib;
 
-use observe\model\Observe;
 use observe\model\SqlitePlanets;
 use tiglib\time\diff;
 use tiglib\math\mod360;
@@ -49,8 +48,8 @@ class Distribs {
             self::init($studyConfig);
         }
         $res = self::initializeDistributions($studyConfig);
-        foreach($func() as $line){
-            self::fillDistributionsWithLine($res, trim($line), $studyConfig);
+        foreach($func() as $dates){
+            self::fillDistributionsWithLine($res, $dates, $studyConfig);
         }
         return $res;
     }
@@ -59,11 +58,10 @@ class Distribs {
         Fills the distributions of a study with one line containing dates.
         $res of the calling code is modified because passed by reference.
     **/
-    public static function fillDistributionsWithLine(array &$res, string $line, array &$studyConfig): void {
-        $nDates = count($studyConfig['dates']);
-        $dates = explode(Observe::CSV_SEP, trim($line));
+    public static function fillDistributionsWithLine(array &$res, array $dates, array &$studyConfig): void {
+        $nDates = count($dates);
         $execArray = [];
-        for($i=0; $i < count($dates); $i++){
+        for($i=0; $i < $nDates; $i++){
             $execArray[":d$i"] = $dates[$i];
         }
         self::$stmt_planets->execute($execArray);
@@ -153,32 +151,53 @@ class Distribs {
         $nDates = count($studyConfig['dates']);
         // distributions of type distrib1
         for($i=0; $i < $nDates; $i++){
-            $dateName = $studyConfig['dates'][$i];
-            $outDir = $baseDir . DS . $dateName;
-            // aspects
-            $dir = $outDir . DS . 'aspects';
-            mkdir::execute($dir, 0755, true);
-            foreach($distribs[$dateName]['aspects'] as $distribName => $distribValues){
-                $filename = $dir . DS . $distribName . '.csv';
+            $dateName = $studyConfig['dates'][$i]; // ex: birth
+            $outDir = $baseDir . DS . $dateName; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth
+            // aspects and planets
+            foreach(['aspects', 'planets'] as $distribType){
+                $dir = $outDir . DS . $distribType; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth/aspects
+                mkdir::execute($dir, 0755, true);
+                foreach($distribs[$dateName][$distribType] as $distribName => $distribValues){
+                    $filename = $dir . DS . $distribName . '.csv'; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth/aspects/SO-MO.csv
+                    $contents = CsvDistrib::distrib2csv($distribValues);
+                    file_put_contents($filename, $contents);
+                }
+            }
+            // day and year
+            ksort($distribs[$dateName]['year']);
+            foreach(['day', 'year'] as $distribName){
+                $filename = $outDir . DS . $distribName . '.csv'; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth/day.csv
+                $distribValues = $distribs[$dateName][$distribName];
                 $contents = CsvDistrib::distrib2csv($distribValues);
                 file_put_contents($filename, $contents);
             }
-exit;
-            // planets
-            $dir = $outDir . DS . 'planets';
-            mkdir::execute($dir, 0755, true);
-            // day
-            // year
         }
-exit;
         // distributions of type distrib2
         for($i=0; $i < $nDates; $i++){
             for($j=$i+1; $j < $nDates; $j++){
-                $dateName = $studyConfig['dates'][$i] . '-' . $studyConfig['dates'][$j];
+                $dateName = $studyConfig['dates'][$i] . '-' . $studyConfig['dates'][$j]; // ex: birth-death
                 $outDir = $baseDir . DS . $dateName;
                 mkdir::execute($outDir, 0755, true);
-            }
-        }
+                // interaspects
+                foreach(['interaspects'] as $distribType){
+                    $dir = $outDir . DS . $distribType; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth-death/interaspects
+                    mkdir::execute($dir, 0755, true);
+                    foreach($distribs[$dateName][$distribType] as $distribName => $distribValues){
+                        $filename = $dir . DS . $distribName . '.csv'; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth-death/interaspects/SO-SO.csv
+                        $contents = CsvDistrib::distrib2csv($distribValues);
+                        file_put_contents($filename, $contents);
+                    }
+                }
+                // age
+                ksort($distribs[$dateName]['age']);
+                foreach(['age'] as $distribName){
+                    $filename = $outDir . DS . $distribName . '.csv'; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth-death/age.csv
+                    $distribValues = $distribs[$dateName][$distribName];
+                    $contents = CsvDistrib::distrib2csv($distribValues);
+                    file_put_contents($filename, $contents);
+                }
+            } // end loop on $j
+        } // end loop on $i
     }
     
 } // end class

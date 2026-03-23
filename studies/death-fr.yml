@@ -22,9 +22,6 @@ splits:
   - all
   - age
 
-# Number of controls to compute
-n-controls: 1
-
 # Description of the dates contained in the split files
 # The order of this array must correspond to the order of the columns in the split files
 dates:
