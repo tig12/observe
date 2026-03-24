@@ -36,10 +36,12 @@ class expected implements ICommand {
         if(!in_array($split, $studyConfig['splits'])){
             return "INVALID PARAMETER split: \"$split\".\n$usage";
         }
+
+        $t1 = microtime(true);
+        
         //
         // Load control distribs
         //
-        $t1 = microtime(true);
         $baseControlsDir = Studies::getControlsDirectory($studyConfig);
         $controlDirs = glob($baseControlsDir . DS . 'control-*');
         $nControls = count($controlDirs);

@@ -184,6 +184,11 @@ class Studies {
         return '';
     }
     
+    /** Returns the directory containing the observed distributions of a subgroup of a given split of a study. **/
+    public static function getObservedDirectory(array &$studyConfig, string $split, string $subgroup): string {
+        return $studyConfig['working-dir'] . DS . 'split-' . $split . DS . $subgroup . DS . 'observed';
+    }
+    
     /** Returns the directory containing the expected distributions of a subgroup of a given split of a study. **/
     public static function getExpectedDirectory(array &$studyConfig, string $split, string $subgroup): string {
         return $studyConfig['working-dir'] . DS . 'split-' . $split . DS . $subgroup . DS . 'expected';
