@@ -25,9 +25,6 @@ class AddDistribs {
         //
         // distributions of type distrib1
         //
-// echo "\n"; print_r($d1['birth']['year']); echo "\n";
-// echo "\n"; print_r($d2['birth']['year']); echo "\n";
-// exit;
         for($i=0; $i < $nDates; $i++){
             $dateName = $studyConfig['dates'][$i]; // ex: birth
             $res[$dateName] = [];

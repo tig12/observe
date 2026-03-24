@@ -1,6 +1,7 @@
 <?php
 /******************************************************************************
     
+    
 
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
     @copyright  Thierry Graff
@@ -44,8 +45,7 @@ class Studies {
                 . implode("\n    - ", self::AVAILABLE_COMMANDS) . "\n";
         }
         
-        $studyDir = str_replace('-', '_', $studySlug); // === WARNING === Here, use of an implicit convention
-        $studyNamespace = 'observe\\commands\\' . $studyDir;
+        $studyNamespace = 'observe\\commands\\' . self::getStudyNamespace($studySlug);
         $sharedNamespace = 'observe\\commands\\shared';
         
         // Here we cheat because we know that current function is called after self::getAllStudySlugs()
@@ -57,7 +57,7 @@ class Studies {
         
         // Before calling the command, handle the computations specific to each study:
         // call method init() of a class implementing IStudy located in the package specific to the command
-        if(($msg = self::initializeStudy($studyDir, $studyNamespace, $studyConfig)) != ''){
+        if(($msg = self::initializeStudy($studyConfig)) != ''){
             return "$msg\n";
         }
         switch($command){
@@ -77,14 +77,21 @@ class Studies {
         // No return as normally here is never reached
     }
     
-    /** Returns the directory containing the intermediate files of a given split of a study. **/
-    public static function getSplitDirectory(array &$studyConfig, string $split): string {
-        return $studyConfig['working-dir'] . DS . 'split-' . $split;
+    /**
+        Returns the fqcn (fully qualified class name) of a class implementing IStudy.
+        Based on a convention: the namespace relative to a study and the name of the class implementing IStudy is built from the class slug.
+        For example, for study slug death-fr:
+        - the namespace is observe\commands\death_fr
+        - the class implementing Istudy is observe\commands\death_fr\Death_fr
+    **/
+    public static function getStudyClasspath(string $studySlug): string {
+        $namespace = self::getStudyNamespace($studySlug);
+        return 'observe\\commands\\' . $namespace . '\\' . ucfirst($namespace); // ex: observe\commands\eath_fr\Death_fr
     }
     
-    /** Returns the directory containing all the controls of a study. **/
-    public static function getControlsDirectory(array &$studyConfig): string {
-        return $studyConfig['working-dir'] . DS . 'controls';
+    /** Returns the namespace containing a class. Not fully qualified. **/
+    public static function getStudyNamespace(string $studySlug): string {
+        return str_replace('-', '_', $studySlug); // ex: death_fr
     }
     
     /** Function written for phpunit. **/
@@ -95,7 +102,6 @@ class Studies {
         }
         return self::$studyConfigs[$studySlug];
     }
-    
     
     /**
         Returns the slugs of all available studies.
@@ -117,6 +123,27 @@ class Studies {
             }
         }
         return array_keys(self::$studyConfigs);
+    }
+    
+    /**
+        Finds a class implementing IStudy, and executes its method init().
+        @return Error message if problem, empty message if ok.
+    **/
+    private static function initializeStudy(array &$studyConfig): string {
+        try{
+            $classpath = self::getStudyClasspath($studyConfig['slug']);
+            $class = new \ReflectionClass($classpath);
+            if(!$class->implementsInterface("observe\\model\\IStudy")){
+                return "The class $classpath doesn't implement interface observe\\model\\IStudy";
+            }
+        }
+        catch(\ReflectionException $e){
+            return "The class $classpath doesn't exist";
+        }
+        $method = new \ReflectionMethod($class->name, 'init');
+        // use invokeArgs() instead of invoke() to pass $studyConfig by reference
+        $method->invokeArgs(null, [&$studyConfig]);
+        return '';
     }
     
     /**
@@ -157,38 +184,19 @@ class Studies {
         return '';
     }
     
-    /**
-        Finds a class implementing IStudy, and executes its method init().
-        @return Error message if problem, empty message if ok.
-    **/
-    private static function initializeStudy(string $studyDir, string $studyNamespace, array &$studyConfig): string {
-        $files = glob(implode(DS, ['src', 'commands', $studyDir, '*.php']));
-        $classes = [];
-        foreach($files as $file){
-            $basename = basename($file, '.php');
-            try{
-                $classpath = $studyNamespace . '\\' . $basename;
-                $class = new \ReflectionClass($classpath);
-                if($class->implementsInterface("observe\\model\\IStudy")){
-                    $classes[] = $class;
-                }
-            }
-            catch(\Exception $e){
-                // silently ignore php files present in the directory, but containing errors
-                // echo "ERR new \\ReflectionClass($baseClasspath) \n" . $e->getMessage() . "\n";
-            }
-        }
-        if(count($classes) == 0){
-            return "The namespace $studyNamespace doesn't contain a class implementing interface observe\\model\\IStudy";
-        }
-        if(count($classes) > 1){
-            return "The namespace $studyNamespace doesn't contain more than one class implementing interface observe\\model\\IStudy";
-        }
-        // ok, one class implements IStudy, call its method init();
-        $method = new \ReflectionMethod($classes[0]->name, 'init');
-        // use invokeArgs() instead of invoke() to pass $studyConfig by reference
-        $method->invokeArgs(null, [&$studyConfig]);
-        return '';
+    /** Returns the directory containing the expected distributions of a subgroup of a given split of a study. **/
+    public static function getExpectedDirectory(array &$studyConfig, string $split, string $subgroup): string {
+        return $studyConfig['working-dir'] . DS . 'split-' . $split . DS . $subgroup . DS . 'expected';
+    }
+    
+    /** Returns the directory containing all the controls of a study. **/
+    public static function getControlsDirectory(array &$studyConfig): string {
+        return $studyConfig['working-dir'] . DS . 'controls';
+    }
+    
+    /** Returns the directory containing the intermediate files of a given split of a study. **/
+    public static function getSplitDirectory(array &$studyConfig, string $split): string {
+        return $studyConfig['working-dir'] . DS . 'split-' . $split;
     }
     
 } // end class

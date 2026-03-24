@@ -66,10 +66,10 @@ class control implements ICommand {
         $outDir = Studies::getControlsDirectory($studyConfig); // ex: var/studies/death-fr/controls
         //
         // sqlite database containing temporary data
-        $sqlite_tmp = Death_Fr::getTmpSqlite();
+        $sqlite_tmp = Death_fr::getTmpSqlite();
         //
         // sqlite database containing data coming from data.gouv.fr
-        $sqlite_persons = Death_Fr::getPersonSqlite();
+        $sqlite_persons = Death_fr::getPersonSqlite();
         $stmt = $sqlite_persons->query('select max(rowid) from person');
         self::$maxRowid = $stmt->fetch(\PDO::FETCH_ASSOC)['max(rowid)']; // = select count(*) from person
         self::$stmt_one_person = $sqlite_persons->prepare('select bday,dday from person where rowid=:rowid');
@@ -86,7 +86,6 @@ class control implements ICommand {
         foreach($controls as $control){
             $controlName = 'control-' . str_pad($control, 3, '0', STR_PAD_LEFT);
             echo "======================== Generating $controlName ==================================\n";
-            self::prepareTmpSqlite($sqlite_tmp, $controlName);
             $controlDir = $outDir . DS . $controlName; // ex: var/studies/death-fr/controls/control-003
             $testFiles = glob($controlDir . DS . '*');
             if(count($testFiles) != 0){
@@ -104,7 +103,10 @@ class control implements ICommand {
                     }
                     return '';
                 }
+                // Answer = 'y' => the user wants to re-compute a control => reinitialize the tmp database
+                self::deleteControlFromTmpSqlite($sqlite_tmp, $controlName);
             }
+            self::prepareTmpSqlite($sqlite_tmp, $controlName);
             mkdir::execute($controlDir, 0755, true);
             // ex: $distribs = ['birth' => 'aspects => ['SO-SO=>[0 ... 359], ...], 'death' => [...], 'birth-death' => [...]]
             [$distribs, $OFFSET] = self::getLastDistribsAndOffsetFromTmpSqlite($sqlite_tmp, $controlName);
@@ -197,6 +199,10 @@ class control implements ICommand {
         }
     }
     
+    public static function deleteControlFromTmpSqlite(\PDO $sqlite_tmp, string $controlName): void {
+        $stmt = $sqlite_tmp->query("delete from control where slug='$controlName'");
+    }
+    
     public static function getLastDistribsAndOffsetFromTmpSqlite(\PDO $sqlite_tmp, string $controlName): array {
         $stmt = $sqlite_tmp->query("select distribs,last_offset from control where slug='$controlName'");
         $value = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -207,5 +213,7 @@ class control implements ICommand {
         $json = json_encode($distrib);
         $stmt = $sqlite_tmp->query("update control set distribs='$json', last_offset=$offset where slug='$controlName' limit 1");
     }
+    
+    
 
 } // end class

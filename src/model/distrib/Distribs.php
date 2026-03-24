@@ -12,6 +12,7 @@ use observe\model\SqlitePlanets;
 use tiglib\time\diff;
 use tiglib\math\mod360;
 use tiglib\filesystem\mkdir;
+
 class Distribs {
     
     private static $initOK = false;
@@ -122,7 +123,7 @@ class Distribs {
     
     /**
         Stores the distributions of a study in csv files.
-        @param  $distribs   The dis
+        @param  $distribs   The distributions to store
     **/
     public static function storeDistributions(string $baseDir, array &$distribs, array &$studyConfig): void {
         $nDates = count($studyConfig['dates']);
@@ -175,6 +176,54 @@ class Distribs {
                 }
             } // end loop on $j
         } // end loop on $i
+    }
+    
+    /**
+        Loads the distributions of a study from csv files.
+        $baseDir is supposed to be structured wuth distributions of type distrib1 and distrib2 (no verification on the existence of the csv files).
+    **/
+    public static function loadDistributions(string $baseDir, array &$studyConfig): array {
+        $res = EmptyDistribs::initializeDistributions($studyConfig);
+        $nDates = count($studyConfig['dates']);
+        // distributions of type distrib1
+        for($i=0; $i < $nDates; $i++){
+            $dateName = $studyConfig['dates'][$i]; // ex: birth
+            $inDir = $baseDir . DS . $dateName; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth
+            // aspects and planets
+            foreach(['aspects', 'planets'] as $distribType){
+                $dir = $inDir . DS . $distribType; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth/aspects
+                $filenames = glob($dir . DS . '*.csv');
+                foreach($filenames as $filename){
+                    $res[$dateName][$distribType][basename($filename, '.csv')] = CsvDistrib::csv2distrib($filename, false);
+                }
+            }
+            // day and year
+            foreach(['day', 'year'] as $distribName){
+                $filename = $inDir . DS . $distribName . '.csv'; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth/day.csv
+                $res[$dateName][$distribName] = CsvDistrib::csv2distrib($filename, false);
+            }
+        }
+        // distributions of type distrib2
+        for($i=0; $i < $nDates; $i++){
+            for($j=$i+1; $j < $nDates; $j++){
+                $dateName = $studyConfig['dates'][$i] . '-' . $studyConfig['dates'][$j]; // ex: birth-death
+                $inDir = $baseDir . DS . $dateName;
+                // interaspects
+                foreach(['interaspects'] as $distribType){
+                    $dir = $inDir . DS . $distribType; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth-death/interaspects
+                    $filenames = glob($dir . DS . '*.csv');
+                    foreach($filenames as $filename){
+                        $res[$dateName][$distribType][basename($filename, '.csv')] = CsvDistrib::csv2distrib($filename, false);
+                    }
+                }
+                // age
+                foreach(['age'] as $distribName){
+                    $filename = $inDir . DS . $distribName . '.csv'; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth-death/age.csv
+                    $res[$dateName][$distribName] = CsvDistrib::csv2distrib($filename, false);
+                }
+            } // end loop on $j
+        } // end loop on $i
+        return $res;
     }
     
 } // end class

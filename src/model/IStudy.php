@@ -11,9 +11,14 @@ namespace observe\model;
 interface IStudy {
     
     /** 
-        @param  $studyFile  Associative array containing the contents of a yaml command file
+        @param  $studyFile  Associative array containing the contents of a yaml study file.
     **/
     public static function init(array &$studyConfig): void;
     
+    /**
+        Returns the names of the directories of each subgroup of a split.
+    **/
+    public static function getSplitDirnames(string $split): array;
+        
 } // end class
 

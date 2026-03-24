@@ -19,7 +19,7 @@ planets: [SO, MO, ME, VE, MA, JU, SA, UR, NE, PL, NN]
 
 # Possible splits of this command
 splits:
-  - all
+  - full
   - age
 
 # Description of the dates contained in the split files

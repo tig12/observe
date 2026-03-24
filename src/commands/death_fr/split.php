@@ -13,33 +13,9 @@ use observe\model\ICommand;
 use observe\model\Studies;
 use tiglib\time\diff;
 use tiglib\time\seconds2HHMMSS;
+use tiglib\filesystem\mkdir;
 
 class split implements ICommand {
-    
-    /** 
-        Arbitrary values used to build the splits, in days.
-        The splits in this study concern the age at death.
-        keys = limits of the interval, in days
-        values = corresponding names, used to build file names
-    **/
-    const array SPLITS = [
-        'all' => [
-            '0'           => '0',
-            '54787.5'     => '150years',
-        ],
-        'age' => [
-            '0'           => '0',
-            '2'           => '2days',
-            '60'          => '2months',
-            '182.625'     => '6months',
-            '730.5'       => '2years',
-            '1826.25'     => '5years',
-            '7305'        => '20years',
-            '18262.5'     => '50years',
-            '32872.5'     => '90years',
-            '54787.5'     => '150years',
-        ],
-    ];
     
     /** 
         Called by Studies::runCommand()
@@ -60,17 +36,17 @@ class split implements ICommand {
         //
         // Prepare
         //
-        $split_limits = self::SPLITS[$split];
+        $split_limits = Death_fr::SPLITS[$split];
         $keys = array_keys($split_limits);
         $values = array_values($split_limits);
-        $nSplits = count($split_limits) - 1;
-        $nValues = array_fill(0, $nSplits, 0); // nb of values stored in each split - useful only for command output
+        $nSubgroups = count($split_limits) - 1;
+        $nValues = array_fill(0, $nSubgroups, 0); // nb of values stored in each subgroup - useful only for command output
         $froms = [];
         $tos = [];
         $filenames = [];
         $bz2s = [];
         // sqlite database containing data coming from data.gouv.fr
-        $sqlite_persons = Death_Fr::getPersonSqlite();
+        $sqlite_persons = Death_fr::getPersonSqlite();
         $stmt_many_persons = $sqlite_persons->prepare("select rowid,bday,dday from person order by rowid limit :limit offset :offset");
         $LIMIT = 1000;
         $stmt = $sqlite_persons->query('select max(rowid) from person');
@@ -83,27 +59,26 @@ class split implements ICommand {
         $t1 = microtime(true);
         // Note: obliged to open the bz2s of all splits because we don't know in which subgroup a line of the database will go.
         // Possible to change the algo : treat each subgroup one by one, but would oblige to loop over the whole database for each subgroup.
-        for($i=0; $i < $nSplits; $i++){
+        $splitDirnames = Death_fr::getSplitDirnames($split);
+        for($i=0; $i < $nSubgroups; $i++){
             $froms[$i] = $keys[$i];
             $tos[$i] = $keys[$i + 1];
             // $subdirName = directory specific to one subgroup of the split.
-            $subdirName = sprintf("%02d", $i + 1) . '--' . $values[$i] . '-' . $values[$i+1];
-            $subdir = $baseOutdir . DS . $subdirName;
-            @mkdir($subdir, 0755, true);
+            $subdir = $baseOutdir . DS . $splitDirnames[$i];
+            mkdir::execute($subdir, 0755, true);
             $filenames[$i] = $subdir . DS . 'data.csv.bz2';
             $bz2s[$i] = bzopen($filenames[$i], 'w');
         }
         //
-        // Execute
+        // Main loop
         //
         $OFFSET = 0;
         while($OFFSET < $MAXROWID){
-        
             $stmt_many_persons->execute([':offset' => $OFFSET, ':limit' => $LIMIT]);
             foreach($stmt_many_persons->fetchAll(\PDO::FETCH_ASSOC) as $person){
                 $diff = diff::compute(new \Datetime($person['bday']), new \Datetime($person['dday']), 'D', 2);
                 // find the split corresponding to $diff
-                for($i=0; $i < $nSplits; $i++){
+                for($i=0; $i < $nSubgroups; $i++){
                     if($diff >= $froms[$i] && $diff < $tos[$i]){
                         bzwrite($bz2s[$i], $person['bday'] . Observe::CSV_SEP . $person['dday'] . "\n");
                         $nValues[$i]++;
@@ -116,10 +91,11 @@ class split implements ICommand {
         //
         // Store result
         //
-        for($i=0; $i < $nSplits; $i++){
+        for($i=0; $i < $nSubgroups; $i++){
             bzclose($bz2s[$i]);
             echo "Generated {$nValues[$i]} lines in {$filenames[$i]}\n";
         }
+        echo "Total generated lines: " . array_sum($nValues) . "\n";
         
         $t2 = microtime(true);
         $dt = round($t2 - $t1, 3);
