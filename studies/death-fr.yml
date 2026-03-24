@@ -30,7 +30,10 @@ dates:
 
 # Unit used in the age.csv distributions
 # Can be Y, M or D
-unit-distrib-age: M
+distrib-age-unit: M
+
+# Precision (nb of digits for decimal part) of the numbers stored in expected distributions
+expected-precision: 2
 
 #
 # 2 - Parameters specific to this study
