@@ -211,7 +211,7 @@ For example, we take each planet separately and represent their positions in a s
 Distributions are stored in csv files with two columns:
 <ul class="naled margin0">
     <li>The first column contains a key to identify the value (birth year in example 3).</li>
-    <li>The second column contains the number of times the value occurs in the data set.</li>
+    <li>The second column contains the number of times the value occurs in the dataset.</li>
 </ul>
 </div>
 <div class="float-left margin-left2" style="position:relative; top:-2rem;">
@@ -221,12 +221,16 @@ Distributions are stored in csv files with two columns:
 -->
 
 <!-- ********************************************************************************* -->
-<h2 id="4-control-groups">Control groups</h2>
-The distributions computed to represent our data set are called the <b>observed distributions</b>.
+<h2 id="4-control-groups">Control groups and expected ditributions</h2>
+The distributions computed to represent our original dataset are called the <b>observed distributions</b>.
 <br>To see if these distributions show anomalies, we must compare them to the <b>expected distributions</b>.
 <br>We build <b>control groups</b> by randomly shuffling the data and compute their distributions.
-<br>Several control groups are built, and the average distributions are computed.
+
+<img class="margin margin-top2" src="static/img/expected.svg" alt="Observed distributions, control groups, expected distributions">
+
+<br>Several control groups are built, and the mean (average) distributions are computed.
 <br>This is supposed to produce what we should observe in the "chance hypothesis".
+
 
 <!-- ********************************************************************************* -->
 <h2 id="5-statistical-tests">Statistical tests</h2>

@@ -33,6 +33,31 @@ class chi2 {
     public static function chi2(array $O, array $E): int|float{
         $res = 0;
         $N = count($O);
+        $keysE = array_keys($E);
+        $keysO = array_keys($O);
+        for($i=0; $i < $N; $i++){
+            if($E[$keysE[$i]] != 0){
+                $res += pow($O[$keysO[$i]] - $E[$keysE[$i]], 2) / $E[$keysE[$i]];
+            }
+        }
+        return $res;
+    }
+    /* 
+    public static function chi2(array $O, array $E): int|float{
+        $res = 0;
+        $N = count($O);
+        foreach($E as $kE => $vE){
+            if($vE != 0){
+                $vO = 
+                $res += pow($O[$i] - $E[$i], 2) / $E[$i];
+            }
+            
+        }
+        return $res;
+    }
+    public static function chi2(array $O, array $E): int|float{
+        $res = 0;
+        $N = count($O);
         for($i=0; $i < $N; $i++){
             if($E[$i] != 0){
                 $res += pow($O[$i] - $E[$i], 2) / $E[$i];
@@ -40,6 +65,7 @@ class chi2 {
         }
         return $res;
     }
+    */
     
     /**
         Computes the probability to get a given chi square distribution.
