@@ -242,7 +242,12 @@ Once the expected distributions are computed, it is possible to use statistical 
 
 <!-- ********************************************************************************* -->
 <h2 id="6-about">About</h2>
-Program started in december 2020 by Thierry Graff to compute <a href="studies/a00.html">a00 distributions</a> for Nick Kollerstrom, who studied if these data show statistical anomalies.
+Observe is a CLI (Command Line Interface), a tool used in a terminal (console) which pemits to issue commands to work on the data.
+<br>For example:
+<pre>php run-observe.php death-fr chi2 full</pre>
+Means: "for study <code>death-fr</code>, compute chi2 values of the split <code>full</code>"
+
+<br><br>Program started in december 2020 by Thierry Graff to compute <a href="studies/a00.html">a00 distributions</a> for Nick Kollerstrom, who studied if these data show statistical anomalies.
 <br>Rewrite in 2026 to test <a href="studies/death-fr.html">Deaths in France since 1970</a>.
 
 <br><br>Program developed and tested under Linux (Debian 13) with php 8.5. A priori, it should also work under Windows and Macintosh.
@@ -269,7 +274,6 @@ TODO
     <li class="title"><a href="./index.html">Home</a></li>
     
     <li>
-        <div class="title">Introduction</div>
         <ul>
             <li><a href="./intro/distrib-single-date.html">Single date distributions</a></li>
             <li><a href="./intro/distrib-several-dates.html">Several dates distributions</a></li>
@@ -280,11 +284,9 @@ TODO
     </li>
     
     
-    <li><a href="./install.html">Installation</a></li>
+    <li class="title"><a href="./install.html">Installation</a></li>
     
-    <li><a href="./usage.html">Usage</a></li>
-    
-    <li><a href="./output.html">Output</a></li>
+    <li class="title"><a href="./usage.html">Usage</a></li>
     
     <li>
         <div class="title">Studies</div>
@@ -295,7 +297,7 @@ TODO
             </li>
             <li>
                 <a href="./studies/a00.html">a00 - birth in France in 2000</a>
-                <div class="small8 padding-left">591 936 { mother, father, child, mariage }</div>
+                <div class="small8 padding-left">591 936 { mother, father, child, wedding }</div>
             </li>
             <li>
                 <a href="./studies/gauquelin.html">Gauquelin heredity data</a>
@@ -304,6 +306,7 @@ TODO
         </ul>
     </li>
     
+    <!-- 
     <li>
         <div class="title padding-top05">Commands</div>
         <ul>
@@ -313,6 +316,7 @@ TODO
             <li><a href="./commands/groupByNumber.html">groupByNumber</a></li>
         </ul>
     </li>
+    -->
     
     <li class="title"><a href="https://larzac.info/observe/output">Output</a></li>
     

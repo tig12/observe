@@ -9,9 +9,10 @@
 namespace observe\commands\shared;
 
 use observe\model\ICommand;
+use observe\model\Observe;
 use observe\model\Studies;
-use tiglib\stats\chi2 as chi2compute;
 use observe\model\distrib\Distribs;
+use tiglib\stats\chi2 as chi2compute;
 use tiglib\time\seconds2HHMMSS;
 
 class chi2 implements ICommand {
@@ -32,11 +33,15 @@ class chi2 implements ICommand {
         if(!in_array($split, $studyConfig['splits'])){
             return "INVALID PARAMETER split: \"$split\".\n$usage";
         }
-    
+        //
+        // Execute
+        //
+        $outDir = Studies::getSplitDirectory($studyConfig, $split);
         $nDates = count($studyConfig['dates']);
         $precision = $studyConfig['expected-precision'];
         $subgroupDirs = Studies::getStudyClasspath($studyConfig['slug'])::getSplitDirnames($split);
-        $chi2s =[];
+//        $chi2s =[];
+$csvChi2 = "DATE_NAME;DISTRIB_TYPE;DISTRIB;CHI2;P\n";
         foreach($subgroupDirs as $subgroupDir){
             $observedDistribs = Distribs::loadDistributions(Studies::getObservedDirectory($studyConfig, $split, $subgroupDir), $studyConfig);
             $expectedDistribs = Distribs::loadDistributions(Studies::getExpectedDirectory($studyConfig, $split, $subgroupDir), $studyConfig);
@@ -47,15 +52,17 @@ class chi2 implements ICommand {
                 foreach(['aspects', 'planets'] as $distribType){
                     foreach($observedDistribs[$dateName][$distribType] as $distribName => $observedDistribValues){ // ex: $distribName = 'SO-MO'
 // echo "[$dateName][$distribType][$distribName]\n";
-                        $chi2s[$dateName][$distribType][$distribName] = chi2compute::chi2AndProba(359, $observedDistribValues, $expectedDistribs[$dateName][$distribType][$distribName]);
+                        //$chi2s[$dateName][$distribType][$distribName] = chi2compute::chi2AndProba(359, $observedDistribValues, $expectedDistribs[$dateName][$distribType][$distribName]);
+//                        $chi2s["$dateName/$distribType/$distribName"] = chi2compute::chi2AndProba(359, $observedDistribValues, $expectedDistribs[$dateName][$distribType][$distribName]);
+$csvChi2 .= self::chi2line($dateName, $distribType, $distribName, chi2compute::chi2AndProba(359, $observedDistribValues, $expectedDistribs[$dateName][$distribType][$distribName]));
                     }
                 }
                 // day
 // echo "[$dateName]['day']\n";
-                $chi2s[$dateName]['day'] = chi2compute::chi2AndProba(359, $observedDistribs[$dateName]['day'], $expectedDistribs[$dateName]['day']);
+//                $chi2s[$dateName]['day'] = chi2compute::chi2AndProba(359, $observedDistribs[$dateName]['day'], $expectedDistribs[$dateName]['day']);
                 // year
 // echo "[$dateName]['year']\n";
-                $chi2s[$dateName]['year'] = chi2compute::chi2AndProba(359, $observedDistribs[$dateName]['year'], $expectedDistribs[$dateName]['year']);
+//                $chi2s[$dateName]['year'] = chi2compute::chi2AndProba(359, $observedDistribs[$dateName]['year'], $expectedDistribs[$dateName]['year']);
             }
             // distributions of type distrib1
             for($i=0; $i < $nDates; $i++){
@@ -64,16 +71,34 @@ class chi2 implements ICommand {
                     // interaspects
                     foreach($observedDistribs[$dateName]['interaspects'] as $distribName => $observedDistribValues){ // ex: $distribName = 'SO-SO'
 // echo "[$dateName]['interaspects'][$distribName]\n";
-                        $chi2s[$dateName]['interaspects'][$distribName] = chi2compute::chi2AndProba(359, $observedDistribValues, $expectedDistribs[$dateName][$distribType][$distribName]);
+                        //$chi2s[$dateName]['interaspects'][$distribName] = chi2compute::chi2AndProba(359, $observedDistribValues, $expectedDistribs[$dateName]['interaspects'][$distribName]);
+//                        $chi2s["$dateName/interaspects/$distribName"] = chi2compute::chi2AndProba(359, $observedDistribValues, $expectedDistribs[$dateName]['interaspects'][$distribName]);
+$csvChi2 .= self::chi2line($dateName, 'interaspects', $distribName, chi2compute::chi2AndProba(359, $observedDistribValues, $expectedDistribs[$dateName]['interaspects'][$distribName]));
                     }
                     // age
 // echo "[$dateName]['age']\n";
-                    $chi2s[$dateName]['age'] = chi2compute::chi2AndProba(359, $observedDistribs[$dateName]['age'], $expectedDistribs[$dateName]['age']);
+//                    $chi2s[$dateName]['age'] = chi2compute::chi2AndProba(359, $observedDistribs[$dateName]['age'], $expectedDistribs[$dateName]['age']);
                 } // end loop on $j
             } // end loop on $i
-        }
-echo "\n"; print_r($chi2s); echo "\n";
+        } // end foreach($subgroupDirs)
+        $outfilename = $outDir . DS . $subgroupDir . DS . 'chi2.csv';
+        file_put_contents($outfilename, $csvChi2);
+echo "Generated $outfilename\n";
+//echo "\n"; print_r($chi2s); echo "\n";
+//echo "$csvChi2\n";
         return '';
     }
+
     
+    /**
+        @param  $
+    **/
+    private static function chi2line(string $k1, string $k2, string $k3, array $chi2AndProba) {
+        return
+            $k1 . Observe::CSV_SEP
+          . $k2 . Observe::CSV_SEP
+          . $k3 . Observe::CSV_SEP
+          . $chi2AndProba[0] . Observe::CSV_SEP
+          . $chi2AndProba[1] . "\n";
+    }
 } // end class

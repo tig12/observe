@@ -36,6 +36,10 @@ class chi2 {
         $keysE = array_keys($E);
         $keysO = array_keys($O);
         for($i=0; $i < $N; $i++){
+// if(!isset($keysE[$i])){
+// echo 'E = ' . print_r($E); echo "\n";
+// echo 'O = ' . print_r($O); exit;
+// }
             if($E[$keysE[$i]] != 0){
                 $res += pow($O[$keysO[$i]] - $E[$keysE[$i]], 2) / $E[$keysE[$i]];
             }
