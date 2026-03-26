@@ -21,7 +21,7 @@ class Death_fr implements IStudy {
     const array SPLITS = [
         'full' => [
             '0'           => '0',
-            '54787.5'     => '150years',
+            '54787.5'     => '200years',
         ],
         'age' => [
             '0'           => '0',
@@ -33,7 +33,7 @@ class Death_fr implements IStudy {
             '7305'        => '20years',
             '18262.5'     => '50years',
             '32872.5'     => '90years',
-            '54787.5'     => '150years',
+            '54787.5'     => '200years',
         ],
     ];
     
@@ -86,6 +86,13 @@ class Death_fr implements IStudy {
                 . "You first need to create it with this command:\nphp run-observe.php death-fr init\n");
         }
         return new \PDO('sqlite:' . self::$SQLITE_TMP_PATH);
+    }
+    
+    /**
+        Written for phpunit
+    **/
+    public static function setSqlitePersonPath(string $path): void {
+        self::$SQLITE_PERSON_PATH = $path;
     }
     
 } // end class

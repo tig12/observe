@@ -48,7 +48,7 @@ class observed implements ICommand {
                 if (!$fileHandle = fopen($filename, 'r')) {
                     return false;
                 }
-                while (false !== $line = fgets($fileHandle)) {
+                while(false !== $line = fgets($fileHandle)){
                     yield explode(Observe::CSV_SEP, trim($line));
                 }
                 fclose($fileHandle);

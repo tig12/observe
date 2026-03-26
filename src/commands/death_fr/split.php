@@ -1,6 +1,8 @@
 <?php
 /******************************************************************************
-
+    
+    Transfers the contents of death-fr.sqlite3 to bz2 split files.
+    
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
     @copyright  Thierry Graff
     @history    2026-03-11 17:47:41+01:00, Thierry Graff : Creation

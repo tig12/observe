@@ -86,7 +86,7 @@ class Studies {
     **/
     public static function getStudyClasspath(string $studySlug): string {
         $namespace = self::getStudyNamespace($studySlug);
-        return 'observe\\commands\\' . $namespace . '\\' . ucfirst($namespace); // ex: observe\commands\eath_fr\Death_fr
+        return 'observe\\commands\\' . $namespace . '\\' . ucfirst($namespace); // ex: observe\commands\death_fr\Death_fr
     }
     
     /** Returns the namespace containing a class. Not fully qualified. **/
@@ -127,9 +127,10 @@ class Studies {
     
     /**
         Finds a class implementing IStudy, and executes its method init().
+        (public for phpunit)
         @return Error message if problem, empty message if ok.
     **/
-    private static function initializeStudy(array &$studyConfig): string {
+    public static function initializeStudy(array &$studyConfig): string {
         try{
             $classpath = self::getStudyClasspath($studyConfig['slug']);
             $class = new \ReflectionClass($classpath);
