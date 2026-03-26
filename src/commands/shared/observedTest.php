@@ -101,6 +101,7 @@ select * from planet where day in (
     public function testStudy1_full(){
         $studyConfig = $this->loadStudy1();
 //        observed::execute($studyConfig, ['full']);
+        
         $arr360 = array_fill(0, 360, 0);
         
         //
@@ -176,13 +177,6 @@ select * from planet where day in (
             'MO' => $arr360,
             'ME' => $arr360,
             'VE' => $arr360,
-            'MA' => $arr360,
-            'JU' => $arr360,
-            'SA' => $arr360,
-            'UR' => $arr360,
-            'NE' => $arr360,
-            'PL' => $arr360,
-            'NN' => $arr360,
         ];
         $wanted['SO'][28] = 1;
         $wanted['SO'][358] = 1;
@@ -275,23 +269,142 @@ select * from planet where day in (
             $observed = self::readCsv($filename, Observe::CSV_SEP);
             $this->assertEquals($observed, $wanted[$planet]);
         }
-/*
-+------------+---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
-|    day     |   SO    |   MO    |   ME    |   VE    |   MA    |   JU    |   SA    |   UR    |   NE    |   PL    |   NN    |
-+------------+---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
-| 1991-12-31 | 279.302 | 229.953 | 257.457 | 239.836 | 263.427 | 164.637 | 305.798 | 283.661 | 286.208 | 233.651 | 279.827 |
-| 1992-01-01 | 280.322 | 242.279 | 258.656 | 241.041 | 264.163 | 164.634 | 305.91  | 283.72  | 286.246 | 233.705 | 279.774 |
-| 1992-01-04 | 283.381 | 278.33  | 262.44  | 244.665 | 266.374 | 164.603 | 306.248 | 283.9   | 286.359 | 233.862 | 279.616 |
-| 1992-01-05 | 284.401 | 290.161 | 263.753 | 245.875 | 267.113 | 164.586 | 306.361 | 283.959 | 286.397 | 233.912 | 279.563 |
-| 1992-01-06 | 285.42  | 301.957 | 265.088 | 247.086 | 267.852 | 164.566 | 306.476 | 284.019 | 286.435 | 233.962 | 279.51  |
-+------------+---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+---------+
-*/
+        
+        //
+        // birth - aspects MA-JU
+        //
+        
+        // calc 313.844-24.07
+        // calc 336.678-190.736
+        // calc 360-57.423+17.535
+        // calc 360-266.883+66.364
+        // calc 360-149.357+97.448
+        // calc 127.302-19.84
+        // calc 142.843-70.671
+        // calc 72.428-57.174
+        // calc 360-284.755+46.816
+        // calc 360-264.899+164.627
+        // 289.774
+        // 145.942
+        // 320.112
+        // 159.481
+        // 308.091
+        // 107.462
+        // 72.172
+        // 15.254
+        // 122.061
+        // 259.728
+        $wanted =  $arr360;
+        $wanted[289] = 1;
+        $wanted[145] = 1;
+        $wanted[320] = 1;
+        $wanted[159] = 1;
+        $wanted[308] = 1;
+        $wanted[107] = 1;
+        $wanted[72] = 1;
+        $wanted[15] = 1;
+        $wanted[122] = 1;
+        $wanted[259] = 1;
+        //
+        $filename = implode(DS, [$studyConfig['working-dir'], 'split-full', '01--0-200years', 'observed', 'birth', 'aspects', 'MA-JU.csv']);
+        $observed = self::readCsv($filename, Observe::CSV_SEP);
+        $this->assertEquals($observed, $wanted);
+        
+        //
+        // death - aspects ME-VE
+        //
+        // calc 360-257.457+239.836
+        // calc 360-258.656+241.041
+        // calc 360-262.44+244.665
+        // calc 360-263.753+245.875
+        // calc 360-265.088+247.086
+        // 342.379
+        // 342.385
+        // 342.225
+        // 342.122
+        // 341.998
+        $wanted =  $arr360;
+        $wanted[342] = 8;
+        $wanted[341] = 2;
+        //
+        $filename = implode(DS, [$studyConfig['working-dir'], 'split-full', '01--0-200years', 'observed', 'death', 'aspects', 'ME-VE.csv']);
+        $observed = self::readCsv($filename, Observe::CSV_SEP);
+        $this->assertEquals($observed, $wanted);
+        
+        //
+        // birth-death - age
+        //
+        // (30.84 = avg month duration)
+        // select bday,dday,round((julianday(dday)-julianday(bday))/30.44, 0) "age" from person;
+        // +------------+------------+--------+
+        // |    bday    |    dday    |  age   |
+        // +------------+------------+--------+
+        // | 1906-09-11 | 1991-12-31 | 1024.0 |
+        // | 1903-03-20 | 1991-12-31 | 1065.0 |
+        // | 1905-10-03 | 1992-01-01 | 1035.0 |
+        // | 1908-02-08 | 1992-01-01 | 1007.0 |
+        // | 1942-03-02 | 1992-01-01 | 598.0  |
+        // | 1902-04-19 | 1992-01-05 | 1076.0 |
+        // | 1904-05-14 | 1992-01-01 | 1052.0 |
+        // | 1992-01-02 | 1992-01-04 | 0.0    |
+        // | 1952-11-01 | 1992-01-06 | 470.0  |
+        // | 1932-07-07 | 1992-01-06 | 714.0  |
+        // +------------+------------+--------+
+        $wanted = [
+            1024 => 1,
+            1065 => 1,
+            1035 => 1,
+            1007 => 1,
+            598 => 1, 
+            1076 => 1,
+            1052 => 1,
+            0 => 1,   
+            470 => 1, 
+            714 => 1, 
+        ];
+        $filename = implode(DS, [$studyConfig['working-dir'], 'split-full', '01--0-200years', 'observed', 'birth-death', 'age.csv']);
+        $observed = self::readCsv($filename, Observe::CSV_SEP);
+        $this->assertEquals($observed, $wanted);
+        
+        //
+        // birth-death - interaspects SO-SO
+        //
+        // calc 279.302-167.835
+        // calc 360-358.71 +279.302
+        // calc 280.322-189.612
+        // calc 360-318.355+280.322
+        // calc 360-341.286+280.322
+        // calc 284.401-28.496 
+        // calc 280.322-53.246                                                          
+        // calc 283.381-281.342
+        // calc 285.42-219.016
+        // calc 285.42-105.129
+        // 111.467
+        // 280.592
+        // 90.71
+        // 321.967
+        // 299.036
+        // 255.905
+        // 227.076
+        // 2.039
+        // 66.404
+        // 180.291
+        $wanted =  $arr360;
+        $wanted[111] = 1;
+        $wanted[280] = 1;
+        $wanted[90] = 1;
+        $wanted[321] = 1;
+        $wanted[299] = 1;
+        $wanted[255] = 1;
+        $wanted[227] = 1;
+        $wanted[2] = 1;
+        $wanted[66] = 1;
+        $wanted[180] = 1;
+        //
+        $filename = implode(DS, [$studyConfig['working-dir'], 'split-full', '01--0-200years', 'observed', 'birth-death', 'interaspects', 'SO-SO.csv']);
+        $observed = self::readCsv($filename, Observe::CSV_SEP);
+        $this->assertEquals($observed, $wanted);
     }
-    
-    /* public function testStudy1_age(){
-        $studyConfig = $this->loadStudy1();
-        observed::execute($studyConfig, ['full']);
-    } */
     
     private static function readCsv($filename, $delimiter=';'){
         $res = [];
@@ -300,7 +413,7 @@ select * from planet where day in (
                 if(count($data) == 1 && $data[0] == ''){
                     continue; // skip empty lines
                 }
-                $res[$data[0]] = $data[1];
+                $res[$data[0]] = (int)$data[1];
             }
             fclose($handle);
         }
