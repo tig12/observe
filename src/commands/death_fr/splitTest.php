@@ -14,26 +14,24 @@ use observe\model\Observe;
 use observe\model\Studies;
 
 class splitTest extends TestCase{
-
-    /*
-    The original data contains the 10 first lines of deces-1994.txt
-    (curiously, not dead in 1994 - but after check, this corresponds to deces-1994.txt
-    select bday,dday,(julianday(dday)-julianday(bday)) from person;
-    +------------+------------+-----------------------------------+
-    |    bday    |    dday    | (julianday(dday)-julianday(bday)) |
-    +------------+------------+-----------------------------------+
-    | 1906-09-11 | 1991-12-31 | 31157.0                           |
-    | 1903-03-20 | 1991-12-31 | 32428.0                           |
-    | 1905-10-03 | 1992-01-01 | 31501.0                           |
-    | 1908-02-08 | 1992-01-01 | 30643.0                           |
-    | 1942-03-02 | 1992-01-01 | 18202.0                           |
-    | 1902-04-19 | 1992-01-05 | 32768.0                           |
-    | 1904-05-14 | 1992-01-01 | 32008.0                           |
-    | 1992-01-02 | 1992-01-04 | 2.0                               |
-    | 1952-11-01 | 1992-01-06 | 14310.0                           |
-    | 1932-07-07 | 1992-01-06 | 21732.0                           |
-    +------------+------------+-----------------------------------+
-    */
+/*
+In person database:
+select bday,dday from person;
++------------+------------+
+|    bday    |    dday    |
++------------+------------+
+| 1906-09-11 | 1991-12-31 |
+| 1903-03-20 | 1991-12-31 |
+| 1905-10-03 | 1992-01-01 |
+| 1908-02-08 | 1992-01-01 |
+| 1942-03-02 | 1992-01-01 |
+| 1902-04-19 | 1992-01-05 |
+| 1904-05-14 | 1992-01-01 |
+| 1992-01-02 | 1992-01-04 |
+| 1952-11-01 | 1992-01-06 |
+| 1932-07-07 | 1992-01-06 |
++------------+------------+
+*/
     private function loadStudy1(): array {
         $yamlStudyFile = implode (DS, [dirname(__DIR__), 'test-files', 'study1', 'study1.yml']);
         $studyConfig = yaml_parse_file($yamlStudyFile);
@@ -86,7 +84,6 @@ class splitTest extends TestCase{
     public function testStudy1_age(){
         $studyConfig = $this->loadStudy1();
         split::execute($studyConfig, ['age']);
-        $this->assertEquals(1, 1);
         $dirs_wanted = [
             '01--0-2days',
             '02--2days-2months',
@@ -100,9 +97,6 @@ class splitTest extends TestCase{
         ];
         $glob = glob($studyConfig['working-dir'] . DS . 'split-age' .DS . '*');
         $dirs_computed = array_map('basename', $glob);
-        
-        $this->assertEquals($dirs_computed, $dirs_wanted);
-        
         $births_bz2 = [];
         $deaths_bz2 = [];
         $births_computed = [];
@@ -192,6 +186,7 @@ class splitTest extends TestCase{
             '09--90years-200years' => [
             ],
         ];
+        $this->assertEquals($dirs_computed, $dirs_wanted);
         $this->assertEquals($births_computed, $births_wanted);
         $this->assertEquals($deaths_computed, $deaths_wanted);
     }
