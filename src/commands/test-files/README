@@ -1,0 +1,4 @@
+
+This directory contains files used to test code located in src/commands.
+
+Before executing the tests, create a directory var/ which contains the intermediate files.

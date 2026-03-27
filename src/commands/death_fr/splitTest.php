@@ -1,6 +1,8 @@
 <?php
 /******************************************************************************
 
+    Functional test for src/command/death_fr/split.php
+    
     @copyright  Thierry Graff
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
     
@@ -14,36 +16,19 @@ use observe\model\Observe;
 use observe\model\Studies;
 
 class splitTest extends TestCase{
-/*
-In person database:
-select bday,dday from person;
-+------------+------------+
-|    bday    |    dday    |
-+------------+------------+
-| 1906-09-11 | 1991-12-31 |
-| 1903-03-20 | 1991-12-31 |
-| 1905-10-03 | 1992-01-01 |
-| 1908-02-08 | 1992-01-01 |
-| 1942-03-02 | 1992-01-01 |
-| 1902-04-19 | 1992-01-05 |
-| 1904-05-14 | 1992-01-01 |
-| 1992-01-02 | 1992-01-04 |
-| 1952-11-01 | 1992-01-06 |
-| 1932-07-07 | 1992-01-06 |
-+------------+------------+
-*/
-    private function loadStudy1(): array {
-        $yamlStudyFile = implode (DS, [dirname(__DIR__), 'test-files', 'study1', 'study1.yml']);
-        $studyConfig = yaml_parse_file($yamlStudyFile);
-        Studies::initializeStudy($studyConfig);
-        Death_fr::setSqlitePersonPath($studyConfig['sqlite-death-fr']);
-        return $studyConfig;
+    
+    private static array $studyConfig;
+
+    public static function setUpBeforeClass(): void {
+        require_once implode(DS, [dirname(__DIR__), 'test-files', 'death_fr_tests.php']);
+        self::$studyConfig = load_death_fr_study('study1/study1.yml');
     }
     
     public function testStudy1_full(){
-        $studyConfig = $this->loadStudy1();
-        split::execute($studyConfig, ['full']);
-        $filename = 'compress.bzip2://' . $studyConfig['working-dir'] . DS . 'split-full' . DS . '01--0-200years' . DS . 'data.csv.bz2';
+        
+        split::execute(self::$studyConfig, ['full']);
+        
+        $filename = 'compress.bzip2://' . self::$studyConfig['working-dir'] . DS . 'split-full' . DS . '01--0-200years' . DS . 'data.csv.bz2';
         $births_bz2 = [];
         $deaths_bz2 = [];
         $fileHandle = fopen($filename, 'r');
@@ -82,8 +67,9 @@ select bday,dday from person;
     }
     
     public function testStudy1_age(){
-        $studyConfig = $this->loadStudy1();
-        split::execute($studyConfig, ['age']);
+        
+        split::execute(self::$studyConfig, ['age']);
+        
         $dirs_wanted = [
             '01--0-2days',
             '02--2days-2months',
@@ -95,8 +81,11 @@ select bday,dday from person;
             '08--50years-90years',
             '09--90years-200years',
         ];
-        $glob = glob($studyConfig['working-dir'] . DS . 'split-age' .DS . '*');
+        $glob = glob(self::$studyConfig['working-dir'] . DS . 'split-age' .DS . '*');
         $dirs_computed = array_map('basename', $glob);
+        
+        $this->assertEquals($dirs_computed, $dirs_wanted);
+        
         $births_bz2 = [];
         $deaths_bz2 = [];
         $births_computed = [];
@@ -114,7 +103,7 @@ select bday,dday from person;
             }
             fclose($fileHandle);
         }
-        // wanted births and deaths can be computed independantlly of the execution
+        // wanted births and deaths can be computed independantly of the execution
         // from the limits of the ages, in Death_fr::SPLITS
         // '0'           => '0',
         // '2'           => '2days',
@@ -186,7 +175,6 @@ select bday,dday from person;
             '09--90years-200years' => [
             ],
         ];
-        $this->assertEquals($dirs_computed, $dirs_wanted);
         $this->assertEquals($births_computed, $births_wanted);
         $this->assertEquals($deaths_computed, $deaths_wanted);
     }

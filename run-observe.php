@@ -18,7 +18,6 @@ use observe\app\ObserveException;
 use observe\commands\prepareAstro;
 
 $input = Run::parseInput($argv);
-print_r($input); exit;
 
 if($input['message'] != ''){
     die($input['message']);
