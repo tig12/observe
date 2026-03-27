@@ -42,6 +42,7 @@ expected-precision: 2
 # Path to the sqlite database containing the data coming from data.gouv.fr
 # Path relative to observe root directory, or absolute path
 sqlite-death-fr: var/studies/death-fr/death-fr.sqlite3
+#sqlite-death-fr: src/commands/test-files/var/study1/death-fr-10.sqlite3
 
 # Path to the sqlite database containing temporary data to assist long command execution
 # Path relative to observe root directory, or absolute path

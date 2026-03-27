@@ -148,6 +148,8 @@ class control implements ICommand {
         (if all $other in the interval are dead before $person is born).
         
         @return Associative array containing 2 keys: "bday" and "dday"
+                bday comes from original $person.
+                dday comes from the other person.
     **/
     private static function otherPerson(array $person): array {
         $other = [];
@@ -167,7 +169,7 @@ class control implements ICommand {
                 continue;
             }
             self::$stmt_one_person->execute([':rowid' => $newRowid]);
-            $other = self::$stmt_one_person->fetch(\PDO::FETCH_ASSOC);
+            $other = self::$stmt_one_person->fetch(\PDO::FETCH_ASSOC); // normally never occurs if person db is built correctly
             if($other === false){
                 echo "OTHER PERSON = false: rowid = $newRowid\n";
                 continue;
@@ -177,13 +179,14 @@ class control implements ICommand {
             }
             break;
         }
+        $other['bday'] = $person['bday'];
         return $other;
     }
     
     //
     // tmp sqlite management
     // Added to permit to stop and resume execution
-    // Database created in init.php
+    // Database created by init.php
     //
 
     /**
