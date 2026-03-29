@@ -12,23 +12,26 @@
 namespace observe\commands\death_fr;
 
 use PHPUnit\Framework\TestCase;
+use observe\commands\tests\Death_fr_tests;
 use observe\model\Observe;
 use observe\model\Studies;
 
-class splitTest extends TestCase{
+class splitTest extends TestCase {
     
     private static array $studyConfig;
 
     public static function setUpBeforeClass(): void {
-        require_once implode(DS, [dirname(__DIR__), 'test-files', 'death_fr_tests.php']);
-        self::$studyConfig = load_death_fr_study('study1/study1.yml');
+        self::$studyConfig = Death_fr_tests::loadStudy('study1/study1.yml');
     }
     
     public function testStudy1_full(){
         
         split::execute(self::$studyConfig, ['full']);
         
-        $filename = 'compress.bzip2://' . self::$studyConfig['working-dir'] . DS . 'split-full' . DS . '01--0-200years' . DS . 'data.csv.bz2';
+        $dir_wanted = implode(DS, [self::$studyConfig['working-dir'], 'split-full', '01--0-200years']);
+        $this->assertTrue(is_dir($dir_wanted));
+        
+        $filename = 'compress.bzip2://' . $dir_wanted . DS . 'data.csv.bz2';
         $births_bz2 = [];
         $deaths_bz2 = [];
         $fileHandle = fopen($filename, 'r');
@@ -38,7 +41,7 @@ class splitTest extends TestCase{
             $deaths_bz2[] = $fields[1];
         }
         fclose($fileHandle);
-        $births_db = [
+        $birth_wanted = [
             '1906-09-11',
             '1903-03-20',
             '1905-10-03',
@@ -50,7 +53,7 @@ class splitTest extends TestCase{
             '1952-11-01',
             '1932-07-07',
         ];
-        $deaths_db = [
+        $deaths_wanted = [
             '1991-12-31',
             '1991-12-31',
             '1992-01-01',
@@ -62,8 +65,8 @@ class splitTest extends TestCase{
             '1992-01-06',
             '1992-01-06',
         ];
-        $this->assertEquals($births_bz2, $births_db);
-        $this->assertEquals($deaths_bz2, $deaths_db);
+        $this->assertEquals($births_bz2, $birth_wanted);
+        $this->assertEquals($deaths_bz2, $deaths_wanted);
     }
     
     public function testStudy1_age(){

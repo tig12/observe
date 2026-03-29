@@ -12,6 +12,7 @@
 namespace observe\commands\shared;
 
 use PHPUnit\Framework\TestCase;
+use observe\commands\tests\Death_fr_tests;
 use observe\model\Observe;
 use observe\model\Studies;
 use observe\model\distrib\EmptyDistribs;
@@ -22,10 +23,25 @@ class observedTest extends TestCase{
     private static array $studyConfig;
 
     public static function setUpBeforeClass(): void {
-        require_once implode(DS, [dirname(__DIR__), 'test-files', 'death_fr_tests.php']);
-        self::$studyConfig = load_death_fr_study('study1/study1.yml');
+        self::$studyConfig = Death_fr_tests::loadStudy('study1/study1.yml');
     }
     
+    /**
+        Test that the sums of the distributions are equal to the number of elements in the original data
+    **/
+    public function testStudy1_sums(){
+        foreach(self::$studyConfig['splits'] as $split){
+            //
+            observed::execute(self::$studyConfig, [$split]);
+            //
+            
+        } // end loop on splits
+exit;
+    }
+    
+    /** 
+        Tests a subset of values for split full.
+    **/
     public function testStudy1_full(){
 
         observed::execute(self::$studyConfig, ['full']);
@@ -47,9 +63,8 @@ class observedTest extends TestCase{
         $wanted['07-07'] = 1;
         //
         $filename = implode(DS, [self::$studyConfig['working-dir'], 'split-full', '01--0-200years', 'observed', 'birth', 'day.csv']);
-        $observed = readCsv($filename, Observe::CSV_SEP);
+        $observed = Death_fr_tests::readCsv($filename, Observe::CSV_SEP);
         $this->assertEquals($observed, $wanted);
-        
         //
         // death - day
         //
@@ -61,9 +76,8 @@ class observedTest extends TestCase{
         $wanted['01-06'] = 2;
         //
         $filename = implode(DS, [self::$studyConfig['working-dir'], 'split-full', '01--0-200years', 'observed', 'death', 'day.csv']);
-        $observed = readCsv($filename, Observe::CSV_SEP);
+        $observed = Death_fr_tests::readCsv($filename, Observe::CSV_SEP);
         $this->assertEquals($observed, $wanted);
-
         //
         // birth - year
         //
@@ -81,9 +95,8 @@ class observedTest extends TestCase{
         ];
         //
         $filename = implode(DS, [self::$studyConfig['working-dir'], 'split-full', '01--0-200years', 'observed', 'birth', 'year.csv']);
-        $observed = readCsv($filename, Observe::CSV_SEP);
+        $observed = Death_fr_tests::readCsv($filename, Observe::CSV_SEP);
         $this->assertEquals($observed, $wanted);
-        
         //
         // death - year
         //
@@ -93,9 +106,8 @@ class observedTest extends TestCase{
         ];
         //
         $filename = implode(DS, [self::$studyConfig['working-dir'], 'split-full', '01--0-200years', 'observed', 'death', 'year.csv']);
-        $observed = readCsv($filename, Observe::CSV_SEP);
+        $observed = Death_fr_tests::readCsv($filename, Observe::CSV_SEP);
         $this->assertEquals($observed, $wanted);
-        
         //
         // birth - planets
         //
@@ -152,10 +164,9 @@ class observedTest extends TestCase{
         $dir = implode(DS, [self::$studyConfig['working-dir'], 'split-full', '01--0-200years', 'observed', 'birth', 'planets']);
         foreach(['SO', 'MO', 'ME', 'VE'] as $planet){
             $filename = $dir . DS . $planet . '.csv';
-            $observed = readCsv($filename, Observe::CSV_SEP);
+            $observed = Death_fr_tests::readCsv($filename, Observe::CSV_SEP);
             $this->assertEquals($observed, $wanted[$planet]);
         }
-            
         //
         // death - planets
         //
@@ -193,10 +204,9 @@ class observedTest extends TestCase{
         $dir = implode(DS, [self::$studyConfig['working-dir'], 'split-full', '01--0-200years', 'observed', 'death', 'planets']);
         foreach(['SO', 'MO', 'ME'] as $planet){
             $filename = $dir . DS . $planet . '.csv';
-            $observed = readCsv($filename, Observe::CSV_SEP);
+            $observed = Death_fr_tests::readCsv($filename, Observe::CSV_SEP);
             $this->assertEquals($observed, $wanted[$planet]);
         }
-        
         //
         // birth - aspects MA-JU
         //
@@ -233,9 +243,8 @@ class observedTest extends TestCase{
         $wanted[259] = 1;
         //
         $filename = implode(DS, [self::$studyConfig['working-dir'], 'split-full', '01--0-200years', 'observed', 'birth', 'aspects', 'MA-JU.csv']);
-        $observed = readCsv($filename, Observe::CSV_SEP);
+        $observed = Death_fr_tests::readCsv($filename, Observe::CSV_SEP);
         $this->assertEquals($observed, $wanted);
-        
         //
         // death - aspects ME-VE
         //
@@ -254,9 +263,8 @@ class observedTest extends TestCase{
         $wanted[341] = 2;
         //
         $filename = implode(DS, [self::$studyConfig['working-dir'], 'split-full', '01--0-200years', 'observed', 'death', 'aspects', 'ME-VE.csv']);
-        $observed = readCsv($filename, Observe::CSV_SEP);
+        $observed = Death_fr_tests::readCsv($filename, Observe::CSV_SEP);
         $this->assertEquals($observed, $wanted);
-        
         //
         // birth-death - age
         //
@@ -274,9 +282,8 @@ class observedTest extends TestCase{
             714 => 1, 
         ];
         $filename = implode(DS, [self::$studyConfig['working-dir'], 'split-full', '01--0-200years', 'observed', 'birth-death', 'age.csv']);
-        $observed = readCsv($filename, Observe::CSV_SEP);
+        $observed = Death_fr_tests::readCsv($filename, Observe::CSV_SEP);
         $this->assertEquals($observed, $wanted);
-        
         //
         // birth-death - interaspects SO-SO
         //
@@ -313,7 +320,7 @@ class observedTest extends TestCase{
         $wanted[180] = 1;
         //
         $filename = implode(DS, [self::$studyConfig['working-dir'], 'split-full', '01--0-200years', 'observed', 'birth-death', 'interaspects', 'SO-SO.csv']);
-        $observed = readCsv($filename, Observe::CSV_SEP);
+        $observed = Death_fr_tests::readCsv($filename, Observe::CSV_SEP);
         $this->assertEquals($observed, $wanted);
     }
     

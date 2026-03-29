@@ -90,12 +90,12 @@ class EmptyDistribs {
     
     /**
         Initialization adapted to interaspects, full combination of the keys.
-        Called square because the array can be represented like that (Z represents the zero values):
+        Called square because the array can be represented like that (V represents values):
             SO MO ME MA
-        SO  Z  Z  Z  Z
-        MO  Z  Z  Z  Z
-        ME  Z  Z  Z  Z
-        MA  Z  Z  Z  Z
+        SO  V  V  V  V
+        MO  V  V  V  V
+        ME  V  V  V  V
+        MA  V  V  V  V
         @param  $codes1 and $codes2     Arrays containing keys
                 ex: ['SO', 'MO', 'ME' ...]
         @param  $N The number of elements in the values of the result.
@@ -119,21 +119,21 @@ class EmptyDistribs {
     
     /**
         Initialization adapted to aspects, partial combination of the keys.
-        Called triangle because the array can be represented like that (Z represents the zero values):
+        Called triangle because the array can be represented like that (V represents values):
             SO MO ME MA
         SO  
-        MO  Z
-        ME  Z  Z
-        MA  Z  Z  Z
+        MO  V
+        ME  V  V
+        MA  V  V  V
         @param  $codes1 and $codes2     Arrays containing keys
                 ex: ['SO', 'MO', 'ME' ...]
         @param  $N The number of elements in the values of the result.
         @return Associative array   keys = combination of $codes1 and $codes2
                                     values = array with $N values initialzed to 0.
                 ex: [
-                    'SO-SO' => [0 => 0, ... 359 => 0],
+                    'SO-MO' => [0 => 0, ... 359 => 0],
                     ...
-                    'NN-NN' => [0 => 0, ... 359 => 0]
+                    'PL-NN' => [0 => 0, ... 359 => 0]
                 ]
     **/
     public static function emptyDoubleDistrib_triangle(array &$codes1, array &$codes2, int $N = 360): array {

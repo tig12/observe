@@ -13,6 +13,7 @@
 namespace observe\commands\death_fr;
 
 use PHPUnit\Framework\TestCase;
+use observe\commands\tests\Death_fr_tests;
 use observe\model\Observe;
 use observe\model\Studies;
 use observe\commands\death_fr\init;
@@ -22,8 +23,7 @@ class controlTest extends TestCase{
     private static array $studyConfig;
 
     public static function setUpBeforeClass(): void {
-        require_once implode(DS, [dirname(__DIR__), 'test-files', 'death_fr_tests.php']);
-        self::$studyConfig = load_death_fr_study('study1/study1.yml');
+        self::$studyConfig = Death_fr_tests::loadStudy('study1/study1.yml');
         
         // initialize tmp database
 return;
@@ -64,11 +64,16 @@ return;
             foreach($wanted_subdirs as $subdir){
                 $this->assertTrue(is_dir($controlDir . DS . $subdir));
                 foreach(self::$studyConfig['planets'] as $planet){
+                    
+                    
+                    
                     $filename = $controlDir . DS . 'birth' . DS . 'planets' . DS . $planet . '.csv';
+                    
+                    
+                    
                     $this->assertTrue(is_file($filename));
                 }
             }
-            
         }
     }
     
@@ -81,17 +86,17 @@ return;
         $observedDir = Studies::getObservedDirectory(self::$studyConfig, 'full', '01--0-200years');
         $controlDirs = glob(Studies::getControlsDirectory(self::$studyConfig, 'full', '01--0-200years') . DS . '*');
         
-        $observed_days = readCsv(implode(DS, [$observedDir, 'birth', 'day.csv']));
-        $observed_years = readCsv(implode(DS, [$observedDir, 'birth', 'year.csv']));
+        $observed_days = Death_fr_tests::readCsv(implode(DS, [$observedDir, 'birth', 'day.csv']));
+        $observed_years = Death_fr_tests::readCsv(implode(DS, [$observedDir, 'birth', 'year.csv']));
         
         foreach($controlDirs as $controlDir){
             // day
             $filename = $controlDir . DS . 'birth' . DS . 'day.csv';
-            $controlValues = readCsv($filename);
+            $controlValues = Death_fr_tests::readCsv($filename);
             $this->assertEquals($observed_days, $controlValues);
             // year
             $filename = $controlDir . DS . 'birth' . DS . 'year.csv';
-            $controlValues = readCsv($filename);
+            $controlValues = Death_fr_tests::readCsv($filename);
             $this->assertEquals($observed_years, $controlValues);
         }
     }
@@ -115,12 +120,12 @@ return;
                 $observedSubdir = implode(DS, [$observedDir, $dateName, $distribType]);
                 $observedFiles = glob($observedSubdir . DS . '*.csv');
                 foreach($observedFiles as $observedFile){
-                    $observedDistrib = readCsv($observedFile);
+                    $observedDistrib = Death_fr_tests::readCsv($observedFile);
                     $observedSum = array_sum($observedDistrib);
                     $distribName = basename($observedFile, '.csv');
                     foreach($controlDirs as $controlDir){
                         $controlFile = implode(DS, [$controlDir, $dateName, $distribType, $distribName . '.csv']);
-                        $controlDistrib = readCsv($controlFile);
+                        $controlDistrib = Death_fr_tests::readCsv($controlFile);
                         $controlSum = array_sum($controlDistrib);
                         $this->assertEquals($controlSum, $observedSum);
                     }
@@ -128,21 +133,21 @@ return;
             }
             // day
             $observedFile = implode(DS, [$observedDir, $dateName, 'day.csv']);
-            $observedDistrib = readCsv($observedFile);
+            $observedDistrib = Death_fr_tests::readCsv($observedFile);
             $observedSum = array_sum($observedDistrib);
             foreach($controlDirs as $controlDir){
                 $controlFile = implode(DS, [$controlDir, $dateName, 'day.csv']);
-                $controlDistrib = readCsv($controlFile);
+                $controlDistrib = Death_fr_tests::readCsv($controlFile);
                 $controlSum = array_sum($controlDistrib);
                 $this->assertEquals($controlSum, $observedSum);
             }
             // day
             $observedFile = implode(DS, [$observedDir, $dateName, 'year.csv']);
-            $observedDistrib = readCsv($observedFile);
+            $observedDistrib = Death_fr_tests::readCsv($observedFile);
             $observedSum = array_sum($observedDistrib);
             foreach($controlDirs as $controlDir){
                 $controlFile = implode(DS, [$controlDir, $dateName, 'year.csv']);
-                $controlDistrib = readCsv($controlFile);
+                $controlDistrib = Death_fr_tests::readCsv($controlFile);
                 $controlSum = array_sum($controlDistrib);
                 $this->assertEquals($controlSum, $observedSum);
             }
@@ -157,23 +162,23 @@ return;
                 $observedSubdir = implode(DS, [$observedDir, $dateName, 'interaspects']);
                 $observedFiles = glob($observedSubdir . DS . '*.csv');
                 foreach($observedFiles as $observedFile){
-                    $observedDistrib = readCsv($observedFile);
+                    $observedDistrib = Death_fr_tests::readCsv($observedFile);
                     $observedSum = array_sum($observedDistrib);
                     $distribName = basename($observedFile, '.csv');
                     foreach($controlDirs as $controlDir){
                         $controlFile = implode(DS, [$controlDir, $dateName, 'interaspects', $distribName . '.csv']);
-                        $controlDistrib = readCsv($controlFile);
+                        $controlDistrib = Death_fr_tests::readCsv($controlFile);
                         $controlSum = array_sum($controlDistrib);
                         $this->assertEquals($controlSum, $observedSum);
                     }
                 }
                 // age
                 $observedFile = implode(DS, [$observedDir, $dateName, 'age.csv']);
-                $observedDistrib = readCsv($observedFile);
+                $observedDistrib = Death_fr_tests::readCsv($observedFile);
                 $observedSum = array_sum($observedDistrib);
                 foreach($controlDirs as $controlDir){
                     $controlFile = implode(DS, [$controlDir, $dateName, 'age.csv']);
-                    $controlDistrib = readCsv($controlFile);
+                    $controlDistrib = Death_fr_tests::readCsv($controlFile);
                     $controlSum = array_sum($controlDistrib);
                     $this->assertEquals($controlSum, $observedSum);
                 }
