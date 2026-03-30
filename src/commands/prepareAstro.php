@@ -17,6 +17,7 @@ use tiglib\time\daysOfYear;
 use tiglib\time\seconds2HHMMSS;
 use tigeph\model\IAA;
 use tigeph\ephem\meeus1\Meeus1;
+use tigeph\ephem\swetest\Swetest;
 
 class prepareAstro {
     /** 
@@ -43,7 +44,7 @@ class prepareAstro {
         //
         // Check parameters
         //
-        $planets = Config::$data['one-day-ephemeris']['planets']; // = ['SO', 'MO', 'ME', 'VE', 'MA', 'JU', 'SDA', 'UR', 'NE', 'PL', 'NN']
+        $planets = Config::$data['one-day-ephemeris']['planets']; // = ['SO', 'MO', 'ME', 'VE', 'MA', 'JU', 'SA', 'UR', 'NE', 'PL', 'NN']
         //
         // Initialize sqlite database
         //
@@ -51,6 +52,12 @@ class prepareAstro {
             return "MISSING PARAMETER 'one-day-ephemeris.sqlite-planets' in config.yml\n";
         }
         $sqlite = self::initalizeSqlite(Config::$data['one-day-ephemeris']['sqlite-planets'], $planets);
+        //
+        // Initialize Swiss Ephemeris
+        //
+        if(Config::$data['one-day-ephemeris']['engine'] == 'swetest'){
+            Swetest::init(Config::$data['swetest']['bin'], Config::$data['swetest']['dir']);
+        }
         //
         // compute planet positions and store in sqlite
         //
@@ -64,7 +71,12 @@ class prepareAstro {
             $days = daysOfYear::compute($year);
             foreach($days as $day){
                 $datetime = $day . ' 12:00:00';
-                $coords = Meeus1::ephem($datetime, $tigephPlanets)['planets'];
+                if(Config::$data['one-day-ephemeris']['engine'] == 'swetest'){
+                    $coords = Swetest::ephem($datetime, $tigephPlanets)['planets'];
+                }
+                else{
+                    $coords = Meeus1::ephem($datetime, $tigephPlanets)['planets'];
+                }
                 $fields = [];
                 $fields['day'] = $day;
                 foreach($coords as $tigephCode => $coord){

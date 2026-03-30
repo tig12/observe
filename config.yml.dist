@@ -9,6 +9,8 @@ swetest:
 # Parameters related to the planetary positions, pre-computed in a sqlite database,
 # and available for all studies
 one-day-ephemeris:
+  # ephemeris computation engine - can be meeus1 or swetest
+  engine: swetest
   # Planets to compute, using IAA codes
   planets: [SO, MO, ME, VE, MA, JU, SA, UR, NE, PL, NN]
   # Path to the local database containing the planet positions.
