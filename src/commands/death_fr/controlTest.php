@@ -26,7 +26,6 @@ class controlTest extends TestCase{
 
     public static function setUpBeforeClass(): void {
         self::$studyConfig = Death_fr_tests::loadStudy('study1/study1.yml');
-        
         // initialize tmp database
         init::execute(self::$studyConfig, []);
         control::execute(self::$studyConfig, ['1-10']);

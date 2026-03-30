@@ -24,6 +24,9 @@ class observedTest extends TestCase{
 
     public static function setUpBeforeClass(): void {
         self::$studyConfig = Death_fr_tests::loadStudy('study1/study1.yml');
+        foreach(self::$studyConfig['splits'] as $split){
+            observed::execute(self::$studyConfig, [$split]);
+        }
     }
     
     // Another possible test: check that sums of the lines in the data.bz2 of age
@@ -35,10 +38,8 @@ class observedTest extends TestCase{
     public function testStudy1_sums(){
         $nDates = count(self::$studyConfig['dates']);
         $nPlanets = count(self::$studyConfig['planets']);
+        
         foreach(self::$studyConfig['splits'] as $split){
-            
-            observed::execute(self::$studyConfig, [$split]);
-            
             $splitDir = Studies::getSplitDirectory(self::$studyConfig, $split);
             $subgroups = Death_fr::getSplitDirnames($split);
             foreach($subgroups as $subgroup){
@@ -118,9 +119,6 @@ class observedTest extends TestCase{
         Tests a subset of values for split full.
     **/
     public function testStudy1_full_values(){
-
-        observed::execute(self::$studyConfig, ['full']);
-        
         $arr360 = array_fill(0, 360, 0);
         //
         // birth - day

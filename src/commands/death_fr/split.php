@@ -50,7 +50,7 @@ class split implements ICommand {
         // sqlite database containing data coming from data.gouv.fr
         $sqlite_persons = Death_fr::getPersonSqlite();
         $stmt_many_persons = $sqlite_persons->prepare("select rowid,bday,dday from person order by rowid limit :limit offset :offset");
-        $LIMIT = 1000;
+        $LIMIT = $studyConfig['split-limit'];
         $stmt = $sqlite_persons->query('select max(rowid) from person');
         $MAXROWID = $stmt->fetch(\PDO::FETCH_ASSOC)['max(rowid)']; // = select count(*) from person
         // $baseOutdir = directory of the split, containing the sub-directories of each subgroup

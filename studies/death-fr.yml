@@ -47,3 +47,8 @@ sqlite-death-fr: var/studies/death-fr/death-fr.sqlite3
 # Path to the sqlite database containing temporary data to assist long command execution
 # Path relative to observe root directory, or absolute path
 sqlite-tmp: var/studies/death-fr/tmp.sqlite3
+
+# When building splits and controls, use a limit clause when reading the death-fr database.
+# This avoids to load the whole database in memory and consume too much RAM (13 Go for the whole db)
+split-limit: 1000
+control-limit: 1000

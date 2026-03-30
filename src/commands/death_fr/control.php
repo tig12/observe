@@ -75,7 +75,7 @@ class control implements ICommand {
         self::$stmt_one_person = $sqlite_persons->prepare('select bday,dday from person where rowid=:rowid');
         // order by rowid : to respect age at death distribution, see comment of otherPerson()
         $stmt_many_persons = $sqlite_persons->prepare("select rowid,bday from person order by rowid limit :limit offset :offset");
-        $LIMIT = 1000;
+        $LIMIT = $studyConfig['control-limit'];
         //
         // Execute
         //
