@@ -185,24 +185,39 @@ class Studies {
         return '';
     }
     
-    /** Returns the directory containing the observed distributions of a subgroup of a given split of a study. **/
+    /**
+        Returns the directory containing the observed distributions of a subgroup of a given split of a study.
+    **/
     public static function getObservedDirectory(array &$studyConfig, string $split, string $subgroup): string {
         return $studyConfig['working-dir'] . DS . 'split-' . $split . DS . $subgroup . DS . 'observed';
     }
     
-    /** Returns the directory containing the expected distributions of a subgroup of a given split of a study. **/
+    /**
+        Returns the directory containing the expected distributions of a subgroup of a given split of a study.
+    **/
     public static function getExpectedDirectory(array &$studyConfig, string $split, string $subgroup): string {
         return $studyConfig['working-dir'] . DS . 'split-' . $split . DS . $subgroup . DS . 'expected';
     }
     
-    /** Returns the directory containing all the controls of a study. **/
+    /**
+        Returns the directory containing all the controls of a study.
+    **/
     public static function getControlsDirectory(array &$studyConfig): string {
         return $studyConfig['working-dir'] . DS . 'controls';
     }
     
-    /** Returns the directory containing the intermediate files of a given split of a study. **/
+    /**
+        Returns the directory containing the intermediate files of a given split of a study.
+    **/
     public static function getSplitDirectory(array &$studyConfig, string $split): string {
         return $studyConfig['working-dir'] . DS . 'split-' . $split;
+    }
+    
+    /**
+        Returns the directory containing the intermediate files of a given split of a study.
+    **/
+    public static function getSubgroupDirectory(array &$studyConfig, string $split, string $subgroup): string {
+        return self::getSplitDirectory($studyConfig, $split) . DS . $subgroup;
     }
     
 } // end class

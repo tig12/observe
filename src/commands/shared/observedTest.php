@@ -26,23 +26,98 @@ class observedTest extends TestCase{
         self::$studyConfig = Death_fr_tests::loadStudy('study1/study1.yml');
     }
     
+    // Another possible test: check that sums of the lines in the data.bz2 of age
+    // are the same as the nb of lines in full/data.bz2
+    
     /**
-        Test that the sums of the distributions are equal to the number of elements in the original data
+        Test that the sums of the observed distributions are equal to the number of elements in the original data.
     **/
     public function testStudy1_sums(){
+        $nDates = count(self::$studyConfig['dates']);
+        $nPlanets = count(self::$studyConfig['planets']);
         foreach(self::$studyConfig['splits'] as $split){
-            //
-            observed::execute(self::$studyConfig, [$split]);
-            //
             
+            observed::execute(self::$studyConfig, [$split]);
+            
+            $splitDir = Studies::getSplitDirectory(self::$studyConfig, $split);
+            $subgroups = Death_fr::getSplitDirnames($split);
+            foreach($subgroups as $subgroup){
+                $subgroupDir = Studies::getSubgroupDirectory(self::$studyConfig, $split, $subgroup);
+                // sum of elements in data.csv.bz2
+                $filename = 'compress.bzip2://' . $subgroupDir . DS . 'data.csv.bz2';
+                $fileHandle = fopen($filename, 'r');
+                $rawSum = 0; // nb of elements present in the subgroup
+                while(false !== $line = fgets($fileHandle)){
+                    $rawSum++;
+                }
+                fclose($fileHandle);
+                //
+                $observedDir = Studies::getObservedDirectory(self::$studyConfig, $split, $subgroup);
+                //
+                // distributions of type distrib1
+                //
+                for($i=0; $i < $nDates; $i++){
+                    $dateName = self::$studyConfig['dates'][$i]; // ex: birth
+                    // planets
+                    foreach(self::$studyConfig['planets'] as $planet){
+                        $observedFile = implode(DS, [$observedDir, $dateName, 'planets', $planet . '.csv']);
+                        $observedDistrib = Death_fr_tests::readCsv($observedFile, Observe::CSV_SEP);
+                        $observedSum = array_sum($observedDistrib);
+                        $this->assertEquals($observedSum, $rawSum);
+                    }
+                    // aspects
+                    for($j=0; $j < $nPlanets; $j++){
+                        for($k=$j+1; $k < $nPlanets; $k++){
+                            $key = self::$studyConfig['planets'][$j] . '-' . self::$studyConfig['planets'][$k]; // ex: MA-NE
+                            $observedFile = implode(DS, [$observedDir, $dateName, 'aspects', $key . '.csv']);
+                            $observedDistrib = Death_fr_tests::readCsv($observedFile, Observe::CSV_SEP);
+                            $observedSum = array_sum($observedDistrib);
+                            $this->assertEquals($observedSum, $rawSum);
+                        }
+                    }
+                    // day
+                    $observedFile = implode(DS, [$observedDir, $dateName, 'day.csv']);
+                    $observedDistrib = Death_fr_tests::readCsv($observedFile, Observe::CSV_SEP);
+                    $observedSum = array_sum($observedDistrib);
+                    $this->assertEquals($observedSum, $rawSum);
+                    // year
+                    $observedFile = implode(DS, [$observedDir, $dateName, 'year.csv']);
+                    $observedDistrib = Death_fr_tests::readCsv($observedFile, Observe::CSV_SEP);
+                    $observedSum = array_sum($observedDistrib);
+                    $this->assertEquals($observedSum, $rawSum);
+                } // end loop on dates
+                //
+                // distributions of type distrib2
+                //
+                for($i=0; $i < $nDates; $i++){
+                    for($j=$i+1; $j < $nDates; $j++){
+                        $dateName1 = self::$studyConfig['dates'][$i];
+                        $dateName2 = self::$studyConfig['dates'][$j];
+                        $dateName = "$dateName1-$dateName2"; // ex: birth-death
+                        // interaspects
+                        foreach(self::$studyConfig['planets'] as $planet1){
+                            foreach(self::$studyConfig['planets'] as $planet2){
+                                $observedFile = implode(DS, [$observedDir, $dateName, 'interaspects', "$planet1-$planet2.csv"]);
+                                $observedDistrib = Death_fr_tests::readCsv($observedFile, Observe::CSV_SEP);
+                                $observedSum = array_sum($observedDistrib);
+                                $this->assertEquals($observedSum, $rawSum);
+                            }
+                        }
+                        // age
+                        $observedFile = implode(DS, [$observedDir, $dateName, 'age.csv']);
+                        $observedDistrib = Death_fr_tests::readCsv($observedFile, Observe::CSV_SEP);
+                        $observedSum = array_sum($observedDistrib);
+                        $this->assertEquals($observedSum, $rawSum);
+                    } // end loop on $j
+                } // end loop on $i
+            } // end loop on subgroups
         } // end loop on splits
-exit;
     }
     
     /** 
         Tests a subset of values for split full.
     **/
-    public function testStudy1_full(){
+    public function testStudy1_full_values(){
 
         observed::execute(self::$studyConfig, ['full']);
         

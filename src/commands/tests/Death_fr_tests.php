@@ -30,15 +30,21 @@ class Death_fr_tests {
     
     /** 
         Load a distribution from a csv file
+        @param  $format "int" or "float"
     **/
-    public static function readCsv($filename, $delimiter=';'){
+    public static function readCsv($filename, $delimiter=';', $format='int'){
         $res = [];
         if (($handle = fopen($filename, 'r')) !== false) {
             while (($data = fgetcsv($handle, 0, $delimiter, escape: '')) !== false){
                 if(count($data) == 1 && $data[0] == ''){
                     continue; // skip empty lines
                 }
-                $res[$data[0]] = (int)$data[1];
+                if($format == 'int'){
+                    $res[$data[0]] = (int)$data[1];
+                }
+                else{
+                    $res[$data[0]] = (float)$data[1];
+                }
             }
             fclose($handle);
         }

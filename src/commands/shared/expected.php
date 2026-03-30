@@ -22,6 +22,9 @@ class expected implements ICommand {
     
     /** 
         Called by Studies::runCommand()
+        
+        WARNING: control groups are currently computed using the whole dataset.
+        So the computation of expected distributions is meaningful only for the split "full".
     **/
     public static function execute(array $studyConfig, array $params): string {
         //
