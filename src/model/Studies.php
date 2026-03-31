@@ -49,11 +49,15 @@ class Studies {
         $sharedNamespace = 'observe\\commands\\shared';
         
         // Here we cheat because we know that current function is called after self::getAllStudySlugs()
+        // (called in observe\app\Run::parseOutput())
         // then self::self::$studyConfigs is already computed
         $studyConfig = self::$studyConfigs[$studySlug];
+        $studyConfig['__command__'] = $command;
         if(($msg = self::checkStudyFile($studyConfig)) != ''){
-            return "ERROR in study file {$studyConfig['study-file']}:\n$msg\n";
+            return "ERROR in study file {$studyConfig['__study-file__']}:\n$msg\n";
         }
+        // 
+        $studyConfig['commnd'] = $command;
         
         // Before calling the command, handle the computations specific to each study:
         // call method init() of a class implementing IStudy located in the package specific to the command
@@ -116,9 +120,9 @@ class Studies {
                 $slug = $studyConfig['slug'];
                 //
                 // HERE store the contents of the yaml in self::$studyFile
-                // (with a supplementary entry: 'study-file')
+                // (with a supplementary entry: '__study-file__')
                 //
-                self::$studyConfigs[$slug] = [...$studyConfig, ...['study-file' => $file]];
+                self::$studyConfigs[$slug] = [...$studyConfig, ...['__study-file__' => $file]];
                 $res[] = $slug;
             }
         }

@@ -73,7 +73,7 @@ class control implements ICommand {
         $stmt = $sqlite_persons->query('select max(rowid) from person');
         self::$maxRowid = $stmt->fetch(\PDO::FETCH_ASSOC)['max(rowid)']; // = select count(*) from person
         self::$stmt_one_person = $sqlite_persons->prepare('select bday,dday from person where rowid=:rowid');
-        // order by rowid : to respect age at death distribution, see comment of otherPerson()
+        // order by rowid : to respect age at death distribution, see comment of otherPerson1()
         $stmt_many_persons = $sqlite_persons->prepare("select rowid,bday from person order by rowid limit :limit offset :offset");
         $LIMIT = $studyConfig['control-limit'];
         //
@@ -111,14 +111,14 @@ class control implements ICommand {
             // ex: $distribs = ['birth' => 'aspects => ['SO-SO=>[0 ... 359], ...], 'death' => [...], 'birth-death' => [...]]
             [$distribs, $OFFSET] = self::getLastDistribsAndOffsetFromTmpSqlite($sqlite_tmp, $controlName);
             while($OFFSET < self::$maxRowid){
-                echo ($OFFSET / 1000) . " k\n";
+                echo $controlName . ' ' . ($OFFSET / 1000) . " k\n";
                 //
                 // function passed to computeDistributions()
                 //
                 $f = function() use ($stmt_many_persons, $OFFSET, $LIMIT) {
                     $stmt_many_persons->execute([':offset' => $OFFSET, ':limit' => $LIMIT]);
                     foreach($stmt_many_persons->fetchAll(\PDO::FETCH_ASSOC) as $person){
-                        yield array_values(self::otherPerson($person));
+                        yield array_values(self::otherPerson2($person));
                     }
                 };
                 $newDistribs = Distribs::computeDistributions($f, $studyConfig);
@@ -141,8 +141,8 @@ class control implements ICommand {
     
     /**
         Randomly selects another person.
+        This method selects $other not very far from $person to try to respect death age distribution.
         => IMPORTANT CODE - the method to choose another person is arbitrary and must be verified.
-        Current method selects $other not very far from $person to try to respect death age distribution.
         
         $nTry and $interval were introduced to avoid a risk of infinite loop
         (if all $other in the interval are dead before $person is born).
@@ -151,7 +151,7 @@ class control implements ICommand {
                 bday comes from original $person.
                 dday comes from the other person.
     **/
-    private static function otherPerson(array $person): array {
+    private static function otherPerson1(array $person): array {
         $other = [];
         $nTry = 0;
         $interval = 20;
@@ -169,8 +169,9 @@ class control implements ICommand {
                 continue;
             }
             self::$stmt_one_person->execute([':rowid' => $newRowid]);
-            $other = self::$stmt_one_person->fetch(\PDO::FETCH_ASSOC); // normally never occurs if person db is built correctly
+            $other = self::$stmt_one_person->fetch(\PDO::FETCH_ASSOC);
             if($other === false){
+                // normally should not occur - was happening in a first version of the db, not completely cleaned from incoherent values.
                 echo "OTHER PERSON = false: rowid = $newRowid\n";
                 continue;
             }
@@ -183,10 +184,35 @@ class control implements ICommand {
         return $other;
     }
     
+    /**
+        Randomly selects another person.
+        This method selects $other anywhere in the data.
+        => IMPORTANT CODE - the method to choose another person is arbitrary and must be verified.
+        @return Associative array containing 2 keys: "bday" and "dday"
+                bday comes from original $person.
+                dday comes from the other person.
+    **/
+    private static function otherPerson2(array $person): array {
+        while(true){
+            $newRowid = rand(1, self::$maxRowid);
+            if($newRowid == 0) {
+                continue;
+            }
+            self::$stmt_one_person->execute([':rowid' => $newRowid]);
+            $other = self::$stmt_one_person->fetch(\PDO::FETCH_ASSOC);
+            if($other['dday'] < $person['bday']){
+                continue; // incoherent
+            }
+            break;
+        }
+        $other['bday'] = $person['bday'];
+        return $other;
+    }
+    
     //
     // tmp sqlite management
-    // Added to permit to stop and resume execution
-    // Database created by init.php
+    // Added to permit to stop and resume execution.
+    // The database is created by init.php
     //
 
     /**

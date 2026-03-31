@@ -44,12 +44,12 @@ class Death_fr implements IStudy {
     /** Implementation of IStudy **/
     public static function init(array &$studyConfig): void {
         if(!isset($studyConfig['sqlite-death-fr'])){
-            throw new ObserveException("Missing entry 'sqlite-death-fr' in file {$studyConfig['study-file']}");
+            throw new ObserveException("Missing entry 'sqlite-death-fr' in file {$studyConfig['__study-file__']}");
         }
         self::$SQLITE_PERSON_PATH = $studyConfig['sqlite-death-fr'];
         //
         if(!isset($studyConfig['sqlite-tmp'])){
-            throw new ObserveException("Missing entry 'sqlite-tmp' in file {$studyConfig['study-file']}");
+            throw new ObserveException("Missing entry 'sqlite-tmp' in file {$studyConfig['__study-file__']}");
         }
         self::$SQLITE_TMP_PATH = $studyConfig['sqlite-tmp'];
     }

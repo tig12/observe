@@ -76,6 +76,7 @@ class split implements ICommand {
         //
         $OFFSET = 0;
         while($OFFSET < $MAXROWID){
+            echo ($OFFSET / 1000) . " k\n";
             $stmt_many_persons->execute([':offset' => $OFFSET, ':limit' => $LIMIT]);
             foreach($stmt_many_persons->fetchAll(\PDO::FETCH_ASSOC) as $person){
                 $diff = diff::compute(new \Datetime($person['bday']), new \Datetime($person['dday']), 'D', 2);
