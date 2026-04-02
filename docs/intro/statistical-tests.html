@@ -24,10 +24,85 @@ Statistical tests
 </h1>
 
 <div class="intro">
+Note: this page needs to be checked - I just try to explain to myself these statistics, but I'm not sure to understand correctly.
 </div>
 </header>
 
 <article>
+
+<!-- ********************************************************************************* -->
+<h2>Chi square test</h2>
+Chi square, or chi 2, or &chi;<sup>2</sup>, permits to compare two distributions.
+<br>In practice, we have an <b>observed distribution</b>, coming from real life, and an <b>expected distribution</b>, supposed to represent what we should observe in the hypothesis of "hazard".
+<br>The chi square test here is used to determine whether there is a statistically significant difference between the expected and observed distributions.
+<br>This use of the chi square test is called "Chi Square Goodness of Fit".
+
+<br><br>The chi square gives a measure of the difference between the observed and expected distributions.
+<br>The formula is simple to implement:
+<img style="background:white; padding:.2rem; margin:1rem;" src="img/chi2.svg" alt="Chi square formula">
+<ul class="simple">
+    <li><i>O<sub>i</sub></i> are the observed values</li>
+    <li><i>E<sub>i</sub></i> are the expected values</li>
+    <li>&Sigma; means sum</li>
+</ul>
+This formula means that for each observed and corresponding expected value:
+<ul class="simple">
+    <li>Take the difference between observed and expected</li>
+    <li>Square this difference</li>
+    <li>Divide the square by expected value</li>
+</ul>
+
+For example:
+<table class="wikitable margin">
+    <tr>
+        <th>Expected</th>
+        <td>15</td>
+        <td>18</td>
+        <td>12</td>
+    </tr>
+    <tr>
+        <th>Observed</th>
+        <td>17</td>
+        <td>18</td>
+        <td>10</td>
+    </tr>
+</table>
+
+&chi;<sup>2</sup> = (17 - 15)<sup>2</sup> / 15 + (18 - 18)<sup>2</sup> / 18 + (10 - 12)<sup>2</sup> / 12
+<br>&nbsp;&nbsp;&nbsp;&nbsp; = 2<sup>2</sup> / 15 + 0<sup>2</sup> / 18 + (-2)<sup>2</sup> / 12
+<br>&nbsp;&nbsp;&nbsp;&nbsp; = 4 / 15 + 0 + 4 / 12 &#8771; 0.959
+
+
+<!-- ********************************************************************************* -->
+<h2>p-value</h2>
+Once the chi square is computed, it is possible to compute the associated probability, often called "p-value".
+<br>In the context of "Chi Square Goodness of Fit", it indicates if the observed distribution differs from the observed distribution.
+<br>The p-value is a probability (then between 0 and 1): the probability that observed and expected distributions are independant.
+<br>For example, a p-value of 0.03 permits to say "There are 97 % of chances that observed and expected distributions are not independant".
+
+<div class="bold margin">
+    Applied to planetary positions, the computation of p-value is the main result to see if an anomaly (eventually related to astrology) is observed.
+</div>
+
+An usual convention (industry, medecine) is to consider that if p &lt; 0.05, the observed and expected distributions differ in a statistically significant way.
+
+
+<!-- ************************************* -->
+<h3>Degree of freedom</h3>
+The computation of p-value needs the "degree of freedom" (often noted <code>df</code>).
+<br>The expected and observed distributions are bound by the fact that their sum must be equal.
+<br>In the chi square example, 15 + 18 + 12 = 17 + 18 + 10 = 45
+<br>If this was not the case, it would be meaningless to compare them.
+<br>The degree of freedom represent <b>the number of quantities that can vary without breaking this constraint</b>.
+
+<br><br>In the case of the distributions handled by this program, the degree of freedom is the number of bins minus 1.
+<br>In the chi square example, <code>df = 3 - 1 = 2</code>.
+<br>In a distribution observed on 360 ° (with one bin per degree), <code>df = 360 - 1 = 359</code>.
+
+<br><br>The details of the p-value computation is too complicated to be explained here.
+
+<!-- ********************************************************************************* -->
+<h2>Size effect</h2>
 
 <div class="prevnext">Next: <a href="studies.html">Studies</a></div>
 
