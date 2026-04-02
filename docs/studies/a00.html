@@ -55,17 +55,22 @@ a00.csv - Births of 2000 in France
             <td><a class="bold" href="https://tig12.github.io/g5/anon-castille.html">tig12.github.io/g5/anon-castille.html</a></td>
         </tr>
     </table>
-    <div class="margin-top">
-        Abbreviations used in this page:
-        <br>M = Mother, F = Father, C = Child, W = Wedding
-    </div>
 </div>
 </header>
 
 <article>
 
+<div class="big2 margin">
+This dataset has not been processed yet by the 2026 version of the program (in particular control groups have not been computed), so do not contain any statistical analysis.
+</div>
+
+<div class="margin-top">
+    Abbreviations used in this page:
+    <br>M = Mother, F = Father, C = Child, W = Wedding
+</div>
+
 <!-- ********************************************************************************* -->
-<h2>The raw file</h2>
+<h2>The raw data</h2>
 <style>
     table#rawfiletable{
     }
@@ -112,6 +117,7 @@ a00.csv - Births of 2000 in France
 <!-- ********************************************************************************* -->
 <!-- ********************************************************************************* -->
 <!-- ********************************************************************************* -->
+<!-- 
 <hr class="margin-top4">
 <hr>
 <h2>Obsolete doc (2020)</h2>
@@ -119,7 +125,6 @@ a00.csv - Births of 2000 in France
 <hr>
 <a href="https://tig12.github.io/g5/anon-castille.html">https://tig12.github.io/g5/anon-castille.html</a>
 Each line contains untimed birth days of mother, father and child ; 321 838 lines contain wedding dates (54.37 %).
-<!-- <br>Working directory is <a href="https://g5.tig12.net/observe/insee/a00">https://g5.tig12.net/observe/insee/a00</a> -->
 <br>Generated graphics are in <a href="https://g5.tig12.net/observe/insee/a00/">https://g5.tig12.net/observe/insee/a00/</a>
 
 Commands to execute all steps :
@@ -131,7 +136,6 @@ php run-observe.php insee/a00 group
 php run-observe.php insee/a00 view
 </pre>
 
-<!-- ********************************************************************************* -->
 <h2>Command file</h2>
 The command file is <code>commands/insee/a00.yml</code>
 
@@ -195,7 +199,7 @@ view:
         #subtitle-template: '{IAA($1)} mother - {IAA($2)} father'
         output-file: mother-father.html
 </pre>
-
+-->
 
 </article>
 </div><!-- end class="main" -->

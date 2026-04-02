@@ -82,8 +82,8 @@ class control implements ICommand {
         // The person database is processed by small packets of size $LIMIT
         // At the end of each iteration, the distributions are stored in tmp database
         // This permits to stop and restart execution without re-computing from the beginning of person database
-        $t1 = microtime(true);
         foreach($controls as $control){
+            $t1 = microtime(true);
             $controlName = 'control-' . str_pad($control, 3, '0', STR_PAD_LEFT);
             echo "======================== Generating $controlName ==================================\n";
             $controlDir = $outDir . DS . $controlName; // ex: var/studies/death-fr/controls/control-003
@@ -130,12 +130,12 @@ class control implements ICommand {
             
             Distribs::storeDistributions($controlDir, $distribs, $studyConfig);
             
+            $t2 = microtime(true);
+            $dt = round($t2 - $t1, 3);
+            $dth = seconds2HHMMSS::compute($dt);
+            echo "Execution time for $controlName: $dt s - $dth\n";
         } // end loop on controls
         
-        $t2 = microtime(true);
-        $dt = round($t2 - $t1, 3);
-        $dth = seconds2HHMMSS::compute($dt);
-        echo "Execution time $dt s - $dth\n";
         return '';
     }
     
