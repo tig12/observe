@@ -21,7 +21,7 @@ class Death_fr_tests {
                         ex: "study1/study1.yml"
     **/
     public static function loadStudy(string $path): array {
-        $yamlStudyFile = implode(DS, [dirname(__DIR__), 'test-files', 'study1', 'study1.yml']);
+        $yamlStudyFile = implode(DS, [__DIR__, 'study1', 'study1.yml']);
         $studyConfig = yaml_parse_file($yamlStudyFile);
         Studies::initializeStudy($studyConfig);
         Death_fr::setSqlitePersonPath($studyConfig['sqlite-death-fr']);

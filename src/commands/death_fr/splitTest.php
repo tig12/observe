@@ -3,6 +3,8 @@
 
     Functional test for src/command/death_fr/split.php
     
+    usage: phpunit src/commands/death_fr/splitTest.php 
+    
     @copyright  Thierry Graff
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
     
