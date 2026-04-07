@@ -188,7 +188,7 @@ class Studies {
 // TODO check entry 'dates'
         return '';
     }
-    
+        
     /**
         Returns the directory containing the observed distributions of a subgroup of a given split of a study.
     **/

@@ -1,0 +1,47 @@
+<?php
+/******************************************************************************
+    
+    Page showing the distributions of type distrib1 (distributions of a single date).
+    
+    Called with a variable $V, associative array containing the keys:
+
+    @license    GPL
+    @copyright  Thierry Graff
+    @history    2026-04-07 18:38:44+01:00, Thierry Graff : Creation
+********************************************************************************/
+
+use observe\commands\shared\output\tocAspects;
+use tigeph\model\IAA;
+?>
+
+<!-- 
+    Table of contents
+-->
+<ul class="naked spaced">
+    <li><a class="bold" href="#day">Days</a></li>
+    <li><a class="bold" href="#year">Years</a></li>
+    <li>
+        <div class="bold">Planet positions</div>
+        <div class="padding-left2">
+            <?php foreach($V['planets'] as $planet): ?>
+                <span class="padding-right"><a href="#positions-<?= $planet ?>"><?= IAA::PLANET_NAMES[$planet] ?></a></span>
+            <?php endforeach; ?>
+        </div>
+    </li>
+    <li>
+        <div class="bold">Aspects</div>
+        <div class="padding-left2 padding-top05">
+            <?= tocAspects::html($V['planets'], '#aspect-') ?>
+        </div>
+    </li>
+</ul>
+
+<!-- 
+    Days
+-->
+<h2 id="day">Days</h2>
+
+<!-- 
+    Years
+-->
+<h2 id="year">Years</h2>

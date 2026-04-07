@@ -12,7 +12,7 @@
 **/
 $rootdir = dirname(dirname(__DIR__));
 require_once implode(DS, [$rootdir, 'vendor', 'tig12', 'tiglib', 'autoload.php']);
-require_once implode(DS, [$rootdir, 'vendor', 'tig12', 'tigeph', 'php', 'autoload.php']);
+require_once implode(DS, [$rootdir, 'vendor', 'tig12', 'tigeph', 'autoload.php']);
 require_once implode(DS, [$rootdir, 'vendor', 'tig12', 'tigdraw', 'autoload.php']);
 
 /** 

@@ -8,6 +8,8 @@
 ********************************************************************************/
 namespace tigeph\model;
 
+use tigeph\model\IAA;
+
 class IAA {
     
     /** List of all planet codes supported by IAA **/
