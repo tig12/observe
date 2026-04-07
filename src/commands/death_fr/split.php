@@ -22,7 +22,7 @@ class split implements ICommand {
     /** 
         Called by Studies::runCommand()
     **/
-    public static function execute(array $studyConfig, array $params): string {
+    public static function execute(array &$studyConfig, array $params): string {
         //
         // Parameter check
         //

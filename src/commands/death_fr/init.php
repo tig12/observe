@@ -19,7 +19,7 @@ class init implements ICommand {
         @param $params empty array
         @return Empty string, echoes its output
     **/
-    public static function execute(array $studyConfig, array $params): string {
+    public static function execute(array &$studyConfig, array $params): string {
         //
         // Parameter check
         //

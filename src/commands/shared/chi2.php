@@ -20,7 +20,7 @@ class chi2 implements ICommand {
     /**
         Called by Studies::runCommand()
     **/
-    public static function execute(array $studyConfig, array $params): string {
+    public static function execute(array &$studyConfig, array $params): string {
         //
         // Parameter check
         //
@@ -41,7 +41,7 @@ class chi2 implements ICommand {
         $precision = $studyConfig['expected-precision'];
         $subgroupDirs = Studies::getStudyClasspath($studyConfig['slug'])::getSplitDirnames($split);
 //        $chi2s =[];
-$csvChi2 = "DATE_NAME;DISTRIB_TYPE;DISTRIB;CHI2;P\n";
+$csvChi2 = "DATE_NAME;DISTRIB_TYPE;DISTRIB;CHI2;P;P < 0.05\n";
         foreach($subgroupDirs as $subgroupDir){
             $observedDistribs = Distribs::loadDistributions(Studies::getObservedDirectory($studyConfig, $split, $subgroupDir), $studyConfig);
             $expectedDistribs = Distribs::loadDistributions(Studies::getExpectedDirectory($studyConfig, $split, $subgroupDir), $studyConfig);
@@ -99,6 +99,8 @@ echo "Generated $outfilename\n";
           . $k2 . Observe::CSV_SEP
           . $k3 . Observe::CSV_SEP
           . $chi2AndProba[0] . Observe::CSV_SEP
-          . $chi2AndProba[1] . "\n";
+          . $chi2AndProba[1] . Observe::CSV_SEP
+          . ($chi2AndProba[1] < 0.05 ? 'Y' : '')
+          . "\n";
     }
 } // end class

@@ -1,0 +1,35 @@
+<?php
+/******************************************************************************
+    
+    Home page of a study.
+    
+    Called with a variable $V, associative array containing the keys:
+
+    @license    GPL
+    @copyright  Thierry Graff
+    @history    2026-04-05 08:24:23+01:00, Thierry Graff : Creation
+********************************************************************************/
+?>
+
+<div class="float-left vertical-align">
+<?php foreach($V['dates'] as $date): ?>
+    <h2><?= ucfirst($date) ?></h2>
+    <ul>
+        <li><a href="<?= $date ?>/index.html#day">Days</a></li>
+        <li><a href="<?= $date ?>/index.html#year">Years</a></li>
+        <li>
+            Planet positions
+            <ul>
+                <?php foreach($V['planets'] as $planet): ?>
+                <li><a href="<?= $date ?>/index.html#positions-<?= $planet ?>"><?= $planet ?></a></li>
+                <?php endforeach; ?>
+            </ul>
+        </li>
+    </ul>
+<?php endforeach; ?>
+
+</div>
+
+<div class="float-left">
+Birth death
+</div>

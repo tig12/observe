@@ -14,7 +14,7 @@ interface ICommand {
         @param  $studyFile  Associative array containing the contents of a yaml command file
         @param  $params     Regular array of parameters passed to run-observe.php when calling the command.
     **/
-    public static function execute(array $studyConfig, array $params): string;
+    public static function execute(array &$studyConfig, array $params): string;
     
 } // end class
 

@@ -35,6 +35,15 @@ distrib-age-unit: M
 # Precision (nb of digits for decimal part) of the numbers stored in expected distributions
 expected-precision: 2
 
+output:
+  title: Deaths in France 1970 - 2025
+  subtitle: 28 803 832 { birth, death }
+  description: Statistical analysis of persons who died in France between 1970 and 2025.
+  intro: |
+    This study concerns persons who died in France between 1970 and 2025.
+    <br>The data come from <a href="https://www.data.gouv.fr/datasets/fichier-des-personnes-decedees">data.gouv.fr/datasets/fichier-des-personnes-decedees</a>
+    <br>See <a href="https://tig12.github.io/observe/studies/death-fr.html">tig12.github.io/observe/studies/death-fr.html</a> for more details.
+
 #
 # 2 - Parameters specific to this study
 #
