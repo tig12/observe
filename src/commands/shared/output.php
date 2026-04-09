@@ -15,6 +15,7 @@ use observe\model\Studies;
 use observe\model\distrib\Distribs;
 use observe\model\distrib\CsvDistrib;
 use tiglib\filesystem\mkdir;
+use tiglib\filesystem\file_put_contents;
 use tigeph\model\IAA;
 use tigdraw\bar;
 
@@ -157,6 +158,7 @@ class output implements ICommand {
             ];
             $res .= self::header($V);
             $V = [
+                'date-name' => $dateName,
                 'planets' => $studyConfig['planets'],
             ];
             $res .= self::template('distrib1.html', $V);
@@ -192,50 +194,108 @@ class output implements ICommand {
         Generates and stores SVG images of distributions of type distrib1.
     **/
     private static function generateImgDistrib1(array &$studyConfig): void {
+        
         // WARNING: temporary code - arguments $split and $subgroup shouldn't be hard-coded
         // but passed as parameters to this function
         $baseInDir = Studies::getObservedDirectory($studyConfig, 'full', '01--0-200years');
         $baseOutDir = $studyConfig['out-dir'] . DS . 'img';
-        $nDates = count($studyConfig['dates']);
-        // distributions of type distrib1
-        for($i=0; $i < $nDates; $i++){
+        
+        for($i=0; $i < count($studyConfig['dates']); $i++){
             $dateName = $studyConfig['dates'][$i]; // ex: birth
+            $title_date = ucFirst($dateName);
             $inDateDir = $baseInDir . DS . $dateName; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth
             $outDateDir = $baseOutDir . DS . $dateName; // ex: output/studies/death-fr/birth
-            // aspects and planets
-            foreach(['aspects', 'planets'] as $distribType){
-                $inDistribTypeDir = $inDateDir . DS . $distribType; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth/aspects
-                $outDistribTypeDir = $outDateDir . DS . $distribType; // ex: output/studies/death-fr/birth/aspects
-                $inFilenames = glob($inDistribTypeDir . DS . '*.csv');
-                foreach($inFilenames as $inFilename){
+            mkdir::execute($outDateDir, 0755, true);
+            //
+            // day
+            //
+            $inFilename = $inDateDir . DS . 'day.csv';  // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth/day.csv
+            $outFilename = $outDateDir . DS . 'day.svg';            // ex: output/studies/death-fr/img/birth/day.svg
+            $distrib = CsvDistrib::csv2distrib($inFilename, false);
+            $svg = bar::svg(
+                data:           $distrib,
+                title:          $title_date . ' - Days',
+                svg_separate:   true,
+                barW:           2,
+                //xlegends:       ['min', 'max'],
+                //ylegends:       ['min', 'max', 'mean'],
+                //ylegendsRound:  1,
+                //meanLine:       true,
+                //stats:          $stats,
+            );
+            file_put_contents::execute($outFilename, $svg);
+            //
+            // year
+            //
+            $inFilename = $inDateDir . DS . 'year.csv';  // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth/year.csv
+            $outFilename = $outDateDir . DS . 'year.svg';            // ex: output/studies/death-fr/img/birth/year.svg
+            $distrib = CsvDistrib::csv2distrib($inFilename, false);
+            $svg = bar::svg(
+                data:           $distrib,
+                title:          $title_date . ' - Years',
+                svg_separate:   true,
+                barW:           2,
+                //xlegends:       ['min', 'max'],
+                //ylegends:       ['min', 'max', 'mean'],
+                //ylegendsRound:  1,
+                //meanLine:       true,
+                //stats:          $stats,
+            );
+            file_put_contents::execute($outFilename, $svg);
+            //
+            // Planet positions
+            //
+            $inDir = $inDateDir . DS . 'planets'; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth/planets
+            $outDir = $outDateDir . DS . 'planets'; // ex: output/studies/death-fr/birth/planets
+            mkdir::execute($outDir, 0755, true);
+            foreach($studyConfig['planets'] as $planet){
+                $inFilename = $inDir . DS . $planet . '.csv';
+                $outFilename = $outDir . DS . $planet . '.svg';
+                $distrib = CsvDistrib::csv2distrib($inFilename, false);
+                $title = ucfirst($dateName) . ' - position of ' . IAA::PLANET_NAMES[$planet];
+                $svg = bar::svg(
+                    data:           $distrib,
+                    title:          $title,
+                    svg_separate:   true,
+                    barW:           2,
+                    //xlegends:       ['min', 'max'],
+                    //ylegends:       ['min', 'max', 'mean'],
+                    //ylegendsRound:  1,
+                    //meanLine:       true,
+                    //stats:          $stats,
+                );
+                file_put_contents::execute($outFilename, $svg);
+            }
+            //
+            // Aspects
+            //
+            $inDir = $inDateDir . DS . 'aspects'; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth/aspects
+            $outDir = $outDateDir . DS . 'aspects'; // ex: output/studies/death-fr/birth/aspects
+            mkdir::execute($outDir, 0755, true);
+            $nPlanets = count($studyConfig['planets']);
+            for($j=0; $j < $nPlanets; $j++){
+                for($k=$j+1; $k < $nPlanets; $k++){
+                    $code = $studyConfig['planets'][$j] . '-' . $studyConfig['planets'][$k];
+                    $inFilename = $inDir . DS . $code . '.csv';
+                    $outFilename = $outDir . DS . $code . '.svg';
                     $distrib = CsvDistrib::csv2distrib($inFilename, false);
-                    $outFilename = $outDistribTypeDir . DS . basename($inFilename, '.csv') . '.svg';
-                    $title = ucfirst($dateName) . ' year';
-                    $img_src = str_replace($studyConfig['out-dir'] . DS, '', $outFilename);
-echo "$img_src\n";
-                    /* [$html_markup, $file_contents] = bar::svg(
+                    $title = ucfirst($dateName) . ' - aspects ' . IAA::PLANET_NAMES[$studyConfig['planets'][$j]] . ' - ' . IAA::PLANET_NAMES[$studyConfig['planets'][$k]];
+                    $svg = bar::svg(
                         data:           $distrib,
                         title:          $title,
                         svg_separate:   true,
-                        img_src:        $img_src,
-                        img_alt:        $title,
-                        barW:           8,
-                        xlegends:       ['min', 'max'],
-                        ylegends:       ['min', 'max', 'mean'],
-                        ylegendsRound:  1,
-                        meanLine:       true,
+                        barW:           2,
+                        //xlegends:       ['min', 'max'],
+                        //ylegends:       ['min', 'max', 'mean'],
+                        //ylegendsRound:  1,
+                        //meanLine:       true,
                         //stats:          $stats,
-                    ); */
+                    );
+                    file_put_contents::execute($outFilename, $svg);
                 }
             }
-            // day and year
-            foreach(['day', 'year'] as $distribName){
-                $filename = $inDateDir . DS . $distribName . '.csv'; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth/day.csv
-                $distrib = CsvDistrib::csv2distrib($filename, false);
-            }
-        }
+        } // end loop on dates
     }
-    
     
     
 } // end class

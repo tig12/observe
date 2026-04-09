@@ -28,12 +28,9 @@ class bar {
                                         - top-key: value of x corresponding to y max.
                                         - top-key-index: rank in the $data array containing top-key.
         // image, general
-        @param  $svg_separate       Save in a separate .svg file ?
-                                    This parameter determines the returned elements.
-        @param  $img_src            Useful only if $svg_separate = true.
-                                    In generated client page : <img src="$img_src">
-        @param  $img_alt            Useful only if $svg_separate = true.
-                                    In generated client page : <img alt="$img_alt">
+        @param  $svg_separate       Generate markup to be saved in a separate .svg file
+                                    or directly included in a html page?
+                                    (Changes the markup of the header)
         @param  $hGap               in px - horizontal (left and right) gap of the image.
         @param  $vGap               in px - vertical (left and right) gap of the image.
         @param  $background         Background color of the image.
@@ -80,21 +77,11 @@ class bar {
         @param  $meanLine           Only if $ylegends contain 'mean'
                                     Draw horizontal line for mean ?
         @param  $meanLineStyle      Style for mean line
-        
-        @return Array containing 2 elements.
-                If $svg_separate = true,
-                    - $res[0] = img tag to link to the svg image.
-                    - $res[1] = markup of the svg to store in a .svg file
-                If $svg_separate = false,
-                    - $res[0] = markup of the <svg>.
-                    - $res[1] = null
     **/
     public static function svg(
             array   $data = [],
             // image, general
             bool    $svg_separate,
-            string  $img_src = '',
-            string  $img_alt = '',
             int     $hGap = 25,
             int     $vGap = 15,
             string  $background = 'moccasin',
@@ -126,7 +113,7 @@ class bar {
             // other
             array   $stats = [],
             bool    $meanLine = false,
-        ){
+        ): string {
         $svg = '';
         // characteristics of data
         $dataKeys = array_keys($data);
@@ -299,15 +286,11 @@ SVG;
             $y1 = $y2 = $yMean;
             $x1 = $xBegin;
             $x2 = $xEnd;
-            $svg .= "<g fill=\"none\"><path class=\"meanLine\" d=\"M$x1 $y1 H$x2 $y2 Z\" /></g>";
+            $svg .= "<g fill=\"none\"><path class=\"meanLine\" d=\"M$x1 $y1 H$x2 $y2 Z\" /></g>\n";
         }
         //
-        return svg::result(
-            svg:            $svg,
-            svg_separate:   $svg_separate,
-            img_src:        $img_src,
-            img_alt:        $img_alt,
-        );
+        $svg .= "</svg>\n";
+        return $svg;
     }
     
 } // end class

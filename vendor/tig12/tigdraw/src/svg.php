@@ -9,40 +9,7 @@ namespace tigdraw;
 
 class svg {
     
-    // ******************************************************
-    /**
-        Returns ready-to-use info to calling pages,
-        which can include the svg in their html code or in a separate img files.
-        Follows a call to svg::header() depending on $svg_separate
-        @param  $svg            svg markup of the image.
-        @param  $svg_separate   Save in a separate .svg file ?
-        @param  $img_src        Attribute "src" of img tag - only for $svg_separate = true
-        @param  $img_alt        Attribute "alt" of img tag - only for $svg_separate = true
-        @return
-            $res[0]: html code to include in the page.
-            $res[1]: only for $svg_separate = true
-                     svg markup to write in a separate .svg file
-    **/
-    public static function result(
-        string  $svg,
-        bool    $svg_separate,
-        string  $img_src = '',
-        string  $img_alt = '',
-    ) {
-        $svg .= "</svg>\n";
-        if($svg_separate){
-            $res[0] = '<img loading="lazy" class="svg" src="' . $img_src . '"'
-                    . ($img_alt ? ' alt="' . $img_alt . '"' : '')
-                    . ">\n";
-            $res[1] = $svg;
-        }
-        else {
-            $res[0] = $svg;
-            $res[1] = null;
-        }
-        return $res;
-    }
-    
+
     /** 
         TODO Useless ? (as separate header works also when svg is inside the html)
     **/

@@ -4,6 +4,8 @@
     Page showing the distributions of type distrib1 (distributions of a single date).
     
     Called with a variable $V, associative array containing the keys:
+        - planets       List of IAA codes.
+        - date-name     Name of the dte concerned by this page (ex: 'birth', 'death', 'father'...).
 
     @license    GPL
     @copyright  Thierry Graff
@@ -39,9 +41,32 @@ use tigeph\model\IAA;
 <!-- 
     Days
 -->
-<h2 id="day">Days</h2>
+<img id="day" loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/day.svg" alt="Distribution of days">
 
 <!-- 
     Years
 -->
-<h2 id="year">Years</h2>
+<img id="year" loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/year.svg" alt="Distribution of years">
+
+<!-- 
+    Planet positions
+-->
+<h2 id="planet-positions">Planet positions</h2>
+<?php foreach($V['planets'] as $planet): ?>
+    <img loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/planets/<?= $planet ?>.svg" alt="Distribution of <?= $planet ?>">
+<?php endforeach; ?>
+
+<!-- 
+    Aspects
+-->
+<h2 id="aspects">Aspects</h2>
+<?php 
+for($i=0; $i < count($V['planets']); $i++){
+    for($j=$i+1; $j < count($V['planets']); $j++){
+        $code = $V['planets'][$i] . '-' . $V['planets'][$j];
+?>
+        <img id="<?= 'aspect-' . $code ?>" loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/aspects/<?= $code ?>.svg" alt="Distribution of aspects <?= $code ?>">
+<?php 
+    }
+}
+?>    
