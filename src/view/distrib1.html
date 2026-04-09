@@ -26,7 +26,7 @@ use tigeph\model\IAA;
         <div class="bold">Planet positions</div>
         <div class="padding-left2">
             <?php foreach($V['planets'] as $planet): ?>
-                <span class="padding-right"><a href="#positions-<?= $planet ?>"><?= IAA::PLANET_NAMES[$planet] ?></a></span>
+                <span class="padding-right"><a href="#position-<?= $planet ?>"><?= IAA::PLANET_NAMES[$planet] ?></a></span>
             <?php endforeach; ?>
         </div>
     </li>
@@ -53,7 +53,7 @@ use tigeph\model\IAA;
 -->
 <h2 id="planet-positions">Planet positions</h2>
 <?php foreach($V['planets'] as $planet): ?>
-    <img loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/planets/<?= $planet ?>.svg" alt="Distribution of <?= $planet ?>">
+    <img id="<?= 'position-' . $planet ?>" loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/planets/<?= $planet ?>.svg" alt="Distribution of <?= IAA::PLANET_NAMES[$planet] ?>">
 <?php endforeach; ?>
 
 <!-- 

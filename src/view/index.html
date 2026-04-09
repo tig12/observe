@@ -20,7 +20,6 @@ use tigeph\model\IAA;
 <!-- 
     Distributions of type distrib1
 -->
-<div class="float-left vertical-align-top">
 <?php foreach($V['dates'] as $dateName): ?>
     <h2><a href="<?= $dateName ?>.html"><?= ucfirst($dateName) ?></a></h2>
     <ul class="naked spaced">
@@ -30,7 +29,7 @@ use tigeph\model\IAA;
             <div class="bold">Planet positions</div>
             <div class="padding-left2">
                 <?php foreach($V['planets'] as $planet): ?>
-                    <span class="padding-right"><a href="<?= $dateName ?>.html#positions-<?= $planet ?>"><?= IAA::PLANET_NAMES[$planet] ?></a></span>
+                    <span class="padding-right"><a href="<?= $dateName ?>.html#position-<?= $planet ?>"><?= IAA::PLANET_NAMES[$planet] ?></a></span>
                 <?php endforeach; ?>
             </div>
         </li>
@@ -43,32 +42,25 @@ use tigeph\model\IAA;
     </ul>
 <?php endforeach; ?>
 
-</div>
-
 <!-- 
     Distributions of type distrib2
 -->
-<div class="float-left vertical-align-top margin-left2">
-    <?php 
-    for($i=0; $i < count($V['dates']); $i++):
-        for($j=$i+1; $j < count($V['dates']); $j++):
-            $dateName = $V['dates'][$i] . '-' . $V['dates'][$j]; // ex: birth-death
-    ?>
-            <h2><a href="<?= $dateName ?>.html"><?= ucfirst($dateName) ?></a></h2>
-            <ul class="naked spaced">
-                <li><a class="bold" href="<?= $dateName ?>.html#age">Age</a></li>
-                <li>
-                    <div class="bold">Inter-aspects</div>
-                    <div class="padding-left2 padding-top05">
-                        <?= tocInteraspects::html($V['planets'], $dateName . '.html#interaspect-') ?>
-                    </div>
-                </li>
-            </ul>
-    <?php 
-        endfor;
+<?php 
+for($i=0; $i < count($V['dates']); $i++):
+    for($j=$i+1; $j < count($V['dates']); $j++):
+        $dateName = $V['dates'][$i] . '-' . $V['dates'][$j]; // ex: birth-death
+?>
+        <h2><a href="<?= $dateName ?>.html"><?= ucfirst($dateName) ?></a></h2>
+        <ul class="naked spaced">
+            <li><a class="bold" href="<?= $dateName ?>.html#age">Age</a></li>
+            <li>
+                <div class="bold">Inter-aspects</div>
+                <div class="padding-left2 padding-top05">
+                    <?= tocInteraspects::html($V['planets'], $dateName . '.html#interaspect-') ?>
+                </div>
+            </li>
+        </ul>
+<?php 
     endfor;
-    ?>
-
-</div>
-
-<br class="clear-left">
+endfor;
+?>

@@ -1,0 +1,54 @@
+<?php
+/******************************************************************************
+    
+    Page showing the distributions of type distrib2 (distributions between 2 dates).
+    
+    Called with a variable $V, associative array containing the keys:
+        - planets       List of IAA codes.
+        - date-name     Concatenation of the names of the dates concerned by this page (ex: 'birth-death'...).
+        - date-names    Array of names of the dates concerned by this page (ex: ['birth', 'death']).
+                        Contains 2 elements.
+    
+    @license    GPL
+    @copyright  Thierry Graff
+    @history    2026-04-09 12:04:26+01:00, Thierry Graff : Creation
+********************************************************************************/
+
+use observe\commands\shared\output\tocInteraspects;
+use tigeph\model\IAA;
+?>
+
+<!-- 
+    Table of contents
+-->
+<ul class="naked spaced">
+    <li><a class="bold" href="#age">Age</a></li>
+    <li>
+        <div class="bold">Inter-aspects</div>
+        <div class="padding-left2 padding-top05">
+            <?= tocInteraspects::html($V['planets'], '#interaspect-') ?>
+        </div>
+    </li>
+</ul>
+
+<!-- 
+    Age
+-->
+<img id="age" loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/age.svg" alt="Distribution of age">
+
+<!-- 
+    Inter-aspects
+-->
+<h2 id="aspects">Inter-aspects</h2>
+<?php 
+for($i=0; $i < count($V['planets']); $i++){
+    for($j=0; $j < count($V['planets']); $j++){
+        $code = $V['planets'][$i] . '-' . $V['planets'][$j];
+        $alt = 'Distribution of aspects between ' . IAA::PLANET_NAMES[$V['planets'][$i]] . ' (' . $V['date-names'][0] . ')'
+             . ' and ' . IAA::PLANET_NAMES[$V['planets'][$j]] . ' (' . $V['date-names'][1] . ')';
+?>
+        <img id="<?= 'interaspect-' . $code ?>" loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/interaspects/<?= $code ?>.svg" alt="<?= $alt ?>">
+<?php 
+    }
+}
+?>    
