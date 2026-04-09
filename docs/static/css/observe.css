@@ -22,7 +22,16 @@ h1{
     text-align:center;
     margin:3rem 0;
 }
-code, pre{
+h1 .subtitle{
+    font-size: .875em;
+}
+
+code{
+    font-family:"Courier New",Courier,monospace;
+    background: #2c333f;
+    padding:2px 5px;
+}
+pre{
     border-radius: .25rem;
     background: #2c333f;
     font-size: .875em;
@@ -114,8 +123,8 @@ a:hover{
 .question{
     background:lightyellow;
     color: black;
-    margin:1rem;
-    padding:1rem;
+    margin:.5rem;
+    padding:.2rem 1rem;
     display:table;
 }
 .distrib1{

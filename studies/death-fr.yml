@@ -32,6 +32,9 @@ dates:
 # Can be Y, M or D
 distrib-age-unit: M
 
+# Limit of p-value to consider that an anomaly is detected
+p-value-limit: 0.05
+
 # Precision (nb of digits for decimal part) of the numbers stored in expected distributions
 expected-precision: 2
 

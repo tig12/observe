@@ -12,108 +12,123 @@ namespace tigdraw;
 class bar {
     
     /** 
-        Computes the svg markup of a distribution (one distribution only).
+        Returns the svg markup of a distribution (one distribution only).
         
         Layout : the image is composed of legends, gaps and a bar area (containing only the bars).
         Bar area height is imposed (parameter $barH) ; bar width is computed.
         Image total height and width ($w and $h) are computed (= bar size + lengends and gaps).
-        
-        @param  $data               The data to represent.
-                                    Must be an associative array.
-                                    keys = x, values on the x axis.
-                                    values = y, corresponding values on the y axis, = nb of occurences of x in the distribution.
-        @param  $stats              Associative array containing statistical informations about the distribution.
-                                    Possible keys:
-                                        - mean: mean y value.
-                                        - top-key: value of x corresponding to y max.
-                                        - top-key-index: rank in the $data array containing top-key.
-        // image, general
-        @param  $svg_separate       Generate markup to be saved in a separate .svg file
-                                    or directly included in a html page?
-                                    (Changes the markup of the header)
-        @param  $hGap               in px - horizontal (left and right) gap of the image.
-        @param  $vGap               in px - vertical (left and right) gap of the image.
-        @param  $background         Background color of the image.
-        // title
-        @param  $title              Title to display on the image.
-        @param  $titleH             in px - height of the title (= font size).
-        @param  $titleBottomGap     in px - gap between the title and bar area.
-                                    Set to 0 if title = empty string.
-        // bar
-        @param  $drawArea           in px - height of the bar area.
-        @param  $barW               in px - width of each vertical bar.
-        @param  $barGap             in px - space between 2 vertical bars.
-        @param  $barColor           Color of the vertical bars.
-        @param  $barHover           If true, a tooltip with (key, value) is displayed on mouse hover.
-        // x and y axis
-        @param  $xAxis              draw x axis ?
-        @param  $xAxisStyle         Style to draw the line of x axis
-        @param  $yAxis              boolean - draw y axis ?
-        @param  $yAxisStyle         Style to draw the line of y axis
-        // x legends
-        @param  $xlegends           Indicates the text to write below the x axis.
-                                    Associative array which can contain the following keys:
-                                        - 'all': in this case, all x values are displayed.
-                                            if 'all' is present, other keys are not considered (because redundant)
-                                        - 'min': the lowest x value is displayed
-                                        - 'max': the highest x value is displayed
-                                        - 'top': the x corresponding to top y value is displayed
-                                            'top' needs that param $stats contains 'top-key' and 'top-key-index'
-        @param  $xlegendsH          in px - height of x legends (= font size)
-        @param  $xlegendsTopGap     in px - gap between x axis and x legends
-                                    Set to 0 if no x legends.
-        // y legends
-        @param  $ylegends           Indicates the text to write left of the y axis.
-                                    Associative array which can contain the following keys:
-                                        - 'min': the lowest y value is displayed
-                                        - 'max': the highest y value is displayed
-                                        - 'mean': the (arithmetic) mean y value is displayed
-        @param  $ylegendsW          in px - width of y legends.
-        @param  $ylegendsH          in px - height of y legends (= font size)
-        @param  $ylegendsRightGap   in px - gap between y legends and y axis.
-        @param  $ylegendsRound      Nb of decimal to include in the displayed values.
-                                    (meaningful for mean, whidh is generally not integer)
-        // other
-        @param  $meanLine           Only if $ylegends contain 'mean'
-                                    Draw horizontal line for mean ?
-        @param  $meanLineStyle      Style for mean line
     **/
     public static function svg(
-            array   $data = [],
-            // image, general
-            bool    $svg_separate,
-            int     $hGap = 25,
-            int     $vGap = 15,
-            string  $background = 'moccasin',
-            // title
-            string  $title = '',
-            int     $titleH = 22,
-            int     $titleBottomGap = 15,
-            // bar
-            int     $drawArea = 250,
-            int     $barW = 2,
-            int     $barGap = 1,
-            string  $barColor = 'slategray',
-            bool    $barHover = true,
-            // x and y axis
-            bool    $xAxis = true,
-            string  $xAxisStyle = 'stroke:black;stroke-width:1;',
-            bool    $yAxis = true,
-            string  $yAxisStyle = 'stroke:black;stroke-width:1;',
-            // x legends
-            array   $xlegends = [],
-            int     $xlegendsH = 12,
-            int     $xlegendsTopGap = 5,
-            // y legends
-            array   $ylegends = [],
-            int     $ylegendsW = 40,
-            int     $ylegendsH = 12,
-            int     $ylegendsRightGap = 5,
-            int     $ylegendsRound = 0,
-            // other
-            array   $stats = [],
-            bool    $meanLine = false,
+        /** 
+            $data is the data to represent.
+            Must be an associative array.
+            keys = x, values on the x axis.
+            values = y, corresponding values on the y axis, = nb of occurences of x in the distribution.
+        **/
+        array   $data = [],
+        //
+        // image, general
+        //
+        /**
+            $svg_separate:      Should generated markup to be saved in a separate .svg file or directly included in a html page?
+                                (Changes the markup of the header)
+        **/
+        bool    $svg_separate,
+        /** $hGap               in px - horizontal (left and right) gap of the image. **/
+        int     $hGap = 25,
+        /** $vGap               in px - vertical (left and right) gap of the image. **/
+        int     $vGap = 15,
+        /** $background         Background color of the image. **/
+        string  $background = 'moccasin',
+        //
+        // title
+        //
+        /** $title              Title to display on the image. **/
+        string  $title = '',
+        /** $titleH             in px - height of the title (= font size). **/
+        int     $titleH = 22,
+        /** $titleBottomGap     in px - gap between the title and bar area. Set to 0 if title = empty string. **/
+        int     $titleBottomGap = 15,
+        //
+        // bar
+        //
+        /** $drawArea           in px - height of the bar area. **/
+        int     $drawArea = 250,
+        /** $barW               in px - width of each vertical bar. **/
+        int     $barW = 2,
+        /** $barGap             in px - space between 2 vertical bars. **/
+        int     $barGap = 1,
+        /** $barColor           Color of the vertical bars. **/
+        string  $barColor = 'slategray',
+        /** $barHover           If true, a tooltip with (key, value) is displayed on mouse hover. **/
+        bool    $barHover = true,
+        //
+        // x and y axis
+        //
+        /** $xAxis              draw x axis ? **/
+        bool    $xAxis = true,
+        /** $xAxisStyle         Style to draw the line of x axis **/
+        string  $xAxisStyle = 'stroke:black;stroke-width:1;',
+        /** $yAxis              boolean - draw y axis ? **/
+        bool    $yAxis = true,
+        /** $yAxisStyle         Style to draw the line of y axis **/
+        string  $yAxisStyle = 'stroke:black;stroke-width:1;',
+        //
+        // x legends
+        //
+        /**
+            $xlegends           Indicates the text to write below the x axis.
+                                Associative array which can contain the following keys:
+                                    - 'all': in this case, all x values are displayed.
+                                             if 'all' is present, other keys are not considered (because redundant)
+                                    - 'min': the lowest x value is displayed
+                                    - 'max': the highest x value is displayed
+                                    - 'top': the x corresponding to top y value is displayed
+                                             'top' needs that param $stats contains 'top-key' and 'top-key-index'
+        **/
+        array   $xlegends = [],
+        /** $xlegendsH          in px - height of x legends (= font size) **/
+        int     $xlegendsH = 12,
+        /** $xlegendsTopGap     in px - gap between x axis and x legends. Set to 0 if no x legends. **/
+        int     $xlegendsTopGap = 5,
+        //
+        // y legends
+        //
+        /**
+            $ylegends           Indicates the text to write left of the y axis.
+                                Associative array which can contain the following keys:
+                                    - 'min': the lowest y value is displayed
+                                    - 'max': the highest y value is displayed
+                                    - 'mean': the (arithmetic) mean y value is displayed
+        **/
+        array   $ylegends = [],
+        /** $ylegendsW      in px - width of y legends. **/
+        int     $ylegendsW = 40,
+        /** $ylegendsH          in px - height of y legends (= font size) **/
+        int     $ylegendsH = 12,
+        /** $ylegendsRightGap   in px - gap between y legends and y axis. **/
+        int     $ylegendsRightGap = 5,
+        /**
+            $ylegendsRound      Nb of decimal to include in the displayed values.
+                                (meaningful for mean, whidh is generally not integer)
+        **/
+        int     $ylegendsRound = 0,
+        //
+        // other
+        //
+        /** 
+            $stats              Associative array containing statistical informations about the distribution.
+                                Possible keys:
+                                    - mean: mean y value.
+                                    - top-key: value of x corresponding to y max.
+                                    - top-key-index: rank in the $data array containing top-key.
+        **/
+        array   $stats = [],
+        /**  $meanLine          Draw horizontal line for mean ? - Only if $ylegends contain 'mean' **/
+        bool    $meanLine = false,
+        /**$meanLineStyle       Style for mean line **/
         ): string {
+    
         $svg = '';
         // characteristics of data
         $dataKeys = array_keys($data);

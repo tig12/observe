@@ -21,10 +21,13 @@
 <header id="topage">
 <h1>
 Deaths in France 1970 - 2025
+<div class="subtitle">
+    28 803 832 birth and death days
+</div>
 </h1>
 <div class="intro">
-    This study is based on data coming from <a href="https://www.data.gouv.fr/datasets/fichier-des-personnes-decedees">www.data.gouv.fr/datasets/fichier-des-personnes-decedees</a>, which contains nominative data of persons deceased in France since 1970 (with birth day and death day, but untimed).
-    <br>This study concerns persons who died in France between 1970 and 2025 and contains <span class="bold big2">28 803 832</span> persons.
+    This study is based on data coming from <a href="https://www.data.gouv.fr/datasets/fichier-des-personnes-decedees">data.gouv.fr/datasets/fichier-des-personnes-decedees</a>, which contains nominative data of persons deceased in France since 1970 (with birth day and death day, days without time).
+    <br>This study concerns persons who died in France between 1970 and 2025, with <span class="bold big2">57 835 022</span> dates.
 </div>
 </header>
 
@@ -33,15 +36,63 @@ Deaths in France 1970 - 2025
 <!-- ********************************************************************************* -->
 <h2>The raw data</h2>
 
-The data used for this study can be downloaded from <a href="https://www.data.gouv.fr/datasets/fichier-des-personnes-decedees">data.gouv.fr</a>.
-<br>The download and build of a local sqlite database (called <code>death-fr.sqlite3</code>), used as the raw data of this study, is handled by another program called g5 (see <a href="https://github.com/tig12/g5">github.com/tig12/g5</a>).
-<br>If you want to build <code>death-fr.sqlite3</code> on your own machine, you can use g5 code, documented on <a href="https://github.com/tig12/g5/tree/main/src/commands/enrich/deathfr">github.com/tig12/g5/tree/main/src/commands/enrich/deathfr</a>
+<!-- ************************************* -->
+<h3>Raw files</h3>
+From <a href="https://www.data.gouv.fr/datasets/fichier-des-personnes-decedees">data.gouv.fr</a>, we download one file per year:
+<pre>
+data.gouv.fr
+    └── datasets
+        └── fichier-des-personnes-decedees
+            ├── deces-1970.txt
+            ├── ...
+            └── deces-2025.txt
+</pre>
+Each file contains one line per personne, a total of <b>28 917 511 lines</b>.
 
-<br><br>The result of the g5 command used to build <code>death-fr.sqlite3</code> gives informations about the number of lines inserted:
+
+, here are the first lines of <code>deces-1970.txt</code>
+<pre>
+DUCRET*MARIE ANTOINETTE/                                                        21922010901004AMBERIEU-EN-BUGEY                                           19701210014216                              
+GRANGEON*ERIC JEAN REMY/                                                        11969032901004AMBERIEU-EN-BUGEY                                           19700425693831059                           
+VELLET*PHILIPPE/                                                                11970020101004AMBERIEU-EN-BUGEY                                           197002030100412                             
+PRESSAVIN*LYDIE/                                                                21970040601004AMBERIEU-EN-BUGEY                                           197004060100433                             
+DOUAT*MARIE-SYLVIA MARTINE/                                                     21970070801004AMBERIEU-EN-BUGEY                                           1970070801053457                            
+ROSIER*FELIX/                                                                   11891112501004AMBERIEU-EN-BUGEY                                           197011143001215                             
+BOUVEYRON*PIERRE/                                                               11900042701005AMBERIEUX-EN-DOMBES                                         19701211693832094                           
+MILLET*MARIE-LOUISE/                                                            21900082901017ARGIS                                                       19701225060885310                           
+GIVORD*JACQUES/                                                                 11910081201026BAGE-LE-CHATEL                                              19701124060884880                           
+CROZET*MARIE CECILE/                                                            21904092101029BEAUPONT                                                    19701102392093                              
+</pre>
+
+<!-- ************************************* -->
+<h3>death-fr.sqlite3</h3>
+
+These text files are first loaded in a sqlite database, <code>death-fr.sqlite3</code>.
+<br>It contains one table, <code>person</code> with this structure:
+<pre>
+create table person(
+    fname varchar(80),
+    gname varchar(80),
+    sex character(1),
+    bday character(8),
+    bcode character(5),
+    bname character(30),
+    bcountry varchar(80),
+    dday character(8),
+    dcode character(5),
+    dact character(9)
+);
+create index idx_bday ON person(bday);
+create index idx_dday ON person(dday);
+</pre>
+
+<h4>Build death-fr.sqlite3</h4>
+<code>death-fr.sqlite3</code> is built by another program called g5, <a href="https://github.com/tig12/g5">github.com/tig12/g5</a>.
+<br>The build process is decribed on <a href="https://github.com/tig12/g5/tree/main/src/commands/enrich/deathfr">github.com/tig12/g5/tree/main/src/commands/enrich/deathfr</a>.
+
 <pre>
 php run-g5.php enrich deathfr raw2sqlite 1970-2025 > data/tmp/enrich/death-fr/sqlite-build-report.log
 </pre>
-
 <pre>
 -------------------------------------------------------
 Total Execution time: 547.3 s - 00:12:07
@@ -58,28 +109,6 @@ ERR_EXCEPTION:  2 exception
 </pre>
 
 This shows that the files of data.gouv.fr (1970 - 2025) contain 28 917 511 dates but around 114 000 lines are incorrect.
-<br>So the input data for this study contain <b>28 803 832 persons</b>.
-<br>As each person has a birth day and a death day, the study deals with <b>57 835 022</b> dates.
-
-<!-- ************************************* -->
-<h3><code>death-fr.sqlite3</code></h3>
-
-<code>death-fr.sqlite3</code> contains one table, <code>person</code> with this structure:
-<pre>
-create table person(
-    fname varchar(80),
-    gname varchar(80),
-    sex character(1),
-    bday character(8),
-    bcode character(5),
-    bname character(30),
-    bcountry varchar(80),
-    dday character(8),
-    dcode character(5),
-    dact character(9)
-);
-create index idx_bday ON person(bday);
-</pre>
 
 </article>
 </div><!-- end class="main" -->

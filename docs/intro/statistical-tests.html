@@ -20,7 +20,7 @@
 
 <header id="topage">
 <h1>
-Statistical tests
+Statistics
 </h1>
 
 <div class="intro">
@@ -41,9 +41,9 @@ Chi square, or chi 2, or &chi;<sup>2</sup>, permits to compare two distributions
 <br>The formula is simple to implement:
 <img style="background:white; padding:.2rem; margin:1rem;" src="img/chi2.svg" alt="Chi square formula">
 <ul class="simple">
+    <li>&Sigma; (sigma) means sum, from i = 0 to i = n</li>
     <li><i>O<sub>i</sub></i> are the observed values</li>
     <li><i>E<sub>i</sub></i> are the expected values</li>
-    <li>&Sigma; means sum</li>
 </ul>
 This formula means that for each observed and corresponding expected value:
 <ul class="simple">
@@ -76,22 +76,23 @@ For example:
 <!-- ********************************************************************************* -->
 <h2>p-value</h2>
 Once the chi square is computed, it is possible to compute the associated probability, often called "p-value".
-<br>In the context of "Chi Square Goodness of Fit", it indicates if the observed distribution differs from the expected distribution.
 <br>The p-value is a probability (then between 0 and 1): the probability that observed and expected distributions are independant.
 <br>For example, a p-value of 0.03 permits to say "There are 97 % of chances that observed and expected distributions are not independant".
+<br>An usual convention (industry, medecine) is to consider that if <code>p &lt; 0.05</code>, then the observed and expected distributions are linked in a statistically significant way.
 
 <div class="bold margin">
     Applied to planetary positions, the computation of p-value is the main result to see if an anomaly (eventually related to astrology) is observed.
 </div>
 
-An usual convention (industry, medecine) is to consider that if p &lt; 0.05, the observed and expected distributions differ in a statistically significant way.
+<div class="question">Q: What does <i>independant </i> mean ?</div>
+
 
 
 <!-- ************************************* -->
 <h3>Degree of freedom</h3>
 The computation of p-value needs the "degree of freedom" (often noted <code>df</code>).
 <br>The expected and observed distributions are bound by the fact that their sum must be equal.
-<br>In the chi square example, 15 + 18 + 12 = 17 + 18 + 10 = 45
+<br>In the chi square example, <code>15 + 18 + 12 = 17 + 18 + 10 = 45</code>
 <br>If this was not the case, it would be meaningless to compare them.
 <br>The degree of freedom represent <b>the number of quantities that can vary without breaking this constraint</b>.
 
@@ -103,6 +104,17 @@ The computation of p-value needs the "degree of freedom" (often noted <code>df</
 
 <!-- ********************************************************************************* -->
 <h2>Size effect</h2>
+
+<!-- ********************************************************************************* -->
+<h2>Variance</h2>
+
+
+<!-- 
+Standard deviation
+(écart type)
+-->
+
+
 
 <div class="prevnext">Next: <a href="studies.html">Studies</a></div>
 
