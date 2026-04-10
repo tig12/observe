@@ -59,7 +59,7 @@ class expected implements ICommand {
         //
         $nDates = count($studyConfig['dates']);
         $precision = $studyConfig['expected-precision'];
-        $subgroupDirs = Studies::getStudyClasspath($studyConfig['slug'])::getSplitDirnames($split);
+        $subgroupDirs = Studies::getStudyClasspath($studyConfig['slug'])::getSplitSubgroups($split);
         
         foreach($subgroupDirs as $subgroupDir){
             $expectedDistribs = EmptyDistribs::initializeDistributions($studyConfig);

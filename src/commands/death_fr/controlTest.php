@@ -45,7 +45,7 @@ class controlTest extends TestCase{
 // because control computation for partial subgroups is not clearly analyzed.
         foreach(['full'] as $split){
             $splitDir = Studies::getSplitDirectory(self::$studyConfig, $split);
-            $subgroups = Death_fr::getSplitDirnames($split);
+            $subgroups = Death_fr::getSplitSubgroups($split);
             
             foreach($subgroups as $subgroup){
                 $observedDir = Studies::getObservedDirectory(self::$studyConfig, $split, $subgroup);

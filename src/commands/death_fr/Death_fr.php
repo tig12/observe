@@ -58,7 +58,7 @@ class Death_fr implements IStudy {
         Returns the names of the directories of each subgroup of a split.
         Implementation of IStudy.
     **/
-    public static function getSplitDirnames(string $split): array {
+    public static function getSplitSubgroups(string $split): array {
         $split_limits = self::SPLITS[$split];
         $values = array_values($split_limits);
         $nSubgroups = count($split_limits) - 1;

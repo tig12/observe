@@ -125,7 +125,8 @@ class output implements ICommand {
             $inFilename = $inDir_date . DS . 'day.csv';     // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth/day.csv
             $distrib = CsvDistrib::csv2distrib($inFilename, false);
             $stats = $statsDistribs[$dateName]['day'];
-print_r($stats); exit;
+print_r($stats);
+exit;
             
             $outFilename = $outDir_date_img . DS . 'day.svg';   // ex: output/studies/death-fr/img/birth/day.svg
             $svg = bar::svg(

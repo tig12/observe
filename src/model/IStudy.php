@@ -18,7 +18,7 @@ interface IStudy {
     /**
         Returns the names of the directories of each subgroup of a split.
     **/
-    public static function getSplitDirnames(string $split): array;
+    public static function getSplitSubgroups(string $split): array;
         
 } // end class
 

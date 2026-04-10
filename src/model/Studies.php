@@ -218,6 +218,24 @@ class Studies {
     }
     
     /**
+        Returns the names of the subgroups of a split = the names of the directories of a split
+        ex:
+            var/studies/death-fr/split-age/
+                ├── 01--0-2days
+                ├── 02--2days-2months
+                ├── 03--2months-6months
+                ├── 04--6months-2years
+                ├── 05--2years-5years
+                ├── 06--5years-20years
+                ├── 07--20years-50years
+                ├── 08--50years-90years
+                └── 09--90years-200years
+    **/
+    public static function getSplitSubgroups(array &$studyConfig, string $split): array {
+        return self::getStudyClasspath($studyConfig['slug'])::getSplitSubgroups($split);
+    }
+    
+    /**
         Returns the directory containing the intermediate files of a given split of a study.
     **/
     public static function getSubgroupDirectory(array &$studyConfig, string $split, string $subgroup): string {

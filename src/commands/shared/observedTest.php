@@ -41,7 +41,7 @@ class observedTest extends TestCase{
         
         foreach(self::$studyConfig['splits'] as $split){
             $splitDir = Studies::getSplitDirectory(self::$studyConfig, $split);
-            $subgroups = Death_fr::getSplitDirnames($split);
+            $subgroups = Death_fr::getSplitSubgroups($split);
             foreach($subgroups as $subgroup){
                 $subgroupDir = Studies::getSubgroupDirectory(self::$studyConfig, $split, $subgroup);
                 // sum of elements in data.csv.bz2

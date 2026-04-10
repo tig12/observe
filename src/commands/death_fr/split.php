@@ -61,7 +61,7 @@ class split implements ICommand {
         $t1 = microtime(true);
         // Note: obliged to open the bz2s of all splits because we don't know in which subgroup a line of the database will go.
         // Possible to change the algo : treat each subgroup one by one, but would oblige to loop over the whole database for each subgroup.
-        $splitDirnames = Death_fr::getSplitDirnames($split);
+        $splitDirnames = Death_fr::getSplitSubgroups($split);
         for($i=0; $i < $nSubgroups; $i++){
             $froms[$i] = $keys[$i];
             $tos[$i] = $keys[$i + 1];
