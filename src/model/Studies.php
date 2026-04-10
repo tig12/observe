@@ -22,7 +22,7 @@ class Studies {
         'observed',
         'control',
         'expected',
-        'chi2',
+        'stats',
         'output',
     ];
     
@@ -56,8 +56,6 @@ class Studies {
         if(($msg = self::checkStudyFile($studyConfig)) != ''){
             return "ERROR in study file {$studyConfig['__study-file__']}:\n$msg\n";
         }
-        // 
-        $studyConfig['commnd'] = $command;
         
         // Before calling the command, handle the computations specific to each study:
         // call method init() of a class implementing IStudy located in the package specific to the command
@@ -109,6 +107,8 @@ class Studies {
     
     /**
         Returns the slugs of all available studies.
+        Fills self::$studyConfigs with all available study configs (here, "study config" = content of a yaml study file).
+        Completes each element of self::$studyConfigs with a key "__study-file__".
         The slugs come from yaml files stored in study file, in studies/
     **/
     public static function getAllStudySlugs(): array {

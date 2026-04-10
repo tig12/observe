@@ -36,7 +36,7 @@ class bar {
         bool    $svg_separate,
         /** $hGap               in px - horizontal (left and right) gap of the image. **/
         int     $hGap = 25,
-        /** $vGap               in px - vertical (left and right) gap of the image. **/
+        /** $vGap               in px - vertical (top and bottom) gap of the image. **/
         int     $vGap = 15,
         /** $background         Background color of the image. **/
         string  $background = 'moccasin',
@@ -76,16 +76,7 @@ class bar {
         //
         // x legends
         //
-        /**
-            $xlegends           Indicates the text to write below the x axis.
-                                Associative array which can contain the following keys:
-                                    - 'all': in this case, all x values are displayed.
-                                             if 'all' is present, other keys are not considered (because redundant)
-                                    - 'min': the lowest x value is displayed
-                                    - 'max': the highest x value is displayed
-                                    - 'top': the x corresponding to top y value is displayed
-                                             'top' needs that param $stats contains 'top-key' and 'top-key-index'
-        **/
+        /** $xlegends           Array of (x value, label) **/
         array   $xlegends = [],
         /** $xlegendsH          in px - height of x legends (= font size) **/
         int     $xlegendsH = 12,
@@ -94,15 +85,9 @@ class bar {
         //
         // y legends
         //
-        /**
-            $ylegends           Indicates the text to write left of the y axis.
-                                Associative array which can contain the following keys:
-                                    - 'min': the lowest y value is displayed
-                                    - 'max': the highest y value is displayed
-                                    - 'mean': the (arithmetic) mean y value is displayed
-        **/
+        /** $ylegends           Array of (y value, label) **/
         array   $ylegends = [],
-        /** $ylegendsW      in px - width of y legends. **/
+        /** $ylegendsW          in px - width of y legends. **/
         int     $ylegendsW = 40,
         /** $ylegendsH          in px - height of y legends (= font size) **/
         int     $ylegendsH = 12,
@@ -113,6 +98,12 @@ class bar {
                                 (meaningful for mean, whidh is generally not integer)
         **/
         int     $ylegendsRound = 0,
+        //
+        // bottom
+        //
+        /** $bottom             Content to put below x-legends **/
+        string  $bottom = '',
+        
         //
         // other
         //

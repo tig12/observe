@@ -1,9 +1,11 @@
 <?php
 /******************************************************************************
+    
     Main class to compute distributions.
     
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
     @copyright  Thierry Graff
+    
     @history    2026-03-13 18:44:21+01:00, Thierry Graff : Creation
 ********************************************************************************/
 namespace observe\model\distrib;

@@ -2,7 +2,9 @@
 /******************************************************************************
     Adds two distributions sharing the same structure
     
-    @license    GPL
+    @license    GPL - conforms to file LICENCE located in root directory of current repository.
+    @copyright  Thierry Graff
+    
     @history    2026-03-23 13:23:02+01:00, Thierry Graff : Creation
 ********************************************************************************/
 namespace observe\model\distrib;

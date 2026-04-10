@@ -14,7 +14,7 @@ namespace observe\commands\shared;
 use PHPUnit\Framework\TestCase;
 use observe\commands\tests\Death_fr_tests;
 
-class chi2Test extends TestCase{
+class statsTest extends TestCase{
     
     private static array $studyConfig;
 

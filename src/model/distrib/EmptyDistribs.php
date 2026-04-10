@@ -1,9 +1,11 @@
 <?php
 /******************************************************************************
+    
     Initializes empty distributions.
     
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
     @copyright  Thierry Graff
+    
     @history    2026-03-12 16:07:07+01:00, Thierry Graff : Isolate this code in a separated class
     @history    2021-03-14 20:15:29+01:00, Thierry Graff : Big refactor
     @history    2021-03-10 04:31:53+01:00, Thierry Graff : Creation
