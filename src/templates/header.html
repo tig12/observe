@@ -4,10 +4,12 @@
     Header of generated pages.
     
     Called with a variable $V, associative array containing the keys:
-        path-to-root
-        date
         title
+        subtitle
+        date
+        path-to-root
         description
+        intro
 
     @license    GPL
     @copyright  Thierry Graff
@@ -32,15 +34,22 @@
 <body>
 
 <header id="topage">
+
+    <div class="homelink">
+        <a href="<?= $V['path-to-root'] ?>">Home</a>
+    </div>
+    
     <h1>
         <?= $V['title'] ?>
         <?php if($V['subtitle']): ?><div class="subtitle"><?= $V['subtitle'] ?></div><?php endif; ?>
     </h1>
+    
     <?php if($V['intro']): ?>
         <div class="intro">
             <?= $V['intro'] ?>
         </div>
     <?php endif; ?>
+    
 </header>
 
 <article>

@@ -1,15 +1,20 @@
 <?php
 /******************************************************************************
-
-    Arrays manipulated by StatsDistrib have this structure:
+    
+    Manipulate statistical informations of distributions read from a file stats.csv,
+    generated with php run-observe.php <study> stats <split>
+    
+    Arrays manipulated by StatsDistrib have these fields:
         [
-          'MIN' => '999',
-          'MAX' => '999',
-          'MEAN' => '999',
-          'SIGMA2' => '999',
-          'CHI2' => '999',
-          'P' => '999',
-          'P < 0.05' => '',
+            MIN,
+            MIN_KEY,
+            MAX,
+            MAX_KEY,
+            MEAN,
+            SIGMA,
+            CHI2,
+            P,
+            P<LIMIT,
         ]
     This array is noted <StatsDistrib>
     
@@ -21,11 +26,11 @@
           'birth' => [
             'day' => <StatsDistrib>
             'year' => <StatsDistrib>
-            'planets => [ 'SO' => <StatsDistrib>, 'MO' =>   ...   ]
-            'aspects => [ 'SO-MO' => <StatsDistrib>, 'SO-ME' =>   ... ]
+            'planets' => [ 'SO' => <StatsDistrib>, 'MO' =>   ...   ]
+            'aspects' => [ 'SO-MO' => <StatsDistrib>, 'SO-ME' =>   ... ]
           'birth-death' => [
             'age' => <StatsDistrib>
-            'interaspects => [ 'SO-SO' => <StatsDistrib>, 'SO-MO' =>   ... ]
+            'interaspects' => [ 'SO-SO' => <StatsDistrib>, 'SO-MO' =>   ... ]
         ]
         
     
@@ -43,6 +48,29 @@ use tiglib\arrays\csvAssociative;
 
 class StatsDistrib {
     
+    /** 
+        Column names of files stats.csv.
+        Unique reference for the names and the order.
+    **/
+    const array STATS_CSV_FIELDS = [
+        // id of the distrib
+        'DATE_NAME',
+        'DISTRIB_TYPE',
+        'DISTRIB',
+        // statistical infos
+        'FROM',
+        'TO',
+        'MIN_KEY',
+        'MIN',
+        'MAX_KEY',
+        'MAX',
+        'MEAN',
+        'SIGMA',
+        'CHI2',
+        'P',
+        'P<LIMIT',
+    ];
+    
     /**
         Loads statistical informations of distributions from file stats.csv.
         @param  $
@@ -58,7 +86,7 @@ class StatsDistrib {
             if(!isset($res[$line['DATE_NAME']][$line['DISTRIB_TYPE']])){
                 $res[$line['DATE_NAME']][$line['DISTRIB_TYPE']] = [];
             }
-            $line2 = $line;
+            $line2 = $line; // $line2 contains only statistical informations, no keys.
             unset($line2['DATE_NAME']);
             unset($line2['DISTRIB_TYPE']);
             unset($line2['DISTRIB']);

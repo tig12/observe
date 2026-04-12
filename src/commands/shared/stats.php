@@ -14,31 +14,12 @@ use observe\model\ICommand;
 use observe\model\Observe;
 use observe\model\Studies;
 use observe\model\distrib\Distribs;
+use observe\model\distrib\StatsDistrib;
 use tiglib\stats\chi2 as chi2compute;
-use tiglib\stats\minmax;
-use tiglib\stats\mean;
-use tiglib\time\seconds2HHMMSS;
+use tiglib\stats\minMax;
+use tiglib\stats\distrib as distribIndicators;
 
 class stats implements ICommand {
-    
-    const array CSV_FIELDS = [
-        // id of the distrib
-        'DATE_NAME',
-        'DISTRIB_TYPE',
-        'DISTRIB',
-        // statistical infos
-        'MIN',
-        'MIN_KEY',
-        'MAX',
-        'MAX_KEY',
-        'MEAN',
-        'SIGMA2',
-        'CHI2',
-        'P',
-        'P<LIMIT',
-        
-    ];
-    
     
     /**
         Called by Studies::runCommand()
@@ -65,7 +46,7 @@ class stats implements ICommand {
         //$subgroupDirs = Studies::getStudyClasspath($studyConfig['slug'])::getSplitSubgroups($split);
         $subgroupDirs = Studies::getSplitSubgroups($studyConfig, $split);
         //
-        $res = implode(Observe::CSV_SEP, self::CSV_FIELDS) . "\n";
+        $res = implode(Observe::CSV_SEP, StatsDistrib::STATS_CSV_FIELDS) . "\n";
         //
         foreach($subgroupDirs as $subgroupDir){
             $observedDistribs = Distribs::loadDistributions(Studies::getObservedDirectory($studyConfig, $split, $subgroupDir), $studyConfig);
@@ -78,35 +59,35 @@ class stats implements ICommand {
                 // day
                 [$chi2, $p_value] = chi2compute::chi2AndProba(359, $observedDistribs[$dateName]['day'], $expectedDistribs[$dateName]['day']);
                 $res .= self::statsLine(
+                    studyConfig:    $studyConfig,
+                    distrib:        $observedDistribs[$dateName]['day'],
                     key1:           $dateName,
                     key2:           'day',
                     key3:           '',
-                    distrib:        $observedDistribs[$dateName]['day'],
-                    studyConfig:    $studyConfig,
                     chi2:           $chi2,
                     p_value:        $p_value,
                 );
                 // year
-                [$chi2, $p_value] = chi2compute::chi2AndProba(359, $observedDistribs[$dateName]['year'], $expectedDistribs[$dateName]['year']);
+                //[$chi2, $p_value] = chi2compute::chi2AndProba(359, $observedDistribs[$dateName]['year'], $expectedDistribs[$dateName]['year']);
                 $res .= self::statsLine(
+                    studyConfig:    $studyConfig,
+                    distrib:        $observedDistribs[$dateName]['year'],
                     key1:           $dateName,
                     key2:           'year',
                     key3:           '',
-                    distrib:        $observedDistribs[$dateName]['year'],
-                    studyConfig:    $studyConfig,
-                    chi2:           $chi2,
-                    p_value:        $p_value,
+                    //chi2:           $chi2,
+                    //p_value:        $p_value,
                 );
                 // aspects and planets
                 foreach(['aspects', 'planets'] as $distribType){
                     foreach($observedDistribs[$dateName][$distribType] as $distribName => $observedDistribValues){ // ex: $distribName = 'SO-MO'
                         [$chi2, $p_value] = chi2compute::chi2AndProba(359, $observedDistribValues, $expectedDistribs[$dateName][$distribType][$distribName]);
                         $res .= self::statsLine(
+                            studyConfig:    $studyConfig,
+                            distrib:        $observedDistribValues,
                             key1:           $dateName,
                             key2:           $distribType,
                             key3:           $distribName,
-                            distrib:        $observedDistribValues,
-                            studyConfig:    $studyConfig,
                             chi2:           $chi2,
                             p_value:        $p_value,
                         );
@@ -122,11 +103,11 @@ class stats implements ICommand {
                     // age
                     [$chi2, $p_value] = chi2compute::chi2AndProba(359, $observedDistribs[$dateName]['age'], $expectedDistribs[$dateName]['age']);
                     $res .= self::statsLine(
+                        studyConfig:    $studyConfig,
+                        distrib:        $observedDistribs[$dateName]['age'],
                         key1:           $dateName,
                         key2:           'age',
                         key3:           '',
-                        distrib:        $observedDistribs[$dateName]['age'],
-                        studyConfig:    $studyConfig,
                         chi2:           $chi2,
                         p_value:        $p_value,
                     );
@@ -134,11 +115,11 @@ class stats implements ICommand {
                     foreach($observedDistribs[$dateName]['interaspects'] as $distribName => $observedDistribValues){ // ex: $distribName = 'SO-SO'
                         [$chi2, $p_value] = chi2compute::chi2AndProba(359, $observedDistribValues, $expectedDistribs[$dateName]['interaspects'][$distribName]);
                         $res .= self::statsLine(
+                            studyConfig:    $studyConfig,
+                            distrib:        $observedDistribValues,
                             key1:           $dateName,
                             key2:           'interaspects',
                             key3:           $distribName,
-                            distrib:        $observedDistribValues,
-                            studyConfig:    $studyConfig,
                             chi2:           $chi2,
                             p_value:        $p_value,
                         );
@@ -155,47 +136,69 @@ class stats implements ICommand {
 
     /**
         Generates a line for a distribution in stats.csv
-            MIN
+        The fields and their order are defined in StatsDistrib::STATS_CSV_FIELDS
+            // id of the distrib
+            DATE_NAME
+            DISTRIB_TYPE
+            DISTRIB
+            // statistical infos
+            FROM
+            TO
             MIN_KEY
-            MAX
+            MIN
             MAX_KEY
+            MAX
             MEAN
-            SIGMA2
+            SIGMA
             CHI2
             P
             P<LIMIT
     **/
     private static function statsLine(
+        array   &$studyConfig,
+        array   &$distrib,
         string  $key1,
         string  $key2,
         string  $key3,
-        array   &$distrib,
-        array   &$studyConfig,
-        ?float  $chi2,
-        ?float  $p_value,
+        ?float  $chi2 = null,
+        ?float  $p_value = null,
     ) {
         $min = min($distrib);
         $max = max($distrib);
-        [$min_key, $max_key] = minmax::mimmaxKeys($distrib);
-        $mean = mean::compute($distrib);
-        $sigma = 999;
-        $res = 
+        [$from, $to, $min_key, $min, $max_key, $max] = minMax::minMaxIndicators($distrib);
+        //
+        $mean = distribIndicators::mean($distrib);
+        $mean = round($mean, 2);                        // WARNING round() is done here - pass in parameter ?
+        $sigma = distribIndicators::sigma($distrib);
+        //
+        if(is_null($chi2)){
+            $chi2 = '';
+            $p_value = '';
+            $p_inf_limit = '';
+        }
+        else{
+            $chi2 = round($chi2, 3);                    // WARNING round() is done here - pass in parameter ?
+            //$p_value = round($p_value, 5);              // WARNING round() is done here - pass in parameter ?
+            $p_inf_limit = ($p_value < $studyConfig['p-value-limit'] ? 'Y' : '');
+        }
+        //
+        return
             $key1                   . Observe::CSV_SEP
           . $key2                   . Observe::CSV_SEP
           . $key3                   . Observe::CSV_SEP
           //
-          . $min                    . Observe::CSV_SEP
+          . $from                   . Observe::CSV_SEP
+          . $to                     . Observe::CSV_SEP
           . $min_key                . Observe::CSV_SEP
-          . $max                    . Observe::CSV_SEP
+          . $min                    . Observe::CSV_SEP
           . $max_key                . Observe::CSV_SEP
-          . round($mean, 2)         . Observe::CSV_SEP
+          . $max                    . Observe::CSV_SEP
+          . $mean                   . Observe::CSV_SEP
           . $sigma                  . Observe::CSV_SEP
           . $chi2                   . Observe::CSV_SEP
-          . round($p_value, 5)      . Observe::CSV_SEP
-          . (!is_null($p_value) && $p_value < $studyConfig['p-value-limit'] ? 'Y' : '')
+          . $p_value                . Observe::CSV_SEP
+          . $p_inf_limit
           . "\n";
-          
-          return $res;
     }
     
 } // end class

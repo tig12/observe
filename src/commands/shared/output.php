@@ -17,10 +17,13 @@ use observe\commands\shared\output\output_img;
 use observe\model\Studies;
 use observe\model\distrib\StatsDistrib;
 use observe\model\distrib\CsvDistrib;
+use observe\model\draw\xlegend;
 
 use tiglib\filesystem\mkdir;
 use tiglib\filesystem\file_put_contents;
-
+use tigdraw\bar;
+use tigstats\center;
+use tigstats\dispersion;
 class output implements ICommand {
     
     const array POSSIBLE_WHAT = [
@@ -124,24 +127,21 @@ class output implements ICommand {
             //
             $inFilename = $inDir_date . DS . 'day.csv';     // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth/day.csv
             $distrib = CsvDistrib::csv2distrib($inFilename, false);
-            $stats = $statsDistribs[$dateName]['day'];
-print_r($stats);
-exit;
-            
+            $stats = $statsDistribs[$dateName]['day'];            
             $outFilename = $outDir_date_img . DS . 'day.svg';   // ex: output/studies/death-fr/img/birth/day.svg
             $svg = bar::svg(
                 data:           $distrib,
                 title:          $dateNameLabel . ' - Days',
                 svg_separate:   true,
                 barW:           2,
-                xlegends:       ['min', 'max'],
+                xlegends:       xlegend::month(),
                 ylegends:       ['min', 'max', 'mean'],
                 ylegendsRound:  1,
-                meanLine:       true,
+                //meanLine:       true,
                 stats:          $stats,
             );
-            file_put_contents::execute($outFilename, $svg, false);
-            
+            file_put_contents::execute($outFilename, $svg, echoMessage: true);
+exit;            
             //
             if($do_page){
                 $res = '';

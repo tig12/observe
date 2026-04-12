@@ -19,13 +19,18 @@ class bar {
         Image total height and width ($w and $h) are computed (= bar size + lengends and gaps).
     **/
     public static function svg(
+        
         /** 
             $data is the data to represent.
             Must be an associative array.
             keys = x, values on the x axis.
             values = y, corresponding values on the y axis, = nb of occurences of x in the distribution.
         **/
+        //
+        //
         array   $data = [],
+        //
+        //
         //
         // image, general
         //
@@ -217,6 +222,7 @@ SVG;
         // bars
         //
         $i = 0;
+        $xlegendKeys = array_keys($xlegends);
         foreach($data as $key => $val){
             $x1 = $xBegin + $i*$barGap + ($i+0.5)*$barW;
             $y1 = $yEnd;
@@ -231,37 +237,40 @@ SVG;
                 $svg .= '</g>';
             }
             $svg .= "\n";
-            $i++;
+            if(in_array($key, $xlegendKeys)){
+                $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">" . $xlegends[$key] . "</text>\n";
+            }
         }
         //
         // x legend
         //
         if(!empty($xlegends)){
-            $y = $yEnd + $xlegendsTopGap + $xlegendsH;
-            if(in_array('all', $xlegends)){
-                $i = 0;
-                foreach(array_keys($data) as $key){
-                    $x = $xBegin + $i*$barGap + ($i+0.5)*$barW;
-                    $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">$key</text>\n";
-                    $i++;
-                }
+//print_r($xlegends);
+//            $y = $yEnd + $xlegendsTopGap + $xlegendsH;
+            foreach($xlegends as $value => $label){
+//                    $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">$key</text>\n";
+//echo "$value => $label\n"; exit;
+                // [$value, $label] = $xlegend;
+                // $x = $xBegin + $i*$barGap + ($i+0.5)*$barW;
+                // $i++;
             }
-            else{
-                if(in_array('min', $xlegends)){
-                    $x = $xBegin;
-                    $text = $dataKeys[0];
-                    $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">$text</text>\n";
-                }
-                if(in_array('max', $xlegends)){
-                    $x = $xBegin + $drawAreaW;
-                    $text = $dataKeys[count($dataKeys)-1];
-                    $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">$text</text>\n";
-                }
+            
+            $y = $yEnd + $xlegendsTopGap + $xlegendsH;
+            // min
+            $x = $xBegin;
+            $text = $dataKeys[0];
+            $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">$text</text>\n";
+            // max
+            $x = $xBegin + $drawAreaW;
+            $text = $dataKeys[count($dataKeys)-1];
+            $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">$text</text>\n";
+
+/* 
                 if(in_array('top', $xlegends)){
                     $x = $xBegin + ($stats['top-key-index']-1)*$barGap + $stats['top-key-index']*$barW;
                     $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">{$stats['top-key']}</text>\n";
                 }
-            }
+*/
         }
         //
         // y legend
@@ -277,23 +286,19 @@ SVG;
                     $y = $yBegin;
                     $svg .= "<text x=\"$x\" y=\"$y\" class=\"yLegends\">$max</text>\n";
                 }
-                if(in_array('mean', $ylegends)){
-                    $yMean = round($yBegin + $deltaY*($max-$stats['mean'])/$maxMin);
-                    $y = $yMean;
-                    $text = round($stats['mean'], $ylegendsRound);
-                    $svg .= "<text x=\"$x\" y=\"$y\" class=\"yLegends\">$text</text>\n";
-                }
             }
         }
         //
         // other
         //
+        /* 
         if($meanLine){
             $y1 = $y2 = $yMean;
             $x1 = $xBegin;
             $x2 = $xEnd;
             $svg .= "<g fill=\"none\"><path class=\"meanLine\" d=\"M$x1 $y1 H$x2 $y2 Z\" /></g>\n";
         }
+        */
         //
         $svg .= "</svg>\n";
         return $svg;
