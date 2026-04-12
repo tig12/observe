@@ -18,6 +18,7 @@ use observe\model\distrib\StatsDistrib;
 use tiglib\stats\chi2 as chi2compute;
 use tiglib\stats\minMax;
 use tiglib\stats\distrib as distribIndicators;
+use tiglib\filesystem\file_put_contents;
 
 class stats implements ICommand {
     
@@ -40,13 +41,13 @@ class stats implements ICommand {
         //
         // Execute
         //
-        $outDir = Studies::getSplitDirectory($studyConfig, $split);
         $nDates = count($studyConfig['dates']);
         $precision = $studyConfig['expected-precision'];
         //$subgroupDirs = Studies::getStudyClasspath($studyConfig['slug'])::getSplitSubgroups($split);
         $subgroupDirs = Studies::getSplitSubgroups($studyConfig, $split);
         //
-        $res = implode(Observe::CSV_SEP, StatsDistrib::STATS_CSV_FIELDS) . "\n";
+        $res_obs = implode(Observe::CSV_SEP, StatsDistrib::STATS_CSV_FIELDS) . "\n";
+        $res_exp = implode(Observe::CSV_SEP, StatsDistrib::STATS_CSV_FIELDS) . "\n";
         //
         foreach($subgroupDirs as $subgroupDir){
             $observedDistribs = Distribs::loadDistributions(Studies::getObservedDirectory($studyConfig, $split, $subgroupDir), $studyConfig);
@@ -58,7 +59,7 @@ class stats implements ICommand {
                 $dateName = $studyConfig['dates'][$i]; // ex: birth
                 // day
                 [$chi2, $p_value] = chi2compute::chi2AndProba(359, $observedDistribs[$dateName]['day'], $expectedDistribs[$dateName]['day']);
-                $res .= self::statsLine(
+                $res_obs .= self::statsLine(
                     studyConfig:    $studyConfig,
                     distrib:        $observedDistribs[$dateName]['day'],
                     key1:           $dateName,
@@ -67,29 +68,48 @@ class stats implements ICommand {
                     chi2:           $chi2,
                     p_value:        $p_value,
                 );
+                $res_exp .= self::statsLine(
+                    studyConfig:    $studyConfig,
+                    distrib:        $expectedDistribs[$dateName]['day'],
+                    key1:           $dateName,
+                    key2:           'day',
+                    key3:           '',
+                );
                 // year
-                //[$chi2, $p_value] = chi2compute::chi2AndProba(359, $observedDistribs[$dateName]['year'], $expectedDistribs[$dateName]['year']);
-                $res .= self::statsLine(
+                // no chi2 because observed and expected distribs can be of different size (meaningless and could bug)
+                $res_obs .= self::statsLine(
                     studyConfig:    $studyConfig,
                     distrib:        $observedDistribs[$dateName]['year'],
                     key1:           $dateName,
                     key2:           'year',
                     key3:           '',
-                    //chi2:           $chi2,
-                    //p_value:        $p_value,
+                );
+                $res_exp .= self::statsLine(
+                    studyConfig:    $studyConfig,
+                    distrib:        $expectedDistribs[$dateName]['year'],
+                    key1:           $dateName,
+                    key2:           'year',
+                    key3:           '',
                 );
                 // aspects and planets
                 foreach(['aspects', 'planets'] as $distribType){
                     foreach($observedDistribs[$dateName][$distribType] as $distribName => $observedDistribValues){ // ex: $distribName = 'SO-MO'
                         [$chi2, $p_value] = chi2compute::chi2AndProba(359, $observedDistribValues, $expectedDistribs[$dateName][$distribType][$distribName]);
-                        $res .= self::statsLine(
+                        $res_obs .= self::statsLine(
                             studyConfig:    $studyConfig,
-                            distrib:        $observedDistribValues,
+                            distrib:        $observedDistribs[$dateName][$distribType][$distribName],
                             key1:           $dateName,
                             key2:           $distribType,
                             key3:           $distribName,
                             chi2:           $chi2,
                             p_value:        $p_value,
+                        );
+                        $res_exp .= self::statsLine(
+                            studyConfig:    $studyConfig,
+                            distrib:        $expectedDistribs[$dateName][$distribType][$distribName],
+                            key1:           $dateName,
+                            key2:           $distribType,
+                            key3:           $distribName,
                         );
                     }
                 }
@@ -101,36 +121,49 @@ class stats implements ICommand {
                 for($j=$i+1; $j < $nDates; $j++){
                     $dateName = $studyConfig['dates'][$i] . '-' . $studyConfig['dates'][$j]; // ex: birth-death
                     // age
-                    [$chi2, $p_value] = chi2compute::chi2AndProba(359, $observedDistribs[$dateName]['age'], $expectedDistribs[$dateName]['age']);
-                    $res .= self::statsLine(
+                    // no chi2 because observed and expected distribs can be of different size (meaningless and could bug)
+                    $res_obs .= self::statsLine(
                         studyConfig:    $studyConfig,
                         distrib:        $observedDistribs[$dateName]['age'],
                         key1:           $dateName,
                         key2:           'age',
                         key3:           '',
-                        chi2:           $chi2,
-                        p_value:        $p_value,
+                    );
+                    $res_exp .= self::statsLine(
+                        studyConfig:    $studyConfig,
+                        distrib:        $expectedDistribs[$dateName]['age'],
+                        key1:           $dateName,
+                        key2:           'age',
+                        key3:           '',
                     );
                     // interaspects
                     foreach($observedDistribs[$dateName]['interaspects'] as $distribName => $observedDistribValues){ // ex: $distribName = 'SO-SO'
                         [$chi2, $p_value] = chi2compute::chi2AndProba(359, $observedDistribValues, $expectedDistribs[$dateName]['interaspects'][$distribName]);
-                        $res .= self::statsLine(
+                        $res_obs .= self::statsLine(
                             studyConfig:    $studyConfig,
-                            distrib:        $observedDistribValues,
+                            distrib:        $observedDistribs[$dateName]['interaspects'][$distribName],
                             key1:           $dateName,
                             key2:           'interaspects',
                             key3:           $distribName,
                             chi2:           $chi2,
                             p_value:        $p_value,
                         );
+                        $res_exp .= self::statsLine(
+                            studyConfig:    $studyConfig,
+                            distrib:        $expectedDistribs[$dateName]['interaspects'][$distribName],
+                            key1:           $dateName,
+                            key2:           'interaspects',
+                            key3:           $distribName,
+                        );
                     }
                 } // end loop on $j
             } // end loop on $i
         } // end foreach($subgroupDirs)
         
-        $outfilename = $outDir . DS . $subgroupDir . DS . 'stats.csv';
-        file_put_contents($outfilename, $res);
-        echo "Generated $outfilename\n";
+        $outDir_obs = Studies::getSplitDirectory($studyConfig, $split) . DS . $subgroupDir . DS . 'observed';
+        $outDir_exp = Studies::getSplitDirectory($studyConfig, $split) . DS . $subgroupDir . DS . 'expected';
+        file_put_contents::execute($outDir_obs . DS . 'stats.csv', $res_obs);
+        file_put_contents::execute($outDir_exp . DS . 'stats.csv', $res_exp);
         return '';
     }
 
@@ -178,7 +211,6 @@ class stats implements ICommand {
         }
         else{
             $chi2 = round($chi2, 3);                    // WARNING round() is done here - pass in parameter ?
-            //$p_value = round($p_value, 5);              // WARNING round() is done here - pass in parameter ?
             $p_inf_limit = ($p_value < $studyConfig['p-value-limit'] ? 'Y' : '');
         }
         //

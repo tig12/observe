@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 class distribTest extends TestCase{
 
     const DISTRIBS = [
-            // From book "Calculs d'incertitudes" de Mathieu Rouaud, p 1
+            // From book "Calculs d'incertitudes" de Mathieu Rouaud, p 1.
             // sum = 5100+4230+3750+4560+3980 = 21620
             [
                 'data' => [ 5100, 4230, 3750, 4560, 3980 ],
@@ -30,19 +30,19 @@ class distribTest extends TestCase{
                 'sigma' => 530,
                 'sigma-round' => -1,
             ],
-            // From book "Calculs d'incertitudes" de Mathieu Rouaud, p 4
+            // From book "Calculs d'incertitudes" de Mathieu Rouaud, p 4.
             [
                 'data' => [ 11, 9, 10, 14, 11, 8, 9, 12, 7, 8, 8, 9, 11, 14, 10, 9 ],
                 'mean' => 10,
                 'sigma' => 2.07,
             ],
-            // From book "Calculs d'incertitudes" de Mathieu Rouaud, p 5
+            // From book "Calculs d'incertitudes" de Mathieu Rouaud, p 5.
             [
                 'data' => [ 15, 13, 12, 13, 14, 13, 16, 19, 13, 14, 10, 16, 14, 15, 13, 14 ],
                 'mean' => 14,
                 'sigma' => 2.00,
             ],
-            // From book "Calculs d'incertitudes" de Mathieu Rouaud, p 5
+            // From book "Calculs d'incertitudes" de Mathieu Rouaud, p 5.
             [
                 'data' => [ 10, 10, 12, 11, 9, 8, 10, 9, 9, 11, 9, 11, 10, 10, 11, 10 ],
                 'mean' => 10,

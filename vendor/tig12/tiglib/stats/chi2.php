@@ -41,11 +41,11 @@ class chi2 {
         $res = 0;
         $N = count($O);
 /*
-if(count($O) != count($E)){
-    echo 'observed = '; print_r($O);
-    echo 'expected = '; print_r($E);
-    exit;
-}
+        if(count($O) != count($E)){
+            echo 'observed = '; print_r($O);
+            echo 'expected = '; print_r($E);
+            exit;
+        }
 */        
         /* 
         $valuesE = array_values($E);

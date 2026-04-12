@@ -59,6 +59,7 @@ class minMax {
     /**
         Computes the "max key" = the key of $data corresponding to the highest value
         (if several keys correspond to the same highest value, the first key is returned).
+        This value is sometimes called "the mode" of a distribution.
         @param  $data Associative array.
         @return Array with 3 elements :
             - the key corresponding to the highest value,

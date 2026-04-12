@@ -73,12 +73,11 @@ class StatsDistrib {
     
     /**
         Loads statistical informations of distributions from file stats.csv.
-        @param  $
+        @param  $dir    Path to a directory containing a file called stats.csv.
     **/
-    public static function loadStats(array &$studyConfig, string $split, string $subgroup): array {
+    public static function loadStats(string $dir): array {
+        $lines = csvAssociative::compute($dir . DS . 'stats.csv', Observe::CSV_SEP);
         $res = [];
-        $filename = Studies::getSubgroupDirectory($studyConfig, $split, $subgroup) . DS . 'stats.csv';
-        $lines = csvAssociative::compute($filename, Observe::CSV_SEP);
         foreach($lines as $line){
             if(!isset($res[$line['DATE_NAME']])){
                 $res[$line['DATE_NAME']] = [];
