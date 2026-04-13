@@ -11,6 +11,7 @@
 namespace observe\model;
 
 use tiglib\filesystem\globRecursive;
+use tiglib\filesystem\mkdir;
 use tigeph\model\IAA;
 
 class Studies {
@@ -164,14 +165,16 @@ class Studies {
             return "Missing entry \"working-dir\"";
         }
         if(!is_dir($studyConfig['working-dir'])){
-            return "Working directory {$studyConfig['working-dir']} does not exist. Create it before executing this command";
+            mkdir::execute($studyConfig['working-dir']);
+            // return "Working directory {$studyConfig['working-dir']} does not exist. Create it before executing this command";
         }
         //
         if(!isset($studyConfig['out-dir'])){
             return "Missing entry \"out-dir\"";
         }
         if(!is_dir($studyConfig['out-dir'])){
-            return "Output directory {$studyConfig['out-dir']} does not exist. Create it before executing this command";
+            mkdir::execute($studyConfig['out-dir']);
+            // return "Output directory {$studyConfig['out-dir']} does not exist. Create it before executing this command";
         }
         //
         if(!isset($studyConfig['planets'])){

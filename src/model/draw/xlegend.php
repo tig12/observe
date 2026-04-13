@@ -1,7 +1,7 @@
 <?php
 /******************************************************************************
     
-    A legend is an array of couples (x value, label), to add labels on x and y axis when drawing distributions.
+    A legend is an array of couples (x value, label), to add labels on x axis when drawing distributions.
     
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
     @copyright  Thierry Graff
@@ -20,6 +20,7 @@ class xlegend {
         foreach([0, 90, 180, 270] as $x){
             $res[$x] = $x;
         }
+        $res[359] = 360; // cheat
         return $res;
     }
     

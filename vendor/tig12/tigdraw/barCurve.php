@@ -28,7 +28,7 @@ class barCurve {
             $svg_separate:      Should generated markup to be saved in a separate .svg file or directly included in a html page?
                                 (Changes the markup of the header)
         **/
-        bool    $svg_separate,
+        bool    $svg_separate = true,
         /** $drawArea           in px - height of the draw area. **/
         int     $drawArea = 250,
         /** $hGap               in px - horizontal (left and right) gap of the image. **/
@@ -105,7 +105,13 @@ class barCurve {
         //
         // y legends
         //
-        /** $ylegends           Array of (y value, label) **/
+        /**
+            $ylegends           Indicates the text to write left of the y axis.
+                                Associative array which can contain the following keys:
+                                    - 'min': the lowest y value is displayed
+                                    - 'max': the highest y value is displayed
+                                    - 'mean': the (arithmetic) mean y value is displayed
+        **/
         array   $ylegends = [],
         /** $ylegendsW          in px - width of y legends. **/
         int     $ylegendsW = 40,
@@ -117,7 +123,7 @@ class barCurve {
             $ylegendsRound      Nb of decimal to include in the displayed values.
                                 (meaningful for mean, whidh is generally not integer)
         **/
-        int     $ylegendsRound = 0,
+        int     $ylegendsRound = 1,
         //
         // bottom
         //
@@ -136,7 +142,7 @@ class barCurve {
         **/
         array   $stats = [],
         /**  $meanLine          Draw horizontal line for mean ? - Only if $ylegends contain 'mean' **/
-        bool    $meanLine = false,
+        bool    $meanLine = true,
         /**$meanLineStyle       Style for mean line **/
     // end parameters
     ): string {
@@ -177,10 +183,16 @@ class barCurve {
     text-anchor:middle;
     font-size:{$xlegendsH}px;
 }
+.xLegendsMark{
+    stroke:black;
+}
 .yLegends{
     text-anchor:end;
     dominant-baseline:middle;
     font-size:{$ylegendsH}px;
+}
+.yLegendsMark{
+    stroke:black;
 }
 .meanLine{
     stroke:black;
@@ -194,8 +206,18 @@ SVG;
         //
         $dataKeys = array_keys($data_bar); // common to bar and curve
         //
-        [$min_bar, $max_bar] = [min($data_bar), max($data_bar)];
-        [$min_curve, $max_curve] = [min($data_curve), max($data_curve)];
+        if(count($data_bar) != 0){
+            [$min_bar, $max_bar] = [min($data_bar), max($data_bar)];
+        }
+        else{
+            [$min_bar, $max_bar] = [PHP_INT_MAX, PHP_INT_MIN];
+        }
+        if(count($data_curve) != 0){
+            [$min_curve, $max_curve] = [min($data_curve), max($data_curve)];
+        }
+        else{
+            [$min_curve, $max_curve] = [PHP_INT_MAX, PHP_INT_MIN];
+        }
         $min = min($min_bar, $min_curve);
         $max = max($max_bar, $max_curve);
         $maxMin = $max - $min;
@@ -254,101 +276,95 @@ SVG;
         $i = 0;
         $xlegendKeys = array_keys($xlegends);
         foreach($dataKeys as $key){
-            $val_bar = $data_bar[$key];
-            $val_curve = $data_curve[$key];
+            
+            $x = $xBegin + $i * $barGap + ($i + 0.5) * $barW;
+            
             //
             // bar
             //
-            $x1 = $xBegin + $i * $barGap + ($i + 0.5) * $barW;
-            $y1 = $yEnd;
-            $x2 = $x1;
-            $y = round(($val_bar - $min) * $deltaY / $maxMin, 1);
-            $y2 = $yEnd - $y;
-            if($barHover === true){
-                $svg .= "<g><title>$key: $val_bar</title>";
+            if(count($data_bar) != 0){
+                $val_bar = $data_bar[$key];
+                $x1 = $x;
+                $x2 = $x;
+                $y1 = $yEnd;
+                $y2 = $yEnd - round(($val_bar - $min) * $deltaY / $maxMin, 1);
+                if($barHover === true){
+                    $svg .= "<g><title>$key: $val_bar</title>";
+                }
+                $svg .= "<line x1=\"$x1\" y1=\"$y1\" x2=\"$x2\" y2=\"$y2\" class=\"bl\" />";
+                if($barHover === true){
+                    $svg .= '</g>';
+                }
+                $svg .= "\n";
             }
-            $svg .= "<line x1=\"$x1\" y1=\"$y1\" x2=\"$x2\" y2=\"$y2\" class=\"bl\" />";
-            if($barHover === true){
-                $svg .= '</g>';
-            }
-            $svg .= "\n";
             //
             // curve
             //
-            // x1 and y1 are the same as bar
-            $y = round(($val_curve - $min) * $deltaY / $maxMin, 1);
-            $y2 = $yEnd - $y;
-            if($i != 0){
-                $svg .= "<line x1=\"$x2_prev\" y1=\"$y2_prev\" x2=\"$x2\" y2=\"$y2\" class=\"cl\" />";
+            if(count($data_curve) != 0){
+                $val_curve = $data_curve[$key];
+                // x1 and y1 are the same as bar
+                $y = $yEnd - round(($val_curve - $min) * $deltaY / $maxMin, 1);
+                if($i != 0){
+                    $svg .= "<line x1=\"$x_prev\" y1=\"$y_prev\" x2=\"$x\" y2=\"$y\" class=\"cl\" />";
+                }
+                [$x_prev, $y_prev] = [$x, $y];
+                $svg .= "\n";
             }
-            [$x2_prev, $y2_prev] = [$x2, $y2];
-            $svg .= "\n";
             $i++;
             //
-            // legends
+            // x legends
             //
+            // xlegends handled in this loop to take profit of $x computation
             if(in_array($key, $xlegendKeys)){
-//                $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">" . $xlegends[$key] . "</text>\n";
+                $y = $yEnd + $xlegendsTopGap + $xlegendsH;
+                $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">" . $xlegends[$key] . "</text>\n";
+                //
+                $y1 = $yEnd;
+                $y2 = $yEnd + 5;
+                $svg .= "<line x1=\"$x\" y1=\"$y1\" x2=\"$x\" y2=\"$y2\" class=\"xLegendsMark\" />";
             }
-        }
-        //
-        // x legend
-        //
-        if(!empty($xlegends)){
-//print_r($xlegends);
-//            $y = $yEnd + $xlegendsTopGap + $xlegendsH;
-            foreach($xlegends as $value => $label){
-//                    $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">$key</text>\n";
-//echo "$value => $label\n"; exit;
-                // [$value, $label] = $xlegend;
-                // $x = $xBegin + $i*$barGap + ($i+0.5)*$barW;
-                // $i++;
-            }
-            
-            /* $y = $yEnd + $xlegendsTopGap + $xlegendsH;
-            // min
-            $x = $xBegin;
-            $text = $dataKeys[0];
-            $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">$text</text>\n";
-            // max
-            $x = $xBegin + $drawAreaW;
-            $text = $dataKeys[count($dataKeys)-1];
-            $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">$text</text>\n"; */
-
-/* 
-                if(in_array('top', $xlegends)){
-                    $x = $xBegin + ($stats['top-key-index']-1)*$barGap + $stats['top-key-index']*$barW;
-                    $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">{$stats['top-key']}</text>\n";
-                }
-*/
         }
         //
         // y legend
         //
-        /* if(!empty($ylegends)){
+        if(!empty($ylegends)){
             $x = $vGap + $ylegendsW;
             if(!empty($ylegends)){
                 if(in_array('min', $ylegends)){
                     $y = $yEnd;
                     $svg .= "<text x=\"$x\" y=\"$y\" class=\"yLegends\">$min</text>\n";
+                    $x1 = $xBegin;
+                    $x2 = $xBegin - 5;
+                    $svg .= "<line x1=\"$x1\" y1=\"$y\" x2=\"$x2\" y2=\"$y\" class=\"yLegendsMark\" />";
                 }
                 if(in_array('max', $ylegends)){
                     $y = $yBegin;
                     $svg .= "<text x=\"$x\" y=\"$y\" class=\"yLegends\">$max</text>\n";
+                    $x1 = $xBegin;
+                    $x2 = $xBegin - 5;
+                    $svg .= "<line x1=\"$x1\" y1=\"$y\" x2=\"$x2\" y2=\"$y\" class=\"yLegendsMark\" />";
+                }
+                if(in_array('mean', $ylegends)){
+                    $yMean = round($yBegin + $deltaY*($max-$stats['MEAN'])/$maxMin);
+                    $y = $yMean;
+                    $text = round($stats['MEAN'], $ylegendsRound);
+                    $svg .= "<text x=\"$x\" y=\"$y\" class=\"yLegends\">$text</text>\n";
+                    $x1 = $xBegin;
+                    $x2 = $xBegin - 5;
+                    $svg .= "<line x1=\"$x1\" y1=\"$y\" x2=\"$x2\" y2=\"$y\" class=\"yLegendsMark\" />";
                 }
             }
-        } */
+        }
         //
         // other
         //
-        /* 
         if($meanLine){
+            $yMean = round($yBegin + $deltaY*($max-$stats['MEAN'])/$maxMin);
             $y1 = $y2 = $yMean;
             $x1 = $xBegin;
             $x2 = $xEnd;
             $svg .= "<g fill=\"none\"><path class=\"meanLine\" d=\"M$x1 $y1 H$x2 $y2 Z\" /></g>\n";
         }
-        */
         //
         $svg .= "</svg>\n";
         return $svg;

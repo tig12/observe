@@ -41,7 +41,7 @@ class CsvDistrib {
     **/
     public static function csv2distrib(
             string  $filename,
-            bool    $has_header,
+            bool    $has_header = false,
             string  $sep = Observe::CSV_SEP,
     ): array {
         $lines = file($filename, FILE_IGNORE_NEW_LINES);

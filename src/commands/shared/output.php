@@ -32,15 +32,15 @@ class output implements ICommand {
         $usage = "Usage of this command: php run-observe <study> output <action> <object>\n"
             . "<action> can be:\n";
             foreach(self::POSSIBLE_ACTIONS as $k => $v){
-                $usage .= str_pad("    $k:", 17) . "$v\n";
+                $usage .= str_pad("    $k:", 16) . "$v\n";
             }
-            $usage .= "If <action> = \"page\", <object> can be:\n";
+            $usage .= "    If <action> = \"page\", <object> can be:\n";
             foreach(output_page::POSSIBLE_PAGES as $k => $v){
-                $usage .= str_pad("    $k:", 17) . "$v\n";
+                $usage .= str_pad("        $k:", 24) . "$v\n";
             }
-            $usage .= "If <action> = \"img\", <object> can be:\n";
+            $usage .= "    If <action> = \"img\", <object> can be:\n";
             foreach(output_img::POSSIBLE_IMG as $k => $v){
-                $usage .= str_pad("    $k:", 17) . "$v\n";
+                $usage .= str_pad("        $k:", 24) . "$v\n";
             }
         if(count($params) != 2){
             return "WRONG NUMBER OF ARGUMENTS.\n$usage";
