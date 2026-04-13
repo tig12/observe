@@ -6,6 +6,9 @@
     Called with a variable $V, associative array containing the keys:
         - planets       List of IAA codes.
         - date-name     Name of the dte concerned by this page (ex: 'birth', 'death', 'father'...).
+        - stats-obs     Stats about the observed distributions - fields listed in observe\model\distrib\StatsDistrib::STATS_CSV_FIELDS
+        - stats-exp     Stats about the expected distributions - fields listed in observe\model\distrib\StatsDistrib::STATS_CSV_FIELDS
+
 
     @license    GPL
     @copyright  Thierry Graff
@@ -13,7 +16,12 @@
 ********************************************************************************/
 
 use observe\commands\shared\output\tocAspects;
+use observe\commands\shared\output\statsOneDistrib;
 use tigeph\model\IAA;
+
+// shortcuts
+$statsObs =& $V['stats-obs'];
+$statsExp =& $V['stats-exp'];
 ?>
 
 <!-- 
@@ -33,7 +41,7 @@ use tigeph\model\IAA;
     <li>
         <div class="bold">Aspects</div>
         <div class="padding-left2 padding-top05">
-            <?= tocAspects::html($V['planets'], '#aspect-') ?>
+            <?= tocAspects::html($V['planets'], '#aspect-', $statsObs) ?>
         </div>
     </li>
 </ul>
@@ -42,11 +50,13 @@ use tigeph\model\IAA;
     Days
 -->
 <img id="day" loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/day.svg" alt="Distribution of days">
+<?= statsOneDistrib::html($statsObs['day'], $statsExp['day']) ?>
 
 <!-- 
     Years
 -->
 <img id="year" loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/year.svg" alt="Distribution of years">
+<?= statsOneDistrib::html($statsObs['year'], $statsExp['year']) ?>
 
 <!-- 
     Planet positions
@@ -54,6 +64,7 @@ use tigeph\model\IAA;
 <h2 id="planet-positions">Planet positions</h2>
 <?php foreach($V['planets'] as $planet): ?>
     <img id="<?= 'position-' . $planet ?>" loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/planets/<?= $planet ?>.svg" alt="Distribution of <?= IAA::PLANET_NAMES[$planet] ?>">
+    <?= statsOneDistrib::html($statsObs['planets'][$planet], $statsExp['planets'][$planet]) ?>
 <?php endforeach; ?>
 
 <!-- 
@@ -66,6 +77,7 @@ for($i=0; $i < count($V['planets']); $i++){
         $code = $V['planets'][$i] . '-' . $V['planets'][$j];
 ?>
         <img id="<?= 'aspect-' . $code ?>" loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/aspects/<?= $code ?>.svg" alt="Distribution of aspects <?= $code ?>">
+        <?= statsOneDistrib::html($statsObs['aspects'][$code], $statsExp['aspects'][$code]) ?>
 <?php 
     }
 }

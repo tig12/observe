@@ -185,7 +185,7 @@ class stats implements ICommand {
             SIGMA
             CHI2
             P
-            P<LIMIT
+            P_LIMIT
     **/
     private static function statsLine(
         array   &$studyConfig,
@@ -203,6 +203,7 @@ class stats implements ICommand {
         $mean = distribIndicators::mean($distrib);
         $mean = round($mean, 2);                        // WARNING round() is done here - pass in parameter ?
         $sigma = distribIndicators::sigma($distrib);
+        $sigma = round($sigma, 2);                      // WARNING round() is done here - pass in parameter ?
         //
         if(is_null($chi2)){
             $chi2 = '';
@@ -212,6 +213,9 @@ class stats implements ICommand {
         else{
             $chi2 = round($chi2, 3);                    // WARNING round() is done here - pass in parameter ?
             $p_inf_limit = ($p_value < $studyConfig['p-value-limit'] ? 'Y' : '');
+            if($p_value != 0 && $p_value < 0.001){
+                $p_value = sprintf("%.2e", $p_value);
+            }
         }
         //
         return

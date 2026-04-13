@@ -321,7 +321,7 @@ SVG;
                 //
                 $y1 = $yEnd;
                 $y2 = $yEnd + 5;
-                $svg .= "<line x1=\"$x\" y1=\"$y1\" x2=\"$x\" y2=\"$y2\" class=\"xLegendsMark\" />";
+                $svg .= "<line x1=\"$x\" y1=\"$y1\" x2=\"$x\" y2=\"$y2\" class=\"xLegendsMark\" />\n";
             }
         }
         //
@@ -335,14 +335,14 @@ SVG;
                     $svg .= "<text x=\"$x\" y=\"$y\" class=\"yLegends\">$min</text>\n";
                     $x1 = $xBegin;
                     $x2 = $xBegin - 5;
-                    $svg .= "<line x1=\"$x1\" y1=\"$y\" x2=\"$x2\" y2=\"$y\" class=\"yLegendsMark\" />";
+                    $svg .= "<line x1=\"$x1\" y1=\"$y\" x2=\"$x2\" y2=\"$y\" class=\"yLegendsMark\" />\n";
                 }
                 if(in_array('max', $ylegends)){
                     $y = $yBegin;
                     $svg .= "<text x=\"$x\" y=\"$y\" class=\"yLegends\">$max</text>\n";
                     $x1 = $xBegin;
                     $x2 = $xBegin - 5;
-                    $svg .= "<line x1=\"$x1\" y1=\"$y\" x2=\"$x2\" y2=\"$y\" class=\"yLegendsMark\" />";
+                    $svg .= "<line x1=\"$x1\" y1=\"$y\" x2=\"$x2\" y2=\"$y\" class=\"yLegendsMark\" />\n";
                 }
                 if(in_array('mean', $ylegends)){
                     $yMean = round($yBegin + $deltaY*($max-$stats['MEAN'])/$maxMin);
@@ -351,7 +351,7 @@ SVG;
                     $svg .= "<text x=\"$x\" y=\"$y\" class=\"yLegends\">$text</text>\n";
                     $x1 = $xBegin;
                     $x2 = $xBegin - 5;
-                    $svg .= "<line x1=\"$x1\" y1=\"$y\" x2=\"$x2\" y2=\"$y\" class=\"yLegendsMark\" />";
+                    $svg .= "<line x1=\"$x1\" y1=\"$y\" x2=\"$x2\" y2=\"$y\" class=\"yLegendsMark\" />\n";
                 }
             }
         }

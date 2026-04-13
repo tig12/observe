@@ -245,4 +245,30 @@ class Studies {
         return self::getSplitDirectory($studyConfig, $split) . DS . $subgroup;
     }
     
+    /**
+        Returns an array containing the dates of a study, different from $dateName.
+        @param      $dateName String like 'birth', 'death', 'mother' etc.
+    **/
+    ///////////// NOT USED YET /////////////////
+    public static function otherDates1(array &$studyConfig, string $dateName): array {
+        $res = [];
+        foreach($studyConfig['dates'] as $date){
+            if($date != $dateName){
+                $res[] = $date;
+            }
+        }
+        return $res;
+    }
+    
+    /**
+        Returns an array containing the possible combinations of 2 dates of a study, different from $dateName.
+        @param  $dateName String like 'mother-father'
+        @return     Ex: ['child-father', 'child-mother', 'child-wedding', 'mother-wedding', 'father-wedding']
+    **/
+    ///////////// NOT USED YET /////////////////
+    public static function otherDates2(array &$studyConfig, string $dateName) {
+        // TODO Implement
+        return [];
+    }
+    
 } // end class

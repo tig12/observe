@@ -1,0 +1,69 @@
+<?php
+/******************************************************************************
+    
+    Called with a variable $V, associative array with two keys: 'obs' and 'exp'
+    $V['obs'] and $V['exp'] contain an associative array structured as described in observe\model\distrib\StatsDistrib::STATS_CSV_FIELDS
+    (keys are 'MIN' 'MAX' etc.)
+
+    @license    GPL
+    @copyright  Thierry Graff
+    
+    @history    2026-04-13 11:25:18+01:00, Thierry Graff : Creation
+********************************************************************************/
+?>
+<div class="float-left">
+    <table class="table-stats">
+        <tr>
+            <th></th><th>Observed</th><th>Expected</th>
+        </tr>
+        <tr>
+            <td>min</td>
+            <td><?= $V['obs']['MIN'] ?></td>
+            <td><?= $V['exp']['MIN'] ?></td>
+        </tr>
+        <tr>
+            <td>max</td>
+            <td><?= $V['obs']['MAX'] ?></td>
+            <td><?= $V['exp']['MAX'] ?></td>
+        </tr>
+        <tr>
+            <td>mean</td>
+            <td><?= $V['obs']['MEAN'] ?></td>
+            <td><?= $V['exp']['MEAN'] ?></td>
+        </tr>
+        <tr>
+            <td>&sigma;</td>
+            <td><?= $V['obs']['SIGMA'] ?></td>
+            <td><?= $V['exp']['SIGMA'] ?></td>
+        </tr>
+    </table>
+</div>
+
+<?php if($V['obs']['CHI2'] != ''): ?>
+<div class="float-left">
+    <table class="table-chi2">
+        <tr>
+            <td class="bold">&Chi;<sup>2</sup></td>
+            <td<?php
+                if($V['obs']['P_LIMIT'] == 'Y'){
+                    echo ' class="significant"';
+                }
+                ?>>
+                <?= $V['obs']['CHI2'] ?>
+            </td>
+        </tr>
+        <tr>
+            <td class="bold">p-value</td>
+            <td<?php
+                if($V['obs']['P_LIMIT'] == 'Y'){
+                    echo ' class="significant"';
+                }
+                ?>>
+                <?= $V['obs']['P'] ?>
+            </td>
+        </tr>
+    </table>
+</div>
+<?php endif; ?>
+
+<br class="clear-left">

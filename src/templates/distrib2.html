@@ -14,8 +14,14 @@
     @history    2026-04-09 12:04:26+01:00, Thierry Graff : Creation
 ********************************************************************************/
 
+use observe\commands\shared\output\statsOneDistrib;
 use observe\commands\shared\output\tocInteraspects;
 use tigeph\model\IAA;
+
+// shortcuts
+$statsObs =& $V['stats-obs'];
+$statsExp =& $V['stats-exp'];
+
 ?>
 
 <!-- 
@@ -26,7 +32,7 @@ use tigeph\model\IAA;
     <li>
         <div class="bold">Inter-aspects</div>
         <div class="padding-left2 padding-top05">
-            <?= tocInteraspects::html($V['planets'], '#interaspect-') ?>
+            <?= tocInteraspects::html($V['planets'], '#interaspect-', $statsObs) ?>
         </div>
     </li>
 </ul>
@@ -35,6 +41,7 @@ use tigeph\model\IAA;
     Age
 -->
 <img id="age" loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/age.svg" alt="Distribution of age">
+<?= statsOneDistrib::html($statsObs['age'], $statsExp['age']) ?>
 
 <!-- 
     Inter-aspects
@@ -48,6 +55,7 @@ for($i=0; $i < count($V['planets']); $i++){
              . ' and ' . IAA::PLANET_NAMES[$V['planets'][$j]] . ' (' . $V['date-names'][1] . ')';
 ?>
         <img id="<?= 'interaspect-' . $code ?>" loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/interaspects/<?= $code ?>.svg" alt="<?= $alt ?>">
+        <?= statsOneDistrib::html($statsObs['interaspects'][$code], $statsExp['interaspects'][$code]) ?>
 <?php 
     }
 }
