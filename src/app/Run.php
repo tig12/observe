@@ -25,8 +25,12 @@ class Run{
     **/
     public static function parseInput(array $argv): array {
         $scriptName = array_shift($argv);
+        $possibleStudies = Studies::getAllStudySlugs();
         $usage = "Usage: php $scriptName <study> <commmand> [args]\n"
-               . "   or: php $scriptName prepare planets\n";
+               . "   or: php $scriptName prepare planets\n"
+               . "Possible values for <study> : \n    - "
+               . implode("\n    - ", $possibleStudies)
+               . "\n";
         $res = [
             'study-slug'    => '',
             'command'       => '',

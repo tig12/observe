@@ -23,6 +23,7 @@ class Studies {
         'observed',
         'control',
         'expected',
+        'correct', // could be removed if useless
         'stats',
         'output',
     ];
@@ -33,6 +34,9 @@ class Studies {
             Values: Contents of the corresponding yaml files located in studies/
     **/
     private static array $studyConfigs = [];
+    
+    /** Bool to avoid several computations of self::$studyConfigs **/
+    private static bool $isStudyConfigsComputed = false;
     
     /**
         Conductor of command execution.
@@ -113,7 +117,10 @@ class Studies {
         The slugs come from yaml files stored in study file, in studies/
     **/
     public static function getAllStudySlugs(): array {
-        $files = globRecursive::execute('studies/*.yml');
+        if(self::$isStudyConfigsComputed === true){
+            return array_keys(self::$studyConfigs);
+        }
+        $files = globRecursive::compute('studies/*.yml');
         foreach($files as $file){
             $studyConfig = yaml_parse_file($file);
             // At this step, doesn't check if the yaml file is valid
@@ -127,6 +134,7 @@ class Studies {
                 $res[] = $slug;
             }
         }
+        self::$isStudyConfigsComputed = true;
         return array_keys(self::$studyConfigs);
     }
     

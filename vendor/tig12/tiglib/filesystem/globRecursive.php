@@ -19,10 +19,10 @@ class globRecursive {
         @param  $pattern - same as php function glob()
         @param  $flag    - same as php function glob()
     **/
-    public static function execute(string $pattern, int $flags = 0){
+    public static function compute(string $pattern, int $flags = 0){
         $files = glob($pattern, $flags);
         foreach (glob(dirname($pattern).DIRECTORY_SEPARATOR.'*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir){
-            $files = array_merge($files, self::execute($dir.DIRECTORY_SEPARATOR.basename($pattern), $flags)); // recursive here
+            $files = array_merge($files, self::compute($dir.DIRECTORY_SEPARATOR.basename($pattern), $flags)); // recursive here
         }
         return $files;
     }    

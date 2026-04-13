@@ -196,13 +196,13 @@ class Distribs {
                 $dir = $inDir . DS . $distribType; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth/aspects
                 $filenames = glob($dir . DS . '*.csv');
                 foreach($filenames as $filename){
-                    $res[$dateName][$distribType][basename($filename, '.csv')] = CsvDistrib::csv2distrib($filename, false);
+                    $res[$dateName][$distribType][basename($filename, '.csv')] = CsvDistrib::csv2distrib($filename);
                 }
             }
             // day and year
             foreach(['day', 'year'] as $distribName){
                 $filename = $inDir . DS . $distribName . '.csv'; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth/day.csv
-                $res[$dateName][$distribName] = CsvDistrib::csv2distrib($filename, false);
+                $res[$dateName][$distribName] = CsvDistrib::csv2distrib($filename);
             }
         }
         // distributions of type distrib2
@@ -215,13 +215,13 @@ class Distribs {
                     $dir = $inDir . DS . $distribType; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth-death/interaspects
                     $filenames = glob($dir . DS . '*.csv');
                     foreach($filenames as $filename){
-                        $res[$dateName][$distribType][basename($filename, '.csv')] = CsvDistrib::csv2distrib($filename, false);
+                        $res[$dateName][$distribType][basename($filename, '.csv')] = CsvDistrib::csv2distrib($filename);
                     }
                 }
                 // age
                 foreach(['age'] as $distribName){
                     $filename = $inDir . DS . $distribName . '.csv'; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth-death/age.csv
-                    $res[$dateName][$distribName] = CsvDistrib::csv2distrib($filename, false);
+                    $res[$dateName][$distribName] = CsvDistrib::csv2distrib($filename);
                 }
             } // end loop on $j
         } // end loop on $i
