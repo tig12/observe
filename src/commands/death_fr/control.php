@@ -10,7 +10,6 @@ namespace observe\commands\death_fr;
 
 use observe\model\ICommand;
 use observe\model\Studies;
-use observe\model\SqlitePlanets;
 use observe\model\distrib\Distribs;
 use observe\model\distrib\AddDistribs;
 use tiglib\filesystem\mkdir;

@@ -1,25 +1,21 @@
 <?php
 /******************************************************************************
-    Generates SVG horizontal bar chart from a distribution.
-    A distribution is an associative array, see param $data_bar. 
-        
-    @license    GPL
-    @history    2026-04-12 13:50:31+01:00, Thierry Graff : new version, to draw a bar and a curve
-    @history    2021-02-28 23:08:04+01:00, Thierry Graff : refactor, moved from commands to parts
-    @history    2020-12-20 18:48:55+01:00, Thierry Graff : Creation
+    Generates a SVG table representing a comparison of two distributions.
+    
+    @license    GPL - conforms to file LICENCE located in root directory of current repository.
+    @copyright  Thierry Graff
+    
+    @history    2026-04-13 20:07:36+01:00, Thierry Graff : Creation
 ********************************************************************************/
 namespace tigdraw;
 
-class barCurve {
+class castille {
     
     /** 
-        Returns the svg markup of two distributions, one as a bar chart, one as a curve.
-        
-        Layout : the image is composed of legends, gaps and a draw area (containing only the bars and the curve).
-        Bar area height is imposed (parameter $barH) ; bar width is computed.
-        Image total height and width ($w and $h) are computed (= bar size + lengends and gaps).
     **/
     public static function svg(
+        
+        
         
         //
         // image, general

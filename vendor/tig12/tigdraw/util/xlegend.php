@@ -8,7 +8,7 @@
     
     @history    2026-04-11 19:19:45+01:00, Thierry Graff : Creation
 ********************************************************************************/
-namespace observe\model\draw;
+namespace tigdraw\util;
 
 class xlegend {
     

@@ -6,6 +6,7 @@
     Called with a variable $V, associative array containing the keys:
         - dates         ex: ['birth', 'death']
         - planets       List of IAA codes.
+        - stats-obs     Stats about the observed distributions - structure described in observe\model\distrib\StatsDistrib
 
     @license    GPL
     @copyright  Thierry Graff
@@ -15,6 +16,9 @@
 use observe\commands\shared\output\tocAspects;
 use observe\commands\shared\output\tocInteraspects;
 use tigeph\model\IAA;
+
+// shortcuts
+$statsObs =& $V['stats-obs'];
 ?>
 
 <!-- 
@@ -36,7 +40,7 @@ use tigeph\model\IAA;
         <li>
             <div class="bold">Aspects</div>
             <div class="padding-left2 padding-top05">
-                <?= tocAspects::html($V['planets'], $dateName . '.html#aspect-') ?>
+                <?= tocAspects::html($V['planets'], $dateName . '.html#aspect-', $statsObs[$dateName]) ?>
             </div>
         </li>
     </ul>
@@ -56,7 +60,7 @@ for($i=0; $i < count($V['dates']); $i++):
             <li>
                 <div class="bold">Inter-aspects</div>
                 <div class="padding-left2 padding-top05">
-                    <?= tocInteraspects::html($V['planets'], $dateName . '.html#interaspect-') ?>
+                    <?= tocInteraspects::html($V['planets'], $dateName . '.html#interaspect-', $statsObs[$dateName]) ?>
                 </div>
             </li>
         </ul>

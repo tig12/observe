@@ -96,8 +96,11 @@ class Studies {
         return 'observe\\commands\\' . $namespace . '\\' . ucfirst($namespace); // ex: observe\commands\death_fr\Death_fr
     }
     
-    /** Returns the namespace containing a class. Not fully qualified. **/
+    /**
+        Returns the namespace containing a class. Not fully qualified.
+    **/
     public static function getStudyNamespace(string $studySlug): string {
+        // WARNING: CONVENTION THAT NEEDS TO BE RESPECTED WHEN CREATING A NEW STUDY
         return str_replace('-', '_', $studySlug); // ex: death_fr
     }
     
