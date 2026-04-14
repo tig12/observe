@@ -30,6 +30,24 @@ class CsvDistrib {
         return $res;
     }
     
+    /**
+        Builds the content of a csv file containing a 2-dim array
+        Each line must have the same number of elements.
+        Supports associative arrays, but the csv doesn't contain header lines.
+        Ex of valid array: [
+            0 => [0 => value_0_0, ... 359 => value_0_359],
+            ...
+            359 => [0 => value_359_0, ... 359 => value_359_359],
+        ]
+    **/
+    public static function distrib2csv2dim(&$a, $sep=Observe::CSV_SEP): string {
+        $res = '';
+        foreach($a as $k => $v){
+            $res .= implode($sep, $v) . "\n";
+        }
+        return $res;
+    }
+    
     /** 
         Loads a distribution from a csv file.
         The csv must contain 2 columns
@@ -59,6 +77,7 @@ class CsvDistrib {
     /** 
         Returns true if a line of a distribution should be skipped.
     **/
+    //////////// NOT USED IN 2026 VERSION ////////////
     public static function skipLine(&$line, &$key, &$skip): bool {
         return $line[$key] == $skip;
     }

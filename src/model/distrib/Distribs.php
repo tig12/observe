@@ -104,7 +104,7 @@ class Distribs {
         //
         for($i=0; $i < $nDates; $i++){
             for($j=$i+1; $j < $nDates; $j++){
-                $dateName = $studyConfig['dates'][$i] . '-' . $studyConfig['dates'][$j]; // "birth-death", "mother-father" etc.
+                $dateName = $studyConfig['dates'][$i] . '-' . $studyConfig['dates'][$j]; // birth-death, mother-father etc.
                 // age
                 $age = diff::compute(new \DateTime($dates[$i]), new \DateTime($dates[$j]), $studyConfig['distrib-age-unit']);
                 if(!isset($res[$dateName]['age'][$age])){

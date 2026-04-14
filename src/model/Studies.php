@@ -24,6 +24,7 @@ class Studies {
         'control',
         'expected',
         'correct', // could be removed if useless
+        'castille',
         'stats',
         'output',
     ];
@@ -72,6 +73,7 @@ class Studies {
         	case 'init': 
         	case 'split': 
         	case 'control': 
+        	case 'castille': 
         	    $class = $studyNamespace . '\\' . $command;
         	    return $class::execute($studyConfig, $params);
         	break;
