@@ -28,8 +28,8 @@ class chi2Table {
         for($i=0; $i < $N; $i++){
             for($j=0; $j < $M; $j++){
                 $sum += $a[$i][$j];
-                $sum_i[$i] += $a[$i][$j];
-                $sum_j[$j] += $a[$i][$j];
+                $sums_i[$i] += $a[$i][$j];
+                $sums_j[$j] += $a[$i][$j];
             }
         }
         //
@@ -38,22 +38,22 @@ class chi2Table {
         $chi2 = 0; //global chi2
         for($i=0; $i < $N; $i++){
             for($j=0; $j < $M; $j++){
-                $theo[$i][$j] = $a[$i][$j] * $sum_i[$i] * $sum_j[$j] / $sum;
+                $theo[$i][$j] = $a[$i][$j] * $sums_i[$i] * $sums_j[$j] / $sum;
                 $c2[$i][$j] = pow($theo[$i][$j] - $a[$i][$j], 2) / $theo[$i][$j];
                 $chi2 += $c2[$i][$j];
             }
         }
         if($test){
             return [
-                'chi2' => $chi2,
-                'c2' => $c2,
-                'sums_i' => $sums_i,
-                'sums_j' => $sums_j,
+                $c2,
+                $chi2,
+                $sums_i,
+                $sums_j,
             ];
         }
         return [
-            'chi2' => $chi2,
-            'c2' => $c2,
+            $c2,
+            $chi2,
         ];
     }
     

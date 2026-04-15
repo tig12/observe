@@ -17,7 +17,7 @@ class xlegend {
     **/
     public static function angle360(): array {
         $res = [];
-        foreach([0, 90, 180, 270] as $x){
+        foreach([0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330] as $x){
             $res[$x] = $x;
         }
         $res[359] = 360; // cheat

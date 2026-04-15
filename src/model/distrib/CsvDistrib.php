@@ -18,6 +18,10 @@ use observe\model\Observe;
 
 class CsvDistrib {
     
+    //
+    // 1 dimension associative arrays
+    //
+    
     /**
         Builds the content of a csv file containing a distribution
         A distribution is just an associative array $k => $v
@@ -26,24 +30,6 @@ class CsvDistrib {
         $res = '';
         foreach($distrib as $k => $v){
             $res .= "$k$sep$v\n";
-        }
-        return $res;
-    }
-    
-    /**
-        Builds the content of a csv file containing a 2-dim array
-        Each line must have the same number of elements.
-        Supports associative arrays, but the csv doesn't contain header lines.
-        Ex of valid array: [
-            0 => [0 => value_0_0, ... 359 => value_0_359],
-            ...
-            359 => [0 => value_359_0, ... 359 => value_359_359],
-        ]
-    **/
-    public static function distrib2csv2dim(&$a, $sep=Observe::CSV_SEP): string {
-        $res = '';
-        foreach($a as $k => $v){
-            $res .= implode($sep, $v) . "\n";
         }
         return $res;
     }
@@ -74,10 +60,47 @@ class CsvDistrib {
         return $res;
     }
     
+    //
+    // 2 dimensions regular arrays
+    //
+    
+    /**
+        Builds the content of a csv file containing a 2-dim array
+        Each line must have the same number of elements.
+        Supports associative arrays, but the keys are nit used.
+        Ex of valid array: [
+            0 => [0 => value_0_0, ... 359 => value_0_359],
+            ...
+            359 => [0 => value_359_0, ... 359 => value_359_359],
+        ]
+    **/
+    public static function distrib2csv_2dim(&$a, $sep=Observe::CSV_SEP): string {
+        $res = '';
+        foreach($a as $k => $v){
+            $res .= implode($sep, $v) . "\n";
+        }
+        return $res;
+    }
+    
+    /** 
+        Loads a distribution from a csv file.
+        Returns a 2-dim array ; each element contains a line of the csv, stored in an array containing columns of this line.
+        @param  $sep        Separator used in the csv file.
+    **/
+    public static function csv2distrib_2dim(string  $filename, string  $sep = Observe::CSV_SEP): array {
+        $lines = file($filename, FILE_IGNORE_NEW_LINES);
+        $res = [];
+        foreach($lines as $line){
+            $res[] = explode($sep, $line);
+        }
+        return $res;
+    }
+    
+    //////////// NOT USED IN 2026 VERSION ////////////
+    
     /** 
         Returns true if a line of a distribution should be skipped.
     **/
-    //////////// NOT USED IN 2026 VERSION ////////////
     public static function skipLine(&$line, &$key, &$skip): bool {
         return $line[$key] == $skip;
     }

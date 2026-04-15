@@ -11,15 +11,13 @@ namespace tigdraw;
 
 class castille {
     
-    /** 
+    /**
     **/
     public static function svg(
-        
-        
-        
         //
         // image, general
         //
+        array   $data;
         /**
             $svg_separate:      Should generated markup to be saved in a separate .svg file or directly included in a html page?
                                 (Changes the markup of the header)
@@ -42,42 +40,6 @@ class castille {
         int     $titleH = 22,
         /** $titleBottomGap     in px - gap between the title and draw area. Set to 0 if title = empty string. **/
         int     $titleBottomGap = 15,
-        //
-        // bar
-        //
-        /** 
-            $data_bar is the data to represent as a bar.
-            Must be an associative array.
-            keys = x, values on the x axis.
-            values = y, corresponding values on the y axis, = nb of occurences of x in the distribution.
-        **/
-        ////////////////////////
-        array   $data_bar = [],
-        ////////////////////////
-        /** $barW               in px - stroke width of each vertical bar. **/
-        int     $barW = 2,
-        /** $barGap             in px - space between 2 vertical bars. **/
-        int     $barGap = 1,
-        /** $barColor           Color of the vertical bars. **/
-        string  $barColor = 'slategray',
-        /** $barHover           If true, a tooltip with (key, value) is displayed on mouse hover. **/
-        bool    $barHover = true,
-        //
-        // curve
-        //
-        /** 
-            $data_curve is the data to represent as a curve.
-            Must be an associative array with the same keys as $data_bar.
-            keys = x, values on the x axis.
-            values = y, corresponding values on the y axis, = nb of occurences of x in the distribution.
-        **/
-        ////////////////////////
-        array   $data_curve = [],
-        ////////////////////////
-        /** $curveColor          Color of the curve. **/
-        string $curveColor = 'black',
-        /** $curveW              in px - stroke width of the line to draw the curve. **/
-        int     $curveW = 2,
         //
         // x and y axis
         //
@@ -125,7 +87,6 @@ class castille {
         //
         /** $bottom             Content to put below x-legends **/
         string  $bottom = '',
-        
         //
         // other
         //
@@ -143,6 +104,7 @@ class castille {
     // end parameters
     ): string {
     
+print_r($data); exit;
         //
         // display details
         //
@@ -199,24 +161,6 @@ class castille {
 SVG;
         //
         // main characteristics of data
-        //
-        $dataKeys = array_keys($data_bar); // common to bar and curve
-        //
-        if(count($data_bar) != 0){
-            [$min_bar, $max_bar] = [min($data_bar), max($data_bar)];
-        }
-        else{
-            [$min_bar, $max_bar] = [PHP_INT_MAX, PHP_INT_MIN];
-        }
-        if(count($data_curve) != 0){
-            [$min_curve, $max_curve] = [min($data_curve), max($data_curve)];
-        }
-        else{
-            [$min_curve, $max_curve] = [PHP_INT_MAX, PHP_INT_MIN];
-        }
-        $min = min($min_bar, $min_curve);
-        $max = max($max_bar, $max_curve);
-        $maxMin = $max - $min;
         //
         $N = count($data_bar); // common to bar and curve
         //

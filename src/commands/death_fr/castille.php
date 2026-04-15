@@ -2,7 +2,12 @@
 /******************************************************************************
     
     Builds Castille distributions, as described in http://cura.free.fr/xx/18cas3fr.html
-    These distributions can be seen as the same nature of observed distributions.
+    Only relevant for two dates.
+    Generates one table per couple (planet at date1, planet at date2).
+    Each table is a 360 x 360 array.
+    Ex in birth-death case: table['ME-SA'][12][145] contains the number of persons with
+    longitude of mercury at birth is between 12° and 13°
+    and longitude of saturn at birth is between 145° and 146°
     
     === NOTE ===
     This code is is death_fr namespace only because of call to Death_fr::getSplitSubgroups()
@@ -89,28 +94,23 @@ class castille implements ICommand {
                     $k = 0;
                     foreach(yieldFile::loop($inFile) as $line){
                         $fields = explode(Observe::CSV_SEP, trim($line));
-                        // here a cnvention is used: the dates in data.csv.bz2 are stored in the same order as in $studyConfig['dates']
+                        // here a convention is used: the dates in data.csv.bz2 are stored in the same order as in $studyConfig['dates']
                         $date1 = $fields[$i];
                         $date2 = $fields[$j];
                         [$planets1, $planets2] = self::getPlanets($date1, $date2);
                         foreach($planets1 as $planet1 => $lg1){
                             foreach($planets2 as $planet2 => $lg2){
-// echo "date1 = $date1\n";
-// echo "date2 = $date2\n";
-// echo "$planet1-$planet2\n";
-// echo "lg1 = $lg1\n";
-// echo "lg2 = $lg2\n";
                                 $res["$planet1-$planet2"][floor($lg1)][floor($lg2)]++;
                             }
                         }
-                        $k++; if($k % 10000 == 0) echo "$k\n";;
+                        $k++; if($k % 100000 == 0) echo "$k\n";;
                     } // end main loop on $inFile
                     $outDir = $outDirBase . DS . $dateName; // ex: var/studies/death-fr/split-full/01--0-200years/castille/birth-death
                     mkdir::execute($outDir);
                     // ex: $k = 'SO-SO' and $v = 2-dim array 360 x 360
                     foreach($res as $k => $v){
                         $outFile = $outDir . DS . $k . '.csv'; // ex: var/studies/death-fr/split-full/01--0-200years/castille/birth-death/SO-SO.csv
-                        $csv = CsvDistrib::distrib2csv2dim($v);
+                        $csv = CsvDistrib::distrib2csv_2dim($v);
                         file_put_contents::execute($outFile, $csv, false);
                     }
                 } // end loop on $j
