@@ -52,11 +52,14 @@ $statsExp =& $V['stats-exp'];
 for($i=0; $i < count($V['planets']); $i++){
     for($j=0; $j < count($V['planets']); $j++){
         $code = $V['planets'][$i] . '-' . $V['planets'][$j];
-        $alt = 'Distribution of aspects between ' . IAA::PLANET_NAMES[$V['planets'][$i]] . ' (' . $V['date-names'][0] . ')'
+        $alt_1 = 'Distribution of aspects between ' . IAA::PLANET_NAMES[$V['planets'][$i]] . ' (' . $V['date-names'][0] . ')'
+             . ' and ' . IAA::PLANET_NAMES[$V['planets'][$j]] . ' (' . $V['date-names'][1] . ')';
+        $alt_2 = 'Positions of ' . IAA::PLANET_NAMES[$V['planets'][$i]] . ' (' . $V['date-names'][0] . ')'
              . ' and ' . IAA::PLANET_NAMES[$V['planets'][$j]] . ' (' . $V['date-names'][1] . ')';
 ?>
-        <img id="<?= 'interaspect-' . $code ?>" loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/interaspects/<?= $code ?>.svg" alt="<?= $alt ?>">
+        <img id="<?= 'interaspect-' . $code ?>" loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/interaspects/<?= $code ?>.svg" alt="<?= $alt_1 ?>">
         <?= statsOneDistrib::html($statsObs['interaspects'][$code], $statsExp['interaspects'][$code]) ?>
+        <img loading="lazy" class="margin" src="img/castille/<?= $V['date-name'] ?>/<?= $code ?>.jpg" alt="<?= $alt_2 ?>">
 <?php 
     }
 }

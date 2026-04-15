@@ -44,8 +44,7 @@ class chi2Test extends TestCase{
         Tests that the chi2 = 0 when observed and expected distributions are equal.
     **/
     public function test_chi2_zero(){
-        $obs = [29, 24, 22, 19, 21, 18, 19, 20, 23, 18, 20, 23];
-        $exp = $obs;
+        $obs = $exp = [29, 24, 22, 19, 21, 18, 19, 20, 23, 18, 20, 23];
         $this->assertEquals(0, chi2::chi2($obs, $exp));
     }
     
