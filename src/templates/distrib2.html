@@ -22,7 +22,7 @@ use tigeph\model\IAA;
 // shortcuts
 $statsObs =& $V['stats-obs'];
 $statsExp =& $V['stats-exp'];
-
+$dateName =& $V['date-name']; // ex: birth-death
 ?>
 
 <!-- 
@@ -31,9 +31,9 @@ $statsExp =& $V['stats-exp'];
 <ul class="naked spaced">
     <li><a class="bold" href="#age">Age</a></li>
     <li>
-        <div><a class="bold" href="#interaspects">Inter-aspects</a></div>
+        <div class="bold">Relations between planets</div>
         <div class="padding-left2 padding-top05">
-            <?= tocInteraspects::html($V['planets'], '#interaspect-', $statsObs) ?>
+            <?= tocInteraspects::html($V['planets'], '#relations-planets-', $statsObs) ?>
         </div>
     </li>
 </ul>
@@ -41,25 +41,29 @@ $statsExp =& $V['stats-exp'];
 <!-- 
     Age
 -->
-<img id="age" loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/age.svg" alt="Distribution of age">
+<img id="age" loading="lazy" class="svg" src="img/<?= $dateName ?>/age.svg" alt="Distribution of age">
 <?= statsOneDistrib::html($statsObs['age'], $statsExp['age']) ?>
 
 <!-- 
-    Inter-aspects
+    Relations between planets
 -->
-<h2 id="interaspects">Inter-aspects</h2>
 <?php 
 for($i=0; $i < count($V['planets']); $i++){
     for($j=0; $j < count($V['planets']); $j++){
+        $planetName1 = strtolower(IAA::PLANET_NAMES[$V['planets'][$i]]);
+        $planetName2 = strtolower(IAA::PLANET_NAMES[$V['planets'][$j]]);
         $code = $V['planets'][$i] . '-' . $V['planets'][$j];
-        $alt_1 = 'Distribution of aspects between ' . IAA::PLANET_NAMES[$V['planets'][$i]] . ' (' . $V['date-names'][0] . ')'
-             . ' and ' . IAA::PLANET_NAMES[$V['planets'][$j]] . ' (' . $V['date-names'][1] . ')';
-        $alt_2 = 'Positions of ' . IAA::PLANET_NAMES[$V['planets'][$i]] . ' (' . $V['date-names'][0] . ')'
-             . ' and ' . IAA::PLANET_NAMES[$V['planets'][$j]] . ' (' . $V['date-names'][1] . ')';
+        $dateName1 = $V['date-names'][0];
+        $dateName2 = $V['date-names'][1];
+        $alt_1 = "Distribution of aspects between $planetName1 ($dateName1) and $planetName2 ($dateName2)";
+        $alt_2 = "Positions of $planetName1 ($dateName1) and $planetName2 ($dateName2)";
 ?>
-        <img id="<?= 'interaspect-' . $code ?>" loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/interaspects/<?= $code ?>.svg" alt="<?= $alt_1 ?>">
+        <h2 id="<?= 'relations-planets-' . $code ?>">Relations between <?= "$planetName1 ($dateName1) and $planetName2 ($dateName2)" ?></h2>
+        
+        <img loading="lazy" class="svg" src="img/<?= $dateName ?>/interaspects/<?= $code ?>.svg" alt="<?= $alt_1 ?>">
         <?= statsOneDistrib::html($statsObs['interaspects'][$code], $statsExp['interaspects'][$code]) ?>
-        <img loading="lazy" class="margin border" src="img/castille/<?= $V['date-name'] ?>/<?= $code ?>.png" alt="<?= $alt_2 ?>">
+        
+        <img loading="lazy" class="margin border" src="img/<?= $dateName ?>/castille/<?= $code ?>.png" alt="<?= $alt_2 ?>">
 <?php 
     }
 }

@@ -56,7 +56,7 @@ class Studies {
         
         // Here we cheat because we know that current function is called after self::getAllStudySlugs()
         // (called in observe\app\Run::parseOutput())
-        // then self::self::$studyConfigs is already computed
+        // then self::$studyConfigs is already computed
         $studyConfig = self::$studyConfigs[$studySlug];
         $studyConfig['__command__'] = $command;
         if(($msg = self::checkStudyFile($studyConfig)) != ''){
@@ -204,7 +204,31 @@ class Studies {
 // TODO check entry 'dates'
         return '';
     }
-        
+    
+    /**
+        Returns the array passed to header.html to build the navigation menu in output pages.
+        The format is an associative array: [
+            'href' => 'label',
+        ]
+    **/
+    public static function getNavigationArray(array &$studyConfig): array {
+        $res = [
+            '../../index.html'  => 'Observe home',
+            'index.html'        => $studyConfig['output']['title'],
+        ];
+        foreach($studyConfig['dates'] as $date){
+            $res["$date.html"] = ucfirst($date);
+        }
+        for($i=0; $i < count($studyConfig['dates']); $i++){
+            for($j=$i+1; $j < count($studyConfig['dates']); $j++){
+                $code = $studyConfig['dates'][$i] . '-' . $studyConfig['dates'][$j];
+                $label = ucfirst($studyConfig['dates'][$i]) . ' - ' . ucfirst($studyConfig['dates'][$j]);
+                $res ["$code.html"] =  $label;
+            }
+        }
+        return $res;
+    }
+    
     /**
         Returns the directory containing the observed distributions of a subgroup of a given split of a study.
     **/

@@ -229,7 +229,7 @@ The distributions computed to represent our original dataset are called the <b>o
 <img class="margin margin-top2" src="static/img/expected.svg" alt="Observed distributions, control groups, expected distributions">
 
 <br>Several control groups are built, and the mean (average) distributions are computed.
-<br>This is supposed to produce what we should observe in the "chance hypothesis".
+<br>This is supposed to produce what we should observe in theory.
 
 
 <!-- ********************************************************************************* -->
@@ -244,8 +244,8 @@ Once the expected distributions are computed, it is possible to use statistical 
 <h2 id="6-about">About</h2>
 Observe is a CLI (Command Line Interface), a tool used in a terminal (console) which pemits to issue commands to work on the data.
 <br>For example:
-<pre>php run-observe.php death-fr chi2 full</pre>
-Means: "for study <code>death-fr</code>, compute chi2 values of the split <code>full</code>"
+<pre>php run-observe.php death-fr stats full</pre>
+Means: "for study <code>death-fr</code>, compute statistical informations of the split <code>full</code>"
 
 <br><br>Program started in december 2020 by Thierry Graff to compute <a href="studies/a00.html">a00 distributions</a> for Nick Kollerstrom, who studied if these data show statistical anomalies.
 <br>Rewrite in 2026 to test <a href="studies/death-fr.html">Deaths in France since 1970</a>.

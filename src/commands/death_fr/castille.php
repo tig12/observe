@@ -1,7 +1,9 @@
 <?php
 /******************************************************************************
     
-    Builds Castille distributions, as described in http://cura.free.fr/xx/18cas3fr.html
+    Builds Castille distributions, as described in
+    http://cura.free.fr/xx/18cas3en.html (English) and http://cura.free.fr/xx/18cas3fr.html (French)
+    
     Only relevant for two dates.
     Generates one table per couple (planet at date1, planet at date2).
     Each table is a 360 x 360 array.
@@ -80,8 +82,6 @@ class castille implements ICommand {
             // prepare the out directories to avoid doing it during main loop on $inFile.
             //
             $workDir = Studies::getSplitDirectory($studyConfig, $split) . DS . $subgroup; // ex: var/studies/death-fr/split-full/01--0-200years
-            $outDirBase = $workDir . DS . 'castille'; // ex: var/studies/death-fr/split-full/01--0-200years/castille
-            mkdir::execute($outDirBase);
             //
             // main loop
             //
@@ -105,11 +105,11 @@ class castille implements ICommand {
                         }
                         $k++; if($k % 100000 == 0) echo "$k\n";;
                     } // end main loop on $inFile
-                    $outDir = $outDirBase . DS . $dateName; // ex: var/studies/death-fr/split-full/01--0-200years/castille/birth-death
+                    $outDir = $workDir . DS . $dateName . DS . 'castille'; // ex: var/studies/death-fr/split-full/01--0-200years/birth-death/castille
                     mkdir::execute($outDir);
                     // ex: $k = 'SO-SO' and $v = 2-dim array 360 x 360
                     foreach($res as $k => $v){
-                        $outFile = $outDir . DS . $k . '.csv'; // ex: var/studies/death-fr/split-full/01--0-200years/castille/birth-death/SO-SO.csv
+                        $outFile = $outDir . DS . $k . '.csv'; // ex: var/studies/death-fr/split-full/01--0-200years/birth-death/castille/SO-SO.csv
                         $csv = CsvDistrib::distrib2csv_2dim($v);
                         file_put_contents::execute($outFile, $csv, false);
                     }

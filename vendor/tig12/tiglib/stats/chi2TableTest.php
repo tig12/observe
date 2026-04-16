@@ -47,8 +47,6 @@ class chi2TableTest extends TestCase{
             pow(9-44*24/128, 2)/(44*24/128) + pow(12-44*36/128, 2)/(44*36/128) + pow(10-44*31/128, 2)/(44*31/128) + pow(13-44*37/128, 2)/(44*37/128);
         
         $got = chi2Table::compute($a, test:true);
-//print_r($got['diff']);
-//print_r($got['diff_percent']);
         
         $this->assertEquals($got['sums_i'], $sums_i);
         

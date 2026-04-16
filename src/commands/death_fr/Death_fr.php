@@ -41,6 +41,10 @@ class Death_fr implements IStudy {
     
     private static string $SQLITE_TMP_PATH;
     
+    //
+    // IStudy
+    //
+    
     /** Implementation of IStudy **/
     public static function init(array &$studyConfig): void {
         if(!isset($studyConfig['sqlite-death-fr'])){
@@ -69,6 +73,10 @@ class Death_fr implements IStudy {
         }
         return $res;
     }
+    
+    //
+    // Specific to death-fr
+    //
     
     /** Returns a PDO link to death-fr.sqlite3 **/
     public static function getPersonSqlite(): \PDO {

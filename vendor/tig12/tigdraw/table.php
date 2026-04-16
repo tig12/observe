@@ -2,6 +2,10 @@
 /******************************************************************************
     Generates an image with a table representing a comparison of two distributions.
     
+    This reprensentation was motivated by a work of Didier Castille available at
+    http://cura.free.fr/xx/18cas3en.html (English) and http://cura.free.fr/xx/18cas3fr.html (French)
+
+    
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
     @copyright  Thierry Graff
     
@@ -9,7 +13,7 @@
 ********************************************************************************/
 namespace tigdraw;
 
-class castille {
+class table {
     
     const array DEFAULT_PARAMS = [
         'padding'           => 15, // in px
@@ -85,7 +89,8 @@ class castille {
         $img = imagecreatetruecolor($w, $h);
         $colors = self::prepareColors($img);
         $black = imagecolorallocate($img, 0, 0, 0);
-        imagefilledrectangle($img, 0, 0, $w-1, $h-1, self::$colors['plus'][0]); // white background
+        $background = imagecolorallocate($img, 255, 228, 181); // mocassin
+        imagefilledrectangle($img, 0, 0, $w-1, $h-1, $background);
         //
         // title
         //

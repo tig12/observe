@@ -8,6 +8,7 @@
         subtitle
         date
         path-to-root
+        navigatiion     // format described in observe\model\Studies::getNavigationArray()
         description
         intro
 
@@ -26,18 +27,28 @@
     <meta charset="utf-8" />
     <title><?= $V['title'] ?></title>
     <meta name="description" content="<?= $V['description'] ?>">
-    <link rel="shortcut icon" href="<?= $V['path-to-root'] ?>/favicon.png" type="image/x-icon">
-    <link rel="copyright" href="http://www.gnu.org/copyleft/gpl.html"/>
+    <link rel="shortcut icon" href="<?= $V['path-to-root'] ?>/static/img/favicon.jpg" type="image/x-icon">
     <link rel="stylesheet" href="<?= $V['path-to-root'] ?>/static/css/observe.css" type="text/css">
+    <link rel="stylesheet" href="<?= $V['path-to-root'] ?>/static/css/menu.css" type="text/css">
+    <link rel="copyright" href="http://www.gnu.org/copyleft/gpl.html"/>
 </head>
 
 <body>
 
 <header id="topage">
 
-    <div class="homelink">
-        <a href="index.html">Home</a>
-    </div>
+    <ul class="menus">
+      <li class="dropdown">
+        <a class="dropbtn" href="index.html">
+            <img src="<?= $V['path-to-root'] ?>/static/img/menu.png" class="border" style="border-radius:10px;">
+        </a>
+        <div class="dropdown-content">
+            <?php foreach($V['navigation'] as $href => $label): ?>
+                <?= $href == '' ? "$label" : "<a href=\"$href\">$label</a>" ?>
+            <?php endforeach; ?>
+        </div>
+      </li>
+    </ul>
     
     <h1>
         <?= $V['title'] ?>

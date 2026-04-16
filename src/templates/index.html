@@ -31,7 +31,7 @@ $statsObs =& $V['stats-obs'];
         <li><a class="bold" href="<?= $dateName ?>.html#year">Years</a></li>
         <li>
             <div class="bold">Planet positions</div>
-            <div class="padding-left2">
+            <div class="padding-left2 padding-top05">
                 <?php foreach($V['planets'] as $planet): ?>
                     <span class="padding-right"><a href="<?= $dateName ?>.html#position-<?= $planet ?>"><?= IAA::PLANET_NAMES[$planet] ?></a></span>
                 <?php endforeach; ?>
@@ -58,9 +58,9 @@ for($i=0; $i < count($V['dates']); $i++):
         <ul class="naked spaced">
             <li><a class="bold" href="<?= $dateName ?>.html#age">Age</a></li>
             <li>
-                <div class="bold">Inter-aspects</div>
+                <div class="bold">Relations between planets</div>
                 <div class="padding-left2 padding-top05">
-                    <?= tocInteraspects::html($V['planets'], $dateName . '.html#interaspect-', $statsObs[$dateName]) ?>
+                    <?= tocInteraspects::html($V['planets'], $dateName . '.html#relations-planets-', $statsObs[$dateName]) ?>
                 </div>
             </li>
         </ul>

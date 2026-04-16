@@ -36,7 +36,7 @@ class barCurve {
         /** $vGap               in px - vertical (top and bottom) gap of the image. **/
         int     $vGap = 15,
         /** $background         Background color of the image. **/
-        string  $background = 'moccasin',
+        string  $background = 'moccasin', // #FFE4B5    RGBA(255, 228, 181, 1)
         //
         // title
         //
