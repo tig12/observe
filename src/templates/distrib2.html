@@ -31,7 +31,7 @@ $statsExp =& $V['stats-exp'];
 <ul class="naked spaced">
     <li><a class="bold" href="#age">Age</a></li>
     <li>
-        <div class="bold">Inter-aspects</div>
+        <div><a class="bold" href="#interaspects">Inter-aspects</a></div>
         <div class="padding-left2 padding-top05">
             <?= tocInteraspects::html($V['planets'], '#interaspect-', $statsObs) ?>
         </div>
@@ -47,7 +47,7 @@ $statsExp =& $V['stats-exp'];
 <!-- 
     Inter-aspects
 -->
-<h2 id="aspects">Inter-aspects</h2>
+<h2 id="interaspects">Inter-aspects</h2>
 <?php 
 for($i=0; $i < count($V['planets']); $i++){
     for($j=0; $j < count($V['planets']); $j++){
@@ -59,7 +59,7 @@ for($i=0; $i < count($V['planets']); $i++){
 ?>
         <img id="<?= 'interaspect-' . $code ?>" loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/interaspects/<?= $code ?>.svg" alt="<?= $alt_1 ?>">
         <?= statsOneDistrib::html($statsObs['interaspects'][$code], $statsExp['interaspects'][$code]) ?>
-        <img loading="lazy" class="margin" src="img/castille/<?= $V['date-name'] ?>/<?= $code ?>.jpg" alt="<?= $alt_2 ?>">
+        <img loading="lazy" class="margin border" src="img/castille/<?= $V['date-name'] ?>/<?= $code ?>.png" alt="<?= $alt_2 ?>">
 <?php 
     }
 }

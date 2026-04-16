@@ -45,7 +45,7 @@ class barCurve {
         /** $titleH             in px - height of the title (= font size). **/
         int     $titleH = 22,
         /** $titleBottomGap     in px - gap between the title and draw area. Set to 0 if title = empty string. **/
-        int     $titleBottomGap = 15,
+        int     $titleBottomGap = 25,
         //
         // bar
         //
@@ -332,7 +332,8 @@ SVG;
             if(!empty($ylegends)){
                 if(in_array('min', $ylegends)){
                     $y = $yEnd;
-                    $svg .= "<text x=\"$x\" y=\"$y\" class=\"yLegends\">$min</text>\n";
+                    $y_cheat = $y + 5; // cheat to avoid writing min and mean at the same place when mean is very close to min.
+                    $svg .= "<text x=\"$x\" y=\"$y_cheat\" class=\"yLegends\">$min</text>\n";
                     $x1 = $xBegin;
                     $x2 = $xBegin - 5;
                     $svg .= "<line x1=\"$x1\" y1=\"$y\" x2=\"$x2\" y2=\"$y\" class=\"yLegendsMark\" />\n";
