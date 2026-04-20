@@ -60,7 +60,13 @@ for($i=0; $i < count($V['dates']); $i++):
             <li>
                 <div class="bold">Relations between planets</div>
                 <div class="padding-left2 padding-top05">
-                    <?= tocInteraspects::html($V['planets'], $dateName . '.html#relations-planets-', $statsObs[$dateName]) ?>
+                    <?= tocInteraspects::html(
+                        $V['planets'],
+                        $dateName . '.html#relations-planets-',
+                        $statsObs[$dateName],
+                        ucfirst($V['dates'][$i]),
+                        ucfirst($V['dates'][$j]),
+                    ) ?>
                 </div>
             </li>
         </ul>

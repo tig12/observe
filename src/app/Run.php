@@ -4,6 +4,7 @@
     
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
     @copyright  Thierry Graff
+    
     @history    2020-12-15 21:42:03+01:00, Thierry Graff : creation
     @history    2026-03-11 14:46:44+01:00, Thierry Graff : new version
 ********************************************************************************/
@@ -11,7 +12,7 @@ namespace observe\app;
 
 use observe\model\Studies;
 
-class Run{
+class Run {
 
     /**
         Computes the parameters passed to run-observe.php

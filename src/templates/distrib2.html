@@ -33,7 +33,13 @@ $dateName =& $V['date-name']; // ex: birth-death
     <li>
         <div class="bold">Relations between planets</div>
         <div class="padding-left2 padding-top05">
-            <?= tocInteraspects::html($V['planets'], '#relations-planets-', $statsObs) ?>
+            <?= tocInteraspects::html(
+                $V['planets'],
+                '#relations-planets-',
+                $statsObs,
+                ucfirst($V['date-names'][0]),
+                ucfirst($V['date-names'][1]),
+            ) ?>
         </div>
     </li>
 </ul>

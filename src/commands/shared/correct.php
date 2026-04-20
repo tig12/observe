@@ -23,7 +23,7 @@ class correct implements ICommand {
         Called by Studies::runCommand()
     **/
     public static function execute(array &$studyConfig, array $params): string {
-return "Code descatvated to avoir error\n";
+return "=== Code descatvated to avoir error === \n" . __FILE__ . "\n";
         //
         // Parameter check
         //

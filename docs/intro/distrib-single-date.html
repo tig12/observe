@@ -60,14 +60,14 @@ Here, birth dates are grouped by year.
 <!-- ********************************************************************************* -->
 <h2 id="2-distribution-by-day">Distribution by day</h2>
 <img height="250px" class="margin" src="img/day.svg" alt="Distribution: Child, day of birth">
-The dates are grouped in 366 packets of 1 day.
+The dates are grouped in 366 bins of 1 day.
 <br>Here we can see that there are less births during the week-ends.
 
 <!-- ********************************************************************************* -->
 <h2 id="3-planetary-positions">Planetary positions</h2>
 
 For each planet, we represent the distributions of their positions (ecliptic longitudes).
-<br>Data are grouped in 360 packets of 1 degree.
+<br>Data are grouped in 360 bins of 1 degree.
 
 <img height="250px" class="margin" src="img/SA.svg" alt="Distribution: Child, day of birth">
 
@@ -88,8 +88,8 @@ For a given date, we compute the planetary positions, and we consider the <b>ang
 In this program, distributions are stored in CSV files.
 <br>Such CSV file has 2 columns:
 <ul class="margin-top0 single">
-    <li>First column designates a packet.</li>
-    <li>Second column designates the number of occurences found in this packet.</li>
+    <li>First column designates a bin.</li>
+    <li>Second column designates the number of occurences found in this bin.</li>
 </ul>
 For example, a distribution representing the position of a planet:
 
@@ -168,7 +168,7 @@ This set of distributions is called <b>distrib1</b>.
         <ul>
             <li>
                 <a href="../studies/death-fr.html">Deaths in France 1970 - 2025</a>
-                <div class="small8 padding-left padding-bottom05">28 803 835 { birth, death }</div>
+                <div class="small8 padding-left padding-bottom05">28 803 832 { birth, death }</div>
             </li>
             <li>
                 <a href="../studies/a00.html">a00 - birth in France in 2000</a>

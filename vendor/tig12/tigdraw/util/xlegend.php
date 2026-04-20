@@ -24,20 +24,61 @@ class xlegend {
         return $res;
     }
     
-    public static function angle12(): array {
-        $res = [];
-        foreach([0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330] as $x){
-            $res[$x] = $x;
-        }
-        return $res;
-    }
-    
+    /** 
+        For a distribution with keys = ['01-01', '01-02', ... '12-31'], returns on element per month.
+    **/
     public static function month(bool $trimZero = false): array {
         $res = [];
         foreach(['01-01', '02-01', '03-01', '04-01', '05-01', '06-01', '07-01', '08-01', '09-01', '10-01', '11-01', '12-01'] as $x){
             $res[$x] = substr($x, 0, 2);
             if($trimZero){
                 $res[$x] = ltrim($res[$x], '0');
+            }
+        }
+        return $res;
+    }
+    
+    /** 
+        Returns element for the min and max keys of a distribution.
+    **/
+    public static function minmax(array &$distrib): array {
+        $res = [];
+        $keys = array_keys($distrib);
+        $min = min($keys);
+        $max = max($keys);
+        $res[$min] = $min;
+        $res[$max] = $max;
+        return $res;
+    }
+    
+    /** 
+        Returns elements for the min and max keys of a distribution
+        + one element for each key multiple of $step.
+    **/
+    public static function minmax_step(array &$distrib, $step): array {
+        $res = [];
+        $keys = array_keys($distrib);
+        $min = min($keys);
+        $max = max($keys);
+        $res[$min] = $min;
+        $res[$max] = $max;
+        foreach($keys as $key){
+            if($key % $step == 0){
+                $res[$key] = $key;
+            }
+        }
+        return $res;
+    }
+    
+    /** 
+        Returns one element for each key multiple of $step.
+    **/
+    public static function step(array &$distrib, $step): array {
+        $res = [];
+        $keys = array_keys($distrib);
+        foreach($keys as $key){
+            if($key % $step == 0){
+                $res[$key] = $key;
             }
         }
         return $res;
