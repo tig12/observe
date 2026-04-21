@@ -341,7 +341,7 @@ class observedTest extends TestCase{
         //
         // birth-death - age
         //
-        // See src/commands/test-files/study1/README to build $wanted from person database.
+        // See src/commands/tests/study1/README to build $wanted from person database.
         $wanted = [
             1024 => 1,
             1065 => 1,

@@ -31,13 +31,14 @@ class table {
         'y-title-width'     => 15, // in px
         'y-legends'         => [], // y values
         'y-legends-width'   => 40, // in px
+        //
+        'bottom-height'     => 50,
+        'bottom-legend1'    => '',
+        'bottom-legend2'    => '',
     ];
     
     private static array $colors;
     
-    /**
-        @param  $
-    **/
     private static function handleParams(array $params): array {
         //
         $res = array_merge(self::DEFAULT_PARAMS, $params);
@@ -56,6 +57,9 @@ class table {
         }
         if($res['y-title'] == ''){
             $res['y-title-width'] = 0;
+        }
+        if($res['bottom-legend1'] == '' && $res['bottom-legend2'] == ''){
+            $res['bottom-height'] = 0;
         }
         return $res;
     }
@@ -82,7 +86,7 @@ class table {
         // width of the image
         $w = $xBegin + $tableWidth + $params['padding'];
         // height of the image
-        $h = $yBegin + $tableHeight + $params['padding'];
+        $h = $yBegin + $tableHeight + $params['bottom-height'] + $params['padding'];
         //
         // Draw
         //
@@ -160,6 +164,7 @@ class table {
         $x2 = $xBegin + $tableWidth + 1;
         $y2 = $yBegin + $tableHeight + 1;
         imagerectangle($img, $x1, $y1, $x2, $y2, $black);
+        
         //
         // Main loop - Draw the table
         //
@@ -172,6 +177,18 @@ class table {
                 $x += $params['cell-size'];
             }
             $y += $params['cell-size'];
+        }
+        
+        //
+        // Bottom
+        //
+        if($params['y-legends'] != 0){
+            // approx computation for $x and $y => TODO handle correctly
+            $x = $xBegin;
+            $y = $yBegin + $tableHeight + 12;
+            imagestring($img, 5, $x, $y, $params['bottom-legend1'], $black);
+            $y += 20;
+            imagestring($img, 5, $x, $y, $params['bottom-legend2'], $black);
         }
         
         return $img;

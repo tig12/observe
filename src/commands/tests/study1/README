@@ -8,7 +8,7 @@ php run-g5.php enrich deathfr init
 php run-g5.php enrich deathfr raw2sqlite 1994
 
 The generated database is then copied to
-src/commands/test-files/var/study1/death-fr-10.sqlite3
+var/studies/study1/death-fr-10.sqlite3
 
 select bday,dday from person;
 +------------+------------+

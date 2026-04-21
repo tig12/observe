@@ -1,2 +1,7 @@
 
 This directory contains files used to test code located in src/commands.
+
+WARNING:
+The yaml files containing config of test studies cannot be placed in studies/ with the real studies,
+because test studies have the slug of the real study they test,
+and slugs of real studies must be unique.

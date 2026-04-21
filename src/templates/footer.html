@@ -2,12 +2,21 @@
 /******************************************************************************
     
     Footer of generated pages.
+    Called with a variable $V, associative array containing the keys:
+        text
 
     @license    GPL
     @copyright  Thierry Graff
     @history    2026-04-05 07:54:38+01:00, Thierry Graff : Creation
 ********************************************************************************/
+
+// shortcuts
+$text = $V['text'] ?? '';
 ?>
+
+<?php if($text): ?>
+<div class="footer"><?= $V['text'] ?></div>
+<?php endif; ?>
 
 </article>
 </body>

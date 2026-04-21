@@ -96,7 +96,7 @@ class CsvDistrib {
         return $res;
     }
     
-    //////////// NOT USED IN 2026 VERSION ////////////
+    //////////// NOT USED YET IN 2026 VERSION ////////////
     
     /** 
         Returns true if a line of a distribution should be skipped.

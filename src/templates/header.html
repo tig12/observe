@@ -46,8 +46,10 @@
         </a>
         <div class="dropdown-content">
             <?php foreach($V['navigation'] as $href => $label): ?>
-                <?= $href == '' ? "$label" : "<a href=\"$href\">$label</a>" ?>
+                <?= $href == '' ? "$label" : "<a href=\"$href\">$label</a>\n" ?>
             <?php endforeach; ?>
+            <hr>
+            <a href="<?= $V['path-to-root'] ?>/help.html">Help to read this page</a>
         </div>
       </li>
     </ul>

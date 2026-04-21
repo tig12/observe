@@ -26,7 +26,6 @@ class chi2Table {
     public static function compute(array &$a, $scale = 4, bool $test=false): array {
         $M = count($a);     // nb of rows       - loop on $j
         $N = count($a[0]);  // nb of columns    - loop on $i
-//echo "M = $M - N = $N\n"; exit;
         //
         $sum = 0; // sum of all elements of the array
         $sums_j = array_fill(0, $M, 0); // sums of each line
@@ -94,7 +93,6 @@ class chi2Table {
             'diff' => $diff,
             'diff_max' => $diff_max,
             'diff_min' => $diff_min,
-//            'c2' => $c2,
             'chi2' => $chi2,
         ];
     }
