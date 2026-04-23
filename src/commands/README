@@ -1,2 +1,4 @@
 
 This directory contains commands directly triggered by the CLI.
+
+Commands specific to studies are located in subdirectories of src/studies

@@ -9,7 +9,7 @@
     @history    2026-03-29 18:38:42+01:00, Thierry Graff : Creation
 ********************************************************************************/
 
-namespace observe\commands\shared;
+namespace observe\test\functional\commands;
 
 use PHPUnit\Framework\TestCase;
 use observe\commands\tests\Death_fr_tests;

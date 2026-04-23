@@ -20,15 +20,13 @@ class chi2Table {
                 ...
                 M-1 =>  [0 ... N-1]
             ]
-        @param  $scale  Number of categories to compute the normalized deviations.
-                        Range of deviations goes from -$scale to +$scale.
     **/
-    public static function compute(array &$a, $scale = 4, bool $test=false): array {
+    public static function compute(array &$a, bool $test=false): array {
         $M = count($a);     // nb of rows       - loop on $j
         $N = count($a[0]);  // nb of columns    - loop on $i
         //
         $sum = 0; // sum of all elements of the array
-        $sums_j = array_fill(0, $M, 0); // sums of each line
+        $sums_j = array_fill(0, $M, 0); // sums of each row
         $sums_i = array_fill(0, $N, 0); // sums of each column
         //
         for($j=0; $j < $M; $j++){ // loop on rows

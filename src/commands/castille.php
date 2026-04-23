@@ -11,20 +11,16 @@
     longitude of mercury at birth is between 12° and 13°
     and longitude of saturn at birth is between 145° and 146°
     
-    === NOTE ===
-    This code is is death_fr namespace only because of call to Death_fr::getSplitSubgroups()
-    Should be logically placed in shared - and the logic of getSplitSubgroups() should be changed.
-    === END NOTE ===
-    
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
     @copyright  Thierry Graff
     @history    2026-04-13 23:14:10+01:00, Thierry Graff : Creation
 ********************************************************************************/
 
-namespace observe\commands\death_fr;
+namespace observe\commands;
 
-use observe\model\ICommand;
 use observe\model\Observe;
+use observe\app\ICommand;
+use observe\model\IStudy;
 use observe\model\Studies;
 use observe\model\SqlitePlanets;
 use observe\model\distrib\CsvDistrib;
@@ -52,9 +48,9 @@ class castille implements ICommand {
     }
     
     /** 
-        Called by Studies::runCommand()
+        Called by Commands::runCommand)
     **/
-    public static function execute(array &$studyConfig, array $params): string {
+    public static function execute(IStudy $study, array $params): string {
         //
         // Parameter check
         //

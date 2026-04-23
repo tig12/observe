@@ -8,19 +8,21 @@
     @history    2026-03-11 17:50:23+01:00, Thierry Graff : Creation
 ********************************************************************************/
 
-namespace observe\commands\shared;
+namespace observe\commands;
 
 use observe\model\Observe;
-use observe\model\ICommand;
+use observe\app\ICommand;
+use observe\model\IStudy;
 use observe\model\Studies;
 use observe\model\distrib\Distribs;
 
 class observed implements ICommand {
     
     /** 
-        Called by Studies::runCommand()
+        Called by Commands::runCommand)
     **/
-    public static function execute(array &$studyConfig, array $params): string {
+    public static function execute(IStudy $study, array $params): string {
+die("\n<br>die here " . __FILE__ . ' - line ' . __LINE__ . "\n");
         //
         // Parameter check
         //

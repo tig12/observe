@@ -11,8 +11,8 @@ namespace tiglib\filesystem;
 class mkdir {
     
    public static function execute(string $dir): void {
-        $is_created = @mkdir($dir, 0755, true);
-        if($is_created){
+       if(!is_dir($dir)){
+            mkdir($dir, 0755, true);
             echo "Created directory $dir\n";
         }
    }    

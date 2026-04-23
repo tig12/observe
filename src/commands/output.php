@@ -8,9 +8,10 @@
     @history    2026-03-11 17:50:55+01:00, Thierry Graff : Creation
 ********************************************************************************/
 
-namespace observe\commands\shared;
+namespace observe\commands;
 
-use observe\model\ICommand;
+use observe\app\ICommand;
+use observe\model\IStudy;
 use observe\commands\shared\output\output_page;
 use observe\commands\shared\output\output_img;
 
@@ -22,9 +23,9 @@ class output implements ICommand {
     ];
     
     /**
-        Called by Studies::runCommand()
+        Called by Commands::runCommand)
     **/
-    public static function execute(array &$studyConfig, array $params): string {
+    public static function execute(IStudy $study, array $params): string {
         //
         // Parameter check
         //

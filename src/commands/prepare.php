@@ -19,7 +19,8 @@ use tigeph\model\IAA;
 use tigeph\ephem\meeus1\Meeus1;
 use tigeph\ephem\swetest\Swetest;
 
-class prepareAstro {
+class prepare{
+    
     /** 
         @return Error message if problem, empty message if ok.
     **/

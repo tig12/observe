@@ -11,7 +11,7 @@
     @history    2026-03-25 21:16:34+01:00, Thierry Graff : Creation
 ********************************************************************************/
 
-namespace observe\commands\death_fr;
+namespace observe\test\functional\studies\death_fr;
 
 use PHPUnit\Framework\TestCase;
 use observe\commands\tests\Death_fr_tests;

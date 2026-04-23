@@ -27,10 +27,13 @@ class Run {
     public static function parseInput(array $argv): array {
         $scriptName = array_shift($argv);
         $possibleStudies = Studies::getAllStudySlugs();
+        $possibleCommands = Commands::getAvailableCommands();
         $usage = "Usage: php $scriptName <study> <commmand> [args]\n"
                . "   or: php $scriptName prepare planets\n"
                . "Possible values for <study> : \n    - "
-               . implode("\n    - ", $possibleStudies)
+               . implode("\n    - ", $possibleStudies) . "\n"
+               . "Possible values for <command> : \n    - "
+               . implode("\n    - ", $possibleCommands) . "\n"
                . "\n";
         $res = [
             'study-slug'    => '',
@@ -57,13 +60,15 @@ class Run {
         //
         // Normal case, $studySlug should correspond to an existing study slug
         //
-        $allSlugs = Studies::getAllStudySlugs();
-        if(!in_array($studySlug, $allSlugs)){
-            $res['message'] = "INVALID STUDY: \"$studySlug\"\n"
-                . "Possible studies: \"" . implode('", "', $allSlugs) . "\"\n";
+        if(!in_array($studySlug, $possibleStudies)){
+            $res['message'] = "INVALID STUDY: \"$studySlug\"\n" . $usage;
             return $res;
         }
-        // ok, valid study
+        if(!in_array($command, $possibleCommands)){
+            $res['message'] = "INVALID COMMAND: \"$command\"\n" . $usage;
+            return $res;
+        }
+        // ok, valid study and valid command
         $res['study-slug'] = $studySlug;
         $res['command'] = $command;
         $res['params'] = array_slice($argv, 2);

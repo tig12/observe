@@ -12,6 +12,7 @@
 ********************************************************************************/
 namespace observe\model\distrib;
 
+use observe\model\Study;
 use tiglib\time\daysOfYear;
 
 class EmptyDistribs {
@@ -24,20 +25,20 @@ class EmptyDistribs {
         Initializes the distributions of a study.
         The knowledge of $studyConfig['date'] permits to deduce the distributions of type distrib1 and distrib2 to initialize.
     **/
-    public static function initializeDistributions(array &$studyConfig): array {
+    public static function initializeDistributions(Study $study): array {
         $res = [];
-        $nDates = count($studyConfig['dates']);
+        $nDates = count($study->config['dates']);
         // distributions of type distrib1
         for($i=0; $i < $nDates; $i++){
-            $dateName = $studyConfig['dates'][$i];
-            $res[$dateName] = self::emptyDistrib1($studyConfig);
+            $dateName = $study->config['dates'][$i];
+            $res[$dateName] = self::emptyDistrib1($study);
         }
         // distributions of type distrib2
         for($i=0; $i < $nDates; $i++){
             for($j=$i+1; $j < $nDates; $j++){
-                $dateName1 = $studyConfig['dates'][$i];
-                $dateName2 = $studyConfig['dates'][$j];
-                $res["$dateName1-$dateName2"] = self::emptyDistrib2($studyConfig);
+                $dateName1 = $study->config['dates'][$i];
+                $dateName2 = $study->config['dates'][$j];
+                $res["$dateName1-$dateName2"] = self::emptyDistrib2($study);
             }
         }
         return $res;
@@ -46,10 +47,10 @@ class EmptyDistribs {
     /** 
         Prepares an array containing empty distributions of type 1 (single date).
     **/
-    public static function emptyDistrib1(array &$studyConfig): array {
+    public static function emptyDistrib1(Study $study): array {
         return [
-            'planets'=> self::emptySingleDistrib($studyConfig['planets']),
-            'aspects' => self::emptyDoubleDistrib_triangle($studyConfig['planets'], $studyConfig['planets']),
+            'planets'=> self::emptySingleDistrib($study->config['planets']),
+            'aspects' => self::emptyDoubleDistrib_triangle($study->config['planets'], $study->config['planets']),
             'day' => self::emptyDayDistrib(),
             'year' => [],
         ];
@@ -58,9 +59,9 @@ class EmptyDistribs {
     /** 
         Prepares an array containing empty distributions of type 2 (relations between two dates).
     **/
-    public static function emptyDistrib2(array &$studyConfig): array {
+    public static function emptyDistrib2(Study $study): array {
         return [
-            'interaspects' => self::emptyDoubleDistrib_square($studyConfig['planets'], $studyConfig['planets']),
+            'interaspects' => self::emptyDoubleDistrib_square($study->config['planets'], $study->config['planets']),
             'age' => [],
         ];
     }
@@ -82,7 +83,7 @@ class EmptyDistribs {
                     'NN' => [0 => 0, ... 359 => 0]
                 ]
     **/
-    public static function emptySingleDistrib(array &$codes, int $N = 360): array {
+    public static function emptySingleDistrib(array $codes, int $N = 360): array {
         $res = [];
         foreach($codes as $code){
             $res[$code] = array_fill(0, $N, 0);
@@ -109,7 +110,7 @@ class EmptyDistribs {
                     'NN-NN' => [0 => 0, ... 359 => 0]
                 ]
     **/
-    public static function emptyDoubleDistrib_square(array &$codes1, array &$codes2, int $N = 360): array {
+    public static function emptyDoubleDistrib_square(array $codes1, array $codes2, int $N = 360): array {
         $res = [];
         foreach($codes1 as $code1){
             foreach($codes2 as $code2){
@@ -138,7 +139,7 @@ class EmptyDistribs {
                     'PL-NN' => [0 => 0, ... 359 => 0]
                 ]
     **/
-    public static function emptyDoubleDistrib_triangle(array &$codes1, array &$codes2, int $N = 360): array {
+    public static function emptyDoubleDistrib_triangle(array $codes1, array $codes2, int $N = 360): array {
         $res = [];
         for($i=0; $i < count($codes1); $i++){
             for($j=$i+1; $j < count($codes2); $j++){

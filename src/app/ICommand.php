@@ -1,20 +1,30 @@
 <?php
 /******************************************************************************
-
+    
+    Interface implemented by classes directly called by the CLI.
+    
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
     @copyright  Thierry Graff
+    
     @history    2026-03-11, Thierry Graff : Creation
 ********************************************************************************/
 
-namespace observe\model;
+namespace observe\app;
+
+use observe\model\IStudy;
 
 interface ICommand {
     
     /** 
-        @param  $studyFile  Associative array containing the contents of a yaml command file
+        @param  $study      Study object
         @param  $params     Regular array of parameters passed to run-observe.php when calling the command.
     **/
-    public static function execute(array &$studyConfig, array $params): string;
+    public static function execute(IStudy $study, array $params): string;
+    
+    /**
+        Returns a short text describing what the command is doing
+    **/
+//    public static function getDescription(): string;
     
 } // end class
 

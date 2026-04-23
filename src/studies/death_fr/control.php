@@ -6,9 +6,10 @@
     @history    2026-03-11 17:48:18+01:00, Thierry Graff : Creation
 ********************************************************************************/
 
-namespace observe\commands\death_fr;
+namespace observe\studies\death_fr;
 
-use observe\model\ICommand;
+use observe\app\ICommand;
+use observe\model\IStudy;
 use observe\model\Studies;
 use observe\model\distrib\Distribs;
 use observe\model\distrib\AddDistribs;
@@ -24,9 +25,9 @@ class control implements ICommand {
     private static \PDOStatement $stmt_one_person;
     
     /** 
-        Called by Studies::runCommand()
+        Called by Commands::runCommand)
     **/
-    public static function execute(array &$studyConfig, array $params): string {
+    public static function execute(IStudy $study, array $params): string {
         //
         // Parameter check
         //

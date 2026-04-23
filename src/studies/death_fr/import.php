@@ -1,28 +1,29 @@
 <?php
 /******************************************************************************
     
-    Transfers the contents of death-fr.sqlite3 to bz2 split files.
+    Transfers the contents of death-fr.sqlite3 to data.csv.bz2.
     
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
     @copyright  Thierry Graff
     @history    2026-03-11 17:47:41+01:00, Thierry Graff : Creation
 ********************************************************************************/
 
-namespace observe\commands\death_fr;
+namespace observe\studies\death_fr;
 
 use observe\model\Observe;
-use observe\model\ICommand;
+use observe\app\ICommand;
+use observe\model\IStudy;
 use observe\model\Studies;
 use tiglib\time\diff;
 use tiglib\time\seconds2HHMMSS;
 use tiglib\filesystem\mkdir;
 
-class split implements ICommand {
+class import implements ICommand {
     
     /** 
-        Called by Studies::runCommand()
+        Called by Commands::runCommand)
     **/
-    public static function execute(array &$studyConfig, array $params): string {
+    public static function execute(IStudy $study, array $params): string {
         //
         // Parameter check
         //

@@ -8,10 +8,12 @@
     @history    2026-02-26 09:09:06+01:00, Thierry Graff : creation
 ********************************************************************************/
 
-namespace observe\commands\death_fr;
+namespace observe\studies\death_fr;
 
-use observe\model\ICommand;
+use observe\app\ICommand;
+use observe\model\IStudy;
 use observe\model\distrib\EmptyDistribs;
+use tiglib\filesystem\mkdir;
 
 class init implements ICommand {
     
@@ -19,16 +21,16 @@ class init implements ICommand {
         @param $params empty array
         @return Empty string, echoes its output
     **/
-    public static function execute(array &$studyConfig, array $params): string {
+    public static function execute(IStudy $study, array $params): string {
         //
         // Parameter check
         //
         if(count($params) != 0){
             return "INVALID PARAMETER: \"{$params[0]}\". This command must be called without parameter\n";
         }
-        $path_sqlite = $studyConfig['sqlite-tmp'];
+        $path_sqlite = $study->config['sqlite-tmp'];
         if(is_file($path_sqlite)) {
-            $answer = readline("WARNING: File $path_sqlite already exists.\n         This operation will delete it permanently. Are you sure (y/n)? ");
+            $answer = readline("WARNING: File $path_sqlite already exists.\nThis operation will delete it permanently. Are you sure (y/n)? ");
             if(strtolower($answer) != 'y') {
                 if(strtolower($answer) != 'n') {
                     echo "WRONG ANSWER - respond with 'y' or 'n'. Nothing was modified\n";
@@ -43,12 +45,9 @@ class init implements ICommand {
         }
         //
         $dir = dirname($path_sqlite);
-        if(!is_dir($dir)) {
-            mkdir($dir, 0777, true);
-            echo "Created directory $dir\n";
-        }
+        mkdir::execute($dir, 0777, true);
         //
-        $distribs = EmptyDistribs::initializeDistributions($studyConfig);
+        $distribs = EmptyDistribs::initializeDistributions($study);
         $json = json_encode($distribs);
         $sql = <<<SQL
 create table control(
@@ -63,4 +62,4 @@ SQL;
         return '';
     }
     
-}// end class    
+} // end class    

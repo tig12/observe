@@ -8,9 +8,10 @@
     @history    2026-03-11 17:49:38+01:00, Thierry Graff : Creation
 ********************************************************************************/
 
-namespace observe\commands\shared;
+namespace observe\commands;
 
-use observe\model\ICommand;
+use observe\app\ICommand;
+use observe\model\IStudy;
 use observe\model\Observe;
 use observe\model\Studies;
 use observe\model\distrib\Distribs;
@@ -23,9 +24,9 @@ use tiglib\filesystem\file_put_contents;
 class stats implements ICommand {
     
     /**
-        Called by Studies::runCommand()
+        Called by Commands::runCommand)
     **/
-    public static function execute(array &$studyConfig, array $params): string {
+    public static function execute(IStudy $study, array $params): string {
         //
         // Parameter check
         //

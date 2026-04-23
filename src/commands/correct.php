@@ -11,18 +11,19 @@
     @history    2026-04-13 16:50:54+01:00, Thierry Graff : Creation
 ********************************************************************************/
 
-namespace observe\commands\shared;
+namespace observe\commands;
 
-use observe\model\ICommand;
+use observe\app\ICommand;
+use observe\model\IStudy;
 use observe\model\distrib\CsvDistrib;
 use tiglib\filesystem\globRecursive;
 
 class correct implements ICommand {
     
     /**
-        Called by Studies::runCommand()
+        Called by Commands::runCommand)
     **/
-    public static function execute(array &$studyConfig, array $params): string {
+    public static function execute(IStudy $study, array $params): string {
 return "=== Code descatvated to avoir error === \n" . __FILE__ . "\n";
         //
         // Parameter check

@@ -8,10 +8,11 @@
     @history    2026-03-23 17:05:06+01:00, Thierry Graff : Creation
 ********************************************************************************/
 
-namespace observe\commands\shared;
+namespace observe\commands;
 
 use observe\model\Observe;
-use observe\model\ICommand;
+use observe\app\ICommand;
+use observe\model\IStudy;
 use observe\model\Studies;
 use observe\model\distrib\Distribs;
 use observe\model\distrib\EmptyDistribs;
@@ -21,12 +22,12 @@ use tiglib\time\seconds2HHMMSS;
 class expected implements ICommand {
     
     /** 
-        Called by Studies::runCommand()
+        Called by Commands::runCommand)
         
         WARNING: control groups are currently computed using the whole dataset.
         So the computation of expected distributions is meaningful only for the split "full".
     **/
-    public static function execute(array &$studyConfig, array $params): string {
+    public static function execute(IStudy $study, array $params): string {
         //
         // Parameter check
         //

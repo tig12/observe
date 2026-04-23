@@ -11,14 +11,9 @@ namespace observe\model;
 interface IStudy {
     
     /** 
-        @param  $studyFile  Associative array containing the contents of a yaml study file.
+        @param  $studySlug Unique identifier of a study (entry "slug" in the yaml files in config/).
     **/
-    public static function init(array &$studyConfig): void;
+    public function __construct(string $studySlug);
     
-    /**
-        Returns the names of the directories of each subgroup of a split.
-    **/
-    public static function getSplitSubgroups(string $split): array;
-        
 } // end class
 

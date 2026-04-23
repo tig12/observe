@@ -1,6 +1,7 @@
 <?php
 /******************************************************************************
     Auxiliary code to access the sqlite database containing pre-computed planet positions.
+    Used by studies with untimed dates.
     
     @license    GPL
     @history    2026-02-21 22:29:01+01:00, Thierry Graff : Creation
