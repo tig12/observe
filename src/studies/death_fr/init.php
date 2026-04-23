@@ -18,6 +18,7 @@ use tiglib\filesystem\mkdir;
 class init implements ICommand {
     
     /** 
+        Called by Commands::runCommand()
         @param $params empty array
         @return Empty string, echoes its output
     **/

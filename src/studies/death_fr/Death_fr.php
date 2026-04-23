@@ -9,10 +9,11 @@
 namespace observe\studies\death_fr;
 
 use observe\model\Study;
+use observe\model\IStudy;
 use observe\model\Studies;
 use observe\app\ObserveException;
 
-class Death_fr extends Study {
+class Death_fr extends Study implements IStudy {
     
     private static string $SQLITE_PERSON_PATH;
     

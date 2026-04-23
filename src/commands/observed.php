@@ -1,7 +1,7 @@
 <?php
 /******************************************************************************
     
-    Computes the observed distributions for a given split.
+    Computes the observed distributions of a study.
     
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
     @copyright  Thierry Graff
@@ -22,43 +22,32 @@ class observed implements ICommand {
         Called by Commands::runCommand)
     **/
     public static function execute(IStudy $study, array $params): string {
-die("\n<br>die here " . __FILE__ . ' - line ' . __LINE__ . "\n");
         //
         // Parameter check
         //
-        $usage = "Usage of this command: php run-observe <study> observed <split>\n"
-            . "<split> can be:\n  - " . implode("\n  - ", $studyConfig['splits']) . "\n";
-        if(count($params) != 1){
-            return "MISSING PARAMETER split.\n$usage";
-        }
-        $split = $params[0];
-        if(!in_array($split, $studyConfig['splits'])){
-            return "INVALID PARAMETER split: \"$split\".\n$usage";
+        if(count($params) != 0){
+            return "INVALID PARAMETER: \"{$params[0]}\". This command must be called without parameter\n";
         }
         //
         // Execute
         //
-        $baseOutdir = Studies::getSplitDirectory($studyConfig, $split);
-        $dirs = glob($baseOutdir . DS . '*');
-        foreach($dirs as $dir){
-            $filename = 'compress.bzip2://' . $dir . DS . 'data.csv.bz2';
-            echo "=== Processing $filename ===\n";
-            //
-            // function passed to computeDistributions()
-            //
-            $f = function() use ($filename) {
-                if (!$fileHandle = fopen($filename, 'r')) {
-                    return false;
-                }
-                while(false !== $line = fgets($fileHandle)){
-                    yield explode(Observe::CSV_SEP, trim($line));
-                }
-                fclose($fileHandle);
-            };
-            $distribs = Distribs::computeDistributions($f, $studyConfig);
-            $outDir = $dir . DS . 'observed';
-            Distribs::storeDistributions($outDir, $distribs, $studyConfig);
-        }
+        $filename = 'compress.bzip2://' . $study->getDatafile();
+        echo "=== Processing $filename ===\n";
+        //
+        // function passed to computeDistributions()
+        //
+        $f = function() use ($filename) {
+            if (!$fileHandle = fopen($filename, 'r')) {
+                return false;
+            }
+            while(false !== $line = fgets($fileHandle)){
+                yield explode(Observe::CSV_SEP, trim($line));
+            }
+            fclose($fileHandle);
+        };
+        $distribs = Distribs::computeDistributions($f, $study);
+        $outDir = $study->getWorkingDirectory() . DS . 'observed';
+        Distribs::storeDistributions($outDir, $distribs, $study);
         return '';
     }
     

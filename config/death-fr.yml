@@ -17,11 +17,6 @@ out-dir: output/studies/death-fr
 # list of planets involved in this study (IAA codes)
 planets: [SO, MO, ME, VE, MA, JU, SA, UR, NE, PL, NN]
 
-# Possible splits of this command
-splits:
-  - full
-  - age
-
 # Description of the dates contained in the split files
 # The order of this array must correspond to the order of the columns in the split files
 dates:
@@ -60,7 +55,7 @@ sqlite-death-fr: var/studies/death-fr/death-fr.sqlite3
 # Path relative to observe root directory, or absolute path
 sqlite-tmp: var/studies/death-fr/tmp.sqlite3
 
-# When building splits and controls, use a limit clause when reading the death-fr database.
+# When building import and controls, use a limit clause when reading the death-fr database.
 # This avoids to load the whole database in memory and consume too much RAM (13 Go for the whole db)
-split-limit: 1000
+import-limit: 1000
 control-limit: 1000

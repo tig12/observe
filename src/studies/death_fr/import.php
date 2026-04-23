@@ -21,86 +21,52 @@ use tiglib\filesystem\mkdir;
 class import implements ICommand {
     
     /** 
-        Called by Commands::runCommand)
+        Called by Commands::runCommand()
+        @param $params empty array
     **/
     public static function execute(IStudy $study, array $params): string {
         //
         // Parameter check
         //
-        $usage = "Usage of this command: php run-observe death-fr split <split>\n"
-            . "<split> can be:\n  - " . implode("\n  - ", $studyConfig['splits']) . "\n";
-        if(count($params) != 1){
-            return "MISSING PARAMETER split.\n$usage";
-        }
-        $split = $params[0];
-        if(!in_array($split, $studyConfig['splits'])){
-            return "INVALID PARAMETER split: \"$split\".\n$usage";
+        if(count($params) != 0){
+            return "INVALID PARAMETER: \"{$params[0]}\". This command must be called without parameter\n";
         }
         //
         // Prepare
         //
-        $split_limits = Death_fr::SPLITS[$split];
-        $keys = array_keys($split_limits);
-        $values = array_values($split_limits);
-        $nSubgroups = count($split_limits) - 1;
-        $nValues = array_fill(0, $nSubgroups, 0); // nb of values stored in each subgroup - useful only for command output
-        $froms = [];
-        $tos = [];
-        $filenames = [];
-        $bz2s = [];
         // sqlite database containing data coming from data.gouv.fr
         $sqlite_persons = Death_fr::getPersonSqlite();
         $stmt_many_persons = $sqlite_persons->prepare("select rowid,bday,dday from person order by rowid limit :limit offset :offset");
-        $LIMIT = $studyConfig['split-limit'];
-        $stmt = $sqlite_persons->query('select max(rowid) from person');
+        $LIMIT = $study->config['import-limit'];
+        $stmt = $sqlite_persons->query('select max(rowid) from person'); // = select count(*)
         $MAXROWID = $stmt->fetch(\PDO::FETCH_ASSOC)['max(rowid)']; // = select count(*) from person
         // $baseOutdir = directory of the split, containing the sub-directories of each subgroup
-        $baseOutdir = Studies::getSplitDirectory($studyConfig, $split);
+        $outdir = $study->getWorkingDirectory();
         //
         // Execute
         //
         $t1 = microtime(true);
-        // Note: obliged to open the bz2s of all splits because we don't know in which subgroup a line of the database will go.
-        // Possible to change the algo : treat each subgroup one by one, but would oblige to loop over the whole database for each subgroup.
-        $splitDirnames = Death_fr::getSplitSubgroups($split);
-        for($i=0; $i < $nSubgroups; $i++){
-            $froms[$i] = $keys[$i];
-            $tos[$i] = $keys[$i + 1];
-            // $subdirName = directory specific to one subgroup of the split.
-            $subdir = $baseOutdir . DS . $splitDirnames[$i];
-            mkdir::execute($subdir, 0755, true);
-            $filenames[$i] = $subdir . DS . 'data.csv.bz2';
-            $bz2s[$i] = bzopen($filenames[$i], 'w');
-        }
+        $outFilename = $study->getDatafile();
+        $bz2 = bzopen($outFilename, 'w');
         //
         // Main loop
         //
         $OFFSET = 0;
+        $nWritten = 0; // for output only
         while($OFFSET < $MAXROWID){
             echo ($OFFSET / 1000) . " k\n";
             $stmt_many_persons->execute([':offset' => $OFFSET, ':limit' => $LIMIT]);
             foreach($stmt_many_persons->fetchAll(\PDO::FETCH_ASSOC) as $person){
-                $diff = diff::compute(new \Datetime($person['bday']), new \Datetime($person['dday']), 'D', 2);
-                // find the split corresponding to $diff
-                for($i=0; $i < $nSubgroups; $i++){
-                    if($diff >= $froms[$i] && $diff < $tos[$i]){
-                        bzwrite($bz2s[$i], $person['bday'] . Observe::CSV_SEP . $person['dday'] . "\n");
-                        $nValues[$i]++;
-                        break;
-                    }
-                }
+                bzwrite($bz2, $person['bday'] . Observe::CSV_SEP . $person['dday'] . "\n");
+                $nWritten++;
             }
             $OFFSET += $LIMIT;
-        } // end while($OFFSET < $MAXROWID)
+        }
         //
         // Store result
         //
-        for($i=0; $i < $nSubgroups; $i++){
-            bzclose($bz2s[$i]);
-            echo "Generated {$nValues[$i]} lines in {$filenames[$i]}\n";
-        }
-        echo "Total generated lines: " . array_sum($nValues) . "\n";
-        
+        bzclose($bz2);
+        echo "Generated $nWritten lines in $outFilename\n";
         $t2 = microtime(true);
         $dt = round($t2 - $t1, 3);
         $dth = seconds2HHMMSS::compute($dt);

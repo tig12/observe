@@ -10,7 +10,11 @@
 namespace observe\app;
 
 use observe\model\Studies;
+use observe\model\IStudy;
 use tiglib\filesystem\globRecursive;
+
+use observe\studies\death_fr\Death_fr;
+
 
 class Commands {
     
@@ -20,8 +24,10 @@ class Commands {
         @return Error message if problem, empty message if ok.
     **/
     public static function runCommand(string $studySlug, string $command, $params=[]): string {
+        
         $fqcn = Studies::getStudyClasspath($studySlug);
         $study = new $fqcn($studySlug);
+        
         //
         if(in_array($command, [
                 'init',
@@ -36,9 +42,9 @@ class Commands {
             $namespace = 'observe\\commands';
         }
         $fqcn = $namespace . '\\' . $command;
-        @$fqcn::execute($study, $params);
         //
-        return '';
+        $msg = $fqcn::execute($study, $params);
+        return $msg;
     }
     
     /**
@@ -69,6 +75,7 @@ class Commands {
             }
             $res[] = basename($file, '.php');
         }
+        sort($res);
         return array_unique($res);
     }
     

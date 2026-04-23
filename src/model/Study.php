@@ -89,5 +89,65 @@ class Study implements IStudy {
         return $res;
     }
     
+    /**
+        Returns the working directory containing the observed distributions of a study.
+    **/
+    public function getDatafile(): string {
+        return $this->config['working-dir'] . DS . 'data.csv.bz2';
+    }
+    
+    /**
+        Returns the working directory containing the observed distributions of a study.
+    **/
+    public function getWorkingDirectory(): string {
+        return $this->config['working-dir'];
+    }
+    
+    /**
+        Returns the directory containing the observed distributions of a study.
+    **/
+    public function getObservedDirectory(): string {
+        return $this->config['working-dir'] . DS . 'observed';
+    }
+    
+    /**
+        Returns the directory containing the expected distributions of a study.
+    **/
+    public function getExpectedDirectory(): string {
+        return $this->config['working-dir'] . DS . 'expected';
+    }
+    
+    /**
+        Returns the directory containing all the controls of a study.
+    **/
+    public function getControlsDirectory(): string {
+        return $this->config['working-dir'] . DS . 'controls';
+    }
+    
+    /**
+        Returns an array containing the dates of a study, different from $dateName.
+        @param      $dateName String like 'birth', 'death', 'mother' etc.
+    **/
+///////////// NOT USED YET /////////////////
+    public function otherDates1(string $dateName): array {
+        $res = [];
+        foreach($this->config['dates'] as $date){
+            if($date != $dateName){
+                $res[] = $date;
+            }
+        }
+        return $res;
+    }
+    
+    /**
+        Returns an array containing the possible combinations of 2 dates of a study, different from $dateName.
+        @param  $dateName String like 'mother-father'
+        @return     Ex: ['child-father', 'child-mother', 'child-wedding', 'mother-wedding', 'father-wedding']
+    **/
+///////////// NOT USED YET /////////////////
+    public function otherDates2(string $dateName) {
+        // TODO Implement
+        return [];
+    }
+    
 } // end class
-
