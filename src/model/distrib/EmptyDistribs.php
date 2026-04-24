@@ -12,7 +12,7 @@
 ********************************************************************************/
 namespace observe\model\distrib;
 
-use observe\model\Study;
+use observe\model\IStudy;
 use tiglib\time\daysOfYear;
 
 class EmptyDistribs {
@@ -25,7 +25,7 @@ class EmptyDistribs {
         Initializes the distributions of a study.
         The knowledge of $studyConfig['date'] permits to deduce the distributions of type distrib1 and distrib2 to initialize.
     **/
-    public static function initializeDistributions(Study $study): array {
+    public static function initializeDistributions(IStudy $study): array {
         $res = [];
         $nDates = count($study->config['dates']);
         // distributions of type distrib1
@@ -47,7 +47,7 @@ class EmptyDistribs {
     /** 
         Prepares an array containing empty distributions of type 1 (single date).
     **/
-    public static function emptyDistrib1(Study $study): array {
+    public static function emptyDistrib1(IStudy $study): array {
         return [
             'planets'=> self::emptySingleDistrib($study->config['planets']),
             'aspects' => self::emptyDoubleDistrib_triangle($study->config['planets'], $study->config['planets']),
@@ -59,7 +59,7 @@ class EmptyDistribs {
     /** 
         Prepares an array containing empty distributions of type 2 (relations between two dates).
     **/
-    public static function emptyDistrib2(Study $study): array {
+    public static function emptyDistrib2(IStudy $study): array {
         return [
             'interaspects' => self::emptyDoubleDistrib_square($study->config['planets'], $study->config['planets']),
             'age' => [],
@@ -70,6 +70,7 @@ class EmptyDistribs {
     // ***********************************************************************************
     // 2 - Generic functions    
     // ***********************************************************************************
+    
     
     /**
         @param  $codes  Array containing keys

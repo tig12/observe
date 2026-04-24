@@ -9,6 +9,8 @@
 ********************************************************************************/
 namespace observe\model\distrib;
 
+use observe\model\IStudy;
+
 class AddDistribs {
     
     /**
