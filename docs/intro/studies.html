@@ -35,13 +35,13 @@ Studies
         table#list-commands td:nth-child(2){padding-left:3rem;}
     </style>
     <table id="list-commands">
-        <tr><td class="orange">init</td><td></td></tr>
-        <tr><td class="orange">split</td><td>Build the sub-groups</td></tr>
-        <tr><td class="green">observed</td><td>Compute the distributions for each split</td></tr>
-        <tr><td class="orange">control</td><td>Build the control groups</td></tr>
-        <tr><td class="green">expected</td><td>Build the expected distributions from control groups</td></tr>
-        <tr><td class="green">stats</td><td>Compute statistical informations about the distributions</td></tr>
-        <tr><td class="green">output</td><td>Generate a presentation of the results</td></tr>
+        <tr><td class="orange">init</td><td>Performs specific inititializations needed by some studies</td></tr>
+        <tr><td class="orange">import</td><td>Converts the original dataset to a common format</td></tr>
+        <tr><td class="green">observed</td><td>Computes the distributions for each split</td></tr>
+        <tr><td class="orange">control</td><td>Builds the control groups</td></tr>
+        <tr><td class="green">expected</td><td>Builds the expected distributions from control groups</td></tr>
+        <tr><td class="green">stats</td><td>Computes statistical informations about the distributions</td></tr>
+        <tr><td class="green">output</td><td>Generates a presentation of the results</td></tr>
     </table>
    (<span class="orange">orange</span> : computations specific to each study - <span class="green">green</span> : computations common to all studies)
     <br>These computations are done issuing <b>commands</b> with the CLI <code>run-observe.php</code> (CLI = Command Line Inerface, a tool used in a console).
@@ -52,8 +52,25 @@ Studies
 
 <article>
 
+<nav class="pagetoc" aria-label="Table of contents">
+    <ul>
+        <li>
+            <a href="#1-splits">Splits</a>
+        </li>
+        <li>
+            <a href="#2-the-working-directory">The working directory</a>
+        </li>
+        <li>
+            <a href="#3-study-file">Study file</a>
+        </li>
+        <li>
+            <a href="#4-command-files">Command files</a>
+        </li>
+    </ul>
+</nav>
+
 <!-- ********************************************************************************* -->
-<h2>Splits</h2>
+<h2 id="1-splits">Splits</h2>
 We often need to divide the original dataset in different subgroups to see if they show different distributions.
 <br>For example, how do the distributions of babies who died a few days after their birth compare with the distributions of general population ?
 <br>In this program, this is handled by the notion of <b>split</b>.
@@ -61,7 +78,7 @@ We often need to divide the original dataset in different subgroups to see if th
 <br>In general, a study has a split with only one subgroup containing the whole dataset.
 
 <!-- ********************************************************************************* -->
-<h2>The working directory</h2>
+<h2 id="2-the-working-directory">The working directory</h2>
 <!-- 
 Finally, the working directory of a study contains the r
 -->
@@ -117,7 +134,7 @@ working-dir
 </pre>
 
 <!-- ********************************************************************************* -->
-<h2>Study file</h2>
+<h2 id="3-study-file">Study file</h2>
 
 
 
@@ -134,7 +151,7 @@ A study is always related to a data set, but a data set can be used for several 
     <li>Generate outputs to present the results of the study</li>
 </ol>
 
-<h2>Command files</h2>
+<h2 id="4-command-files">Command files</h2>
 Program usage is based on <b>command files</b>
 <br>They are created by users ; they are used to describe what the program should do.
 <br>They are located in directory <code>commands/</code>.
@@ -158,7 +175,8 @@ Program usage is based on <b>command files</b>
         <ul>
             <li><a href="../intro/distrib-single-date.html">Single date distributions</a></li>
             <li><a href="../intro/distrib-several-dates.html">Several dates distributions</a></li>
-            <li><a href="../intro/control-groups.html">Control groups</a></li>
+            <li><a href="../intro/distributions.html">Distributions</a></li>
+            <li><a href="../intro/expected.html">Expected distributions</a></li>
             <li><a href="../intro/statistical-tests.html">Statistical tests</a></li>
             <li><a href="../intro/studies.html">Studies</a></li>
         </ul>

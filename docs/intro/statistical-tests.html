@@ -30,8 +30,30 @@ Note: this page needs to be checked - I just try to explain to myself these stat
 
 <article>
 
+<nav class="pagetoc" aria-label="Table of contents">
+    <ul>
+        <li>
+            <a href="#1-chi-square-test">Chi square test</a>
+        </li>
+        <li>
+            <a href="#2-p-value">p-value</a>
+            <ul>
+                <li>
+                    <a href="#2-1-degree-of-freedom">Degree of freedom</a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="#3-size-effect">Size effect</a>
+        </li>
+        <li>
+            <a href="#4-variance">Variance</a>
+        </li>
+    </ul>
+</nav>
+
 <!-- ********************************************************************************* -->
-<h2>Chi square test</h2>
+<h2 id="1-chi-square-test">Chi square test</h2>
 Chi square, or chi 2, or &chi;<sup>2</sup>, permits to compare two distributions.
 <br>In practice, we have an <b>observed distribution</b>, coming from real life, and an <b>expected distribution</b>, supposed to represent what we should observe in the hypothesis of "hazard".
 <br>The chi square test here is used to determine whether there is a statistically significant difference between the expected and observed distributions.
@@ -74,7 +96,7 @@ For example:
 
 
 <!-- ********************************************************************************* -->
-<h2>p-value</h2>
+<h2 id="2-p-value">p-value</h2>
 Once the chi square is computed, it is possible to compute the associated probability, often called "p-value".
 <br>The p-value is a probability (then between 0 and 1): the probability that observed and expected distributions are independant.
 <br>For example, a p-value of 0.03 permits to say "There are 97 % of chances that observed and expected distributions are not independant".
@@ -89,7 +111,7 @@ Once the chi square is computed, it is possible to compute the associated probab
 
 
 <!-- ************************************* -->
-<h3>Degree of freedom</h3>
+<h3 id="2-1-degree-of-freedom">Degree of freedom</h3>
 The computation of p-value needs the "degree of freedom" (often noted <code>df</code>).
 <br>The expected and observed distributions are bound by the fact that their sum must be equal.
 <br>In the chi square example, <code>15 + 18 + 12 = 17 + 18 + 10 = 45</code>
@@ -103,10 +125,10 @@ The computation of p-value needs the "degree of freedom" (often noted <code>df</
 <br><br>The details of the p-value computation is too complicated to be explained here.
 
 <!-- ********************************************************************************* -->
-<h2>Size effect</h2>
+<h2 id="3-size-effect">Size effect</h2>
 
 <!-- ********************************************************************************* -->
-<h2>Variance</h2>
+<h2 id="4-variance">Variance</h2>
 
 
 <!-- 
@@ -131,7 +153,8 @@ Standard deviation
         <ul>
             <li><a href="../intro/distrib-single-date.html">Single date distributions</a></li>
             <li><a href="../intro/distrib-several-dates.html">Several dates distributions</a></li>
-            <li><a href="../intro/control-groups.html">Control groups</a></li>
+            <li><a href="../intro/distributions.html">Distributions</a></li>
+            <li><a href="../intro/expected.html">Expected distributions</a></li>
             <li><a href="../intro/statistical-tests.html">Statistical tests</a></li>
             <li><a href="../intro/studies.html">Studies</a></li>
         </ul>

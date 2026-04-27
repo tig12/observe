@@ -12,8 +12,8 @@ namespace observe\commands;
 
 use observe\app\ICommand;
 use observe\model\IStudy;
-use observe\commands\shared\output\output_page;
-use observe\commands\shared\output\output_img;
+use observe\commands\output\output_page;
+use observe\commands\output\output_img;
 
 class output implements ICommand {
     
@@ -49,10 +49,10 @@ class output implements ICommand {
         // Execution
         //
         if($params[0] == 'page'){
-            $msg = output_page::execute($studyConfig, $params);
+            $msg = output_page::execute($study, $params);
         }
         else{
-            $msg = output_img::execute($studyConfig, $params);
+            $msg = output_img::execute($study, $params);
         }
         return ($msg != '' ? "$msg\n$usage" : '');
     }

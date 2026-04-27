@@ -47,12 +47,15 @@ class distrib {
     //
     
     /**
-        Ecart type - Standard deviation.
+        Standard deviation - Ecart type.
         @param  $data Regular or associative array. Values are used to compute the mean.
     **/
     public static function sigma(array &$data): float {
         $mean = self::mean($data);
         $n = count($data);
+        if($n == 1){
+            return 0;
+        }
         $values = array_values($data);
         $res = 0;
         for($i=0; $i < $n; $i++){

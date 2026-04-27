@@ -33,11 +33,27 @@ Deaths in France 1970 - 2025
 
 <article>
 
+<nav class="pagetoc" aria-label="Table of contents">
+    <ul>
+        <li>
+            <a href="#1-the-raw-data">The raw data</a>
+            <ul>
+                <li>
+                    <a href="#1-1-raw-files">Raw files</a>
+                </li>
+                <li>
+                    <a href="#1-2-death-fr-sqlite3">death-fr.sqlite3</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</nav>
+
 <!-- ********************************************************************************* -->
-<h2>The raw data</h2>
+<h2 id="1-the-raw-data">The raw data</h2>
 
 <!-- ************************************* -->
-<h3>Raw files</h3>
+<h3 id="1-1-raw-files">Raw files</h3>
 From <a href="https://www.data.gouv.fr/datasets/fichier-des-personnes-decedees">data.gouv.fr</a>, we download one file per year:
 <pre>
 data.gouv.fr
@@ -65,7 +81,7 @@ CROZET*MARIE CECILE/                                                            
 </pre>
 
 <!-- ************************************* -->
-<h3>death-fr.sqlite3</h3>
+<h3 id="1-2-death-fr-sqlite3">death-fr.sqlite3</h3>
 
 These text files are first loaded in a sqlite database, <code>death-fr.sqlite3</code>.
 <br>It contains one table, <code>person</code> with this structure:
@@ -123,7 +139,8 @@ This shows that the files of data.gouv.fr (1970 - 2025) contain 28 917 511 dates
         <ul>
             <li><a href="../intro/distrib-single-date.html">Single date distributions</a></li>
             <li><a href="../intro/distrib-several-dates.html">Several dates distributions</a></li>
-            <li><a href="../intro/control-groups.html">Control groups</a></li>
+            <li><a href="../intro/distributions.html">Distributions</a></li>
+            <li><a href="../intro/expected.html">Expected distributions</a></li>
             <li><a href="../intro/statistical-tests.html">Statistical tests</a></li>
             <li><a href="../intro/studies.html">Studies</a></li>
         </ul>

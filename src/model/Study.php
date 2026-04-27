@@ -125,6 +125,13 @@ class Study implements IStudy {
     }
     
     /**
+        Returns the list of subdirectories of controls/ = the list of directories containing individual controls.
+    **/
+    public function getControlSubdirectories(): array {
+        return glob($this->getControlsDirectory() . DS . 'control-*');
+    }
+    
+    /**
         Returns an array containing the dates of a study, different from $dateName.
         @param      $dateName String like 'birth', 'death', 'mother' etc.
     **/

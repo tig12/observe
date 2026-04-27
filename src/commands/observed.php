@@ -46,8 +46,9 @@ class observed implements ICommand {
             fclose($fileHandle);
         };
         $distribs = Distribs::computeDistributions($f, $study);
-        $outDir = $study->getWorkingDirectory() . DS . 'observed';
+        $outDir = $study->getObservedDirectory();
         Distribs::storeDistributions($outDir, $distribs, $study);
+        echo "Generated observed distributions in $outDir\n";
         return '';
     }
     

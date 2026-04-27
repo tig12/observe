@@ -1,7 +1,7 @@
 <?php
 /******************************************************************************
     
-    Computes the expected distributions of a given split from control groups.
+    Computes the expected distributions of a study from control groups.
     
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
     @copyright  Thierry Graff
@@ -23,22 +23,13 @@ class expected implements ICommand {
     
     /** 
         Called by Commands::runCommand)
-        
-        WARNING: control groups are currently computed using the whole dataset.
-        So the computation of expected distributions is meaningful only for the split "full".
     **/
     public static function execute(IStudy $study, array $params): string {
         //
         // Parameter check
         //
-        $usage = "Usage of this command: php run-observe <study> expected <split>\n"
-            . "<split> can be:\n  - " . implode("\n  - ", $studyConfig['splits']) . "\n";
-        if(count($params) != 1){
-            return "MISSING PARAMETER split.\n$usage";
-        }
-        $split = $params[0];
-        if(!in_array($split, $studyConfig['splits'])){
-            return "INVALID PARAMETER split: \"$split\".\n$usage";
+        if(count($params) != 0){
+            return "INVALID PARAMETER: \"{$params[0]}\". This command must be called without parameter\n";
         }
 
         $t1 = microtime(true);
@@ -46,73 +37,69 @@ class expected implements ICommand {
         //
         // Load control distribs
         //
-        $baseControlsDir = Studies::getControlsDirectory($studyConfig);
-        $controlDirs = glob($baseControlsDir . DS . 'control-*');
+        $controlDirs = $study->getControlSubdirectories();
         $nControls = count($controlDirs);
-        $allControlDistribs = EmptyDistribs::initializeDistributions($studyConfig);
+        $allControlDistribs = EmptyDistribs::initializeDistributions($study);
         
         foreach($controlDirs as $controlDir){
-            $controlDistrib = Distribs::loadDistributions($controlDir, $studyConfig);
-            $allControlDistribs = AddDistribs::add($allControlDistribs, $controlDistrib, $studyConfig);
+            $controlDistrib = Distribs::loadDistributions($controlDir, $study);
+            $allControlDistribs = AddDistribs::add($allControlDistribs, $controlDistrib, $study);
         }
         //
         // Compute expected distribs
         //
-        $nDates = count($studyConfig['dates']);
-        $precision = $studyConfig['expected-precision'];
-        $subgroupDirs = Studies::getStudyClasspath($studyConfig['slug'])::getSplitSubgroups($split);
+        $nDates = count($study->config['dates']);
+        $precision = $study->config['expected-precision'];
         
-        foreach($subgroupDirs as $subgroupDir){
-            $expectedDistribs = EmptyDistribs::initializeDistributions($studyConfig);
-            
-            // distributions of type distrib1
-            for($i=0; $i < $nDates; $i++){
-                $dateName = $studyConfig['dates'][$i]; // ex: birth
-                // aspects and planets
-                foreach(['aspects', 'planets'] as $distribType){
-                    foreach($allControlDistribs[$dateName][$distribType] as $distribName => $controlDistribValues){ // ex: $distribName = 'SO-MO'
-                        foreach($controlDistribValues as $k => $v){
-                            $expectedDistribs[$dateName][$distribType][$distribName][$k] = round($v / $nControls, $precision);
-                        }
+        $expectedDistribs = EmptyDistribs::initializeDistributions($study);
+        
+        // distributions of type distrib1
+        for($i=0; $i < $nDates; $i++){
+            $dateName = $study->config['dates'][$i]; // ex: birth
+            // aspects and planets
+            foreach(['aspects', 'planets'] as $distribType){
+                foreach($allControlDistribs[$dateName][$distribType] as $distribName => $controlDistribValues){ // ex: $distribName = 'SO-MO'
+                    foreach($controlDistribValues as $k => $v){
+                        $expectedDistribs[$dateName][$distribType][$distribName][$k] = round($v / $nControls, $precision);
                     }
-                }
-                // day
-                foreach($allControlDistribs[$dateName]['day'] as $k => $v){ // ex: $k = '01-01'
-                    $expectedDistribs[$dateName]['day'][$k] = round($v / $nControls, $precision);
-                }
-                // year
-                foreach($allControlDistribs[$dateName]['year'] as $k => $v){ // ex: $k = '1935'
-                    $expectedDistribs[$dateName]['year'][$k] = round($v / $nControls, $precision);
                 }
             }
-            
-            // distributions of type distrib2
-            for($i=0; $i < $nDates; $i++){
-                for($j=$i+1; $j < $nDates; $j++){
-                    $dateName = $studyConfig['dates'][$i] . '-' . $studyConfig['dates'][$j]; // ex: birth-death
-                    // interaspects
-                    foreach($allControlDistribs[$dateName]['interaspects'] as $distribName => $controlDistribValues){ // ex: $distribName = 'SO-SO'
-                        foreach($controlDistribValues as $k => $v){ // $k: 0 ... 359
-                            $expectedDistribs[$dateName]['interaspects'][$distribName][$k] = round($v / $nControls, $precision);
-                        }
-                    }
-                    // age
-                    foreach($allControlDistribs[$dateName]['age'] as $k => $v){ // $k: age in months, see $studyConfig['distrib-age-unit']
-                        $expectedDistribs[$dateName]['age'][$k] = round($v / $nControls, $precision);
-                    }
-                } // end loop on $j
-            } // end loop on $i
-            //
-            // Store results
-            //
-            $outDir = Studies::getExpectedDirectory($studyConfig, $split, $subgroupDir);
-            Distribs::storeDistributions($outDir, $expectedDistribs, $studyConfig);
+            // day
+            foreach($allControlDistribs[$dateName]['day'] as $k => $v){ // ex: $k = '01-01'
+                $expectedDistribs[$dateName]['day'][$k] = round($v / $nControls, $precision);
+            }
+            // year
+            foreach($allControlDistribs[$dateName]['year'] as $k => $v){ // ex: $k = '1935'
+                $expectedDistribs[$dateName]['year'][$k] = round($v / $nControls, $precision);
+            }
+        }
         
-        } // end foreach($subgroupDirs)
+        // distributions of type distrib2
+        for($i=0; $i < $nDates; $i++){
+            for($j=$i+1; $j < $nDates; $j++){
+                $dateName = $study->config['dates'][$i] . '-' . $study->config['dates'][$j]; // ex: birth-death
+                // interaspects
+                foreach($allControlDistribs[$dateName]['interaspects'] as $distribName => $controlDistribValues){ // ex: $distribName = 'SO-SO'
+                    foreach($controlDistribValues as $k => $v){ // $k: 0 ... 359
+                        $expectedDistribs[$dateName]['interaspects'][$distribName][$k] = round($v / $nControls, $precision);
+                    }
+                }
+                // age
+                foreach($allControlDistribs[$dateName]['age'] as $k => $v){ // $k: age in months or years, see $study->config['distrib-age-unit']
+                    $expectedDistribs[$dateName]['age'][$k] = round($v / $nControls, $precision);
+                }
+            } // end loop on $j
+        } // end loop on $i
+        //
+        // Store results
+        //
+        $outDir = $study->getExpectedDirectory();
+        Distribs::storeDistributions($outDir, $expectedDistribs, $study);
         
         $t2 = microtime(true);
         $dt = round($t2 - $t1, 3);
         $dth = seconds2HHMMSS::compute($dt);
+        echo "Stored expected distributions in $outDir\n";
         echo "Execution time $dt s - $dth\n";
         return '';
     }

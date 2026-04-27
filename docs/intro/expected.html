@@ -2,7 +2,7 @@
 <html lang="fr" lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Control groups | Observe</title>
+    <title>Expected distributions | Observe</title>
     <link rel="icon" type="image/jpg" href="../static/img/favicon.jpg">
     <link href="../static/css/observe.css" rel="stylesheet" type="text/css">
     <meta name="description" content="">
@@ -20,12 +20,12 @@
 
 <header id="topage">
 <h1>
-Control groups
+Expected distributions
 </h1>
 
 <div class="intro">
 The distributions computed from the original data set are called the <b>observed distributions</b>.
-<br>The next step is to build the <b>expected distributions</b>.
+<br>The next step is to build the <b>expected distributions</b>, which is what we should observe in "theory".
 <br>The comparison between observed and expected distribution will permit to see if the observed distributions show anomalies.
 <br>In this program, the expected distributions are built with <b>control groups</b>.
 </div>
@@ -36,19 +36,21 @@ The distributions computed from the original data set are called the <b>observed
 <nav class="pagetoc" aria-label="Table of contents">
     <ul>
         <li>
-            <a href="#1-definition">Definition</a>
+            <a href="#1-control-groups">Control groups</a>
+            <ul>
+                <li>
+                    <a href="#1-1-warning">Warning</a>
+                </li>
+            </ul>
         </li>
         <li>
-            <a href="#2-expected-distributions">Expected distributions</a>
-        </li>
-        <li>
-            <a href="#3-file-hierarchy">File hierarchy</a>
+            <a href="#2-file-hierarchy">File hierarchy</a>
         </li>
     </ul>
 </nav>
 
 <!-- ********************************************************************************* -->
-<h2 id="1-definition">Definition</h2>
+<h2 id="1-control-groups">Control groups</h2>
 A control group is a fictional group built by shuffling the data of the observed group.
 <br>For example, for a group of 500 persons with birth and death dates (B and D):
 
@@ -61,6 +63,10 @@ We build a fictional person of the control group:
     <li>build a record with the birth date of the first record and the death date of the second record.</li>
 </ul>
 
+Several fictional groups are built (typically betweeen 100 and 1000) and the average value is computed to obtain the expected distribution.
+
+<!-- ************************************* -->
+<h3 id="1-1-warning">Warning</h3>
 Here, precautions are needed: for example, the birth date of the newly created record must be anterior to its death date.
 
 <br>And there are many ways to build the control groups: we can use complete random or decide to keep properties of the original group.
@@ -70,23 +76,20 @@ Here, precautions are needed: for example, the birth date of the newly created r
     <li>Should it respect the age at death distribution ?</li>
 </ul>
 Answering these questions affect the way the control groups are computed.
+
 <div class="question">
     Can it affect the results of the satistical tests ?
     <br>More rigorous statistical knowledge is needed to build correct control groups and avoid unintentional bias due to arbitrary choices.
 </div>
 
+<div class="question">
+    Another information is missing: how many control groups must be computed ?
+</div>
+
+
 
 <!-- ********************************************************************************* -->
-<h2 id="2-expected-distributions">Expected distributions</h2>
-To build the expected distributions,
-<ul class="simple margin-top0">
-    <li>several control groups are computed ;</li>
-    <li>for each distribution, an <b>average distribution</b> is computed ;</li>
-    <li>these average distributions are called the expected distributions.</li>
-</ul>
-
-<!-- ********************************************************************************* -->
-<h2 id="3-file-hierarchy">File hierarchy</h2>
+<h2 id="2-file-hierarchy">File hierarchy</h2>
 For each control, the full hierarchy of the observed distributions is reproduced.
 
 <br>In the example of a group containing birth and death dates:
@@ -166,7 +169,8 @@ expected
         <ul>
             <li><a href="../intro/distrib-single-date.html">Single date distributions</a></li>
             <li><a href="../intro/distrib-several-dates.html">Several dates distributions</a></li>
-            <li><a href="../intro/control-groups.html">Control groups</a></li>
+            <li><a href="../intro/distributions.html">Distributions</a></li>
+            <li><a href="../intro/expected.html">Expected distributions</a></li>
             <li><a href="../intro/statistical-tests.html">Statistical tests</a></li>
             <li><a href="../intro/studies.html">Studies</a></li>
         </ul>

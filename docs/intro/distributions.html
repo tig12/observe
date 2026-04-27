@@ -19,14 +19,10 @@
 <div class="main">
 
 <header id="topage">
-<h1>
-Distributions
-</h1>
+<h1>Distributions</h1>
 
 <div class="intro">
-The 
-
-</div>
+Distributions handled by this program generate two kinds of arrays: one dimension array and two dimensions array (a table).</div>
 </header>
 
 <article>
@@ -34,93 +30,132 @@ The
 <nav class="pagetoc" aria-label="Table of contents">
     <ul>
         <li>
-            <a href="#1-distribution-by-year">Distribution by year</a>
+            <a href="#1-one-dimensional-arrays-1dim">One-dimensional arrays - 1dim</a>
+            <ul>
+                <li>
+                    <a href="#1-1-distributions-by-year">Distributions by year</a>
+                </li>
+                <li>
+                    <a href="#1-2-distributions-by-day">Distributions by day</a>
+                </li>
+                <li>
+                    <a href="#1-3-planetary-positions">Planetary positions</a>
+                </li>
+                <li>
+                    <a href="#1-4-aspects">Aspects</a>
+                </li>
+            </ul>
         </li>
         <li>
-            <a href="#2-distribution-by-day">Distribution by day</a>
+            <a href="#2-two-dimensional-arrays-2dim">Two-dimensional arrays - 2dim</a>
+            <ul>
+                <li>
+                    <a href="#2-1-example">Example</a>
+                </li>
+            </ul>
         </li>
         <li>
-            <a href="#3-planetary-positions">Planetary positions</a>
+            <a href="#3-two-views-for-the-same-distribution">Two views for the same distribution</a>
         </li>
         <li>
-            <a href="#4-planetary-aspects">Planetary aspects</a>
-        </li>
-        <li>
-            <a href="#5-file-hierarchy">File hierarchy</a>
+            <a href="#4-file-hierarchy">File hierarchy</a>
         </li>
     </ul>
 </nav>
 
 <!-- ********************************************************************************* -->
-<h2 id="1-distribution-by-year">Distribution by year</h2>
-<img height="250px" class="margin" src="img/year.svg" alt="Distribution: Mother, year of birth">
-Here, birth dates are grouped by year.
-<br>It represents the number of persons born each year.
+<h2 id="1-one-dimensional-arrays-1dim">One-dimensional arrays - 1dim</h2>
+
+These are simple arrays which permit to store ordered sets of values.
+<br>These arrays can be simple <b>regular arrays</b>, where the keys to access to values are integers starting with 0, or <b>associative arrays</b>(also called maps or hash tables), where the keys can be strings.
+<br> This kind of array is abbreviated <b>1dim</b>
+
+<br><br>Here are the distributions stored in 1dim arrays:
+
+<!-- ************************************* -->
+<h3 id="1-1-distributions-by-year">Distributions by year</h3>
+<pre>
++------------+-------------+------------+-------------+
+|    1891    |     1892    |     ...    |     2025    |
++------------+-------------+------------+-------------+
+|   177283   |   187633    |     ...    |    20302    |
++------------+-------------+------------+-------------+
+</pre>
+Means that there are 177283 dates in 1891 etc.
+
+<!-- ************************************* -->
+<h3 id="1-2-distributions-by-day">Distributions by day</h3>
+<pre>
++------------+-------------+------------+-------------+
+|    01-01   |    01-02    |     ...    |     12-31   |
++------------+-------------+------------+-------------+
+|   183547   |   187633    |     ...    |   182667    |
++------------+-------------+------------+-------------+
+</pre>
+
+<!-- ************************************* -->
+<h3 id="1-3-planetary-positions">Planetary positions</h3>
+We have one such distribution per planet:
+<pre>
++------------+-------------+------------+-------------+
+|      0     |      1      |     ...    |     359     |
++------------+-------------+------------+-------------+
+|   145265   |   143657    |     ...    |   148775    |
++------------+-------------+------------+-------------+
+</pre>
+Means that there are 145265 dates with the longitude of the planet between 0 and 1° etc.
+
+<!-- ************************************* -->
+<h3 id="1-4-aspects">Aspects</h3>
+We have one such distribution per couple of planets:
+<pre>
++------------+-------------+------------+-------------+
+|      0     |      1      |     ...    |     359     |
++------------+-------------+------------+-------------+
+|   159843   |   155412    |     ...    |   149553    |
++------------+-------------+------------+-------------+
+</pre>
+Means that there are 159843 dates with the longitude of the planet between 0 and 1° etc.
 
 <!-- ********************************************************************************* -->
-<h2 id="2-distribution-by-day">Distribution by day</h2>
-<img height="250px" class="margin" src="img/day.svg" alt="Distribution: Child, day of birth">
-The dates are grouped in 366 bins of 1 day.
-<br>Here we can see that there are less births during the week-ends.
+<h2 id="2-two-dimensional-arrays-2dim">Two-dimensional arrays - 2dim</h2>
+These are arrays which permit to store a table or a two-dimensional array.
+
+<pre>
+      +------------+-------------+------------+-------------+
+      |      0     |      1      |     ...    |     359     |
++-----+------------+-------------+------------+-------------+
+|  0  |   159843   |   155412    |     ...    |   149553    |
++-----+------------+-------------+------------+-------------+
+| ... |    ...     |     ...     |     ...    |   149553    |
++-----+------------+-------------+------------+-------------+
+| 359 |     ...    |     ...     |     ...    |   149553    |
++-----+------------+-------------+------------+-------------+
+</pre>
+
+<br>These arrays could be associative arrays, but currently the program only handles regular arrays (indexed 0, 1, ...). 
+
+<br>This kind of array is abbreviated <b>2dim</b>.
+
+<!-- ************************************* -->
+<h3 id="2-1-example">Example</h3>
 
 <!-- ********************************************************************************* -->
-<h2 id="3-planetary-positions">Planetary positions</h2>
+<h2 id="3-two-views-for-the-same-distribution">Two views for the same distribution</h2>
+1dim and 2dim arrays can be used to represent a distribution.
 
-For each planet, we represent the distributions of their positions (ecliptic longitudes).
-<br>Data are grouped in 360 bins of 1 degree.
+<br><br>If you look at the "death in France" study and the <a href="https://observe.tig12.net/output/studies/death-fr/birth-death.html#relations-planets-MA-MA">distribution comparing the position of mars at birth and mars at death</a>:
+<img class="margin" src="https://observe.tig12.net/output/studies/death-fr/img/birth-death/interaspects/MA-MA.svg" alt="Interaspects between mars (birth) and mars (death)">
+<img class="margin" src="https://observe.tig12.net/output/studies/death-fr/img/birth-death/castille/MA-MA.png" alt="Position of mars (birth) and mars (death)">
 
-<img height="250px" class="margin" src="img/SA.svg" alt="Distribution: Child, day of birth">
+These two images represent the same data. The first image uses a 1dim array, and the second a 2dim array.
+<br>The first image is less precise: it only shows the distribution of the <b>angles</b> between the two planets, but it doesn't show where these angles come from.
+<br>The second image shows the distribution of the <b>positions</b> of the two planets.
 
-It sometimes shows strange distributions, expressing astronomical or demographical condiderations.
-
-<br>This gives one distribution per planet.
 
 <!-- ********************************************************************************* -->
-<h2 id="4-planetary-aspects">Planetary aspects</h2>
+<h2 id="4-file-hierarchy">File hierarchy</h2>
 
-For a given date, we compute the planetary positions, and we consider the <b>angles</b> between 2 planets. These angles are called <b>aspects</b>.
-<br>They also vary from 0 to 360 degrees.
-
-<img height="250px" class="margin" src="img/SO-UR.svg" alt="Distribution: Aspect sun-uranus">
-
-<!-- ********************************************************************************* -->
-<h2 id="5-file-hierarchy">File hierarchy</h2>
-In this program, distributions are stored in CSV files.
-<br>Such CSV file has 2 columns:
-<ul class="margin-top0 single">
-    <li>First column designates a bin.</li>
-    <li>Second column designates the number of occurences found in this bin.</li>
-</ul>
-For example, a distribution representing the position of a planet:
-
-<br><div class="float-left">
-<table class="wikitable center margin">
-    <tr>
-        <td>0</td>
-        <td>1543</td>
-    </tr>
-    <tr>
-        <td>1</td>
-        <td>1548</td>
-    </tr>
-    <tr>
-        <td colspan="2">...</td>
-    </tr>
-    <tr>
-        <td>359</td>
-        <td>1571</td>
-    </tr>
-</table>
-</div>
-<div class="float-left margin">
-    1543 records have a planet with longitude between 0° and 1°,
-    <br>1548 records have a planet with longitude between 1° and 2°
-    <br>etc.
-</div>
-<br class="clear-left">
-
-
-Finally, for each date processed by the program, the following hierarchy of files is generated:
 <pre>
 distributions
     ├── aspects
@@ -137,7 +172,8 @@ distributions
 
 This set of distributions is called <b>distrib1</b>.
 
-<div class="prevnext">Next: <a href="distrib-several-dates.html">Several dates distributions</a></div>
+
+<div class="prevnext">Next: <a href="expected.html">Expected distributions</a></div>
 
 </article>
 </div><!-- end class="main" -->
@@ -152,7 +188,8 @@ This set of distributions is called <b>distrib1</b>.
         <ul>
             <li><a href="../intro/distrib-single-date.html">Single date distributions</a></li>
             <li><a href="../intro/distrib-several-dates.html">Several dates distributions</a></li>
-            <li><a href="../intro/control-groups.html">Control groups</a></li>
+            <li><a href="../intro/distributions.html">Distributions</a></li>
+            <li><a href="../intro/expected.html">Expected distributions</a></li>
             <li><a href="../intro/statistical-tests.html">Statistical tests</a></li>
             <li><a href="../intro/studies.html">Studies</a></li>
         </ul>

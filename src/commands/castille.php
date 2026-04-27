@@ -4,7 +4,7 @@
     Builds Castille distributions, as described in
     http://cura.free.fr/xx/18cas3en.html (English) and http://cura.free.fr/xx/18cas3fr.html (French)
     
-    Only relevant for two dates.
+    Only relevant for distributions involving two quantities.
     Generates one table per couple (planet at date1, planet at date2).
     Each table is a 360 x 360 array.
     Ex in birth-death case: table['ME-SA'][12][145] contains the number of persons with
@@ -21,7 +21,6 @@ namespace observe\commands;
 use observe\model\Observe;
 use observe\app\ICommand;
 use observe\model\IStudy;
-use observe\model\Studies;
 use observe\model\SqlitePlanets;
 use observe\model\distrib\CsvDistrib;
 
@@ -35,11 +34,11 @@ class castille implements ICommand {
     private static \PDO $sqlite_planets;
     private static \PDOStatement $stmt_planets;
     
-    private static function init(array &$studyConfig): void {
+    private static function init(IStudy $study): void {
         self::$sqlite_planets = SqlitePlanets::getSqlite();
-        $planets = implode(',', $studyConfig['planets']);
+        $planets = implode(',', $study->config['planets']);
         $days = '';
-        for($i=0; $i < count($studyConfig['dates']); $i++){
+        for($i=0; $i < count($study->config['dates']); $i++){
             $days .= ":d$i,";
         }
         $days = substr($days, 0, -1);
@@ -54,64 +53,52 @@ class castille implements ICommand {
         //
         // Parameter check
         //
-        $usage = "Usage of this command: php run-observe death-fr castille <split>\n"
-            . "<split> can be:\n  - " . implode("\n  - ", $studyConfig['splits']) . "\n";
-        if(count($params) != 1){
-            return "MISSING PARAMETER split.\n$usage";
-        }
-        $split = $params[0];
-        if(!in_array($split, $studyConfig['splits'])){
-            return "INVALID PARAMETER split: \"$split\".\n$usage";
+        if(count($params) != 0){
+            return "INVALID PARAMETER: \"{$params[0]}\". This command must be called without parameter\n";
         }
         //
         // Prepare
         //
-        self::init($studyConfig);
-        $nDates = count($studyConfig['dates']);
+        self::init($study);
+        $nDates = count($study->config['dates']);
         //
         // Execute
         //
         $t1 = microtime(true);
-        $splitSubgroups = Death_fr::getSplitSubgroups($split);
-        foreach($splitSubgroups as $subgroup){
-            //
-            // prepare the out directories to avoid doing it during main loop on $inFile.
-            //
-            $workDir = Studies::getSplitDirectory($studyConfig, $split) . DS . $subgroup; // ex: var/studies/death-fr/split-full/01--0-200years
-            //
-            // main loop
-            //
-            for($i=0; $i < $nDates; $i++){
-                for($j=$i+1; $j < $nDates; $j++){
-                    $dateName = $studyConfig['dates'][$i] . '-' . $studyConfig['dates'][$j]; // birth-death, mother-father etc.
-                    echo "======= Processing $workDir - $dateName =======\n";
-                    $res = self::emptyDistribs($studyConfig['planets'], 360); // 11 * 11 * 360 * 360 = 15 681 600 elements
-                    $inFile = 'compress.bzip2://' . $workDir . DS . 'data.csv.bz2'; // ex: compress.bzip2://var/studies/death-fr/split-full/01--0-200years/data.csv.bz2
-                    $k = 0;
-                    foreach(yieldFile::loop($inFile) as $line){
-                        $fields = explode(Observe::CSV_SEP, trim($line));
-                        // here a convention is used: the dates in data.csv.bz2 are stored in the same order as in $studyConfig['dates']
-                        $date1 = $fields[$i];
-                        $date2 = $fields[$j];
-                        [$planets1, $planets2] = self::getPlanets($date1, $date2);
-                        foreach($planets1 as $planet1 => $lg1){
-                            foreach($planets2 as $planet2 => $lg2){
-                                $res["$planet1-$planet2"][floor($lg1)][floor($lg2)]++;
-                            }
+        $workDir = $study->getWorkingDirectory(); // ex: var/studies/death-fr
+        //
+        // main loop
+        //
+        for($i=0; $i < $nDates; $i++){
+            for($j=$i+1; $j < $nDates; $j++){
+                $dateName = $study->config['dates'][$i] . '-' . $study->config['dates'][$j]; // birth-death, mother-father etc.
+                echo "======= Processing $workDir - $dateName =======\n";
+                $res = self::emptyDistribs($study->config['planets'], 360); // 11 * 11 * 360 * 360 = 15 681 600 elements
+                $inFile = 'compress.bzip2://' . $workDir . DS . 'data.csv.bz2'; // ex: compress.bzip2://var/studies/death-fr/data.csv.bz2
+                $k = 0;
+                foreach(yieldFile::loop($inFile) as $line){
+                    $fields = explode(Observe::CSV_SEP, trim($line));
+                    // here a convention is used: the dates in data.csv.bz2 are stored in the same order as in $study->config['dates']
+                    $date1 = $fields[$i];
+                    $date2 = $fields[$j];
+                    [$planets1, $planets2] = self::getPlanets($date1, $date2);
+                    foreach($planets1 as $planet1 => $lg1){
+                        foreach($planets2 as $planet2 => $lg2){
+                            $res["$planet1-$planet2"][floor($lg1)][floor($lg2)]++;
                         }
-                        $k++; if($k % 100000 == 0) echo "$k\n";;
-                    } // end main loop on $inFile
-                    $outDir = $workDir . DS . $dateName . DS . 'castille'; // ex: var/studies/death-fr/split-full/01--0-200years/birth-death/castille
-                    mkdir::execute($outDir);
-                    // ex: $k = 'SO-SO' and $v = 2-dim array 360 x 360
-                    foreach($res as $k => $v){
-                        $outFile = $outDir . DS . $k . '.csv'; // ex: var/studies/death-fr/split-full/01--0-200years/birth-death/castille/SO-SO.csv
-                        $csv = CsvDistrib::distrib2csv_2dim($v);
-                        file_put_contents::execute($outFile, $csv, false);
                     }
-                } // end loop on $j
-            } // end loop on $i
-        } // end loop on $subgroup
+                    $k++; if($k % 100000 == 0) echo "$k\n";;
+                } // end main loop on $inFile
+                $outDir = $workDir . DS . $dateName . DS . 'castille'; // ex: var/studies/death-fr/birth-death/castille
+                mkdir::execute($outDir);
+                // ex: $k = 'SO-SO' and $v = 2-dim array 360 x 360
+                foreach($res as $k => $v){
+                    $outFile = $outDir . DS . $k . '.csv'; // ex: var/studies/death-fr/birth-death/castille/SO-SO.csv
+                    $csv = CsvDistrib::distrib2csv_2dim($v);
+                    file_put_contents::execute($outFile, $csv, false);
+                }
+            } // end loop on $j
+        } // end loop on $i
         
         $t2 = microtime(true);
         $dt = round($t2 - $t1, 3);

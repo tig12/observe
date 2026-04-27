@@ -221,6 +221,9 @@ SVG;
         $min = min($min_bar, $min_curve);
         $max = max($max_bar, $max_curve);
         $maxMin = $max - $min;
+        if($maxMin ==0){
+            return '';
+        }
         //
         $N = count($data_bar); // common to bar and curve
         //

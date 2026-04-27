@@ -23,14 +23,14 @@ class AddDistribs {
                 ]
         @return Distribution containing the sum of $d1 and $d2
     **/
-    public static function add(array &$d1, array &$d2, array &$studyConfig): array {
+    public static function add(array &$d1, array &$d2, IStudy $study): array {
         $res = [];
-        $nDates = count($studyConfig['dates']);
+        $nDates = count($study->config['dates']);
         //
         // distributions of type distrib1
         //
         for($i=0; $i < $nDates; $i++){
-            $dateName = $studyConfig['dates'][$i]; // ex: birth
+            $dateName = $study->config['dates'][$i]; // ex: birth
             $res[$dateName] = [];
             // aspects and planets
             foreach(['aspects', 'planets'] as $distribType){
@@ -64,7 +64,7 @@ class AddDistribs {
         //
         for($i=0; $i < $nDates; $i++){
             for($j=$i+1; $j < $nDates; $j++){
-                $dateName = $studyConfig['dates'][$i] . '-' . $studyConfig['dates'][$j]; // ex: birth-death
+                $dateName = $study->config['dates'][$i] . '-' . $study->config['dates'][$j]; // ex: birth-death
                 // interaspects
                 foreach($d1[$dateName]['interaspects'] as $distribName => $distribValues){
                     $res[$dateName]['interaspects'][$distribName] = $d1[$dateName]['interaspects'][$distribName];

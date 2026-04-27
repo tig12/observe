@@ -46,7 +46,7 @@ For any date (birth, death, wedding date...), the program can build a certain nu
             <a href="#4-planetary-aspects">Planetary aspects</a>
         </li>
         <li>
-            <a href="#5-file-hierarchy">File hierarchy</a>
+            <a href="#5-hierarchy-distrib1">Hierarchy "distrib1"</a>
         </li>
     </ul>
 </nav>
@@ -84,7 +84,41 @@ For a given date, we compute the planetary positions, and we consider the <b>ang
 <img height="250px" class="margin" src="img/SO-UR.svg" alt="Distribution: Aspect sun-uranus">
 
 <!-- ********************************************************************************* -->
-<h2 id="5-file-hierarchy">File hierarchy</h2>
+<h2 id="5-hierarchy-distrib1">Hierarchy "distrib1"</h2>
+
+As explained in <a href="distributions.html">the page about distributions</a>, 
+<ul class="">
+    <li>A distribution representing a single quantity (here distribution by year, by day, and planetary positions) can be represented by an 1-dimensional array (abbreviated <b>1dim</b>).</li>
+    <li>A distribution involving two quantities (here planetary aspects) can be represented either by a 1-dimensional array or by a 2-dimensional array (abbreviated <b>2dim</b>).</li>
+</ul>
+
+The distributions used to describe a single date are then organized in this hierarchy:
+
+<pre>
+distrib1
+    ├── positions
+    │   ├── SO
+    │   ├── ...
+    │   └── NN
+    ├── aspects
+    │   ├── 1dim
+    │   │   ├── SO-MO
+    │   │   ├── ...
+    │   │   └── PL-NN
+    │   └── 2dim
+    │       ├── SO-MO
+    │       ├── ...
+    │       └── PL-NN
+    ├── day
+    └── year
+</pre>
+
+This hierarchy is called <b>distrib1</b>.
+
+
+
+
+<!-- 
 In this program, distributions are stored in CSV files.
 <br>Such CSV file has 2 columns:
 <ul class="margin-top0 single">
@@ -134,6 +168,7 @@ distributions
     ├── day.csv
     └── year.csv
 </pre>
+-->
 
 This set of distributions is called <b>distrib1</b>.
 
@@ -152,7 +187,8 @@ This set of distributions is called <b>distrib1</b>.
         <ul>
             <li><a href="../intro/distrib-single-date.html">Single date distributions</a></li>
             <li><a href="../intro/distrib-several-dates.html">Several dates distributions</a></li>
-            <li><a href="../intro/control-groups.html">Control groups</a></li>
+            <li><a href="../intro/distributions.html">Distributions</a></li>
+            <li><a href="../intro/expected.html">Expected distributions</a></li>
             <li><a href="../intro/statistical-tests.html">Statistical tests</a></li>
             <li><a href="../intro/studies.html">Studies</a></li>
         </ul>

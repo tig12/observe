@@ -43,6 +43,7 @@ class control implements ICommand {
         if(count($params) != 1){
             return "INVALID CALL.\n$usage";
         }
+        // control range
         $p_one = '/^\d+$/';
         $p_range = '/^\d+-\d+$/';
         $controls = [];
@@ -54,7 +55,7 @@ class control implements ICommand {
             preg_match($p_range, $params[0], $m);
             if(count($m) == 1){
                 [$from, $to] = explode('-', $m[0]);
-                $controls = range($from, $to); // if $to > $from, range() returns years from $to to $from
+                $controls = range($from, $to); // if $to > $from, range() returns $controls from $to to $from
             }
             else {
                 return "INVALID PARAMETER: \"{$params[0]}\"\n$usage";
@@ -63,7 +64,7 @@ class control implements ICommand {
         //
         // Prepare
         //
-        $outDir = Studies::getControlsDirectory($studyConfig); // ex: var/studies/death-fr/controls
+        $outDir = $study->getControlsDirectory(); // ex: var/studies/death-fr/controls
         //
         // sqlite database containing temporary data
         $sqlite_tmp = Death_fr::getTmpSqlite();
@@ -75,7 +76,7 @@ class control implements ICommand {
         self::$stmt_one_person = $sqlite_persons->prepare('select bday,dday from person where rowid=:rowid');
         // order by rowid : to respect age at death distribution, see comment of otherPerson1()
         $stmt_many_persons = $sqlite_persons->prepare("select rowid,bday from person order by rowid limit :limit offset :offset");
-        $LIMIT = $studyConfig['control-limit'];
+        $LIMIT = $study->config['control-limit'];
         //
         // Execute
         //
@@ -121,14 +122,14 @@ class control implements ICommand {
                         yield array_values(self::otherPerson2($person));
                     }
                 };
-                $newDistribs = Distribs::computeDistributions($f, $studyConfig);
-                $distribs = AddDistribs::add($distribs, $newDistribs, $studyConfig);
+                $newDistribs = Distribs::computeDistributions($f, $study);
+                $distribs = AddDistribs::add($distribs, $newDistribs, $study);
                 self::storeDistribsAndOffsetInTmpSqlite($sqlite_tmp, $controlName, $OFFSET, $distribs);
                 unset($newDistribs);
                 $OFFSET += $LIMIT;
             } // end while($OFFSET < self::$maxRowid)
             
-            Distribs::storeDistributions($controlDir, $distribs, $studyConfig);
+            Distribs::storeDistributions($controlDir, $distribs, $study);
             
             $t2 = microtime(true);
             $dt = round($t2 - $t1, 3);
@@ -243,6 +244,4 @@ class control implements ICommand {
         $stmt = $sqlite_tmp->query("update control set distribs='$json', last_offset=$offset where slug='$controlName' limit 1");
     }
     
-    
-
 } // end class

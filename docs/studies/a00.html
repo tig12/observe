@@ -60,6 +60,20 @@ a00.csv - Births of 2000 in France
 
 <article>
 
+<nav class="pagetoc" aria-label="Table of contents">
+    <ul>
+        <li>
+            <a href="#1-the-raw-data">The raw data</a>
+        </li>
+        <li>
+            <a href="#2-obsolete-doc-2020">Obsolete doc (2020)</a>
+        </li>
+        <li>
+            <a href="#3-command-file">Command file</a>
+        </li>
+    </ul>
+</nav>
+
 <div class="big2 margin">
 This dataset has not been processed yet by the 2026 version of the program (in particular control groups have not been computed), so do not contain any statistical analysis.
 </div>
@@ -70,7 +84,7 @@ This dataset has not been processed yet by the 2026 version of the program (in p
 </div>
 
 <!-- ********************************************************************************* -->
-<h2>The raw data</h2>
+<h2 id="1-the-raw-data">The raw data</h2>
 <style>
     table#rawfiletable{
     }
@@ -120,7 +134,7 @@ This dataset has not been processed yet by the 2026 version of the program (in p
 <!-- 
 <hr class="margin-top4">
 <hr>
-<h2>Obsolete doc (2020)</h2>
+<h2 id="2-obsolete-doc-2020">Obsolete doc (2020)</h2>
 <hr>
 <hr>
 <a href="https://tig12.github.io/g5/anon-castille.html">https://tig12.github.io/g5/anon-castille.html</a>
@@ -136,7 +150,7 @@ php run-observe.php insee/a00 group
 php run-observe.php insee/a00 view
 </pre>
 
-<h2>Command file</h2>
+<h2 id="3-command-file">Command file</h2>
 The command file is <code>commands/insee/a00.yml</code>
 
 <pre>
@@ -214,7 +228,8 @@ view:
         <ul>
             <li><a href="../intro/distrib-single-date.html">Single date distributions</a></li>
             <li><a href="../intro/distrib-several-dates.html">Several dates distributions</a></li>
-            <li><a href="../intro/control-groups.html">Control groups</a></li>
+            <li><a href="../intro/distributions.html">Distributions</a></li>
+            <li><a href="../intro/expected.html">Expected distributions</a></li>
             <li><a href="../intro/statistical-tests.html">Statistical tests</a></li>
             <li><a href="../intro/studies.html">Studies</a></li>
         </ul>
