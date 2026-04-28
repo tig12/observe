@@ -44,7 +44,7 @@ class Distribs {
     }
     
     /** 
-        Conductor of distribution omputation.
+        Conductor of distribution computation.
         @param  $func Function which yields the data whose distributions need to be computed.
     **/
     public static function computeDistributions(callable $func, IStudy $study): array {
@@ -87,16 +87,18 @@ class Distribs {
                 $res[$dateName]['year'][$y] = 0;
             }
             $res[$dateName]['year'][$y]++;
-            // planets
+            // planet positions
             foreach($planets[$i] as $codePlanet => $longitude){
-                $res[$dateName]['planets'][$codePlanet][floor($longitude)]++;
+                $res[$dateName]['positions'][$codePlanet][floor($longitude)]++;
             }
             // aspects
             for($j=0; $j < self::$nPlanets; $j++){
                 for($k=$j+1; $k < self::$nPlanets; $k++){
+                    $code = self::$codePlanets[$j] . '-' . self::$codePlanets[$k];
                     // Take $planets[$i] to have the aspects between planets of $dates[$i]
                     // Warning: mod360::compute($k - $j) to have the angle from planet j to planet k
-                    $res[$dateName]['aspects'][self::$codePlanets[$j] . '-' . self::$codePlanets[$k]][floor(mod360::compute($planets[$i][self::$codePlanets[$k]] - $planets[$i][self::$codePlanets[$j]]))]++;
+                    $angle = floor(mod360::compute($planets[$i][self::$codePlanets[$k]] - $planets[$i][self::$codePlanets[$j]]));
+                    $res[$dateName]['aspects']['dim1'][$code][$angle]++;
                 }
             }
         }
@@ -108,16 +110,18 @@ class Distribs {
                 $dateName = $study->config['dates'][$i] . '-' . $study->config['dates'][$j]; // birth-death, mother-father etc.
                 // age
                 $age = diff::compute(new \DateTime($dates[$i]), new \DateTime($dates[$j]), $study->config['distrib-age-unit']);
-                if(!isset($res[$dateName]['age'][$age])){
-                    $res[$dateName]['age'][$age] = 0;
+                if(!isset($res[$dateName]['age-dim1'][$age])){
+                    $res[$dateName]['age-dim1'][$age] = 0;
                 }
-                $res[$dateName]['age'][$age]++;
-                // interaspect
+                $res[$dateName]['age-dim1'][$age]++;
+                // interaspects
                 for($k=0; $k < self::$nPlanets; $k++){ // $k loop on $planets[$i]
                     for($l=0; $l < self::$nPlanets; $l++){ // $l loop on $planets[$j]
+                        $code = self::$codePlanets[$k] . '-' . self::$codePlanets[$l];
                         // Take $planets[$i] and $planets[$j] to have the interaspects between planets of $dates[$i] and $dates[$j]
                         // Warning; mod360::compute($l - $k) to have the angle from planet k to planet l
-                        $res[$dateName]['interaspects'][self::$codePlanets[$k] . '-' . self::$codePlanets[$l]][floor(mod360::compute($planets[$j][self::$codePlanets[$l]] - $planets[$i][self::$codePlanets[$k]]))]++;
+                        $angle = floor(mod360::compute($planets[$j][self::$codePlanets[$l]] - $planets[$i][self::$codePlanets[$k]]));
+                        $res[$dateName]['interaspects']['dim1'][$code][$angle]++;
                     }
                 }
             }
@@ -134,20 +138,26 @@ class Distribs {
         for($i=0; $i < $nDates; $i++){
             $dateName = $study->config['dates'][$i]; // ex: birth
             $outDir = $baseDir . DS . $dateName; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth
-            // aspects and planets
-            foreach(['aspects', 'planets'] as $distribType){
-                $dir = $outDir . DS . $distribType; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth/aspects
-                mkdir::execute($dir, 0755, true);
-                foreach($distribs[$dateName][$distribType] as $distribName => $distribValues){
-                    $filename = $dir . DS . $distribName . '.csv'; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth/aspects/SO-MO.csv
-                    $contents = CsvDistrib::distrib2csv($distribValues);
-                    file_put_contents($filename, $contents);
-                }
+            // positions of planets
+            $dir = $outDir . DS . 'positions'; // ex: var/studies/death-fr/observed/birth/positions
+            mkdir::execute($dir);
+            foreach($distribs[$dateName]['positions'] as $distribName => $distribValues){
+                $filename = $dir . DS . $distribName . '.csv'; // ex: var/studies/death-fr/observed/birth/positions/SO.csv
+                $contents = CsvDistrib::distrib2csv($distribValues);
+                file_put_contents($filename, $contents);
+            }
+            // aspects
+            $dir = $outDir . DS . 'aspects' . DS . 'dim1'; // ex: var/studies/death-fr/observed/birth/aspects/dim1
+            mkdir::execute($dir);
+            foreach($distribs[$dateName]['aspects']['dim1'] as $distribName => $distribValues){
+                $filename = $dir . DS . $distribName . '.csv'; // ex: var/studies/death-fr/observed/birth/aspects/dim1/SO-MO.csv
+                $contents = CsvDistrib::distrib2csv($distribValues);
+                file_put_contents($filename, $contents);
             }
             // day and year
             ksort($distribs[$dateName]['year']);
             foreach(['day', 'year'] as $distribName){
-                $filename = $outDir . DS . $distribName . '.csv'; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth/day.csv
+                $filename = $outDir . DS . $distribName . '.csv'; // ex: var/studies/death-fr/observed/birth/day.csv
                 $distribValues = $distribs[$dateName][$distribName];
                 $contents = CsvDistrib::distrib2csv($distribValues);
                 file_put_contents($filename, $contents);
@@ -158,25 +168,21 @@ class Distribs {
             for($j=$i+1; $j < $nDates; $j++){
                 $dateName = $study->config['dates'][$i] . '-' . $study->config['dates'][$j]; // ex: birth-death
                 $outDir = $baseDir . DS . $dateName;
-                mkdir::execute($outDir, 0755, true);
+                mkdir::execute($outDir);
                 // interaspects
-                foreach(['interaspects'] as $distribType){
-                    $dir = $outDir . DS . $distribType; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth-death/interaspects
-                    mkdir::execute($dir, 0755, true);
-                    foreach($distribs[$dateName][$distribType] as $distribName => $distribValues){
-                        $filename = $dir . DS . $distribName . '.csv'; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth-death/interaspects/SO-SO.csv
-                        $contents = CsvDistrib::distrib2csv($distribValues);
-                        file_put_contents($filename, $contents);
-                    }
-                }
-                // age
-                ksort($distribs[$dateName]['age']);
-                foreach(['age'] as $distribName){
-                    $filename = $outDir . DS . $distribName . '.csv'; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth-death/age.csv
-                    $distribValues = $distribs[$dateName][$distribName];
+                $dir = $outDir . DS . 'interaspects' . DS . 'dim1'; // ex: var/studies/death-fr/observed/birth-death/interaspects/dim1
+                mkdir::execute($dir);
+                foreach($distribs[$dateName]['interaspects']['dim1'] as $distribName => $distribValues){
+                    $filename = $dir . DS . $distribName . '.csv'; // ex: var/studies/death-fr/observed/birth-death/interaspects/dim1/SO-SO.csv
                     $contents = CsvDistrib::distrib2csv($distribValues);
                     file_put_contents($filename, $contents);
                 }
+                // age
+                ksort($distribs[$dateName]['age-dim1']);
+                $filename = $outDir . DS . 'age-dim1.csv'; // ex: var/studies/death-fr/observed/birth-death/age-dim1.csv
+                $distribValues = $distribs[$dateName]['age-dim1'];
+                $contents = CsvDistrib::distrib2csv($distribValues);
+                file_put_contents($filename, $contents);
             } // end loop on $j
         } // end loop on $i
     }
@@ -191,18 +197,22 @@ class Distribs {
         // distributions of type distrib1
         for($i=0; $i < $nDates; $i++){
             $dateName = $study->config['dates'][$i]; // ex: birth
-            $inDir = $baseDir . DS . $dateName; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth
-            // aspects and planets
-            foreach(['aspects', 'planets'] as $distribType){
-                $dir = $inDir . DS . $distribType; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth/aspects
-                $filenames = glob($dir . DS . '*.csv');
-                foreach($filenames as $filename){
-                    $res[$dateName][$distribType][basename($filename, '.csv')] = CsvDistrib::csv2distrib($filename);
-                }
+            $inDir = $baseDir . DS . $dateName; // ex: var/studies/death-fr/observed/birth
+            // planet positions
+            $dir = $inDir . DS . 'positions'; // ex: var/studies/death-fr/observed/birth/positions
+            $filenames = glob($dir . DS . '*.csv');
+            foreach($filenames as $filename){
+                $res[$dateName]['positions'][basename($filename, '.csv')] = CsvDistrib::csv2distrib($filename);
+            }
+            // aspects
+            $dir = $inDir . DS . 'aspects' . DS . 'dim1'; // ex: var/studies/death-fr/observed/birth/aspects/dim1
+            $filenames = glob($dir . DS . '*.csv');
+            foreach($filenames as $filename){
+                $res[$dateName]['aspects']['dim1'][basename($filename, '.csv')] = CsvDistrib::csv2distrib($filename);
             }
             // day and year
             foreach(['day', 'year'] as $distribName){
-                $filename = $inDir . DS . $distribName . '.csv'; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth/day.csv
+                $filename = $inDir . DS . $distribName . '.csv'; // ex: var/studies/death-fr/observed/birth/day.csv
                 $res[$dateName][$distribName] = CsvDistrib::csv2distrib($filename);
             }
         }
@@ -212,18 +222,14 @@ class Distribs {
                 $dateName = $study->config['dates'][$i] . '-' . $study->config['dates'][$j]; // ex: birth-death
                 $inDir = $baseDir . DS . $dateName;
                 // interaspects
-                foreach(['interaspects'] as $distribType){
-                    $dir = $inDir . DS . $distribType; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth-death/interaspects
-                    $filenames = glob($dir . DS . '*.csv');
-                    foreach($filenames as $filename){
-                        $res[$dateName][$distribType][basename($filename, '.csv')] = CsvDistrib::csv2distrib($filename);
-                    }
+                $dir = $inDir . DS . 'interaspects' . DS . 'dim1'; // ex: var/studies/death-fr/observed/birth-death/interaspects/dim1
+                $filenames = glob($dir . DS . '*.csv');
+                foreach($filenames as $filename){
+                    $res[$dateName]['interaspects']['dim1'][basename($filename, '.csv')] = CsvDistrib::csv2distrib($filename);
                 }
                 // age
-                foreach(['age'] as $distribName){
-                    $filename = $inDir . DS . $distribName . '.csv'; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth-death/age.csv
-                    $res[$dateName][$distribName] = CsvDistrib::csv2distrib($filename);
-                }
+                $filename = $inDir . DS  . 'age-dim1.csv'; // ex: var/studies/death-fr/observed/birth-death/age-dim1.csv
+                $res[$dateName]['age-dim1'] = CsvDistrib::csv2distrib($filename);
             } // end loop on $j
         } // end loop on $i
         return $res;

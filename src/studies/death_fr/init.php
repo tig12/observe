@@ -46,7 +46,7 @@ class init implements ICommand {
         }
         //
         $dir = dirname($path_sqlite);
-        mkdir::execute($dir, 0777, true);
+        mkdir::execute($dir);
         //
         $distribs = EmptyDistribs::initializeDistributions($study);
         $json = json_encode($distribs);

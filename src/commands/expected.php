@@ -56,12 +56,16 @@ class expected implements ICommand {
         // distributions of type distrib1
         for($i=0; $i < $nDates; $i++){
             $dateName = $study->config['dates'][$i]; // ex: birth
-            // aspects and planets
-            foreach(['aspects', 'planets'] as $distribType){
-                foreach($allControlDistribs[$dateName][$distribType] as $distribName => $controlDistribValues){ // ex: $distribName = 'SO-MO'
-                    foreach($controlDistribValues as $k => $v){
-                        $expectedDistribs[$dateName][$distribType][$distribName][$k] = round($v / $nControls, $precision);
-                    }
+            // planet positions
+            foreach($allControlDistribs[$dateName]['positions'] as $distribName => $controlDistribValues){ // ex: $distribName = 'SO-MO'
+                foreach($controlDistribValues as $k => $v){
+                    $expectedDistribs[$dateName]['positions'][$distribName][$k] = round($v / $nControls, $precision);
+                }
+            }
+            // aspects
+            foreach($allControlDistribs[$dateName]['aspects']['dim1'] as $distribName => $controlDistribValues){ // ex: $distribName = 'SO-MO'
+                foreach($controlDistribValues as $k => $v){
+                    $expectedDistribs[$dateName]['aspects']['dim1'][$distribName][$k] = round($v / $nControls, $precision);
                 }
             }
             // day
@@ -79,14 +83,14 @@ class expected implements ICommand {
             for($j=$i+1; $j < $nDates; $j++){
                 $dateName = $study->config['dates'][$i] . '-' . $study->config['dates'][$j]; // ex: birth-death
                 // interaspects
-                foreach($allControlDistribs[$dateName]['interaspects'] as $distribName => $controlDistribValues){ // ex: $distribName = 'SO-SO'
+                foreach($allControlDistribs[$dateName]['interaspects']['dim1'] as $distribName => $controlDistribValues){ // ex: $distribName = 'SO-SO'
                     foreach($controlDistribValues as $k => $v){ // $k: 0 ... 359
-                        $expectedDistribs[$dateName]['interaspects'][$distribName][$k] = round($v / $nControls, $precision);
+                        $expectedDistribs[$dateName]['interaspects']['dim1'][$distribName][$k] = round($v / $nControls, $precision);
                     }
                 }
                 // age
-                foreach($allControlDistribs[$dateName]['age'] as $k => $v){ // $k: age in months or years, see $study->config['distrib-age-unit']
-                    $expectedDistribs[$dateName]['age'][$k] = round($v / $nControls, $precision);
+                foreach($allControlDistribs[$dateName]['age-dim1'] as $k => $v){ // $k: age in months or years, see $study->config['distrib-age-unit']
+                    $expectedDistribs[$dateName]['age-dim1'][$k] = round($v / $nControls, $precision);
                 }
             } // end loop on $j
         } // end loop on $i

@@ -88,8 +88,8 @@ For a given date, we compute the planetary positions, and we consider the <b>ang
 
 As explained in <a href="distributions.html">the page about distributions</a>, 
 <ul class="">
-    <li>A distribution representing a single quantity (here distribution by year, by day, and planetary positions) can be represented by an 1-dimensional array (abbreviated <b>1dim</b>).</li>
-    <li>A distribution involving two quantities (here planetary aspects) can be represented either by a 1-dimensional array or by a 2-dimensional array (abbreviated <b>2dim</b>).</li>
+    <li>A distribution representing a single quantity (here distribution by year, by day, and planetary positions) can be represented by an 1-dimensional array (abbreviated <b>dim1</b>).</li>
+    <li>A distribution involving two quantities (here planetary aspects) can be represented either by a 1-dimensional array or by a 2-dimensional array (abbreviated <b>dim2</b>).</li>
 </ul>
 
 The distributions used to describe a single date are then organized in this hierarchy:
@@ -101,11 +101,11 @@ distrib1
     │   ├── ...
     │   └── NN
     ├── aspects
-    │   ├── 1dim
+    │   ├── dim1
     │   │   ├── SO-MO
     │   │   ├── ...
     │   │   └── PL-NN
-    │   └── 2dim
+    │   └── dim2
     │       ├── SO-MO
     │       ├── ...
     │       └── PL-NN
@@ -114,63 +114,6 @@ distrib1
 </pre>
 
 This hierarchy is called <b>distrib1</b>.
-
-
-
-
-<!-- 
-In this program, distributions are stored in CSV files.
-<br>Such CSV file has 2 columns:
-<ul class="margin-top0 single">
-    <li>First column designates a bin.</li>
-    <li>Second column designates the number of occurences found in this bin.</li>
-</ul>
-For example, a distribution representing the position of a planet:
-
-<br><div class="float-left">
-<table class="wikitable center margin">
-    <tr>
-        <td>0</td>
-        <td>1543</td>
-    </tr>
-    <tr>
-        <td>1</td>
-        <td>1548</td>
-    </tr>
-    <tr>
-        <td colspan="2">...</td>
-    </tr>
-    <tr>
-        <td>359</td>
-        <td>1571</td>
-    </tr>
-</table>
-</div>
-<div class="float-left margin">
-    1543 records have a planet with longitude between 0° and 1°,
-    <br>1548 records have a planet with longitude between 1° and 2°
-    <br>etc.
-</div>
-<br class="clear-left">
-
-
-Finally, for each date processed by the program, the following hierarchy of files is generated:
-<pre>
-distributions
-    ├── aspects
-    │   ├── JU-NE.csv
-    │   ├── ...
-    │   └── VE-UR.csv
-    ├── planets
-    │   ├── JU.csv
-    │   ├── ...
-    │   └── VE.csv
-    ├── day.csv
-    └── year.csv
-</pre>
--->
-
-This set of distributions is called <b>distrib1</b>.
 
 <div class="prevnext">Next: <a href="distrib-several-dates.html">Several dates distributions</a></div>
 

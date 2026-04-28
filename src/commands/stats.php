@@ -86,27 +86,45 @@ class stats implements ICommand {
                 key2:           'year',
                 key3:           '',
             );
-            // aspects and planets
-            foreach(['aspects', 'planets'] as $distribType){
-                foreach($observedDistribs[$dateName][$distribType] as $distribName => $observedDistribValues){ // ex: $distribName = 'SO-MO'
-                    [$chi2, $p_value] = chi2compute::chi2AndProba(359, $observedDistribValues, $expectedDistribs[$dateName][$distribType][$distribName]);
-                    $res_obs .= self::statsLine(
-                        study:          $study,
-                        distrib:        $observedDistribs[$dateName][$distribType][$distribName],
-                        key1:           $dateName,
-                        key2:           $distribType,
-                        key3:           $distribName,
-                        chi2:           $chi2,
-                        p_value:        $p_value,
-                    );
-                    $res_exp .= self::statsLine(
-                        study:          $study,
-                        distrib:        $expectedDistribs[$dateName][$distribType][$distribName],
-                        key1:           $dateName,
-                        key2:           $distribType,
-                        key3:           $distribName,
-                    );
-                }
+            // planet positions
+            foreach($observedDistribs[$dateName]['positions'] as $distribName => $observedDistribValues){ // ex: $distribName = 'SO-MO'
+                [$chi2, $p_value] = chi2compute::chi2AndProba(359, $observedDistribValues, $expectedDistribs[$dateName]['positions'][$distribName]);
+                $res_obs .= self::statsLine(
+                    study:          $study,
+                    distrib:        $observedDistribs[$dateName]['positions'][$distribName],
+                    key1:           $dateName,
+                    key2:           'positions',
+                    key3:           $distribName,
+                    chi2:           $chi2,
+                    p_value:        $p_value,
+                );
+                $res_exp .= self::statsLine(
+                    study:          $study,
+                    distrib:        $expectedDistribs[$dateName]['positions'][$distribName],
+                    key1:           $dateName,
+                    key2:           'positions',
+                    key3:           $distribName,
+                );
+            }
+            // aspects
+            foreach($observedDistribs[$dateName]['aspects']['dim1'] as $distribName => $observedDistribValues){ // ex: $distribName = 'SO-MO'
+                [$chi2, $p_value] = chi2compute::chi2AndProba(359, $observedDistribValues, $expectedDistribs[$dateName]['aspects']['dim1'][$distribName]);
+                $res_obs .= self::statsLine(
+                    study:          $study,
+                    distrib:        $observedDistribs[$dateName]['aspects']['dim1'][$distribName],
+                    key1:           $dateName,
+                    key2:           'aspects',
+                    key3:           $distribName,
+                    chi2:           $chi2,
+                    p_value:        $p_value,
+                );
+                $res_exp .= self::statsLine(
+                    study:          $study,
+                    distrib:        $expectedDistribs[$dateName]['aspects']['dim1'][$distribName],
+                    key1:           $dateName,
+                    key2:           'aspects',
+                    key3:           $distribName,
+                );
             }
         }
         //
@@ -119,24 +137,24 @@ class stats implements ICommand {
                 // no chi2 because observed and expected distribs can be of different size (meaningless and could bug)
                 $res_obs .= self::statsLine(
                     study:          $study,
-                    distrib:        $observedDistribs[$dateName]['age'],
+                    distrib:        $observedDistribs[$dateName]['age-dim1'],
                     key1:           $dateName,
                     key2:           'age',
                     key3:           '',
                 );
                 $res_exp .= self::statsLine(
                     study:          $study,
-                    distrib:        $expectedDistribs[$dateName]['age'],
+                    distrib:        $expectedDistribs[$dateName]['age-dim1'],
                     key1:           $dateName,
                     key2:           'age',
                     key3:           '',
                 );
                 // interaspects
-                foreach($observedDistribs[$dateName]['interaspects'] as $distribName => $observedDistribValues){ // ex: $distribName = 'SO-SO'
-                    [$chi2, $p_value] = chi2compute::chi2AndProba(359, $observedDistribValues, $expectedDistribs[$dateName]['interaspects'][$distribName]);
+                foreach($observedDistribs[$dateName]['interaspects']['dim1'] as $distribName => $observedDistribValues){ // ex: $distribName = 'SO-SO'
+                    [$chi2, $p_value] = chi2compute::chi2AndProba(359, $observedDistribValues, $expectedDistribs[$dateName]['interaspects']['dim1'][$distribName]);
                     $res_obs .= self::statsLine(
                         study:          $study,
-                        distrib:        $observedDistribs[$dateName]['interaspects'][$distribName],
+                        distrib:        $observedDistribs[$dateName]['interaspects']['dim1'][$distribName],
                         key1:           $dateName,
                         key2:           'interaspects',
                         key3:           $distribName,
@@ -145,7 +163,7 @@ class stats implements ICommand {
                     );
                     $res_exp .= self::statsLine(
                         study:          $study,
-                        distrib:        $expectedDistribs[$dateName]['interaspects'][$distribName],
+                        distrib:        $expectedDistribs[$dateName]['interaspects']['dim1'][$distribName],
                         key1:           $dateName,
                         key2:           'interaspects',
                         key3:           $distribName,

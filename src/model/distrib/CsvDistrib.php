@@ -74,7 +74,7 @@ class CsvDistrib {
             359 => [0 => value_359_0, ... 359 => value_359_359],
         ]
     **/
-    public static function distrib2csv_2dim(&$a, $sep=Observe::CSV_SEP): string {
+    public static function distrib2csv_dim2(&$a, $sep=Observe::CSV_SEP): string {
         $res = '';
         foreach($a as $k => $v){
             $res .= implode($sep, $v) . "\n";
@@ -87,7 +87,7 @@ class CsvDistrib {
         Returns a 2-dim array ; each element contains a line of the csv, stored in an array containing columns of this line.
         @param  $sep        Separator used in the csv file.
     **/
-    public static function csv2distrib_2dim(string  $filename, string  $sep = Observe::CSV_SEP): array {
+    public static function csv2distrib_dim2(string  $filename, string  $sep = Observe::CSV_SEP): array {
         $lines = file($filename, FILE_IGNORE_NEW_LINES);
         $res = [];
         foreach($lines as $line){

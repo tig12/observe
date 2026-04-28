@@ -32,14 +32,20 @@ class AddDistribs {
         for($i=0; $i < $nDates; $i++){
             $dateName = $study->config['dates'][$i]; // ex: birth
             $res[$dateName] = [];
-            // aspects and planets
-            foreach(['aspects', 'planets'] as $distribType){
-                $res[$dateName][$distribType] = [];
-                foreach($d1[$dateName][$distribType] as $distribName => $distribValues){
-                    $res[$dateName][$distribType][$distribName] = $distribValues;
-                    foreach($d2[$dateName][$distribType][$distribName] as $k => $v){
-                        $res[$dateName][$distribType][$distribName][$k] += $v;
-                    }
+            // planet positions
+            $res[$dateName]['positions'] = [];
+            foreach($d1[$dateName]['positions'] as $distribName => $distribValues){
+                $res[$dateName]['positions'][$distribName] = $distribValues;
+                foreach($d2[$dateName]['positions'][$distribName] as $k => $v){
+                    $res[$dateName]['positions'][$distribName][$k] += $v;
+                }
+            }
+            // aspects
+            $res[$dateName]['aspects'] = [];
+            foreach($d1[$dateName]['aspects']['dim1'] as $distribName => $distribValues){
+                $res[$dateName]['aspects']['dim1'][$distribName] = $distribValues;
+                foreach($d2[$dateName]['aspects']['dim1'][$distribName] as $k => $v){
+                    $res[$dateName]['aspects']['dim1'][$distribName][$k] += $v;
                 }
             }
             // day
@@ -66,23 +72,23 @@ class AddDistribs {
             for($j=$i+1; $j < $nDates; $j++){
                 $dateName = $study->config['dates'][$i] . '-' . $study->config['dates'][$j]; // ex: birth-death
                 // interaspects
-                foreach($d1[$dateName]['interaspects'] as $distribName => $distribValues){
-                    $res[$dateName]['interaspects'][$distribName] = $d1[$dateName]['interaspects'][$distribName];
-                    foreach($d2[$dateName]['interaspects'][$distribName] as $k => $v){
-                        $res[$dateName]['interaspects'][$distribName][$k] += $v;
+                foreach($d1[$dateName]['interaspects']['dim1'] as $distribName => $distribValues){
+                    $res[$dateName]['interaspects']['dim1'][$distribName] = $d1[$dateName]['interaspects']['dim1'][$distribName];
+                    foreach($d2[$dateName]['interaspects']['dim1'][$distribName] as $k => $v){
+                        $res[$dateName]['interaspects']['dim1'][$distribName][$k] += $v;
                     }
                 }
                 // age
-                $res[$dateName]['age'] = $d1[$dateName]['age'];
-                foreach($d2[$dateName]['age'] as $k => $v){
-                    if(!isset($res[$dateName]['age'][$k])){
-                        $res[$dateName]['age'][$k] = $d2[$dateName]['age'][$k];
+                $res[$dateName]['age-dim1'] = $d1[$dateName]['age-dim1'];
+                foreach($d2[$dateName]['age-dim1'] as $k => $v){
+                    if(!isset($res[$dateName]['age-dim1'][$k])){
+                        $res[$dateName]['age-dim1'][$k] = $d2[$dateName]['age-dim1'][$k];
                     }
                     else{
-                        $res[$dateName]['age'][$k] += $d2[$dateName]['age'][$k];
+                        $res[$dateName]['age-dim1'][$k] += $d2[$dateName]['age-dim1'][$k];
                     }
                 }
-                ksort($res[$dateName]['age']);
+                ksort($res[$dateName]['age-dim1']);
             } // end loop on $j
         } // end loop on $i
         return $res;

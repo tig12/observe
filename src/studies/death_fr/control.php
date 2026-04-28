@@ -108,7 +108,7 @@ class control implements ICommand {
                 self::deleteControlFromTmpSqlite($sqlite_tmp, $controlName);
             }
             self::prepareTmpSqlite($sqlite_tmp, $controlName);
-            mkdir::execute($controlDir, 0755, true);
+            mkdir::execute($controlDir);
             // ex: $distribs = ['birth' => 'aspects => ['SO-SO=>[0 ... 359], ...], 'death' => [...], 'birth-death' => [...]]
             [$distribs, $OFFSET] = self::getLastDistribsAndOffsetFromTmpSqlite($sqlite_tmp, $controlName);
             while($OFFSET < self::$maxRowid){

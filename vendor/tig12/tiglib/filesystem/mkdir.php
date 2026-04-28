@@ -10,11 +10,11 @@ namespace tiglib\filesystem;
 
 class mkdir {
     
-   public static function execute(string $dir): void {
-       if(!is_dir($dir)){
-            mkdir($dir, 0755, true);
+    public static function execute(string $dir, $permissions = 0755, $recursive = true): void {
+        if(!is_dir($dir)){
+            mkdir($dir, $permissions, $recursive);
             echo "Created directory $dir\n";
         }
-   }    
+    }    
 
 }// end class

@@ -37,10 +37,11 @@ Studies
     <table id="list-commands">
         <tr><td class="orange">init</td><td>Performs specific inititializations needed by some studies</td></tr>
         <tr><td class="orange">import</td><td>Converts the original dataset to a common format</td></tr>
-        <tr><td class="green">observed</td><td>Computes the distributions for each split</td></tr>
+        <tr><td class="green">observed</td><td>Computes the distributions of the original data</td></tr>
         <tr><td class="orange">control</td><td>Builds the control groups</td></tr>
         <tr><td class="green">expected</td><td>Builds the expected distributions from control groups</td></tr>
         <tr><td class="green">stats</td><td>Computes statistical informations about the distributions</td></tr>
+        <tr><td class="green">dim2</td><td>Adds distributions and statistics using <i>dim2</i> arrays</td></tr>
         <tr><td class="green">output</td><td>Generates a presentation of the results</td></tr>
     </table>
    (<span class="orange">orange</span> : computations specific to each study - <span class="green">green</span> : computations common to all studies)
@@ -55,9 +56,6 @@ Studies
 <nav class="pagetoc" aria-label="Table of contents">
     <ul>
         <li>
-            <a href="#1-splits">Splits</a>
-        </li>
-        <li>
             <a href="#2-the-working-directory">The working directory</a>
         </li>
         <li>
@@ -68,14 +66,6 @@ Studies
         </li>
     </ul>
 </nav>
-
-<!-- ********************************************************************************* -->
-<h2 id="1-splits">Splits</h2>
-We often need to divide the original dataset in different subgroups to see if they show different distributions.
-<br>For example, how do the distributions of babies who died a few days after their birth compare with the distributions of general population ?
-<br>In this program, this is handled by the notion of <b>split</b>.
-<br>A split permits to generate subgroups from the original groups.
-<br>In general, a study has a split with only one subgroup containing the whole dataset.
 
 <!-- ********************************************************************************* -->
 <h2 id="2-the-working-directory">The working directory</h2>
