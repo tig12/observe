@@ -10,48 +10,43 @@
 namespace observe\model\distrib;
 
 use PHPUnit\Framework\TestCase;
-use observe\model\Studies;
 use observe\model\distrib\Distribs;
 use observe\model\distrib\EmptyDistribs;
 
 class DistribsTest extends TestCase{
 
-    /** Study used for the tests **/
-    private const string STUDY_SLUG = 'death-fr';
+    private const array DATE_NAMES = ['birth', 'death'];
     
-    private static array $studyConfig;
+    private const array PLANET_CODES = ['SO', 'MO', 'ME', 'VE', 'MA', 'JU', 'SA', 'UR', 'NE', 'PL', 'NN'];
     
-    protected function setUp(): void {
-        self::$studyConfig = Studies::getStudyConfig(self::STUDY_SLUG);
-    }
+    private const string DISTRIB_AGE_UNIT = 'M';
     
     public function testComputeDistributions(){
-        $baseOutdir = Studies::getSplitDirectory(self::$studyConfig, 'all');
-        $filename = 'compress.bzip2://' . $baseOutdir . DS . '01--0-150years' . DS . 'data.csv.bz2';
-        $f = function() use ($filename) {
-            if (!$fileHandle = fopen($filename, 'r')) {
-                return false;
-            }
-            $i = 0;
-            while ($i < 2 && false !== $line = fgets($fileHandle)) {
-                yield $line;
-                $i++;
-            }
-            fclose($fileHandle);
+        
+        /* 
+            Function passed to Distribs::computeDistributions()
+            Simulates the reading of the 2 first lines of var/studies/death-fr/data.csv.bz2:
+            bzcat var/studies/death-fr/data.csv.bz2 | head -n 2
+            1922-01-09;1970-12-10
+            1969-03-29;1970-04-25
+        */
+        $f = function() {
+            yield ['1922-01-09', '1970-12-10'];
+            yield ['1969-03-29', '1970-04-25'];
         };
         //
         $arr360 = array_fill(0, 360, 0);
-        $emptyPlanets = array_fill_keys(self::$studyConfig['planets'], $arr360);
+        $emptyPlanets = array_fill_keys(self::PLANET_CODES, $arr360);
         $emptyAspects = [];
-        for($i=0; $i < count(self::$studyConfig['planets']); $i++){
-            for($j=$i+1; $j < count(self::$studyConfig['planets']); $j++){
-                $key = self::$studyConfig['planets'][$i] . '-' . self::$studyConfig['planets'][$j];
+        for($i=0; $i < count(self::PLANET_CODES); $i++){
+            for($j=$i+1; $j < count(self::PLANET_CODES); $j++){
+                $key = self::PLANET_CODES[$i] . '-' . self::PLANET_CODES[$j];
                 $emptyAspects[$key] = $arr360;
             }
         }
         $emptyInteraspects = [];
-        foreach(self::$studyConfig['planets'] as $code1){
-            foreach(self::$studyConfig['planets'] as $code2){
+        foreach(self::PLANET_CODES as $code1){
+            foreach(self::PLANET_CODES as $code2){
                 $emptyInteraspects["$code1-$code2"] = $arr360;
             }
         }
@@ -59,200 +54,180 @@ class DistribsTest extends TestCase{
         //
         $expected = [
             'birth' => [
-                'planets' => $emptyPlanets,
-                'aspects' => $emptyAspects,
+                'positions' => $emptyPlanets,
+                'aspects' => ['dim1' => $emptyAspects],
                 'year' => [],
                 'day' => $emptyDays,
             ],
             'death' => [
-                'planets' => $emptyPlanets,
-                'aspects' => $emptyAspects,
+                'positions' => $emptyPlanets,
+                'aspects' => ['dim1' => $emptyAspects],
                 'year' => [],
                 'day' => $emptyDays,
             ],
             'birth-death' => [
-                'interaspects' => $emptyInteraspects,
-                'age' => [],
+                'interaspects' => ['dim1' => $emptyInteraspects],
+                'age-dim1' => [],
             ],
         ];
         
 /*
-Based on execution using Meeus1 computations
-========= line 1 =========               ========= line 2 =========
-dates                                    dates
-    [0] => 1922-01-09                        [0] => 1969-03-29
-    [1] => 1970-12-10                        [1] => 1970-04-25
-planets                                  planets
-    [0] => Array(                            [0] => Array
-            [SO] => 288.474                          [SO] => 8.628
-            [MO] => 54.159                           [MO] => 136.996
-            [ME] => 296.33                           [ME] => 358.301
-            [VE] => 281.092                          [VE] => 24.35
-            [MA] => 218.128                          [MA] => 252.248
-            [JU] => 197.967                          [JU] => 180.166
-            [SA] => 187.553                          [SA] => 26.032
-            [UR] => 336.961                          [UR] => 181.682
-            [NE] => 135.269                          [NE] => 238.498
-            [PL] => 98.752                           [PL] => 172.836
-            [NN] => 193.222                          [NN] => 359.98
-    [1] => Array(                            [1] => Array
-            [SO] => 258.022                          [SO] => 34.866
-            [MO] => 48.251                           [MO] => 262.776
-            [ME] => 278.71                           [ME] => 52.08
-            [VE] => 221.489                          [VE] => 57.131
-            [MA] => 212.423                          [MA] => 64.607
-            [JU] => 233.261                          [JU] => 210.596
-            [SA] => 46.969                           [SA] => 41.168
-            [UR] => 192.86                           [UR] => 185.576
-            [NE] => 241.266                          [NE] => 240.188
-            [PL] => 181.436                          [PL] => 173.753
-            [NN] => 327.095                          [NN] => 339.222
+Based on execution using Swissephem computations
+select * from planet where day in ('1922-01-09','1970-12-10','1969-03-29','1970-04-25');
++------------+-------------+-------------+-------------+-------------+-------------+-------------+-------------+-------------+-------------+-------------+-------------+
+|    day     |     SO      |     MO      |     ME      |     VE      |     MA      |     JU      |     SA      |     UR      |     NE      |     PL      |     NN      |
++------------+-------------+-------------+-------------+-------------+-------------+-------------+-------------+-------------+-------------+-------------+-------------+
+| 1922-01-09 | 288.4696949 | 54.1648325  | 296.3189889 | 281.0818103 | 218.1236324 | 197.963406  | 187.5517234 | 336.94814   | 135.2806304 | 98.8159356  | 193.2233008 |
+| 1969-03-29 | 8.6220338   | 137.0039167 | 358.2871684 | 24.3486099  | 252.2483913 | 180.1770698 | 26.0277003  | 181.6819333 | 238.4889072 | 173.38721   | 359.9802851 |
+| 1970-04-25 | 34.8622467  | 262.7866333 | 52.0804289  | 57.122513   | 64.5989507  | 210.6034009 | 41.167102   | 185.5886505 | 240.1862056 | 175.0946797 | 339.2237309 |
+| 1970-12-10 | 258.0208572 | 48.2657102  | 278.7094937 | 221.4945587 | 212.4186924 | 233.2577048 | 46.979153   | 192.8695529 | 241.2587457 | 179.5631401 | 327.0982989 |
++------------+-------------+-------------+-------------+-------------+-------------+-------------+-------------+-------------+-------------+-------------+-------------+
 */
         //
         // birth
         //
-        $expected['birth']['planets']['SO'][288] = 1;
-        $expected['birth']['planets']['SO'][8] = 1;
-        $expected['birth']['planets']['MO'][54] = 1;
-        $expected['birth']['planets']['MO'][136] = 1;
-        $expected['birth']['planets']['ME'][296] = 1;
-        $expected['birth']['planets']['ME'][358] = 1;
-        $expected['birth']['planets']['VE'][281] = 1;
-        $expected['birth']['planets']['VE'][24] = 1;
-        $expected['birth']['planets']['MA'][218] = 1;
-        $expected['birth']['planets']['MA'][252] = 1;
-        $expected['birth']['planets']['JU'][197] = 1;
-        $expected['birth']['planets']['JU'][180] = 1;
-        $expected['birth']['planets']['SA'][187] = 1;
-        $expected['birth']['planets']['SA'][26] = 1;
-        $expected['birth']['planets']['UR'][336] = 1;
-        $expected['birth']['planets']['UR'][181] = 1;
-        $expected['birth']['planets']['NE'][135] = 1;
-        $expected['birth']['planets']['NE'][238] = 1;
-        $expected['birth']['planets']['PL'][98] = 1;
-        $expected['birth']['planets']['PL'][172] = 1;
-        $expected['birth']['planets']['NN'][193] = 1;
-        $expected['birth']['planets']['NN'][359] = 1;
+        $expected['birth']['positions']['SO'][288] = 1;
+        $expected['birth']['positions']['SO'][8] = 1;
+        $expected['birth']['positions']['MO'][54] = 1;
+        $expected['birth']['positions']['MO'][137] = 1;
+        $expected['birth']['positions']['ME'][296] = 1;
+        $expected['birth']['positions']['ME'][358] = 1;
+        $expected['birth']['positions']['VE'][281] = 1;
+        $expected['birth']['positions']['VE'][24] = 1;
+        $expected['birth']['positions']['MA'][218] = 1;
+        $expected['birth']['positions']['MA'][252] = 1;
+        $expected['birth']['positions']['JU'][197] = 1;
+        $expected['birth']['positions']['JU'][180] = 1;
+        $expected['birth']['positions']['SA'][187] = 1;
+        $expected['birth']['positions']['SA'][26] = 1;
+        $expected['birth']['positions']['UR'][336] = 1;
+        $expected['birth']['positions']['UR'][181] = 1;
+        $expected['birth']['positions']['NE'][135] = 1;
+        $expected['birth']['positions']['NE'][238] = 1;
+        $expected['birth']['positions']['PL'][98] = 1;
+        $expected['birth']['positions']['PL'][173] = 1;
+        $expected['birth']['positions']['NN'][193] = 1;
+        $expected['birth']['positions']['NN'][359] = 1;
         //
-        $expected['birth']['aspects']['SO-MO'][125] = 1;
-        $expected['birth']['aspects']['SO-MO'][128] = 1;
-        $expected['birth']['aspects']['SO-ME'][7] = 1;
-        $expected['birth']['aspects']['SO-ME'][349] = 1;
-        // $expected['birth']['aspects']['SO-VE'][] = 1;
-        // $expected['birth']['aspects']['SO-VE'][] = 1;
-        // $expected['birth']['aspects']['SO-MA'][] = 1;
-        // $expected['birth']['aspects']['SO-MA'][] = 1;
-        // $expected['birth']['aspects']['SO-JU'][] = 1;
-        // $expected['birth']['aspects']['SO-JU'][] = 1;
-        // $expected['birth']['aspects']['SO-SA'][] = 1;
-        // $expected['birth']['aspects']['SO-SA'][] = 1;
-        // $expected['birth']['aspects']['SO-UR'][] = 1;
-        // $expected['birth']['aspects']['SO-UR'][] = 1;
-        // $expected['birth']['aspects']['SO-NE'][] = 1;
-        // $expected['birth']['aspects']['SO-NE'][] = 1;
-        // $expected['birth']['aspects']['SO-PL'][] = 1;
-        // $expected['birth']['aspects']['SO-PL'][] = 1;
-        // $expected['birth']['aspects']['SO-NN'][] = 1;
-        // $expected['birth']['aspects']['SO-NN'][] = 1;
+        $expected['birth']['aspects']['dim1']['SO-MO'][125] = 1;
+        $expected['birth']['aspects']['dim1']['SO-MO'][128] = 1;
+        $expected['birth']['aspects']['dim1']['SO-ME'][7] = 1;
+        $expected['birth']['aspects']['dim1']['SO-ME'][349] = 1;
+        // $expected['birth']['aspects']['dim1']['SO-VE'][] = 1;
+        // $expected['birth']['aspects']['dim1']['SO-VE'][] = 1;
+        // $expected['birth']['aspects']['dim1']['SO-MA'][] = 1;
+        // $expected['birth']['aspects']['dim1']['SO-MA'][] = 1;
+        // $expected['birth']['aspects']['dim1']['SO-JU'][] = 1;
+        // $expected['birth']['aspects']['dim1']['SO-JU'][] = 1;
+        // $expected['birth']['aspects']['dim1']['SO-SA'][] = 1;
+        // $expected['birth']['aspects']['dim1']['SO-SA'][] = 1;
+        // $expected['birth']['aspects']['dim1']['SO-UR'][] = 1;
+        // $expected['birth']['aspects']['dim1']['SO-UR'][] = 1;
+        // $expected['birth']['aspects']['dim1']['SO-NE'][] = 1;
+        // $expected['birth']['aspects']['dim1']['SO-NE'][] = 1;
+        // $expected['birth']['aspects']['dim1']['SO-PL'][] = 1;
+        // $expected['birth']['aspects']['dim1']['SO-PL'][] = 1;
+        // $expected['birth']['aspects']['dim1']['SO-NN'][] = 1;
+        // $expected['birth']['aspects']['dim1']['SO-NN'][] = 1;
         // //
-        // $expected['birth']['aspects']['MO-ME'][] = 1;
-        // $expected['birth']['aspects']['MO-ME'][] = 1;
-        // $expected['birth']['aspects']['MO-VE'][] = 1;
-        // $expected['birth']['aspects']['MO-VE'][] = 1;
-        // $expected['birth']['aspects']['MO-MA'][] = 1;
-        // $expected['birth']['aspects']['MO-MA'][] = 1;
-        // $expected['birth']['aspects']['MO-JU'][] = 1;
-        // $expected['birth']['aspects']['MO-JU'][] = 1;
-        // $expected['birth']['aspects']['MO-SA'][] = 1;
-        // $expected['birth']['aspects']['MO-SA'][] = 1;
-        // $expected['birth']['aspects']['MO-UR'][] = 1;
-        // $expected['birth']['aspects']['MO-UR'][] = 1;
-        // $expected['birth']['aspects']['MO-NE'][] = 1;
-        // $expected['birth']['aspects']['MO-NE'][] = 1;
-        // $expected['birth']['aspects']['MO-PL'][] = 1;
-        // $expected['birth']['aspects']['MO-PL'][] = 1;
-        // $expected['birth']['aspects']['MO-NN'][] = 1;
-        // $expected['birth']['aspects']['MO-NN'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MO-ME'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MO-ME'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MO-VE'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MO-VE'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MO-MA'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MO-MA'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MO-JU'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MO-JU'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MO-SA'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MO-SA'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MO-UR'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MO-UR'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MO-NE'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MO-NE'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MO-PL'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MO-PL'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MO-NN'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MO-NN'][] = 1;
         // //
-        // $expected['birth']['aspects']['ME-VE'][] = 1;
-        // $expected['birth']['aspects']['ME-VE'][] = 1;
-        // $expected['birth']['aspects']['ME-MA'][] = 1;
-        // $expected['birth']['aspects']['ME-MA'][] = 1;
-        // $expected['birth']['aspects']['ME-JU'][] = 1;
-        // $expected['birth']['aspects']['ME-JU'][] = 1;
-        // $expected['birth']['aspects']['ME-SA'][] = 1;
-        // $expected['birth']['aspects']['ME-SA'][] = 1;
-        // $expected['birth']['aspects']['ME-UR'][] = 1;
-        // $expected['birth']['aspects']['ME-UR'][] = 1;
-        // $expected['birth']['aspects']['ME-NE'][] = 1;
-        // $expected['birth']['aspects']['ME-NE'][] = 1;
-        // $expected['birth']['aspects']['ME-PL'][] = 1;
-        // $expected['birth']['aspects']['ME-PL'][] = 1;
-        // $expected['birth']['aspects']['ME-NN'][] = 1;
-        // $expected['birth']['aspects']['ME-NN'][] = 1;
+        // $expected['birth']['aspects']['dim1']['ME-VE'][] = 1;
+        // $expected['birth']['aspects']['dim1']['ME-VE'][] = 1;
+        // $expected['birth']['aspects']['dim1']['ME-MA'][] = 1;
+        // $expected['birth']['aspects']['dim1']['ME-MA'][] = 1;
+        // $expected['birth']['aspects']['dim1']['ME-JU'][] = 1;
+        // $expected['birth']['aspects']['dim1']['ME-JU'][] = 1;
+        // $expected['birth']['aspects']['dim1']['ME-SA'][] = 1;
+        // $expected['birth']['aspects']['dim1']['ME-SA'][] = 1;
+        // $expected['birth']['aspects']['dim1']['ME-UR'][] = 1;
+        // $expected['birth']['aspects']['dim1']['ME-UR'][] = 1;
+        // $expected['birth']['aspects']['dim1']['ME-NE'][] = 1;
+        // $expected['birth']['aspects']['dim1']['ME-NE'][] = 1;
+        // $expected['birth']['aspects']['dim1']['ME-PL'][] = 1;
+        // $expected['birth']['aspects']['dim1']['ME-PL'][] = 1;
+        // $expected['birth']['aspects']['dim1']['ME-NN'][] = 1;
+        // $expected['birth']['aspects']['dim1']['ME-NN'][] = 1;
         // //
-        // $expected['birth']['aspects']['VE-MA'][] = 1;
-        // $expected['birth']['aspects']['VE-MA'][] = 1;
-        // $expected['birth']['aspects']['VE-JU'][] = 1;
-        // $expected['birth']['aspects']['VE-JU'][] = 1;
-        // $expected['birth']['aspects']['VE-SA'][] = 1;
-        // $expected['birth']['aspects']['VE-SA'][] = 1;
-        // $expected['birth']['aspects']['VE-UR'][] = 1;
-        // $expected['birth']['aspects']['VE-UR'][] = 1;
-        // $expected['birth']['aspects']['VE-NE'][] = 1;
-        // $expected['birth']['aspects']['VE-NE'][] = 1;
-        // $expected['birth']['aspects']['VE-PL'][] = 1;
-        // $expected['birth']['aspects']['VE-PL'][] = 1;
-        // $expected['birth']['aspects']['VE-NN'][] = 1;
-        // $expected['birth']['aspects']['VE-NN'][] = 1;
+        // $expected['birth']['aspects']['dim1']['VE-MA'][] = 1;
+        // $expected['birth']['aspects']['dim1']['VE-MA'][] = 1;
+        // $expected['birth']['aspects']['dim1']['VE-JU'][] = 1;
+        // $expected['birth']['aspects']['dim1']['VE-JU'][] = 1;
+        // $expected['birth']['aspects']['dim1']['VE-SA'][] = 1;
+        // $expected['birth']['aspects']['dim1']['VE-SA'][] = 1;
+        // $expected['birth']['aspects']['dim1']['VE-UR'][] = 1;
+        // $expected['birth']['aspects']['dim1']['VE-UR'][] = 1;
+        // $expected['birth']['aspects']['dim1']['VE-NE'][] = 1;
+        // $expected['birth']['aspects']['dim1']['VE-NE'][] = 1;
+        // $expected['birth']['aspects']['dim1']['VE-PL'][] = 1;
+        // $expected['birth']['aspects']['dim1']['VE-PL'][] = 1;
+        // $expected['birth']['aspects']['dim1']['VE-NN'][] = 1;
+        // $expected['birth']['aspects']['dim1']['VE-NN'][] = 1;
         // //
-        // $expected['birth']['aspects']['MA-JU'][] = 1;
-        // $expected['birth']['aspects']['MA-JU'][] = 1;
-        // $expected['birth']['aspects']['MA-SA'][] = 1;
-        // $expected['birth']['aspects']['MA-SA'][] = 1;
-        // $expected['birth']['aspects']['MA-UR'][] = 1;
-        // $expected['birth']['aspects']['MA-UR'][] = 1;
-        // $expected['birth']['aspects']['MA-NE'][] = 1;
-        // $expected['birth']['aspects']['MA-NE'][] = 1;
-        // $expected['birth']['aspects']['MA-PL'][] = 1;
-        // $expected['birth']['aspects']['MA-PL'][] = 1;
-        // $expected['birth']['aspects']['MA-NN'][] = 1;
-        // $expected['birth']['aspects']['MA-NN'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MA-JU'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MA-JU'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MA-SA'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MA-SA'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MA-UR'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MA-UR'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MA-NE'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MA-NE'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MA-PL'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MA-PL'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MA-NN'][] = 1;
+        // $expected['birth']['aspects']['dim1']['MA-NN'][] = 1;
         // //
-        // $expected['birth']['aspects']['JU-SA'][] = 1;
-        // $expected['birth']['aspects']['JU-SA'][] = 1;
-        // $expected['birth']['aspects']['JU-UR'][] = 1;
-        // $expected['birth']['aspects']['JU-UR'][] = 1;
-        // $expected['birth']['aspects']['JU-NE'][] = 1;
-        // $expected['birth']['aspects']['JU-NE'][] = 1;
-        // $expected['birth']['aspects']['JU-PL'][] = 1;
-        // $expected['birth']['aspects']['JU-PL'][] = 1;
-        // $expected['birth']['aspects']['JU-NN'][] = 1;
-        // $expected['birth']['aspects']['JU-NN'][] = 1;
+        // $expected['birth']['aspects']['dim1']['JU-SA'][] = 1;
+        // $expected['birth']['aspects']['dim1']['JU-SA'][] = 1;
+        // $expected['birth']['aspects']['dim1']['JU-UR'][] = 1;
+        // $expected['birth']['aspects']['dim1']['JU-UR'][] = 1;
+        // $expected['birth']['aspects']['dim1']['JU-NE'][] = 1;
+        // $expected['birth']['aspects']['dim1']['JU-NE'][] = 1;
+        // $expected['birth']['aspects']['dim1']['JU-PL'][] = 1;
+        // $expected['birth']['aspects']['dim1']['JU-PL'][] = 1;
+        // $expected['birth']['aspects']['dim1']['JU-NN'][] = 1;
+        // $expected['birth']['aspects']['dim1']['JU-NN'][] = 1;
         // //
-        // $expected['birth']['aspects']['SA-UR'][] = 1;
-        // $expected['birth']['aspects']['SA-UR'][] = 1;
-        // $expected['birth']['aspects']['SA-NE'][] = 1;
-        // $expected['birth']['aspects']['SA-NE'][] = 1;
-        // $expected['birth']['aspects']['SA-PL'][] = 1;
-        // $expected['birth']['aspects']['SA-PL'][] = 1;
-        // $expected['birth']['aspects']['SA-NN'][] = 1;
-        // $expected['birth']['aspects']['SA-NN'][] = 1;
+        // $expected['birth']['aspects']['dim1']['SA-UR'][] = 1;
+        // $expected['birth']['aspects']['dim1']['SA-UR'][] = 1;
+        // $expected['birth']['aspects']['dim1']['SA-NE'][] = 1;
+        // $expected['birth']['aspects']['dim1']['SA-NE'][] = 1;
+        // $expected['birth']['aspects']['dim1']['SA-PL'][] = 1;
+        // $expected['birth']['aspects']['dim1']['SA-PL'][] = 1;
+        // $expected['birth']['aspects']['dim1']['SA-NN'][] = 1;
+        // $expected['birth']['aspects']['dim1']['SA-NN'][] = 1;
         // //
-        // $expected['birth']['aspects']['UR-NE'][] = 1;
-        // $expected['birth']['aspects']['UR-NE'][] = 1;
-        // $expected['birth']['aspects']['UR-PL'][] = 1;
-        // $expected['birth']['aspects']['UR-PL'][] = 1;
-        // $expected['birth']['aspects']['UR-NN'][] = 1;
-        // $expected['birth']['aspects']['UR-NN'][] = 1;
+        // $expected['birth']['aspects']['dim1']['UR-NE'][] = 1;
+        // $expected['birth']['aspects']['dim1']['UR-NE'][] = 1;
+        // $expected['birth']['aspects']['dim1']['UR-PL'][] = 1;
+        // $expected['birth']['aspects']['dim1']['UR-PL'][] = 1;
+        // $expected['birth']['aspects']['dim1']['UR-NN'][] = 1;
+        // $expected['birth']['aspects']['dim1']['UR-NN'][] = 1;
         // //
-        // $expected['birth']['aspects']['NE-PL'][] = 1;
-        // $expected['birth']['aspects']['NE-PL'][] = 1;
-        // $expected['birth']['aspects']['NE-NN'][] = 1;
-        // $expected['birth']['aspects']['NE-NN'][] = 1;
+        // $expected['birth']['aspects']['dim1']['NE-PL'][] = 1;
+        // $expected['birth']['aspects']['dim1']['NE-PL'][] = 1;
+        // $expected['birth']['aspects']['dim1']['NE-NN'][] = 1;
+        // $expected['birth']['aspects']['dim1']['NE-NN'][] = 1;
         //
-        $expected['birth']['aspects']['PL-NN'][94] = 1;
-        $expected['birth']['aspects']['PL-NN'][187] = 1;
+        $expected['birth']['aspects']['dim1']['PL-NN'][94] = 1;
+        $expected['birth']['aspects']['dim1']['PL-NN'][186] = 1;
         //
         $expected['birth']['year']['1922'] = 1;
         $expected['birth']['year']['1969'] = 1;
@@ -262,148 +237,148 @@ planets                                  planets
         //
         // death
         //
-        $expected['death']['planets']['SO'][258] = 1;
-        $expected['death']['planets']['SO'][34] = 1;
-        $expected['death']['planets']['MO'][48] = 1;
-        $expected['death']['planets']['MO'][262] = 1;
-        $expected['death']['planets']['ME'][278] = 1;
-        $expected['death']['planets']['ME'][52] = 1;
-        $expected['death']['planets']['VE'][221] = 1;
-        $expected['death']['planets']['VE'][57] = 1;
-        $expected['death']['planets']['MA'][212] = 1;
-        $expected['death']['planets']['MA'][64] = 1;
-        $expected['death']['planets']['JU'][233] = 1;
-        $expected['death']['planets']['JU'][210] = 1;
-        $expected['death']['planets']['SA'][46] = 1;
-        $expected['death']['planets']['SA'][41] = 1;
-        $expected['death']['planets']['UR'][192] = 1;
-        $expected['death']['planets']['UR'][185] = 1;
-        $expected['death']['planets']['NE'][241] = 1;
-        $expected['death']['planets']['NE'][240] = 1;
-        $expected['death']['planets']['PL'][181] = 1;
-        $expected['death']['planets']['PL'][173] = 1;
-        $expected['death']['planets']['NN'][327] = 1;
-        $expected['death']['planets']['NN'][339] = 1;
+        $expected['death']['positions']['SO'][258] = 1;
+        $expected['death']['positions']['SO'][34] = 1;
+        $expected['death']['positions']['MO'][48] = 1;
+        $expected['death']['positions']['MO'][262] = 1;
+        $expected['death']['positions']['ME'][278] = 1;
+        $expected['death']['positions']['ME'][52] = 1;
+        $expected['death']['positions']['VE'][221] = 1;
+        $expected['death']['positions']['VE'][57] = 1;
+        $expected['death']['positions']['MA'][212] = 1;
+        $expected['death']['positions']['MA'][64] = 1;
+        $expected['death']['positions']['JU'][233] = 1;
+        $expected['death']['positions']['JU'][210] = 1;
+        $expected['death']['positions']['SA'][46] = 1;
+        $expected['death']['positions']['SA'][41] = 1;
+        $expected['death']['positions']['UR'][192] = 1;
+        $expected['death']['positions']['UR'][185] = 1;
+        $expected['death']['positions']['NE'][241] = 1;
+        $expected['death']['positions']['NE'][240] = 1;
+        $expected['death']['positions']['PL'][179] = 1;
+        $expected['death']['positions']['PL'][175] = 1;
+        $expected['death']['positions']['NN'][327] = 1;
+        $expected['death']['positions']['NN'][339] = 1;
         //
-        $expected['death']['aspects']['SO-MO'][150] = 1;
-        $expected['death']['aspects']['SO-MO'][227] = 1;
-        $expected['death']['aspects']['SO-ME'][20] = 1;
-        $expected['death']['aspects']['SO-ME'][17] = 1;
-        // $expected['death']['aspects']['SO-VE'][] = 1;
-        // $expected['death']['aspects']['SO-VE'][] = 1;
-        // $expected['death']['aspects']['SO-MA'][] = 1;
-        // $expected['death']['aspects']['SO-MA'][] = 1;
-        // $expected['death']['aspects']['SO-JU'][] = 1;
-        // $expected['death']['aspects']['SO-JU'][] = 1;
-        // $expected['death']['aspects']['SO-SA'][] = 1;
-        // $expected['death']['aspects']['SO-SA'][] = 1;
-        // $expected['death']['aspects']['SO-UR'][] = 1;
-        // $expected['death']['aspects']['SO-UR'][] = 1;
-        // $expected['death']['aspects']['SO-NE'][] = 1;
-        // $expected['death']['aspects']['SO-NE'][] = 1;
-        // $expected['death']['aspects']['SO-PL'][] = 1;
-        // $expected['death']['aspects']['SO-PL'][] = 1;
-        // $expected['death']['aspects']['SO-NN'][] = 1;
-        // $expected['death']['aspects']['SO-NN'][] = 1;
+        $expected['death']['aspects']['dim1']['SO-MO'][150] = 1;
+        $expected['death']['aspects']['dim1']['SO-MO'][227] = 1;
+        $expected['death']['aspects']['dim1']['SO-ME'][20] = 1;
+        $expected['death']['aspects']['dim1']['SO-ME'][17] = 1;
+        // $expected['death']['aspects']['dim1']['SO-VE'][] = 1;
+        // $expected['death']['aspects']['dim1']['SO-VE'][] = 1;
+        // $expected['death']['aspects']['dim1']['SO-MA'][] = 1;
+        // $expected['death']['aspects']['dim1']['SO-MA'][] = 1;
+        // $expected['death']['aspects']['dim1']['SO-JU'][] = 1;
+        // $expected['death']['aspects']['dim1']['SO-JU'][] = 1;
+        // $expected['death']['aspects']['dim1']['SO-SA'][] = 1;
+        // $expected['death']['aspects']['dim1']['SO-SA'][] = 1;
+        // $expected['death']['aspects']['dim1']['SO-UR'][] = 1;
+        // $expected['death']['aspects']['dim1']['SO-UR'][] = 1;
+        // $expected['death']['aspects']['dim1']['SO-NE'][] = 1;
+        // $expected['death']['aspects']['dim1']['SO-NE'][] = 1;
+        // $expected['death']['aspects']['dim1']['SO-PL'][] = 1;
+        // $expected['death']['aspects']['dim1']['SO-PL'][] = 1;
+        // $expected['death']['aspects']['dim1']['SO-NN'][] = 1;
+        // $expected['death']['aspects']['dim1']['SO-NN'][] = 1;
         // //
-        // $expected['death']['aspects']['MO-ME'][] = 1;
-        // $expected['death']['aspects']['MO-ME'][] = 1;
-        // $expected['death']['aspects']['MO-VE'][] = 1;
-        // $expected['death']['aspects']['MO-VE'][] = 1;
-        // $expected['death']['aspects']['MO-MA'][] = 1;
-        // $expected['death']['aspects']['MO-MA'][] = 1;
-        // $expected['death']['aspects']['MO-JU'][] = 1;
-        // $expected['death']['aspects']['MO-JU'][] = 1;
-        // $expected['death']['aspects']['MO-SA'][] = 1;
-        // $expected['death']['aspects']['MO-SA'][] = 1;
-        // $expected['death']['aspects']['MO-UR'][] = 1;
-        // $expected['death']['aspects']['MO-UR'][] = 1;
-        // $expected['death']['aspects']['MO-NE'][] = 1;
-        // $expected['death']['aspects']['MO-NE'][] = 1;
-        // $expected['death']['aspects']['MO-PL'][] = 1;
-        // $expected['death']['aspects']['MO-PL'][] = 1;
-        // $expected['death']['aspects']['MO-NN'][] = 1;
-        // $expected['death']['aspects']['MO-NN'][] = 1;
+        // $expected['death']['aspects']['dim1']['MO-ME'][] = 1;
+        // $expected['death']['aspects']['dim1']['MO-ME'][] = 1;
+        // $expected['death']['aspects']['dim1']['MO-VE'][] = 1;
+        // $expected['death']['aspects']['dim1']['MO-VE'][] = 1;
+        // $expected['death']['aspects']['dim1']['MO-MA'][] = 1;
+        // $expected['death']['aspects']['dim1']['MO-MA'][] = 1;
+        // $expected['death']['aspects']['dim1']['MO-JU'][] = 1;
+        // $expected['death']['aspects']['dim1']['MO-JU'][] = 1;
+        // $expected['death']['aspects']['dim1']['MO-SA'][] = 1;
+        // $expected['death']['aspects']['dim1']['MO-SA'][] = 1;
+        // $expected['death']['aspects']['dim1']['MO-UR'][] = 1;
+        // $expected['death']['aspects']['dim1']['MO-UR'][] = 1;
+        // $expected['death']['aspects']['dim1']['MO-NE'][] = 1;
+        // $expected['death']['aspects']['dim1']['MO-NE'][] = 1;
+        // $expected['death']['aspects']['dim1']['MO-PL'][] = 1;
+        // $expected['death']['aspects']['dim1']['MO-PL'][] = 1;
+        // $expected['death']['aspects']['dim1']['MO-NN'][] = 1;
+        // $expected['death']['aspects']['dim1']['MO-NN'][] = 1;
         // //
-        // $expected['death']['aspects']['ME-VE'][] = 1;
-        // $expected['death']['aspects']['ME-VE'][] = 1;
-        // $expected['death']['aspects']['ME-MA'][] = 1;
-        // $expected['death']['aspects']['ME-MA'][] = 1;
-        // $expected['death']['aspects']['ME-JU'][] = 1;
-        // $expected['death']['aspects']['ME-JU'][] = 1;
-        // $expected['death']['aspects']['ME-SA'][] = 1;
-        // $expected['death']['aspects']['ME-SA'][] = 1;
-        // $expected['death']['aspects']['ME-UR'][] = 1;
-        // $expected['death']['aspects']['ME-UR'][] = 1;
-        // $expected['death']['aspects']['ME-NE'][] = 1;
-        // $expected['death']['aspects']['ME-NE'][] = 1;
-        // $expected['death']['aspects']['ME-PL'][] = 1;
-        // $expected['death']['aspects']['ME-PL'][] = 1;
-        // $expected['death']['aspects']['ME-NN'][] = 1;
-        // $expected['death']['aspects']['ME-NN'][] = 1;
+        // $expected['death']['aspects']['dim1']['ME-VE'][] = 1;
+        // $expected['death']['aspects']['dim1']['ME-VE'][] = 1;
+        // $expected['death']['aspects']['dim1']['ME-MA'][] = 1;
+        // $expected['death']['aspects']['dim1']['ME-MA'][] = 1;
+        // $expected['death']['aspects']['dim1']['ME-JU'][] = 1;
+        // $expected['death']['aspects']['dim1']['ME-JU'][] = 1;
+        // $expected['death']['aspects']['dim1']['ME-SA'][] = 1;
+        // $expected['death']['aspects']['dim1']['ME-SA'][] = 1;
+        // $expected['death']['aspects']['dim1']['ME-UR'][] = 1;
+        // $expected['death']['aspects']['dim1']['ME-UR'][] = 1;
+        // $expected['death']['aspects']['dim1']['ME-NE'][] = 1;
+        // $expected['death']['aspects']['dim1']['ME-NE'][] = 1;
+        // $expected['death']['aspects']['dim1']['ME-PL'][] = 1;
+        // $expected['death']['aspects']['dim1']['ME-PL'][] = 1;
+        // $expected['death']['aspects']['dim1']['ME-NN'][] = 1;
+        // $expected['death']['aspects']['dim1']['ME-NN'][] = 1;
         // //
-        // $expected['death']['aspects']['VE-MA'][] = 1;
-        // $expected['death']['aspects']['VE-MA'][] = 1;
-        // $expected['death']['aspects']['VE-JU'][] = 1;
-        // $expected['death']['aspects']['VE-JU'][] = 1;
-        // $expected['death']['aspects']['VE-SA'][] = 1;
-        // $expected['death']['aspects']['VE-SA'][] = 1;
-        // $expected['death']['aspects']['VE-UR'][] = 1;
-        // $expected['death']['aspects']['VE-UR'][] = 1;
-        // $expected['death']['aspects']['VE-NE'][] = 1;
-        // $expected['death']['aspects']['VE-NE'][] = 1;
-        // $expected['death']['aspects']['VE-PL'][] = 1;
-        // $expected['death']['aspects']['VE-PL'][] = 1;
-        // $expected['death']['aspects']['VE-NN'][] = 1;
-        // $expected['death']['aspects']['VE-NN'][] = 1;
+        // $expected['death']['aspects']['dim1']['VE-MA'][] = 1;
+        // $expected['death']['aspects']['dim1']['VE-MA'][] = 1;
+        // $expected['death']['aspects']['dim1']['VE-JU'][] = 1;
+        // $expected['death']['aspects']['dim1']['VE-JU'][] = 1;
+        // $expected['death']['aspects']['dim1']['VE-SA'][] = 1;
+        // $expected['death']['aspects']['dim1']['VE-SA'][] = 1;
+        // $expected['death']['aspects']['dim1']['VE-UR'][] = 1;
+        // $expected['death']['aspects']['dim1']['VE-UR'][] = 1;
+        // $expected['death']['aspects']['dim1']['VE-NE'][] = 1;
+        // $expected['death']['aspects']['dim1']['VE-NE'][] = 1;
+        // $expected['death']['aspects']['dim1']['VE-PL'][] = 1;
+        // $expected['death']['aspects']['dim1']['VE-PL'][] = 1;
+        // $expected['death']['aspects']['dim1']['VE-NN'][] = 1;
+        // $expected['death']['aspects']['dim1']['VE-NN'][] = 1;
         // //
-        // $expected['death']['aspects']['MA-JU'][] = 1;
-        // $expected['death']['aspects']['MA-JU'][] = 1;
-        // $expected['death']['aspects']['MA-SA'][] = 1;
-        // $expected['death']['aspects']['MA-SA'][] = 1;
-        // $expected['death']['aspects']['MA-UR'][] = 1;
-        // $expected['death']['aspects']['MA-UR'][] = 1;
-        // $expected['death']['aspects']['MA-NE'][] = 1;
-        // $expected['death']['aspects']['MA-NE'][] = 1;
-        // $expected['death']['aspects']['MA-PL'][] = 1;
-        // $expected['death']['aspects']['MA-PL'][] = 1;
-        // $expected['death']['aspects']['MA-NN'][] = 1;
-        // $expected['death']['aspects']['MA-NN'][] = 1;
+        // $expected['death']['aspects']['dim1']['MA-JU'][] = 1;
+        // $expected['death']['aspects']['dim1']['MA-JU'][] = 1;
+        // $expected['death']['aspects']['dim1']['MA-SA'][] = 1;
+        // $expected['death']['aspects']['dim1']['MA-SA'][] = 1;
+        // $expected['death']['aspects']['dim1']['MA-UR'][] = 1;
+        // $expected['death']['aspects']['dim1']['MA-UR'][] = 1;
+        // $expected['death']['aspects']['dim1']['MA-NE'][] = 1;
+        // $expected['death']['aspects']['dim1']['MA-NE'][] = 1;
+        // $expected['death']['aspects']['dim1']['MA-PL'][] = 1;
+        // $expected['death']['aspects']['dim1']['MA-PL'][] = 1;
+        // $expected['death']['aspects']['dim1']['MA-NN'][] = 1;
+        // $expected['death']['aspects']['dim1']['MA-NN'][] = 1;
         // //
-        // $expected['death']['aspects']['JU-SA'][] = 1;
-        // $expected['death']['aspects']['JU-SA'][] = 1;
-        // $expected['death']['aspects']['JU-UR'][] = 1;
-        // $expected['death']['aspects']['JU-UR'][] = 1;
-        // $expected['death']['aspects']['JU-NE'][] = 1;
-        // $expected['death']['aspects']['JU-NE'][] = 1;
-        // $expected['death']['aspects']['JU-PL'][] = 1;
-        // $expected['death']['aspects']['JU-PL'][] = 1;
-        // $expected['death']['aspects']['JU-NN'][] = 1;
-        // $expected['death']['aspects']['JU-NN'][] = 1;
+        // $expected['death']['aspects']['dim1']['JU-SA'][] = 1;
+        // $expected['death']['aspects']['dim1']['JU-SA'][] = 1;
+        // $expected['death']['aspects']['dim1']['JU-UR'][] = 1;
+        // $expected['death']['aspects']['dim1']['JU-UR'][] = 1;
+        // $expected['death']['aspects']['dim1']['JU-NE'][] = 1;
+        // $expected['death']['aspects']['dim1']['JU-NE'][] = 1;
+        // $expected['death']['aspects']['dim1']['JU-PL'][] = 1;
+        // $expected['death']['aspects']['dim1']['JU-PL'][] = 1;
+        // $expected['death']['aspects']['dim1']['JU-NN'][] = 1;
+        // $expected['death']['aspects']['dim1']['JU-NN'][] = 1;
         // //
-        // $expected['death']['aspects']['SA-UR'][] = 1;
-        // $expected['death']['aspects']['SA-UR'][] = 1;
-        // $expected['death']['aspects']['SA-NE'][] = 1;
-        // $expected['death']['aspects']['SA-NE'][] = 1;
-        // $expected['death']['aspects']['SA-PL'][] = 1;
-        // $expected['death']['aspects']['SA-PL'][] = 1;
-        // $expected['death']['aspects']['SA-NN'][] = 1;
-        // $expected['death']['aspects']['SA-NN'][] = 1;
+        // $expected['death']['aspects']['dim1']['SA-UR'][] = 1;
+        // $expected['death']['aspects']['dim1']['SA-UR'][] = 1;
+        // $expected['death']['aspects']['dim1']['SA-NE'][] = 1;
+        // $expected['death']['aspects']['dim1']['SA-NE'][] = 1;
+        // $expected['death']['aspects']['dim1']['SA-PL'][] = 1;
+        // $expected['death']['aspects']['dim1']['SA-PL'][] = 1;
+        // $expected['death']['aspects']['dim1']['SA-NN'][] = 1;
+        // $expected['death']['aspects']['dim1']['SA-NN'][] = 1;
         // //
-        // $expected['death']['aspects']['UR-NE'][] = 1;
-        // $expected['death']['aspects']['UR-NE'][] = 1;
-        // $expected['death']['aspects']['UR-PL'][] = 1;
-        // $expected['death']['aspects']['UR-PL'][] = 1;
-        // $expected['death']['aspects']['UR-NN'][] = 1;
-        // $expected['death']['aspects']['UR-NN'][] = 1;
+        // $expected['death']['aspects']['dim1']['UR-NE'][] = 1;
+        // $expected['death']['aspects']['dim1']['UR-NE'][] = 1;
+        // $expected['death']['aspects']['dim1']['UR-PL'][] = 1;
+        // $expected['death']['aspects']['dim1']['UR-PL'][] = 1;
+        // $expected['death']['aspects']['dim1']['UR-NN'][] = 1;
+        // $expected['death']['aspects']['dim1']['UR-NN'][] = 1;
         // //
-        // $expected['death']['aspects']['NE-PL'][] = 1;
-        // $expected['death']['aspects']['NE-PL'][] = 1;
-        // $expected['death']['aspects']['NE-NN'][] = 1;
-        // $expected['death']['aspects']['NE-NN'][] = 1;
+        // $expected['death']['aspects']['dim1']['NE-PL'][] = 1;
+        // $expected['death']['aspects']['dim1']['NE-PL'][] = 1;
+        // $expected['death']['aspects']['dim1']['NE-NN'][] = 1;
+        // $expected['death']['aspects']['dim1']['NE-NN'][] = 1;
         //
-        $expected['death']['aspects']['PL-NN'][145] = 1;
-        $expected['death']['aspects']['PL-NN'][165] = 1;
+        $expected['death']['aspects']['dim1']['PL-NN'][147] = 1;
+        $expected['death']['aspects']['dim1']['PL-NN'][164] = 1;
         //
         $expected['death']['year']['1970'] = 2;
         //
@@ -412,280 +387,282 @@ planets                                  planets
         //
         // birth-death
         //
-        $expected['birth-death']['interaspects']['SO-SO'][329] = 1;
-        $expected['birth-death']['interaspects']['SO-SO'][26] = 1;
-        // $expected['birth-death']['interaspects']['SO-MO'][] = 1;
-        // $expected['birth-death']['interaspects']['SO-MO'][] = 1;
-        // $expected['birth-death']['interaspects']['SO-ME'][] = 1;
-        // $expected['birth-death']['interaspects']['SO-ME'][] = 1;
-        // $expected['birth-death']['interaspects']['SO-VE'][] = 1;
-        // $expected['birth-death']['interaspects']['SO-VE'][] = 1;
-        // $expected['birth-death']['interaspects']['SO-MA'][] = 1;
-        // $expected['birth-death']['interaspects']['SO-MA'][] = 1;
-        // $expected['birth-death']['interaspects']['SO-JU'][] = 1;
-        // $expected['birth-death']['interaspects']['SO-JU'][] = 1;
-        // $expected['birth-death']['interaspects']['SO-SA'][] = 1;
-        // $expected['birth-death']['interaspects']['SO-SA'][] = 1;
-        // $expected['birth-death']['interaspects']['SO-UR'][] = 1;
-        // $expected['birth-death']['interaspects']['SO-UR'][] = 1;
-        // $expected['birth-death']['interaspects']['SO-NE'][] = 1;
-        // $expected['birth-death']['interaspects']['SO-NE'][] = 1;
-        // $expected['birth-death']['interaspects']['SO-PL'][] = 1;
-        // $expected['birth-death']['interaspects']['SO-PL'][] = 1;
-        // $expected['birth-death']['interaspects']['SO-NN'][] = 1;
-        // $expected['birth-death']['interaspects']['SO-NN'][] = 1;
+        $expected['birth-death']['interaspects']['dim1']['SO-SO'][329] = 1;
+        $expected['birth-death']['interaspects']['dim1']['SO-SO'][26] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SO-MO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SO-MO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SO-ME'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SO-ME'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SO-VE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SO-VE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SO-MA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SO-MA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SO-JU'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SO-JU'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SO-SA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SO-SA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SO-UR'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SO-UR'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SO-NE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SO-NE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SO-PL'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SO-PL'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SO-NN'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SO-NN'][] = 1;
         //
-        // $expected['birth-death']['interaspects']['MO-SO'][] = 1;
-        // $expected['birth-death']['interaspects']['MO-SO'][] = 1;
-        // $expected['birth-death']['interaspects']['MO-MO'][] = 1;
-        // $expected['birth-death']['interaspects']['MO-MO'][] = 1;
-        // $expected['birth-death']['interaspects']['MO-ME'][] = 1;
-        // $expected['birth-death']['interaspects']['MO-ME'][] = 1;
-        // $expected['birth-death']['interaspects']['MO-VE'][] = 1;
-        // $expected['birth-death']['interaspects']['MO-VE'][] = 1;
-        // $expected['birth-death']['interaspects']['MO-MA'][] = 1;
-        // $expected['birth-death']['interaspects']['MO-MA'][] = 1;
-        // $expected['birth-death']['interaspects']['MO-JU'][] = 1;
-        // $expected['birth-death']['interaspects']['MO-JU'][] = 1;
-        // $expected['birth-death']['interaspects']['MO-SA'][] = 1;
-        // $expected['birth-death']['interaspects']['MO-SA'][] = 1;
-        // $expected['birth-death']['interaspects']['MO-UR'][] = 1;
-        // $expected['birth-death']['interaspects']['MO-UR'][] = 1;
-        // $expected['birth-death']['interaspects']['MO-NE'][] = 1;
-        // $expected['birth-death']['interaspects']['MO-NE'][] = 1;
-        // $expected['birth-death']['interaspects']['MO-PL'][] = 1;
-        // $expected['birth-death']['interaspects']['MO-PL'][] = 1;
-        // $expected['birth-death']['interaspects']['MO-NN'][] = 1;
-        // $expected['birth-death']['interaspects']['MO-NN'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MO-SO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MO-SO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MO-MO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MO-MO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MO-ME'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MO-ME'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MO-VE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MO-VE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MO-MA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MO-MA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MO-JU'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MO-JU'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MO-SA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MO-SA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MO-UR'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MO-UR'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MO-NE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MO-NE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MO-PL'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MO-PL'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MO-NN'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MO-NN'][] = 1;
         // //
-        // $expected['birth-death']['interaspects']['ME-SO'][] = 1;
-        // $expected['birth-death']['interaspects']['ME-SO'][] = 1;
-        // $expected['birth-death']['interaspects']['ME-MO'][] = 1;
-        // $expected['birth-death']['interaspects']['ME-MO'][] = 1;
-        // $expected['birth-death']['interaspects']['ME-ME'][] = 1;
-        // $expected['birth-death']['interaspects']['ME-ME'][] = 1;
-        // $expected['birth-death']['interaspects']['ME-VE'][] = 1;
-        // $expected['birth-death']['interaspects']['ME-VE'][] = 1;
-        // $expected['birth-death']['interaspects']['ME-MA'][] = 1;
-        // $expected['birth-death']['interaspects']['ME-MA'][] = 1;
-        // $expected['birth-death']['interaspects']['ME-JU'][] = 1;
-        // $expected['birth-death']['interaspects']['ME-JU'][] = 1;
-        // $expected['birth-death']['interaspects']['ME-SA'][] = 1;
-        // $expected['birth-death']['interaspects']['ME-SA'][] = 1;
-        // $expected['birth-death']['interaspects']['ME-UR'][] = 1;
-        // $expected['birth-death']['interaspects']['ME-UR'][] = 1;
-        // $expected['birth-death']['interaspects']['ME-NE'][] = 1;
-        // $expected['birth-death']['interaspects']['ME-NE'][] = 1;
-        // $expected['birth-death']['interaspects']['ME-PL'][] = 1;
-        // $expected['birth-death']['interaspects']['ME-PL'][] = 1;
-        // $expected['birth-death']['interaspects']['ME-NN'][] = 1;
-        // $expected['birth-death']['interaspects']['ME-NN'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['ME-SO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['ME-SO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['ME-MO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['ME-MO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['ME-ME'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['ME-ME'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['ME-VE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['ME-VE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['ME-MA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['ME-MA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['ME-JU'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['ME-JU'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['ME-SA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['ME-SA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['ME-UR'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['ME-UR'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['ME-NE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['ME-NE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['ME-PL'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['ME-PL'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['ME-NN'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['ME-NN'][] = 1;
         // //
-        // $expected['birth-death']['interaspects']['VE-SO'][] = 1;
-        // $expected['birth-death']['interaspects']['VE-SO'][] = 1;
-        // $expected['birth-death']['interaspects']['VE-MO'][] = 1;
-        // $expected['birth-death']['interaspects']['VE-MO'][] = 1;
-        // $expected['birth-death']['interaspects']['VE-ME'][] = 1;
-        // $expected['birth-death']['interaspects']['VE-ME'][] = 1;
-        // $expected['birth-death']['interaspects']['VE-VE'][] = 1;
-        // $expected['birth-death']['interaspects']['VE-VE'][] = 1;
-        // $expected['birth-death']['interaspects']['VE-MA'][] = 1;
-        // $expected['birth-death']['interaspects']['VE-MA'][] = 1;
-        // $expected['birth-death']['interaspects']['VE-JU'][] = 1;
-        // $expected['birth-death']['interaspects']['VE-JU'][] = 1;
-        // $expected['birth-death']['interaspects']['VE-SA'][] = 1;
-        // $expected['birth-death']['interaspects']['VE-SA'][] = 1;
-        // $expected['birth-death']['interaspects']['VE-UR'][] = 1;
-        // $expected['birth-death']['interaspects']['VE-UR'][] = 1;
-        // $expected['birth-death']['interaspects']['VE-NE'][] = 1;
-        // $expected['birth-death']['interaspects']['VE-NE'][] = 1;
-        // $expected['birth-death']['interaspects']['VE-PL'][] = 1;
-        // $expected['birth-death']['interaspects']['VE-PL'][] = 1;
-        // $expected['birth-death']['interaspects']['VE-NN'][] = 1;
-        // $expected['birth-death']['interaspects']['VE-NN'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['VE-SO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['VE-SO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['VE-MO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['VE-MO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['VE-ME'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['VE-ME'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['VE-VE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['VE-VE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['VE-MA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['VE-MA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['VE-JU'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['VE-JU'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['VE-SA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['VE-SA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['VE-UR'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['VE-UR'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['VE-NE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['VE-NE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['VE-PL'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['VE-PL'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['VE-NN'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['VE-NN'][] = 1;
         // //
-        // $expected['birth-death']['interaspects']['MA-SO'][] = 1;
-        // $expected['birth-death']['interaspects']['MA-SO'][] = 1;
-        // $expected['birth-death']['interaspects']['MA-MO'][] = 1;
-        // $expected['birth-death']['interaspects']['MA-MO'][] = 1;
-        // $expected['birth-death']['interaspects']['MA-ME'][] = 1;
-        // $expected['birth-death']['interaspects']['MA-ME'][] = 1;
-        // $expected['birth-death']['interaspects']['MA-VE'][] = 1;
-        // $expected['birth-death']['interaspects']['MA-VE'][] = 1;
-        // $expected['birth-death']['interaspects']['MA-MA'][] = 1;
-        // $expected['birth-death']['interaspects']['MA-MA'][] = 1;
-        // $expected['birth-death']['interaspects']['MA-JU'][] = 1;
-        // $expected['birth-death']['interaspects']['MA-JU'][] = 1;
-        // $expected['birth-death']['interaspects']['MA-SA'][] = 1;
-        // $expected['birth-death']['interaspects']['MA-SA'][] = 1;
-        // $expected['birth-death']['interaspects']['MA-UR'][] = 1;
-        // $expected['birth-death']['interaspects']['MA-UR'][] = 1;
-        // $expected['birth-death']['interaspects']['MA-NE'][] = 1;
-        // $expected['birth-death']['interaspects']['MA-NE'][] = 1;
-        // $expected['birth-death']['interaspects']['MA-PL'][] = 1;
-        // $expected['birth-death']['interaspects']['MA-PL'][] = 1;
-        // $expected['birth-death']['interaspects']['MA-NN'][] = 1;
-        // $expected['birth-death']['interaspects']['MA-NN'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MA-SO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MA-SO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MA-MO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MA-MO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MA-ME'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MA-ME'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MA-VE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MA-VE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MA-MA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MA-MA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MA-JU'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MA-JU'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MA-SA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MA-SA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MA-UR'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MA-UR'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MA-NE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MA-NE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MA-PL'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MA-PL'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MA-NN'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['MA-NN'][] = 1;
         // //
-        // $expected['birth-death']['interaspects']['JU-SO'][] = 1;
-        // $expected['birth-death']['interaspects']['JU-SO'][] = 1;
-        // $expected['birth-death']['interaspects']['JU-MO'][] = 1;
-        // $expected['birth-death']['interaspects']['JU-MO'][] = 1;
-        // $expected['birth-death']['interaspects']['JU-ME'][] = 1;
-        // $expected['birth-death']['interaspects']['JU-ME'][] = 1;
-        // $expected['birth-death']['interaspects']['JU-VE'][] = 1;
-        // $expected['birth-death']['interaspects']['JU-VE'][] = 1;
-        // $expected['birth-death']['interaspects']['JU-MA'][] = 1;
-        // $expected['birth-death']['interaspects']['JU-MA'][] = 1;
-        // $expected['birth-death']['interaspects']['JU-JU'][] = 1;
-        // $expected['birth-death']['interaspects']['JU-JU'][] = 1;
-        // $expected['birth-death']['interaspects']['JU-SA'][] = 1;
-        // $expected['birth-death']['interaspects']['JU-SA'][] = 1;
-        // $expected['birth-death']['interaspects']['JU-UR'][] = 1;
-        // $expected['birth-death']['interaspects']['JU-UR'][] = 1;
-        // $expected['birth-death']['interaspects']['JU-NE'][] = 1;
-        // $expected['birth-death']['interaspects']['JU-NE'][] = 1;
-        // $expected['birth-death']['interaspects']['JU-PL'][] = 1;
-        // $expected['birth-death']['interaspects']['JU-PL'][] = 1;
-        // $expected['birth-death']['interaspects']['JU-NN'][] = 1;
-        // $expected['birth-death']['interaspects']['JU-NN'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['JU-SO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['JU-SO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['JU-MO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['JU-MO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['JU-ME'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['JU-ME'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['JU-VE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['JU-VE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['JU-MA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['JU-MA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['JU-JU'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['JU-JU'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['JU-SA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['JU-SA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['JU-UR'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['JU-UR'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['JU-NE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['JU-NE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['JU-PL'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['JU-PL'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['JU-NN'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['JU-NN'][] = 1;
         // //
-        // $expected['birth-death']['interaspects']['SA-SO'][] = 1;
-        // $expected['birth-death']['interaspects']['SA-SO'][] = 1;
-        // $expected['birth-death']['interaspects']['SA-MO'][] = 1;
-        // $expected['birth-death']['interaspects']['SA-MO'][] = 1;
-        // $expected['birth-death']['interaspects']['SA-ME'][] = 1;
-        // $expected['birth-death']['interaspects']['SA-ME'][] = 1;
-        // $expected['birth-death']['interaspects']['SA-VE'][] = 1;
-        // $expected['birth-death']['interaspects']['SA-VE'][] = 1;
-        // $expected['birth-death']['interaspects']['SA-MA'][] = 1;
-        // $expected['birth-death']['interaspects']['SA-MA'][] = 1;
-        // $expected['birth-death']['interaspects']['SA-JU'][] = 1;
-        // $expected['birth-death']['interaspects']['SA-JU'][] = 1;
-        // $expected['birth-death']['interaspects']['SA-SA'][] = 1;
-        // $expected['birth-death']['interaspects']['SA-SA'][] = 1;
-        // $expected['birth-death']['interaspects']['SA-UR'][] = 1;
-        // $expected['birth-death']['interaspects']['SA-UR'][] = 1;
-        // $expected['birth-death']['interaspects']['SA-NE'][] = 1;
-        // $expected['birth-death']['interaspects']['SA-NE'][] = 1;
-        // $expected['birth-death']['interaspects']['SA-PL'][] = 1;
-        // $expected['birth-death']['interaspects']['SA-PL'][] = 1;
-        // $expected['birth-death']['interaspects']['SA-NN'][] = 1;
-        // $expected['birth-death']['interaspects']['SA-NN'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SA-SO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SA-SO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SA-MO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SA-MO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SA-ME'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SA-ME'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SA-VE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SA-VE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SA-MA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SA-MA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SA-JU'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SA-JU'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SA-SA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SA-SA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SA-UR'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SA-UR'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SA-NE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SA-NE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SA-PL'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SA-PL'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SA-NN'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['SA-NN'][] = 1;
         // //
-        // $expected['birth-death']['interaspects']['UR-SO'][] = 1;
-        // $expected['birth-death']['interaspects']['UR-SO'][] = 1;
-        // $expected['birth-death']['interaspects']['UR-MO'][] = 1;
-        // $expected['birth-death']['interaspects']['UR-MO'][] = 1;
-        // $expected['birth-death']['interaspects']['UR-ME'][] = 1;
-        // $expected['birth-death']['interaspects']['UR-ME'][] = 1;
-        // $expected['birth-death']['interaspects']['UR-VE'][] = 1;
-        // $expected['birth-death']['interaspects']['UR-VE'][] = 1;
-        // $expected['birth-death']['interaspects']['UR-MA'][] = 1;
-        // $expected['birth-death']['interaspects']['UR-MA'][] = 1;
-        // $expected['birth-death']['interaspects']['UR-JU'][] = 1;
-        // $expected['birth-death']['interaspects']['UR-JU'][] = 1;
-        // $expected['birth-death']['interaspects']['UR-SA'][] = 1;
-        // $expected['birth-death']['interaspects']['UR-SA'][] = 1;
-        // $expected['birth-death']['interaspects']['UR-UR'][] = 1;
-        // $expected['birth-death']['interaspects']['UR-UR'][] = 1;
-        // $expected['birth-death']['interaspects']['UR-NE'][] = 1;
-        // $expected['birth-death']['interaspects']['UR-NE'][] = 1;
-        // $expected['birth-death']['interaspects']['UR-PL'][] = 1;
-        // $expected['birth-death']['interaspects']['UR-PL'][] = 1;
-        // $expected['birth-death']['interaspects']['UR-NN'][] = 1;
-        // $expected['birth-death']['interaspects']['UR-NN'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['UR-SO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['UR-SO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['UR-MO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['UR-MO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['UR-ME'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['UR-ME'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['UR-VE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['UR-VE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['UR-MA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['UR-MA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['UR-JU'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['UR-JU'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['UR-SA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['UR-SA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['UR-UR'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['UR-UR'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['UR-NE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['UR-NE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['UR-PL'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['UR-PL'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['UR-NN'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['UR-NN'][] = 1;
         // //
-        // $expected['birth-death']['interaspects']['NE-SO'][] = 1;
-        // $expected['birth-death']['interaspects']['NE-SO'][] = 1;
-        // $expected['birth-death']['interaspects']['NE-MO'][] = 1;
-        // $expected['birth-death']['interaspects']['NE-MO'][] = 1;
-        // $expected['birth-death']['interaspects']['NE-ME'][] = 1;
-        // $expected['birth-death']['interaspects']['NE-ME'][] = 1;
-        // $expected['birth-death']['interaspects']['NE-VE'][] = 1;
-        // $expected['birth-death']['interaspects']['NE-VE'][] = 1;
-        // $expected['birth-death']['interaspects']['NE-MA'][] = 1;
-        // $expected['birth-death']['interaspects']['NE-MA'][] = 1;
-        // $expected['birth-death']['interaspects']['NE-JU'][] = 1;
-        // $expected['birth-death']['interaspects']['NE-JU'][] = 1;
-        // $expected['birth-death']['interaspects']['NE-SA'][] = 1;
-        // $expected['birth-death']['interaspects']['NE-SA'][] = 1;
-        // $expected['birth-death']['interaspects']['NE-UR'][] = 1;
-        // $expected['birth-death']['interaspects']['NE-UR'][] = 1;
-        // $expected['birth-death']['interaspects']['NE-NE'][] = 1;
-        // $expected['birth-death']['interaspects']['NE-NE'][] = 1;
-        // $expected['birth-death']['interaspects']['NE-PL'][] = 1;
-        // $expected['birth-death']['interaspects']['NE-PL'][] = 1;
-        // $expected['birth-death']['interaspects']['NE-NN'][] = 1;
-        // $expected['birth-death']['interaspects']['NE-NN'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NE-SO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NE-SO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NE-MO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NE-MO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NE-ME'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NE-ME'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NE-VE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NE-VE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NE-MA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NE-MA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NE-JU'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NE-JU'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NE-SA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NE-SA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NE-UR'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NE-UR'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NE-NE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NE-NE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NE-PL'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NE-PL'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NE-NN'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NE-NN'][] = 1;
         // //
-        // $expected['birth-death']['interaspects']['PL-SO'][] = 1;
-        // $expected['birth-death']['interaspects']['PL-SO'][] = 1;
-        // $expected['birth-death']['interaspects']['PL-MO'][] = 1;
-        // $expected['birth-death']['interaspects']['PL-MO'][] = 1;
-        // $expected['birth-death']['interaspects']['PL-ME'][] = 1;
-        // $expected['birth-death']['interaspects']['PL-ME'][] = 1;
-        // $expected['birth-death']['interaspects']['PL-VE'][] = 1;
-        // $expected['birth-death']['interaspects']['PL-VE'][] = 1;
-        // $expected['birth-death']['interaspects']['PL-MA'][] = 1;
-        // $expected['birth-death']['interaspects']['PL-MA'][] = 1;
-        // $expected['birth-death']['interaspects']['PL-JU'][] = 1;
-        // $expected['birth-death']['interaspects']['PL-JU'][] = 1;
-        // $expected['birth-death']['interaspects']['PL-SA'][] = 1;
-        // $expected['birth-death']['interaspects']['PL-SA'][] = 1;
-        // $expected['birth-death']['interaspects']['PL-UR'][] = 1;
-        // $expected['birth-death']['interaspects']['PL-UR'][] = 1;
-        // $expected['birth-death']['interaspects']['PL-NE'][] = 1;
-        // $expected['birth-death']['interaspects']['PL-NE'][] = 1;
-        // $expected['birth-death']['interaspects']['PL-PL'][] = 1;
-        // $expected['birth-death']['interaspects']['PL-PL'][] = 1;
-        // $expected['birth-death']['interaspects']['PL-NN'][] = 1;
-        // $expected['birth-death']['interaspects']['PL-NN'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['PL-SO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['PL-SO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['PL-MO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['PL-MO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['PL-ME'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['PL-ME'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['PL-VE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['PL-VE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['PL-MA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['PL-MA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['PL-JU'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['PL-JU'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['PL-SA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['PL-SA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['PL-UR'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['PL-UR'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['PL-NE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['PL-NE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['PL-PL'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['PL-PL'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['PL-NN'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['PL-NN'][] = 1;
         // //
-        // $expected['birth-death']['interaspects']['NN-SO'][] = 1;
-        // $expected['birth-death']['interaspects']['NN-SO'][] = 1;
-        // $expected['birth-death']['interaspects']['NN-MO'][] = 1;
-        // $expected['birth-death']['interaspects']['NN-MO'][] = 1;
-        // $expected['birth-death']['interaspects']['NN-ME'][] = 1;
-        // $expected['birth-death']['interaspects']['NN-ME'][] = 1;
-        // $expected['birth-death']['interaspects']['NN-VE'][] = 1;
-        // $expected['birth-death']['interaspects']['NN-VE'][] = 1;
-        // $expected['birth-death']['interaspects']['NN-MA'][] = 1;
-        // $expected['birth-death']['interaspects']['NN-MA'][] = 1;
-        // $expected['birth-death']['interaspects']['NN-JU'][] = 1;
-        // $expected['birth-death']['interaspects']['NN-JU'][] = 1;
-        // $expected['birth-death']['interaspects']['NN-SA'][] = 1;
-        // $expected['birth-death']['interaspects']['NN-SA'][] = 1;
-        // $expected['birth-death']['interaspects']['NN-UR'][] = 1;
-        // $expected['birth-death']['interaspects']['NN-UR'][] = 1;
-        // $expected['birth-death']['interaspects']['NN-NE'][] = 1;
-        // $expected['birth-death']['interaspects']['NN-NE'][] = 1;
-        // $expected['birth-death']['interaspects']['NN-PL'][] = 1;
-        // $expected['birth-death']['interaspects']['NN-PL'][] = 1;
-        $expected['birth-death']['interaspects']['NN-NN'][133] = 1;
-        $expected['birth-death']['interaspects']['NN-NN'][339] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NN-SO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NN-SO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NN-MO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NN-MO'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NN-ME'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NN-ME'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NN-VE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NN-VE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NN-MA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NN-MA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NN-JU'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NN-JU'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NN-SA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NN-SA'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NN-UR'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NN-UR'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NN-NE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NN-NE'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NN-PL'][] = 1;
+        // $expected['birth-death']['interaspects']['dim1']['NN-PL'][] = 1;
+        $expected['birth-death']['interaspects']['dim1']['NN-NN'][133] = 1;
+        $expected['birth-death']['interaspects']['dim1']['NN-NN'][339] = 1;
         //
-        $expected['birth-death']['age'][587] = 1;
-        $expected['birth-death']['age'][13] = 1;
+        $expected['birth-death']['age-dim1'][587] = 1;
+        $expected['birth-death']['age-dim1'][13] = 1;
         
-        $computed = Distribs::computeDistributions($f, self::$studyConfig);
-        $this->assertEquals($computed['birth']['planets'], $expected['birth']['planets']);
-        $this->assertEquals($computed['birth']['aspects']['SO-MO'], $expected['birth']['aspects']['SO-MO']);
-        $this->assertEquals($computed['birth']['aspects']['SO-ME'], $expected['birth']['aspects']['SO-ME']);
-        $this->assertEquals($computed['birth']['aspects']['PL-NN'], $expected['birth']['aspects']['PL-NN']);
+        $computed = Distribs::computeDistributions($f, self::DATE_NAMES, self::PLANET_CODES, self::DISTRIB_AGE_UNIT);
+//print_r($computed['birth']['aspects']['dim1']['SO-MO']); exit;
+        
+        $this->assertEquals($computed['birth']['positions'], $expected['birth']['positions']);                                                       
+        $this->assertEquals($computed['birth']['aspects']['dim1']['SO-MO'], $expected['birth']['aspects']['dim1']['SO-MO']);
+        $this->assertEquals($computed['birth']['aspects']['dim1']['SO-ME'], $expected['birth']['aspects']['dim1']['SO-ME']);
+        $this->assertEquals($computed['birth']['aspects']['dim1']['PL-NN'], $expected['birth']['aspects']['dim1']['PL-NN']);
         $this->assertEquals($computed['birth']['year'], $expected['birth']['year']);
         $this->assertEquals($computed['birth']['day'], $expected['birth']['day']);
         //
-        $this->assertEquals($computed['death']['planets'], $expected['death']['planets']);
-        $this->assertEquals($computed['death']['aspects']['SO-MO'], $expected['death']['aspects']['SO-MO']);
-        $this->assertEquals($computed['death']['aspects']['SO-ME'], $expected['death']['aspects']['SO-ME']);
-        $this->assertEquals($computed['death']['aspects']['PL-NN'], $expected['death']['aspects']['PL-NN']);
+        $this->assertEquals($computed['death']['positions'], $expected['death']['positions']);
+        $this->assertEquals($computed['death']['aspects']['dim1']['SO-MO'], $expected['death']['aspects']['dim1']['SO-MO']);
+        $this->assertEquals($computed['death']['aspects']['dim1']['SO-ME'], $expected['death']['aspects']['dim1']['SO-ME']);
+        $this->assertEquals($computed['death']['aspects']['dim1']['PL-NN'], $expected['death']['aspects']['dim1']['PL-NN']);
         $this->assertEquals($computed['death']['year'], $expected['death']['year']);
         $this->assertEquals($computed['death']['day'], $expected['death']['day']);
         //
-        $this->assertEquals($computed['birth-death']['interaspects']['SO-SO'], $expected['birth-death']['interaspects']['SO-SO']);
-        $this->assertEquals($computed['birth-death']['interaspects']['NN-NN'], $expected['birth-death']['interaspects']['NN-NN']);
-        $this->assertEquals($computed['birth-death']['age'], $expected['birth-death']['age']);
+        $this->assertEquals($computed['birth-death']['interaspects']['dim1']['SO-SO'], $expected['birth-death']['interaspects']['dim1']['SO-SO']);
+        $this->assertEquals($computed['birth-death']['interaspects']['dim1']['NN-NN'], $expected['birth-death']['interaspects']['dim1']['NN-NN']);
+        $this->assertEquals($computed['birth-death']['age-dim1'], $expected['birth-death']['age-dim1']);
     }
     
 }// end class

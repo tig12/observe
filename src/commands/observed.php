@@ -45,9 +45,9 @@ class observed implements ICommand {
             }
             fclose($fileHandle);
         };
-        $distribs = Distribs::computeDistributions($f, $study);
+        $distribs = Distribs::computeDistributions($f, $study->config['dates'], $study->config['planets'], $study->config['distrib-age-unit']);
         $outDir = $study->getObservedDirectory();
-        Distribs::storeDistributions($outDir, $distribs, $study);
+        Distribs::storeDistributions($outDir, $distribs, $study->config['dates']);
         echo "Generated observed distributions in $outDir\n";
         return '';
     }

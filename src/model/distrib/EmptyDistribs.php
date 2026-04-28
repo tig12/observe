@@ -24,7 +24,7 @@ class EmptyDistribs {
         Initializes the distributions of a study.
         The knowledge of $dateNames permits to deduce the distributions of type distrib1 and distrib2 to initialize.
         @param  $dateNames      ex: ['birth', 'death']
-        @param  $planetCodes    ex: ['SO', 'MO', 'ME', 'VE', 'MA', 'JU', 'SA', 'UR', 'NE', PL', 'NN']
+        @param  $planetCodes    ex: ['SO', 'MO', 'ME', 'VE', 'MA', 'JU', 'SA', 'UR', 'NE', 'PL', 'NN']
         
     **/
     public static function initializeDistributions(array $dateNames, array $planetCodes): array {
@@ -64,7 +64,7 @@ class EmptyDistribs {
     /** 
         Prepares an array containing empty distributions of type 2 (relations between two dates).
     **/
-    public static function emptyDistrib2(array &$planetCodes): array {
+    public static function emptyDistrib2(array $planetCodes): array {
         return [
             'interaspects' => [
                 'dim1' => self::emptyDoubleDistrib_square_dim1($planetCodes, $planetCodes),

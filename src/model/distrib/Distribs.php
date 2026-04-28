@@ -10,7 +10,6 @@
 ********************************************************************************/
 namespace observe\model\distrib;
 
-use observe\model\IStudy;
 use observe\model\SqlitePlanets;
 use tiglib\time\diff;
 use tiglib\math\mod360;
@@ -28,17 +27,17 @@ class Distribs {
     
     private static int $nPlanets;
     
-    private static function init(IStudy $study): void {
+    private static function init(array $dateNames, array $planetCodes): void {
         self::$sqlite_planets = SqlitePlanets::getSqlite();
-        $planets = implode(',', $study->config['planets']);
+        $planets = implode(',', $planetCodes);
         $days = '';
-        for($i=0; $i < count($study->config['dates']); $i++){
+        for($i=0; $i < count($dateNames); $i++){
             $days .= ":d$i,";
         }
         $days = substr($days, 0, -1);
         // select SO,MO,ME,VE,MA,JU,SA,UR,NE,PL,NN from planet where day in(:d0,:d1)
         self::$stmt_planets = self::$sqlite_planets->prepare("select $planets from planet where day in($days)");
-        self::$codePlanets = $study->config['planets'];
+        self::$codePlanets = $planetCodes;
         self::$nPlanets = count(self::$codePlanets);
         self::$initOK = true;
     }
@@ -47,13 +46,13 @@ class Distribs {
         Conductor of distribution computation.
         @param  $func Function which yields the data whose distributions need to be computed.
     **/
-    public static function computeDistributions(callable $func, IStudy $study): array {
+    public static function computeDistributions(callable $func, array $dateNames, array $planetCodes, string $distribAgeUnit = 'Y'): array {
         if(!self::$initOK){
-            self::init($study);
+            self::init($dateNames, $planetCodes);
         }
-        $res = EmptyDistribs::initializeDistributions($study->config['dates'], $study->config['planets']);
+        $res = EmptyDistribs::initializeDistributions($dateNames, $planetCodes);
         foreach($func() as $dates){
-            self::fillDistributionsWithLine($res, $dates, $study);
+            self::fillDistributionsWithLine($res, $dates, $dateNames, $planetCodes, $distribAgeUnit);
         }
         return $res;
     }
@@ -62,7 +61,7 @@ class Distribs {
         Fills the distributions of a study with one line containing dates.
         $res of the calling code is modified because passed by reference.
     **/
-    public static function fillDistributionsWithLine(array &$res, array $dates, IStudy $study): void {
+    public static function fillDistributionsWithLine(array &$res, array $dates, array $dateNames, array $planetCodes, string $distribAgeUnit): void {
         $nDates = count($dates);
         $execArray = [];
         for($i=0; $i < $nDates; $i++){
@@ -78,7 +77,7 @@ class Distribs {
         // distributions of type distrib1
         //
         for($i=0; $i < $nDates; $i++){
-            $dateName = $study->config['dates'][$i]; // "birth", "death", "mother", "father" etc.
+            $dateName = $dateNames[$i]; // "birth", "death", "mother", "father" etc.
             // day
             $res[$dateName]['day'][substr($dates[$i], 5)]++;
             //year
@@ -107,9 +106,9 @@ class Distribs {
         //
         for($i=0; $i < $nDates; $i++){
             for($j=$i+1; $j < $nDates; $j++){
-                $dateName = $study->config['dates'][$i] . '-' . $study->config['dates'][$j]; // birth-death, mother-father etc.
+                $dateName = $dateNames[$i] . '-' . $dateNames[$j]; // birth-death, mother-father etc.
                 // age
-                $age = diff::compute(new \DateTime($dates[$i]), new \DateTime($dates[$j]), $study->config['distrib-age-unit']);
+                $age = diff::compute(new \DateTime($dates[$i]), new \DateTime($dates[$j]), $distribAgeUnit);
                 if(!isset($res[$dateName]['age-dim1'][$age])){
                     $res[$dateName]['age-dim1'][$age] = 0;
                 }
@@ -132,11 +131,11 @@ class Distribs {
         Stores the distributions of a study in csv files.
         @param  $distribs   The distributions to store
     **/
-    public static function storeDistributions(string $baseDir, array &$distribs, IStudy $study): void {
-        $nDates = count($study->config['dates']);
+    public static function storeDistributions(string $baseDir, array &$distribs, array $dateNames): void {
+        $nDates = count($dateNames);
         // distributions of type distrib1
         for($i=0; $i < $nDates; $i++){
-            $dateName = $study->config['dates'][$i]; // ex: birth
+            $dateName = $dateNames[$i]; // ex: birth
             $outDir = $baseDir . DS . $dateName; // ex: var/studies/death-fr/split-all/01--0-150years/observed/birth
             // positions of planets
             $dir = $outDir . DS . 'positions'; // ex: var/studies/death-fr/observed/birth/positions
@@ -166,7 +165,7 @@ class Distribs {
         // distributions of type distrib2
         for($i=0; $i < $nDates; $i++){
             for($j=$i+1; $j < $nDates; $j++){
-                $dateName = $study->config['dates'][$i] . '-' . $study->config['dates'][$j]; // ex: birth-death
+                $dateName = $dateNames[$i] . '-' . $dateNames[$j]; // ex: birth-death
                 $outDir = $baseDir . DS . $dateName;
                 mkdir::execute($outDir);
                 // interaspects
@@ -191,12 +190,12 @@ class Distribs {
         Loads the distributions of a study from csv files.
         $baseDir is supposed to be structured wuth distributions of type distrib1 and distrib2 (no verification on the existence of the csv files).
     **/
-    public static function loadDistributions(string $baseDir, IStudy $study): array {
-        $res = EmptyDistribs::initializeDistributions($study->config['dates'], $study->config['planets']);
-        $nDates = count($study->config['dates']);
+    public static function loadDistributions(string $baseDir, array $dateNames, array $planetNames): array {
+        $res = EmptyDistribs::initializeDistributions($dateNames, $planetNames);
+        $nDates = count($dateNames);
         // distributions of type distrib1
         for($i=0; $i < $nDates; $i++){
-            $dateName = $study->config['dates'][$i]; // ex: birth
+            $dateName = $dateNames[$i]; // ex: birth
             $inDir = $baseDir . DS . $dateName; // ex: var/studies/death-fr/observed/birth
             // planet positions
             $dir = $inDir . DS . 'positions'; // ex: var/studies/death-fr/observed/birth/positions
@@ -219,7 +218,7 @@ class Distribs {
         // distributions of type distrib2
         for($i=0; $i < $nDates; $i++){
             for($j=$i+1; $j < $nDates; $j++){
-                $dateName = $study->config['dates'][$i] . '-' . $study->config['dates'][$j]; // ex: birth-death
+                $dateName = $dateNames[$i] . '-' . $dateNames[$j]; // ex: birth-death
                 $inDir = $baseDir . DS . $dateName;
                 // interaspects
                 $dir = $inDir . DS . 'interaspects' . DS . 'dim1'; // ex: var/studies/death-fr/observed/birth-death/interaspects/dim1

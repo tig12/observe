@@ -122,14 +122,14 @@ class control implements ICommand {
                         yield array_values(self::otherPerson2($person));
                     }
                 };
-                $newDistribs = Distribs::computeDistributions($f, $study);
+                $newDistribs = Distribs::computeDistributions($f, $study->config['dates'], $study->config['planets'], $study->config['distrib-age-unit']);
                 $distribs = AddDistribs::add($distribs, $newDistribs, $study->config['dates']);
                 self::storeDistribsAndOffsetInTmpSqlite($sqlite_tmp, $controlName, $OFFSET, $distribs);
                 unset($newDistribs);
                 $OFFSET += $LIMIT;
             } // end while($OFFSET < self::$maxRowid)
             
-            Distribs::storeDistributions($controlDir, $distribs, $study);
+            Distribs::storeDistributions($controlDir, $distribs, $study->config['dates']);
             
             $t2 = microtime(true);
             $dt = round($t2 - $t1, 3);

@@ -15,14 +15,9 @@ use observe\model\distrib\EmptyDistribs;
 
 class EmptyDistribsTest extends TestCase{
 
-    /** Study used for the tests **/
-    private const string STUDY_SLUG = 'death-fr';
+    private const array DATE_NAMES = ['birth', 'death'];
     
-    private static array $studyConfig;
-    
-    protected function setUp(): void {
-        self::$studyConfig = Studies::getStudyConfig(self::STUDY_SLUG);
-    }
+    private const array PLANET_CODES = ['SO', 'MO', 'ME', 'VE', 'MA', 'JU', 'SA', 'UR', 'NE', 'PL', 'NN'];
     
     // ***********************************************************************************
     // 1 - Test generic functions    
@@ -89,7 +84,7 @@ class EmptyDistribsTest extends TestCase{
     
     public function testEmptyDistrib1(){
         $arr360 = array_fill(0, 360, 0);
-        $this->assertEquals(EmptyDistribs::emptyDistrib1(self::$studyConfig), [
+        $this->assertEquals(EmptyDistribs::emptyDistrib1(self::PLANET_CODES), [
             'positions'=> [
                 'SO' => $arr360,
                 'MO' => $arr360,
@@ -169,7 +164,7 @@ class EmptyDistribsTest extends TestCase{
     
     public function testEmptyDistrib2(){
         $arr360 = array_fill(0, 360, 0);
-        $this->assertEquals(EmptyDistribs::emptyDistrib2(self::$studyConfig), [
+        $this->assertEquals(EmptyDistribs::emptyDistrib2(self::PLANET_CODES), [
             'interaspects' => [
                 'dim1' => [
                     'SO-SO' => $arr360,
