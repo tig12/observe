@@ -17,8 +17,8 @@ out-dir: output/studies/death-fr
 # list of planets involved in this study (IAA codes)
 planets: [SO, MO, ME, VE, MA, JU, SA, UR, NE, PL, NN]
 
-# Description of the dates contained in the split files
-# The order of this array must correspond to the order of the columns in the split files
+# Description of the dates contained in data.csv.bz2
+# The order of this array must correspond to the order of the columns in data.csv.bz2
 dates:
   - birth
   - death

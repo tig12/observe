@@ -12,7 +12,6 @@
 ********************************************************************************/
 namespace observe\model\distrib;
 
-use observe\model\IStudy;
 use tiglib\time\daysOfYear;
 
 class EmptyDistribs {
@@ -23,22 +22,25 @@ class EmptyDistribs {
     
     /**
         Initializes the distributions of a study.
-        The knowledge of $studyConfig['date'] permits to deduce the distributions of type distrib1 and distrib2 to initialize.
+        The knowledge of $dateNames permits to deduce the distributions of type distrib1 and distrib2 to initialize.
+        @param  $dateNames      ex: ['birth', 'death']
+        @param  $planetCodes    ex: ['SO', 'MO', 'ME', 'VE', 'MA', 'JU', 'SA', 'UR', 'NE', PL', 'NN']
+        
     **/
-    public static function initializeDistributions(IStudy $study): array {
+    public static function initializeDistributions(array $dateNames, array $planetCodes): array {
         $res = [];
-        $nDates = count($study->config['dates']);
+        $nDates = count($dateNames);
         // distributions of type distrib1
         for($i=0; $i < $nDates; $i++){
-            $dateName = $study->config['dates'][$i];
-            $res[$dateName] = self::emptyDistrib1($study);
+            $dateName = $dateNames[$i];
+            $res[$dateName] = self::emptyDistrib1($planetCodes);
         }
         // distributions of type distrib2
         for($i=0; $i < $nDates; $i++){
             for($j=$i+1; $j < $nDates; $j++){
-                $dateName1 = $study->config['dates'][$i];
-                $dateName2 = $study->config['dates'][$j];
-                $res["$dateName1-$dateName2"] = self::emptyDistrib2($study);
+                $dateName1 = $dateNames[$i];
+                $dateName2 = $dateNames[$j];
+                $res["$dateName1-$dateName2"] = self::emptyDistrib2($planetCodes);
             }
         }
         return $res;
@@ -47,11 +49,11 @@ class EmptyDistribs {
     /** 
         Prepares an array containing empty distributions of type 1 (single date).
     **/
-    public static function emptyDistrib1(IStudy $study): array {
+    public static function emptyDistrib1(array $planetCodes): array {
         return [
-            'positions'=> self::emptySingleDistrib_dim1($study->config['planets']),
+            'positions'=> self::emptySingleDistrib_dim1($planetCodes),
             'aspects' => [
-                'dim1' => self::emptyDoubleDistrib_triangle_dim1($study->config['planets'], $study->config['planets']),
+                'dim1' => self::emptyDoubleDistrib_triangle_dim1($planetCodes, $planetCodes),
                 // dim2 is computed in command dim2
             ],
             'day' => self::emptyDayDistrib(),
@@ -62,12 +64,11 @@ class EmptyDistribs {
     /** 
         Prepares an array containing empty distributions of type 2 (relations between two dates).
     **/
-    public static function emptyDistrib2(IStudy $study): array {
+    public static function emptyDistrib2(array &$planetCodes): array {
         return [
             'interaspects' => [
-                'dim1' => self::emptyDoubleDistrib_square_dim1($study->config['planets'], $study->config['planets']),
+                'dim1' => self::emptyDoubleDistrib_square_dim1($planetCodes, $planetCodes),
                 // dim2 is computed in command dim2
-                //'dim2' =>  self::emptyDoubleDistrib_square_dim2($study->config['planets'], $study->config['planets']), 
             ],
             'age-dim1' => [],
         ];

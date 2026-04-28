@@ -51,7 +51,7 @@ class Distribs {
         if(!self::$initOK){
             self::init($study);
         }
-        $res = EmptyDistribs::initializeDistributions($study);
+        $res = EmptyDistribs::initializeDistributions($study->config['dates'], $study->config['planets']);
         foreach($func() as $dates){
             self::fillDistributionsWithLine($res, $dates, $study);
         }
@@ -192,7 +192,7 @@ class Distribs {
         $baseDir is supposed to be structured wuth distributions of type distrib1 and distrib2 (no verification on the existence of the csv files).
     **/
     public static function loadDistributions(string $baseDir, IStudy $study): array {
-        $res = EmptyDistribs::initializeDistributions($study);
+        $res = EmptyDistribs::initializeDistributions($study->config['dates'], $study->config['planets']);
         $nDates = count($study->config['dates']);
         // distributions of type distrib1
         for($i=0; $i < $nDates; $i++){

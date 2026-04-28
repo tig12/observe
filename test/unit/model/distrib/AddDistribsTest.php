@@ -14,14 +14,16 @@ use PHPUnit\Framework\TestCase;
 class AddDistribsTest extends TestCase{
 
     public function testAdd(){
-        $studyConfig = [ 'dates' => ['birth', 'death'] ];
+        $dateNames = ['birth', 'death'];
         $d1 = [
             'birth' => [
                 'aspects' => [
-                    'SO-MO' => [0 => 11, 1 => 12, 2 => 13],
-                    'SO-ME' => [0 => 14, 1 => 15, 2 => 16],
+                    'dim1' => [
+                        'SO-MO' => [0 => 11, 1 => 12, 2 => 13],
+                        'SO-ME' => [0 => 14, 1 => 15, 2 => 16],
+                    ],
                 ],
-                'planets' => [
+                'positions' => [
                     'SO' => [0 => 21, 1 => 22, 2 => 23],
                     'MO' => [0 => 24, 1 => 25, 2 => 26],
                 ],
@@ -38,10 +40,12 @@ class AddDistribsTest extends TestCase{
             ],
             'death' => [
                 'aspects' => [
-                    'SO-MO' => [0 => 21, 1 => 22, 2 => 23],
-                    'SO-ME' => [0 => 21, 1 => 22, 2 => 23],
+                    'dim1' => [
+                        'SO-MO' => [0 => 21, 1 => 22, 2 => 23],
+                        'SO-ME' => [0 => 21, 1 => 22, 2 => 23],
+                    ],
                 ],
-                'planets' => [
+                'positions' => [
                     'SO' => [0 => 21, 1 => 22, 2 => 23],
                     'MO' => [0 => 24, 1 => 25, 2 => 26],
                 ],
@@ -55,14 +59,16 @@ class AddDistribsTest extends TestCase{
                 ],
             ],
             'birth-death' => [
-                'age' => [
+                'age-dim1' => [
                     0 => 21,
                     10 => 31,
                     11 => 32,
                 ],
                 'interaspects' => [
-                    'SO-SO' => [0 => 21, 1 => 22, 2 => 23],
-                    'SO-MO' => [0 => 24, 1 => 25, 2 => 26],
+                    'dim1' => [
+                        'SO-SO' => [0 => 21, 1 => 22, 2 => 23],
+                        'SO-MO' => [0 => 24, 1 => 25, 2 => 26],
+                    ],
                 ],
             ],
         ];
@@ -70,10 +76,12 @@ class AddDistribsTest extends TestCase{
         $d2 = [
             'birth' => [
                 'aspects' => [
-                    'SO-MO' => [0 => 1, 1 => 2, 2 => 3],
-                    'SO-ME' => [0 => 4, 1 => 5, 2 => 6],
+                    'dim1' => [
+                        'SO-MO' => [0 => 1, 1 => 2, 2 => 3],
+                        'SO-ME' => [0 => 4, 1 => 5, 2 => 6],
+                    ],
                 ],
-                'planets' => [
+                'positions' => [
                     'SO' => [0 => 1, 1 => 2, 2 => 3],
                     'MO' => [0 => 4, 1 => 5, 2 => 6],
                 ],
@@ -90,10 +98,12 @@ class AddDistribsTest extends TestCase{
             ],
             'death' => [
                 'aspects' => [
-                    'SO-MO' => [0 => 11, 1 => 12, 2 => 13],
-                    'SO-ME' => [0 => 31, 1 => 32, 2 => 33],
+                    'dim1' => [
+                        'SO-MO' => [0 => 11, 1 => 12, 2 => 13],
+                        'SO-ME' => [0 => 31, 1 => 32, 2 => 33],
+                    ],
                 ],
-                'planets' => [
+                'positions' => [
                     'SO' => [0 => 121, 1 => 122, 2 => 123],
                     'MO' => [0 => 121, 1 => 122, 2 => 123],
                 ],
@@ -107,14 +117,16 @@ class AddDistribsTest extends TestCase{
                 ],
             ],
             'birth-death' => [
-                'age' => [
+                'age-dim1' => [
                     0 => 121,
                     10 => 131,
                     12 => 132,
                 ],
                 'interaspects' => [
-                    'SO-SO' => [0 => 121, 1 => 122, 2 => 123],
-                    'SO-MO' => [0 => 124, 1 => 125, 2 => 126],
+                    'dim1' => [
+                        'SO-SO' => [0 => 121, 1 => 122, 2 => 123],
+                        'SO-MO' => [0 => 124, 1 => 125, 2 => 126],
+                    ],
                 ],
             ],
         ];
@@ -122,10 +134,12 @@ class AddDistribsTest extends TestCase{
         $res = [
             'birth' => [
                 'aspects' => [
-                    'SO-MO' => [0 => 12, 1 => 14, 2 => 16],
-                    'SO-ME' => [0 => 18, 1 => 20, 2 => 22],
+                    'dim1' => [
+                        'SO-MO' => [0 => 12, 1 => 14, 2 => 16],
+                        'SO-ME' => [0 => 18, 1 => 20, 2 => 22],
+                    ],
                 ],
-                'planets' => [
+                'positions' => [
                     'SO' => [0 => 22, 1 => 24, 2 => 26],
                     'MO' => [0 => 28, 1 => 30, 2 => 32],
                 ],
@@ -143,10 +157,12 @@ class AddDistribsTest extends TestCase{
             ],
             'death' => [
                 'aspects' => [
-                    'SO-MO' => [0 => 32, 1 => 34, 2 => 36],
-                    'SO-ME' => [0 => 52, 1 => 54, 2 => 56],
+                    'dim1' => [
+                        'SO-MO' => [0 => 32, 1 => 34, 2 => 36],
+                        'SO-ME' => [0 => 52, 1 => 54, 2 => 56],
+                    ],
                 ],
-                'planets' => [
+                'positions' => [
                     'SO' => [0 => 142, 1 => 144, 2 => 146],
                     'MO' => [0 => 145, 1 => 147, 2 => 149],
                 ],
@@ -160,20 +176,22 @@ class AddDistribsTest extends TestCase{
                 ],
             ],
             'birth-death' => [
-                'age' => [
+                'age-dim1' => [
                     0 => 142,
                     10 => 162,
                     11 => 32,
                     12 => 132,
                 ],
                 'interaspects' => [
-                    'SO-SO' => [0 => 142, 1 => 144, 2 => 146],
-                    'SO-MO' => [0 => 148, 1 => 150, 2 => 152],
+                    'dim1' => [
+                        'SO-SO' => [0 => 142, 1 => 144, 2 => 146],
+                        'SO-MO' => [0 => 148, 1 => 150, 2 => 152],
+                    ],
                 ],
             ],
         ];
         
-        $this->assertEquals(AddDistribs::add($d1, $d2, $studyConfig), $res);
+        $this->assertEquals(AddDistribs::add($d1, $d2, $dateNames), $res);
     }
     
 }// end class

@@ -9,8 +9,6 @@
 ********************************************************************************/
 namespace observe\model\distrib;
 
-use observe\model\IStudy;
-
 class AddDistribs {
     
     /**
@@ -21,16 +19,17 @@ class AddDistribs {
                     ...
                     'NN-NN' => [0 => 1158, ... 359 => 1356]
                 ]
-        @return Distribution containing the sum of $d1 and $d2
+        @param  $dateNames      ex: ['birth', 'death']
+        @return Distribution containing the sum of $d1 and $d2, done element by element.
     **/
-    public static function add(array &$d1, array &$d2, IStudy $study): array {
+    public static function add(array &$d1, array &$d2, array $dateNames): array {
         $res = [];
-        $nDates = count($study->config['dates']);
+        $nDates = count($dateNames);
         //
         // distributions of type distrib1
         //
         for($i=0; $i < $nDates; $i++){
-            $dateName = $study->config['dates'][$i]; // ex: birth
+            $dateName = $dateNames[$i]; // ex: birth
             $res[$dateName] = [];
             // planet positions
             $res[$dateName]['positions'] = [];
@@ -70,7 +69,7 @@ class AddDistribs {
         //
         for($i=0; $i < $nDates; $i++){
             for($j=$i+1; $j < $nDates; $j++){
-                $dateName = $study->config['dates'][$i] . '-' . $study->config['dates'][$j]; // ex: birth-death
+                $dateName = $dateNames[$i] . '-' . $dateNames[$j]; // ex: birth-death
                 // interaspects
                 foreach($d1[$dateName]['interaspects']['dim1'] as $distribName => $distribValues){
                     $res[$dateName]['interaspects']['dim1'][$distribName] = $d1[$dateName]['interaspects']['dim1'][$distribName];

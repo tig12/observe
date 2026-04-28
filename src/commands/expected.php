@@ -39,11 +39,11 @@ class expected implements ICommand {
         //
         $controlDirs = $study->getControlSubdirectories();
         $nControls = count($controlDirs);
-        $allControlDistribs = EmptyDistribs::initializeDistributions($study);
+        $allControlDistribs = EmptyDistribs::initializeDistributions($study->config['dates'], $study->config['planets']);
         
         foreach($controlDirs as $controlDir){
             $controlDistrib = Distribs::loadDistributions($controlDir, $study);
-            $allControlDistribs = AddDistribs::add($allControlDistribs, $controlDistrib, $study);
+            $allControlDistribs = AddDistribs::add($allControlDistribs, $controlDistrib, $study->config['dates']);
         }
         //
         // Compute expected distribs
@@ -51,7 +51,7 @@ class expected implements ICommand {
         $nDates = count($study->config['dates']);
         $precision = $study->config['expected-precision'];
         
-        $expectedDistribs = EmptyDistribs::initializeDistributions($study);
+        $expectedDistribs = EmptyDistribs::initializeDistributions($study->config['dates'], $study->config['planets']);
         
         // distributions of type distrib1
         for($i=0; $i < $nDates; $i++){

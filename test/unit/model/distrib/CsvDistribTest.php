@@ -7,8 +7,6 @@
     @history    2026-04-14 12:33:26+01:00, Thierry Graff : Creation
 ********************************************************************************/
 
-namespace observe\model\distrib;
-
 use PHPUnit\Framework\TestCase;
 use observe\model\Studies;
 use observe\model\distrib\EmptyDistribs;

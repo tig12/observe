@@ -48,7 +48,7 @@ class init implements ICommand {
         $dir = dirname($path_sqlite);
         mkdir::execute($dir);
         //
-        $distribs = EmptyDistribs::initializeDistributions($study);
+        $distribs = EmptyDistribs::initializeDistributions($study->config['dates'], $study->config['planets']);
         $json = json_encode($distribs);
         $sql = <<<SQL
 create table control(
