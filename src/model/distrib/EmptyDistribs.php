@@ -54,7 +54,6 @@ class EmptyDistribs {
             'positions'=> self::emptySingleDistrib_dim1($planetCodes),
             'aspects' => [
                 'dim1' => self::emptyDoubleDistrib_triangle_dim1($planetCodes, $planetCodes),
-                // dim2 is computed in command dim2
             ],
             'day' => self::emptyDayDistrib(),
             'year' => [],
@@ -68,9 +67,14 @@ class EmptyDistribs {
         return [
             'interaspects' => [
                 'dim1' => self::emptyDoubleDistrib_square_dim1($planetCodes, $planetCodes),
-                // dim2 is computed in command dim2
             ],
-            'age-dim1' => [],
+            'age' => [
+                'dim1' => [
+                    'age-D' => [],
+                    'age-M' => [],
+                    'age-Y' => [],
+                ],
+            ],
         ];
     }
     

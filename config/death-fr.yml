@@ -6,6 +6,9 @@
 # Unique id of this study
 slug: death-fr
 
+# fqcn = fully qualified class name ; the class handling this study
+fqcn: observe\studies\death_fr\Death_fr
+
 # Contains all intermediate files of this study
 # Path relative to observe root directory, or absolute path
 working-dir:  var/studies/death-fr
@@ -22,10 +25,6 @@ planets: [SO, MO, ME, VE, MA, JU, SA, UR, NE, PL, NN]
 dates:
   - birth
   - death
-
-# Unit used in the age.csv distributions
-# Can be Y, M or D
-distrib-age-unit: 'Y'
 
 # Limit of p-value to consider that an anomaly is detected
 p-value-limit: 0.05
@@ -49,7 +48,6 @@ output:
 # Path to the sqlite database containing the data coming from data.gouv.fr
 # Path relative to observe root directory, or absolute path
 sqlite-death-fr: var/studies/death-fr/death-fr.sqlite3
-#sqlite-death-fr: src/commands/test-files/var/study1/death-fr-10.sqlite3
 
 # Path to the sqlite database containing temporary data to assist long command execution
 # Path relative to observe root directory, or absolute path

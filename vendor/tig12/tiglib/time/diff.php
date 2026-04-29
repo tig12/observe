@@ -22,7 +22,7 @@ class diff {
         @param  $precision Nb of decimal digits of the result 
         @return Decimal or integer number
     **/
-    public static function compute(\DateTime $d1, \DateTime $d2, string $unit='Y', int $precision=0): float {
+    public static function compute(\DateTime $d1, \DateTime $d2, string $unit = 'Y', int $precision = 0): float {
         // %r: "-" if < 0 ; empty if >= 0
         // %a: nb of days
         $diff = $d1->diff($d2)->format('%r%a');
@@ -40,6 +40,22 @@ class diff {
             throw new \Exception("tiglib\\time::diff() : Invalid parameter unit: '$unit' - can be 'Y', 'M' or 'D'");
         }
         return round($res, $precision);
+    }
+    
+    /**
+        Returns the duration from $d1 to $d2 (computes $d2 - $d1) in days, months, years.
+        @param  $precision Nb of decimal digits of the result 
+        @return Associative array containing 3 elements (D, M, Y)
+    **/
+    public static function compute_all(\DateTime $d1, \DateTime $d2, int $precision = 0): array {
+        // %r: "-" if < 0 ; empty if >= 0
+        // %a: nb of days
+        $diff = $d1->diff($d2)->format('%r%a');
+        return [
+            'D' => round($diff, $precision),
+            'M' => round($diff / 30.44, $precision), // average month length ~ 30.44 days
+            'Y' => round($diff / 365.25, $precision),
+        ];
     }
     
 } // end class

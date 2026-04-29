@@ -122,7 +122,7 @@ class control implements ICommand {
                         yield array_values(self::otherPerson2($person));
                     }
                 };
-                $newDistribs = Distribs::computeDistributions($f, $study->config['dates'], $study->config['planets'], $study->config['distrib-age-unit']);
+                $newDistribs = Distribs::computeDistributions($f, $study->config['dates'], $study->config['planets']);
                 $distribs = AddDistribs::add($distribs, $newDistribs, $study->config['dates']);
                 self::storeDistribsAndOffsetInTmpSqlite($sqlite_tmp, $controlName, $OFFSET, $distribs);
                 unset($newDistribs);

@@ -73,6 +73,7 @@ class expected implements ICommand {
                 $expectedDistribs[$dateName]['day'][$k] = round($v / $nControls, $precision);
             }
             // year
+            // in theory should not computed because observed and expected values may differ
             foreach($allControlDistribs[$dateName]['year'] as $k => $v){ // ex: $k = '1935'
                 $expectedDistribs[$dateName]['year'][$k] = round($v / $nControls, $precision);
             }
@@ -89,8 +90,11 @@ class expected implements ICommand {
                     }
                 }
                 // age
-                foreach($allControlDistribs[$dateName]['age-dim1'] as $k => $v){ // $k: age in months or years, see $study->config['distrib-age-unit']
-                    $expectedDistribs[$dateName]['age-dim1'][$k] = round($v / $nControls, $precision);
+                // in theory should not computed because observed and expected values may differ
+                foreach(['D', 'M', 'Y'] as $unit){
+                    foreach($allControlDistribs[$dateName]['age']['dim1']["age-$unit"] as $k => $v){ // $k = age
+                        $expectedDistribs[$dateName]['age']['dim1']["age-$unit"][$k] = round($v / $nControls, $precision);
+                    }
                 }
             } // end loop on $j
         } // end loop on $i

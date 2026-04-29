@@ -71,7 +71,7 @@ These distributions are called "age" in the context of this program.
 <ul class="naked margin-top0">
     <li>The longitude of venus at the moment of father birth is 100°</li>
     <li>The longitude of mars at the moment of mother birth is 150°</li>
-    <li>The we say that the inter-aspect between mother's venus and father's mars is 50°</li>
+    <li>Then we say that the inter-aspect between mother's venus and father's mars is 50°</li>
 </ul>
 
 <img height="250px" class="margin" src="img/M-MA--F-VE.svg" alt="Distribution: Inter-aspects between mother mars and father venus">
@@ -86,17 +86,20 @@ As explained in <a href="distributions.html">the page about distributions</a>,
 The distributions used to describe the relations between two dates are then organized in this hierarchy:
 <pre>
 distrib2
-    ├── age-dim1
-    ├── age-dim2
+    ├── age
+    │   └── dim1
+    │       ├── age-D
+    │       ├── age-M
+    │       └── age-Y
     └── interaspects
         ├── dim1
         │   ├── SO-SO
         │   ├── ...
         │   └── NN-NN
         └── dim2
-            ├── SO-SO
+            ├── SO-MO
             ├── ...
-            └── NN-NN
+            └── PL-NN
 </pre>
 
 This hierarchy is called <b>distrib2</b>.
@@ -124,7 +127,7 @@ distributions
 <span class="distrib1">Distributions of type distrib1 (single date) are in green</span>.
 <br><span class="distrib2">Distributions of type distrib2 (two dates) are in yellow</span>.
 
-<br><br>Many other distributions can be imagined, involving relations between three or more dates. The program is currently limited to these distributions.
+<br><br>Many other distributions can be imagined, involving relations between three or more dates, but the program is currently limited to these distributions.
 
 <div class="prevnext">Next: <a href="distributions.html">Distributions</a></div>
 

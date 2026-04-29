@@ -332,7 +332,7 @@ class observedTest extends TestCase{
         //
         // birth-death - age
         //
-        // See src/commands/tests/study1/README to build $wanted from person database.
+        // See config/tests/study1/README to build $wanted from person database.
         $wanted = [
             1024 => 1,
             1065 => 1,
@@ -345,7 +345,7 @@ class observedTest extends TestCase{
             470 => 1, 
             714 => 1, 
         ];
-        $filename = implode(DS, [$observedDir, 'birth-death', 'age-dim1.csv']);
+        $filename = implode(DS, [$observedDir, 'birth-death', 'age', 'dim1', 'age-M.csv']);
         $observed = CsvDistrib::csv2distrib_dim1($filename, Observe::CSV_SEP);
         $this->assertEquals($observed, $wanted);
         //
