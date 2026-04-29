@@ -42,7 +42,7 @@ class expected implements ICommand {
         $allControlDistribs = EmptyDistribs::initializeDistributions($study->config['dates'], $study->config['planets']);
         
         foreach($controlDirs as $controlDir){
-            $controlDistrib = Distribs::loadDistributions($controlDir, $study);
+            $controlDistrib = Distribs::loadDistributions($controlDir, $study->config['dates'], $study->config['planets']);
             $allControlDistribs = AddDistribs::add($allControlDistribs, $controlDistrib, $study->config['dates']);
         }
         //
@@ -98,7 +98,7 @@ class expected implements ICommand {
         // Store results
         //
         $outDir = $study->getExpectedDirectory();
-        Distribs::storeDistributions($outDir, $expectedDistribs, $study);
+        Distribs::storeDistributions($outDir, $expectedDistribs, $study->config['dates']);
         
         $t2 = microtime(true);
         $dt = round($t2 - $t1, 3);

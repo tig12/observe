@@ -26,7 +26,7 @@ class CsvDistrib {
         Builds the content of a csv file containing a distribution
         A distribution is just an associative array $k => $v
     **/
-    public static function distrib2csv(&$distrib, $sep=Observe::CSV_SEP): string {
+    public static function distrib2csv_dim1(&$distrib, $sep=Observe::CSV_SEP): string {
         $res = '';
         foreach($distrib as $k => $v){
             $res .= "$k$sep$v\n";
@@ -35,23 +35,15 @@ class CsvDistrib {
     }
     
     /** 
-        Loads a distribution from a csv file.
+        Loads a distribution of type dim1 from a csv file.
         The csv must contain 2 columns
         The first column contains the values of the random variable
             ex: the angular values (0 - 359) in the case of a zodiacal distribution
         The second column contains the nb of occurences.
-        @param  $has_header true if the first line of the distribution contained in the csv file is a header (= a line containing the titles of the columns) ; false otherwise.
         @param  $sep        Separator used in the csv file.
     **/
-    public static function csv2distrib(
-            string  $filename,
-            bool    $has_header = false,
-            string  $sep = Observe::CSV_SEP,
-    ): array {
+    public static function csv2distrib_dim1(string  $filename, string  $sep = Observe::CSV_SEP): array {
         $lines = file($filename, FILE_IGNORE_NEW_LINES);
-        if($has_header){
-            array_shift($lines);
-        }
         $res = [];
         foreach($lines as $line){
             $tmp = explode($sep, $line);
@@ -87,7 +79,7 @@ class CsvDistrib {
         Returns a 2-dim array ; each element contains a line of the csv, stored in an array containing columns of this line.
         @param  $sep        Separator used in the csv file.
     **/
-    public static function csv2distrib_dim2(string  $filename, string  $sep = Observe::CSV_SEP): array {
+    public static function csv2distrib_dim2(string $filename, string $sep = Observe::CSV_SEP): array {
         $lines = file($filename, FILE_IGNORE_NEW_LINES);
         $res = [];
         foreach($lines as $line){

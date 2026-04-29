@@ -142,7 +142,7 @@ class Distribs {
             mkdir::execute($dir);
             foreach($distribs[$dateName]['positions'] as $distribName => $distribValues){
                 $filename = $dir . DS . $distribName . '.csv'; // ex: var/studies/death-fr/observed/birth/positions/SO.csv
-                $contents = CsvDistrib::distrib2csv($distribValues);
+                $contents = CsvDistrib::distrib2csv_dim1($distribValues);
                 file_put_contents($filename, $contents);
             }
             // aspects
@@ -150,7 +150,7 @@ class Distribs {
             mkdir::execute($dir);
             foreach($distribs[$dateName]['aspects']['dim1'] as $distribName => $distribValues){
                 $filename = $dir . DS . $distribName . '.csv'; // ex: var/studies/death-fr/observed/birth/aspects/dim1/SO-MO.csv
-                $contents = CsvDistrib::distrib2csv($distribValues);
+                $contents = CsvDistrib::distrib2csv_dim1($distribValues);
                 file_put_contents($filename, $contents);
             }
             // day and year
@@ -158,7 +158,7 @@ class Distribs {
             foreach(['day', 'year'] as $distribName){
                 $filename = $outDir . DS . $distribName . '.csv'; // ex: var/studies/death-fr/observed/birth/day.csv
                 $distribValues = $distribs[$dateName][$distribName];
-                $contents = CsvDistrib::distrib2csv($distribValues);
+                $contents = CsvDistrib::distrib2csv_dim1($distribValues);
                 file_put_contents($filename, $contents);
             }
         }
@@ -173,14 +173,14 @@ class Distribs {
                 mkdir::execute($dir);
                 foreach($distribs[$dateName]['interaspects']['dim1'] as $distribName => $distribValues){
                     $filename = $dir . DS . $distribName . '.csv'; // ex: var/studies/death-fr/observed/birth-death/interaspects/dim1/SO-SO.csv
-                    $contents = CsvDistrib::distrib2csv($distribValues);
+                    $contents = CsvDistrib::distrib2csv_dim1($distribValues);
                     file_put_contents($filename, $contents);
                 }
                 // age
                 ksort($distribs[$dateName]['age-dim1']);
                 $filename = $outDir . DS . 'age-dim1.csv'; // ex: var/studies/death-fr/observed/birth-death/age-dim1.csv
                 $distribValues = $distribs[$dateName]['age-dim1'];
-                $contents = CsvDistrib::distrib2csv($distribValues);
+                $contents = CsvDistrib::distrib2csv_dim1($distribValues);
                 file_put_contents($filename, $contents);
             } // end loop on $j
         } // end loop on $i
@@ -201,18 +201,18 @@ class Distribs {
             $dir = $inDir . DS . 'positions'; // ex: var/studies/death-fr/observed/birth/positions
             $filenames = glob($dir . DS . '*.csv');
             foreach($filenames as $filename){
-                $res[$dateName]['positions'][basename($filename, '.csv')] = CsvDistrib::csv2distrib($filename);
+                $res[$dateName]['positions'][basename($filename, '.csv')] = CsvDistrib::csv2distrib_dim1($filename);
             }
             // aspects
             $dir = $inDir . DS . 'aspects' . DS . 'dim1'; // ex: var/studies/death-fr/observed/birth/aspects/dim1
             $filenames = glob($dir . DS . '*.csv');
             foreach($filenames as $filename){
-                $res[$dateName]['aspects']['dim1'][basename($filename, '.csv')] = CsvDistrib::csv2distrib($filename);
+                $res[$dateName]['aspects']['dim1'][basename($filename, '.csv')] = CsvDistrib::csv2distrib_dim1($filename);
             }
             // day and year
             foreach(['day', 'year'] as $distribName){
                 $filename = $inDir . DS . $distribName . '.csv'; // ex: var/studies/death-fr/observed/birth/day.csv
-                $res[$dateName][$distribName] = CsvDistrib::csv2distrib($filename);
+                $res[$dateName][$distribName] = CsvDistrib::csv2distrib_dim1($filename);
             }
         }
         // distributions of type distrib2
@@ -224,11 +224,11 @@ class Distribs {
                 $dir = $inDir . DS . 'interaspects' . DS . 'dim1'; // ex: var/studies/death-fr/observed/birth-death/interaspects/dim1
                 $filenames = glob($dir . DS . '*.csv');
                 foreach($filenames as $filename){
-                    $res[$dateName]['interaspects']['dim1'][basename($filename, '.csv')] = CsvDistrib::csv2distrib($filename);
+                    $res[$dateName]['interaspects']['dim1'][basename($filename, '.csv')] = CsvDistrib::csv2distrib_dim1($filename);
                 }
                 // age
                 $filename = $inDir . DS  . 'age-dim1.csv'; // ex: var/studies/death-fr/observed/birth-death/age-dim1.csv
-                $res[$dateName]['age-dim1'] = CsvDistrib::csv2distrib($filename);
+                $res[$dateName]['age-dim1'] = CsvDistrib::csv2distrib_dim1($filename);
             } // end loop on $j
         } // end loop on $i
         return $res;

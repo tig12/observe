@@ -46,8 +46,8 @@ class stats implements ICommand {
         $res_obs = implode(Observe::CSV_SEP, StatsDistrib::STATS_CSV_FIELDS) . "\n";
         $res_exp = implode(Observe::CSV_SEP, StatsDistrib::STATS_CSV_FIELDS) . "\n";
         //
-        $observedDistribs = Distribs::loadDistributions($study->getObservedDirectory(), $study);
-        $expectedDistribs = Distribs::loadDistributions($study->getExpectedDirectory(), $study);
+        $observedDistribs = Distribs::loadDistributions($study->getObservedDirectory(), $study->config['dates'], $study->config['planets']);
+        $expectedDistribs = Distribs::loadDistributions($study->getExpectedDirectory(), $study->config['dates'], $study->config['planets']);
         //
         // distributions of type distrib1
         //

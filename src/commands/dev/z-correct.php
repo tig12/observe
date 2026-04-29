@@ -37,7 +37,7 @@ return "=== Code descatvated to avoir error === \n" . __FILE__ . "\n";
         //
         $files = globRecursive::compute($studyConfig['working-dir'] . DS . '*age.csv');
         foreach($files as $file){
-            $distrib_Y = CsvDistrib::csv2distrib($file);
+            $distrib_Y = CsvDistrib::csv2distrib_dim1($file);
             $res = [];
             foreach($distrib_Y as $m => $value){ // $m = month
                 $y = floor($m / 12);
@@ -46,7 +46,7 @@ return "=== Code descatvated to avoir error === \n" . __FILE__ . "\n";
                 }
                 $res[$y] += $value;
             }
-            $csv = CsvDistrib::distrib2csv($res);
+            $csv = CsvDistrib::distrib2csv_dim1($res);
             // backup file with months as age-M.csv
             $bck_file = str_replace('age.csv', 'age-M.csv', $file);
             copy($file, $bck_file);
