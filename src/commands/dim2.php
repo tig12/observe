@@ -8,9 +8,10 @@
     Generates one table per couple (quantity 1, quantity 2).
     Each table is a 360 x 360 array.
     
-    Ex in birth-death case: table['ME-SA'][12][145] contains the number of persons with
-    longitude of mercury at birth is between 12° and 13°
-    and longitude of saturn at birth is between 145° and 146°
+    Ex in birth-death case: table['ME-SA'][12][145] is related to the number of persons with
+        - longitude of mercury at birth is between 12° and 13°
+        - and longitude of saturn at birth is between 145° and 146°
+    The cell represents the percentage of the difference between the observed and expected number of persons. 
     
     NOTE: This only computes observed distributions. For dim2 data, expected distributions are not computed from control groups,
     but uses the method described in Didier Castille's article.

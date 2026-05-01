@@ -1,11 +1,11 @@
 <?php
 /******************************************************************************
     Generates an image with a table representing a comparison of two distributions.
+    The data sent to image() must represent percentages.
     
     This reprensentation was motivated by a work of Didier Castille available at
     http://cura.free.fr/xx/18cas3en.html (English) and http://cura.free.fr/xx/18cas3fr.html (French)
 
-    
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
     @copyright  Thierry Graff
     

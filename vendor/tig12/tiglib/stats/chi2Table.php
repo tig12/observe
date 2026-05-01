@@ -81,7 +81,7 @@ class chi2Table {
             ];
         }
         return [
-            'diff' => $diff,
+            'diff_percent' => $diff_percent,
             'chi2' => $chi2,
         ];
     }
