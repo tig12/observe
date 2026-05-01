@@ -14,6 +14,7 @@ use observe\app\ICommand;
 use observe\model\IStudy;
 use observe\commands\output\output_page;
 use observe\commands\output\output_img;
+use tiglib\time\seconds2HHMMSS;
 
 class output implements ICommand {
     
@@ -23,7 +24,7 @@ class output implements ICommand {
     ];
     
     /**
-        Called by Commands::runCommand)
+        Called by Run::runCommand()
     **/
     public static function execute(IStudy $study, array $params): string {
         //
@@ -47,12 +48,21 @@ class output implements ICommand {
         //
         // Execution
         //
+        
+        $t1 = microtime(true);
+        
         if($params[0] == 'page'){
             $msg = output_page::execute($study, $params);
         }
         else{
             $msg = output_img::execute($study, $params);
         }
+        
+        $t2 = microtime(true);
+        $dt = round($t2 - $t1, 3);
+        $dth = seconds2HHMMSS::compute($dt);
+        echo "Execution time $dt s - $dth\n";
+        
         return ($msg != '' ? "$msg\n$usage" : '');
     }
     

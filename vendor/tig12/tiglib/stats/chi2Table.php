@@ -20,20 +20,23 @@ class chi2Table {
                 ...
                 M-1 =>  [0 ... N-1]
             ]
+            $i loops on rows [0, M-1]
+            $j loops on cols [0, N-1]
+            $a[$i][$j] = row $i, col $j
     **/
-    public static function compute(array &$a, bool $test=false): array {
-        $M = count($a);     // nb of rows       - loop on $j
-        $N = count($a[0]);  // nb of columns    - loop on $i
+    public static function compute(array &$a, int $round = 2, bool $test=false): array {
+        $M = count($a);     // nb of rows       - loop on $i
+        $N = count($a[0]);  // nb of columns    - loop on $j
         //
         $sum = 0; // sum of all elements of the array
-        $sums_j = array_fill(0, $M, 0); // sums of each row
-        $sums_i = array_fill(0, $N, 0); // sums of each column
+        $sums_i = array_fill(0, $M, 0); // sums of each row
+        $sums_j = array_fill(0, $N, 0); // sums of each col
         //
-        for($j=0; $j < $M; $j++){ // loop on rows
-            for($i=0; $i < $N; $i++){ //loop on columns
-                $sum += $a[$j][$i];
-                $sums_i[$i] += $a[$j][$i];
-                $sums_j[$j] += $a[$j][$i];
+        for($i=0; $i < $M; $i++){ // loop on rows
+            for($j=0; $j < $N; $j++){ // loop on cols
+                $sum += $a[$i][$j];
+                $sums_i[$i] += $a[$i][$j];
+                $sums_j[$j] += $a[$i][$j];
             }
         }
         //
@@ -41,38 +44,28 @@ class chi2Table {
         $c2 = [];   // individual contributions to chi2
         $diff = []; // individual deviations from theoretical values
         $diff_percent = []; // percentage of individual deviations from theoretical values
-        $diff_min = $diff_max = 0;  ////////////// useless ???
         $chi2 = 0;  // global chi2
-        for($j=0; $j < $M; $j++){ // loop on rows
-            for($i=0; $i < $N; $i++){ //loop on columns
-                $theo[$j][$i] = $sums_i[$i] * $sums_j[$j] / $sum;
-                $diff[$j][$i] = $a[$j][$i] - $theo[$j][$i];
-                if($theo[$j][$i] != 0){
-                    $diff_percent[$j][$i] = 100 * $diff[$j][$i] / $theo[$j][$i];
-                    $c2[$j][$i] = pow($diff[$j][$i], 2) / $theo[$j][$i];
+        for($i=0; $i < $M; $i++){ // loop on rows
+            for($j=0; $j < $N; $j++){ // loop on cols
+                $theo[$i][$j] = $sums_i[$i] * $sums_j[$j] / $sum;
+                $diff[$i][$j] = $a[$i][$j] - $theo[$i][$j];
+                if($theo[$i][$j] != 0){
+                    $diff_percent[$i][$j] = 100 * $diff[$i][$j] / $theo[$i][$j];
+                    $c2[$i][$j] = pow($diff[$i][$j], 2) / $theo[$i][$j];
                 }
                 else{
                     // TODO check if this is correct 
-                    $diff_percent[$j][$i] = 0;
-                    $c2[$j][$i] = 0;
+                    $diff_percent[$i][$j] = 0;
+                    $c2[$i][$j] = 0;
                 }
-                $chi2 += $c2[$j][$i];
-                if($diff[$j][$i] > $diff_max){
-                    $diff_max = $diff[$j][$i];
-                }
-                if($diff[$j][$i] < $diff_min){
-                    $diff_min = $diff[$j][$i];
-                }
+                $chi2 += $c2[$i][$j];
             }
         }
         //
-        $round = 2;
-        for($j=0; $j < $M; $j++){ // loop on rows
-            for($i=0; $i < $N; $i++){ //loop on columns
-                $diff[$j][$i] = round($diff[$j][$i], $round);
+        for($i=0; $i < $M; $i++){ // loop on rows
+            for($j=0; $j < $N; $j++){ //loop on cols
+                $diff[$i][$j] = round($diff[$i][$j], $round);
             }
-            $diff_min = round($diff_min, $round);
-            $diff_max = round($diff_max, $round);
         }
         
         if($test){
@@ -89,8 +82,6 @@ class chi2Table {
         }
         return [
             'diff' => $diff,
-            'diff_max' => $diff_max,
-            'diff_min' => $diff_min,
             'chi2' => $chi2,
         ];
     }

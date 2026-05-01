@@ -11,6 +11,8 @@
 namespace observe\app;
 
 use observe\model\Studies;
+use observe\model\IStudy;
+use tiglib\filesystem\globRecursive;
 
 class Run {
 
@@ -27,7 +29,7 @@ class Run {
     public static function parseInput(array $argv): array {
         $scriptName = array_shift($argv);
         $possibleStudies = Studies::getAllStudySlugs();
-        $possibleCommands = Commands::getAvailableCommands();
+        $possibleCommands = self::getAvailableCommands();
         $usage = "Usage: php $scriptName <study> <commmand> [args]\n"
                . "   or: php $scriptName prepare planets\n"
                . "Possible values for <study> : \n    - "
@@ -73,6 +75,50 @@ class Run {
         $res['command'] = $command;
         $res['params'] = array_slice($argv, 2);
         return $res;
+    }
+    
+    /**
+        Conductor of command execution.
+        Parameters $studySlug and $command are considered as valid, already checked by Run::parseInput().
+        @return Error message if problem, empty message if ok.
+    **/
+    public static function runCommand(string $studySlug, string $command, $params=[]): string {
+        $studyConfig = Studies::getStudyConfig($studySlug);
+        $fqcn_study = $studyConfig['fqcn'];
+        $study = new $fqcn_study($studySlug);
+        return $study->$command($params);
+    }
+    
+    /**
+        Returns the classes that implement ICommand in directories
+            src/commands
+            src/studies
+    **/
+    public static function getAvailableCommands(): array {
+        $files = array_merge(
+            globRecursive::compute('src/commands/*.php'),
+            globRecursive::compute('src/studies/*.php'),
+        );
+        $res = [];
+        foreach($files as $file){
+            $fqcn = strtr($file,[
+                'src' . DS  => 'observe\\',
+                '.php'      => '',
+                DS          => '\\',
+            ]);
+            try{
+                $class = new \ReflectionClass($fqcn);
+            }
+            catch(\ReflectionException $e){
+                continue;
+            }
+            if(!$class->implementsInterface("observe\\app\\ICommand")){
+                continue;
+            }
+            $res[] = basename($file, '.php');
+        }
+        sort($res);
+        return array_unique($res);
     }
     
 } // end class

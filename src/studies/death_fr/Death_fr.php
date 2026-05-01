@@ -20,10 +20,9 @@ class Death_fr extends Study implements IStudy {
     private static string $SQLITE_TMP_PATH;
     
     //
-    // IStudy
+    // Implementation of IStudy
     //
     
-    /** Implementation of IStudy **/
     public function __construct(string $studySlug) {
         
         parent::__construct($studySlug);
@@ -37,6 +36,16 @@ class Death_fr extends Study implements IStudy {
             throw new ObserveException("Missing entry 'sqlite-tmp' in file {$this->config['__study-file__']}");
         }
         self::$SQLITE_TMP_PATH = $this->config['sqlite-tmp'];
+    }
+    
+    public function init($params = []): string {
+        return init::execute($this, $params);
+    }
+    public function import($params = []): string {
+        return import::execute($this, $params);
+    }
+    public function control($params = []): string {
+        return control::execute($this, $params);
     }
     
     //

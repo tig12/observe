@@ -2,5 +2,6 @@
 <phpunit
     bootstrap="test/bootstrap.php"
     displayDetailsOnTestsThatTriggerDeprecations="true"
+    displayDetailsOnAllIssues="true"
 >
 </phpunit>

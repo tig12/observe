@@ -15,5 +15,15 @@ interface IStudy {
     **/
     public function __construct(string $studySlug);
     
+    public function init($params = []): string;
+    public function import($params = []): string;
+    public function observed($params = []): string;
+    public function control($params = []): string;
+    public function expected($params = []): string;
+    public function stats($params = []): string;
+    public function dim2($params = []): string;
+    public function output($params = []): string;
+    public function dev($params = []): string;
+    
 } // end class
 

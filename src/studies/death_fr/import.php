@@ -21,7 +21,7 @@ use tiglib\filesystem\mkdir;
 class import implements ICommand {
     
     /** 
-        Called by Commands::runCommand()
+        Called by Run::runCommand()
         @param $params empty array
     **/
     public static function execute(IStudy $study, array $params): string {
@@ -54,13 +54,15 @@ class import implements ICommand {
         $OFFSET = 0;
         $nWritten = 0; // for output only
         while($OFFSET < $MAXROWID){
-            echo ($OFFSET / 1000) . " k\n";
             $stmt_many_persons->execute([':offset' => $OFFSET, ':limit' => $LIMIT]);
             foreach($stmt_many_persons->fetchAll(\PDO::FETCH_ASSOC) as $person){
                 bzwrite($bz2, $person['bday'] . Observe::CSV_SEP . $person['dday'] . "\n");
                 $nWritten++;
             }
             $OFFSET += $LIMIT;
+            if($nWritten % 100000 == 0){
+                echo ($nWritten / 1000) . " k\n";
+            }
         }
         //
         // Store result

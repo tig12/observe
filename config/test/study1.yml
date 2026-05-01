@@ -6,7 +6,7 @@
 # Unique id of this study
 slug: study1
 
-# fqcn = fully qualified class name ; the class handling this study
+# fqcn = fully qualified class name of the class handling this study
 fqcn: observe\studies\death_fr\Death_fr
 
 # Contains all intermediate files of this study

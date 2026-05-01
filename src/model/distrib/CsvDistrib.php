@@ -2,9 +2,7 @@
 /******************************************************************************
     
     Utilities to read / write distributions in CSV files.
-    A distribution is just an associative array key - value.
-    ex : ['1978' => 2563]
-    Values = nb of occurence of the corresponding key
+    Handles distributions of type dim1 and dim2.
     
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
     @copyright  Thierry Graff

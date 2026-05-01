@@ -37,7 +37,7 @@ use tiglib\time\seconds2HHMMSS;
 class dim2 implements ICommand {
     
     /** 
-        Called by Commands::runCommand)
+        Called by Run::runCommand()
     **/
     public static function execute(IStudy $study, array $params): string {
         //

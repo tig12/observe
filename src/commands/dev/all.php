@@ -12,47 +12,36 @@ namespace observe\commands\dev;
 
 use observe\model\IStudy;
 
-use observe\studies\death_fr\init;
-use observe\studies\death_fr\import;
-use observe\commands\observed;
-use observe\studies\death_fr\control;
-use observe\commands\expected;
-use observe\commands\stats;
-use observe\commands\dim2;
-use observe\commands\output;
-
 class all {
     
     public static function execute(IStudy $study): string {
         
-        // TODO This mechanism must be modified to become generic => see Commands::runCommand() and Studies::getStudyClasspath()
-        
         echo "============================= dev - init =============================\n";
-        init::execute($study, []);
+        $study->init([]);
         
         echo "============================= dev - import =============================\n";
-        import::execute($study, []);
+        $study->import([]);
         
         echo "============================= dev - observed =============================\n";
-        observed::execute($study, []);
+        $study->observed([]);
         
         echo "============================= dev - control =============================\n";
-        control::execute($study, [1]);
+        $study->control([1]);
         
         echo "============================= dev - expected =============================\n";
-        expected::execute($study, []);
+        $study->expected([]);
         
         echo "============================= dev - stats =============================\n";
-        stats::execute($study, []);
+        $study->stats([]);
         
         echo "============================= dev - dim2 =============================\n";
-        dim2::execute($study, []);
+        $study->dim2([]);
         
         echo "============================= dev - ouput img =============================\n";
-        output::execute($study, ['img', 'all']);
+        $study->output(['img', 'all']);
         
         echo "============================= dev - ouput page =============================\n";
-        output::execute($study, ['page', 'all']);
+        $study->output(['page', 'all']);
         
         return '';
     }

@@ -78,7 +78,8 @@ class AddDistribs {
                     }
                 }
                 // age
-                foreach(['D', 'M', 'Y'] as $unit){
+//                foreach(['D', 'M', 'Y'] as $unit){
+                foreach(['M', 'Y'] as $unit){
                     $res[$dateName]['age']['dim1']["age-$unit"] = $d1[$dateName]['age']['dim1']["age-$unit"];
                     foreach($d2[$dateName]['age']['dim1']["age-$unit"] as $k => $v){ // $k = age
                         if(!isset($res[$dateName]['age']['dim1']["age-$unit"][$k])){

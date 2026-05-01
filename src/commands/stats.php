@@ -27,7 +27,7 @@ use tiglib\filesystem\file_put_contents;
 class stats implements ICommand {
     
     /**
-        Called by Commands::runCommand)
+        Called by Run::runCommand()
     **/
     public static function execute(IStudy $study, array $params): string {
         //
@@ -137,14 +137,14 @@ class stats implements ICommand {
                 // no chi2 because observed and expected distribs can be of different size (meaningless and could bug)
                 $res_obs .= self::statsLine(
                     study:          $study,
-                    distrib:        $observedDistribs[$dateName]['age-dim1'],
+                    distrib:        $observedDistribs[$dateName]['age']['dim1']['age-Y'],
                     key1:           $dateName,
                     key2:           'age',
                     key3:           '',
                 );
                 $res_exp .= self::statsLine(
                     study:          $study,
-                    distrib:        $expectedDistribs[$dateName]['age-dim1'],
+                    distrib:        $expectedDistribs[$dateName]['age']['dim1']['age-Y'],
                     key1:           $dateName,
                     key2:           'age',
                     key3:           '',

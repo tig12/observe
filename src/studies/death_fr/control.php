@@ -25,7 +25,7 @@ class control implements ICommand {
     private static \PDOStatement $stmt_one_person;
     
     /** 
-        Called by Commands::runCommand)
+        Called by Run::runCommand()
     **/
     public static function execute(IStudy $study, array $params): string {
         //

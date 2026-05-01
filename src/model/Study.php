@@ -9,10 +9,16 @@
 namespace observe\model;
 
 use observe\app\ObserveException;
+use observe\commands\observed;
+use observe\commands\expected;
+use observe\commands\stats;
+use observe\commands\dim2;
+use observe\commands\output;
+use observe\commands\dev;
 use tiglib\filesystem\mkdir;
 use tigeph\model\IAA;
 
-class Study implements IStudy {
+abstract class Study implements IStudy {
     
     /** Contents of the yaml command file located in config/  **/
     public readonly array $config;
@@ -23,6 +29,25 @@ class Study implements IStudy {
     public function __construct(string $studySlug){
         $this->config = Studies::getStudyConfig($studySlug);
         $this->checkStudyFile();
+    }
+    
+    public function observed($params = []): string {
+        return observed::execute($this, $params);
+    }
+    public function expected($params = []): string {
+        return expected::execute($this, $params);
+    }
+    public function stats($params = []): string {
+        return stats::execute($this, $params);
+    }
+    public function dim2($params = []): string {
+        return dim2::execute($this, $params);
+    }
+    public function output($params = []): string {
+        return output::execute($this, $params);
+    }
+    public function dev($params = []): string {
+        return dev::execute($this, $params);
     }
     
     /**

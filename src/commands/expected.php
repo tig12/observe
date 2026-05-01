@@ -22,7 +22,7 @@ use tiglib\time\seconds2HHMMSS;
 class expected implements ICommand {
     
     /** 
-        Called by Commands::runCommand)
+        Called by Run::runCommand()
     **/
     public static function execute(IStudy $study, array $params): string {
         //
@@ -91,7 +91,8 @@ class expected implements ICommand {
                 }
                 // age
                 // in theory should not computed because observed and expected values may differ
-                foreach(['D', 'M', 'Y'] as $unit){
+//                foreach(['D', 'M', 'Y'] as $unit){
+                foreach(['M', 'Y'] as $unit){
                     foreach($allControlDistribs[$dateName]['age']['dim1']["age-$unit"] as $k => $v){ // $k = age
                         $expectedDistribs[$dateName]['age']['dim1']["age-$unit"][$k] = round($v / $nControls, $precision);
                     }

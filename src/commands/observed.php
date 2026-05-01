@@ -15,11 +15,12 @@ use observe\app\ICommand;
 use observe\model\IStudy;
 use observe\model\Studies;
 use observe\model\distrib\Distribs;
+use tiglib\time\seconds2HHMMSS;
 
 class observed implements ICommand {
     
     /** 
-        Called by Commands::runCommand)
+        Called by Run::runCommand()
     **/
     public static function execute(IStudy $study, array $params): string {
         //
@@ -31,6 +32,9 @@ class observed implements ICommand {
         //
         // Execute
         //
+        
+        $t1 = microtime(true);
+        
         $filename = 'compress.bzip2://' . $study->getDatafile();
         echo "=== Processing $filename ===\n";
         //
@@ -48,7 +52,12 @@ class observed implements ICommand {
         $distribs = Distribs::computeDistributions($f, $study->config['dates'], $study->config['planets']);
         $outDir = $study->getObservedDirectory();
         Distribs::storeDistributions($outDir, $distribs, $study->config['dates']);
+        
+        $t2 = microtime(true);
+        $dt = round($t2 - $t1, 3);
+        $dth = seconds2HHMMSS::compute($dt);
         echo "Generated observed distributions in $outDir\n";
+        echo "Execution time $dt s - $dth\n";
         return '';
     }
     

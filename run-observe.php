@@ -13,7 +13,6 @@
 require_once implode(DIRECTORY_SEPARATOR, [__DIR__, 'src', 'app', 'init.php']);
 
 use observe\app\Run;
-use observe\app\Commands;
 use observe\app\ObserveException;
 use observe\commands\prepare;
 
@@ -27,13 +26,13 @@ if($input['message'] != ''){
 // Run
 //
 try{
-    // TODO: this "if" shows that prepare is a particular case (not related to a prticular study).
+    // TODO: this "if" shows that prepare is a particular case (not related to a particular study).
     // Should be done by another program
     if($input['study-slug'] == 'prepare' && $input['command'] == 'planets'){
         $msg = prepare::execute($input['params']);
     }
     else {
-        $msg = Commands::runCommand($input['study-slug'], $input['command'], $input['params']);
+        $msg = Run::runCommand($input['study-slug'], $input['command'], $input['params']);
     }
     echo $msg; // $msg is empty if execution is ok
 }

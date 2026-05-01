@@ -14,16 +14,17 @@ use observe\app\ICommand;
 use observe\model\IStudy;
 
 use observe\commands\dev\all;
+use observe\commands\dev\age;
 
 class dev implements ICommand {
     
     private const POSSIBLE_ACTIONS = [
         'all' => 'Execute all commands on a given study',
+        'age' => 'Hack to compute birth-death/age/dim1/age-M.csv for controls of a study',
     ];
     
-    
     /** 
-        Called by Commands::runCommand)
+        Called by Run::runCommand()
     **/
     public static function execute(IStudy $study, array $params): string {
         //
@@ -47,6 +48,7 @@ class dev implements ICommand {
         //
         switch($action){
         	case 'all': all::execute($study); break;
+        	case 'age': age::execute($study); break;
         }
         return '';
     }
