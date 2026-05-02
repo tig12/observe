@@ -1,0 +1,98 @@
+<?php
+/******************************************************************************
+    
+    Page showing the distributions of type distrib1 (distributions of a single date).
+    
+    Called with a variable $V, associative array containing the keys:
+        - planets       List of IAA codes
+        - date-name     Name of the date concerned by this page (ex: 'birth', 'death', 'father'...)
+        - date-label    Displayable name of the date concerned by this page (ex: 'Birth', 'Death', 'Father'...)
+        - stats-obs     Stats about the observed distributions - structure described in observe\model\distrib\StatsDistrib
+        - stats-exp     Stats about the expected distributions - structure described in observe\model\distrib\StatsDistrib
+
+    @license    GPL
+    @copyright  Thierry Graff
+    @history    2026-04-07 18:38:44+01:00, Thierry Graff : Creation
+********************************************************************************/
+
+use observe\commands\output\tocAspects;
+use observe\commands\output\statsOneDistrib;
+use tigeph\model\IAA;
+
+// shortcuts
+$statsObs =& $V['stats-obs'];
+$statsExp =& $V['stats-exp'];
+?>
+
+<!-- 
+    Table of contents
+-->
+<ul class="naked spaced">
+    <li><a class="bold" href="#day">Days</a></li>
+    <li><a class="bold" href="#year">Years</a></li>
+    <li>
+        <div class="bold">Planet positions</div>
+        <div class="padding-left2 padding-top05">
+            <?php foreach($V['planets'] as $planet): ?>
+                <span class="padding-right"><a href="#position-<?= $planet ?>"><?= IAA::PLANET_NAMES[$planet] ?></a></span>
+            <?php endforeach; ?>
+        </div>
+    </li>
+    <li>
+        <div class="bold">Aspects</div>
+        <div class="padding-left2 padding-top05">
+            <?= tocAspects::html($V['planets'], '#aspect-', $statsObs) ?>
+        </div>
+    </li>
+</ul>
+
+<!-- 
+    Days
+-->
+<img id="day" loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/day.svg" alt="Distribution of days">
+<?= statsOneDistrib::html($statsObs['day'], $statsExp['day']) ?>
+
+<!-- 
+    Years
+-->
+<img id="year" loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/year.svg" alt="Distribution of years">
+<?= statsOneDistrib::html($statsObs['year'], $statsExp['year']) ?>
+
+<!-- 
+    Planet positions
+-->
+<h2 id="planet-positions">Planet positions</h2>
+<?php foreach($V['planets'] as $planet): ?>
+    <img id="<?= 'position-' . $planet ?>" loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/positions/<?= $planet ?>.svg" alt="Distribution of <?= IAA::PLANET_NAMES[$planet] ?>">
+    <?= statsOneDistrib::html($statsObs['positions'][$planet], $statsExp['positions'][$planet]) ?>
+<?php endforeach; ?>
+
+<!-- 
+    Aspects
+-->
+<h2 id="aspects">Aspects</h2>
+<?php 
+for($i=0; $i < count($V['planets']); $i++){
+    for($j=$i+1; $j < count($V['planets']); $j++){
+        $code = $V['planets'][$i] . '-' . $V['planets'][$j];
+        $dateLabel = $V['date-label'];
+        $planetName1 = strtolower(IAA::PLANET_NAMES[$V['planets'][$i]]);
+        $planetName2 = strtolower(IAA::PLANET_NAMES[$V['planets'][$j]]);
+        $alt1 = "Distribution of aspects between $planetName1 ($dateLabel) and $planetName2 ($dateLabel)";
+        $alt2 = "Positions of $planetName1 ($dateLabel) and $planetName2 ($dateLabel)";
+?>
+        <h2 id="<?= 'aspect-' . $code ?>">Aspects <?= $planetName1 ?> - <?= $planetName2 ?></h2>
+        <img loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/aspects/dim1/<?= $code ?>.svg" alt="<?= $alt1 ?>">
+        <?= statsOneDistrib::html($statsObs['aspects'][$code], $statsExp['aspects'][$code]) ?>
+        <div class="float-left">
+            <img loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/aspects/dim2/<?= $code ?>.png" alt="<?= $alt2 ?>">
+        </div>
+        <div class="float-left margin-top margin-left">
+            <a href="csv/<?= $V['date-name'] ?>/aspects/dim2/<?= $code ?>.csv.zip">Download CSV file</a>
+        </div>
+        <br class="clear-left">
+        
+<?php 
+    }
+}
+?>    
