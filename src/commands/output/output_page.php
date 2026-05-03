@@ -217,7 +217,7 @@ class output_page {
     }
     
     /** 
-        Generates the pages of type distrib1 (distributions of a single date)
+        Generates a gallery of images
     **/
     private static function generateGallery(IStudy $study): void {
         $res = '';
@@ -225,7 +225,7 @@ class output_page {
         $V = [
             'path-to-root' => '../..',
             'date' => new \Datetime('now')->format('Y-m-d h:i:s'),
-            'title' => "Diagonal",
+            'title' => "Gallery",
             'subtitle' => $study->config['output']['title'] ?? '',
             'description' => 'At person death, the planets are more often',
             'intro' => '',
