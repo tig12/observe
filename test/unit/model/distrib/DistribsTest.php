@@ -1,6 +1,8 @@
 <?php
 /******************************************************************************
-
+    
+    TODO Test loadDistributions() and storeDitributions() ?
+    
     @copyright  Thierry Graff
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
     
@@ -67,7 +69,12 @@ class DistribsTest extends TestCase{
             ],
             'birth-death' => [
                 'interaspects' => ['dim1' => $emptyInteraspects],
-                'age-dim1' => [],
+                'age' => [
+                    'dim1' => [
+                        'age-M' => [],
+                        'age-Y' => [],
+                    ],
+                ],
             ],
         ];
         
@@ -640,8 +647,10 @@ select * from planet where day in ('1922-01-09','1970-12-10','1969-03-29','1970-
         $expected['birth-death']['interaspects']['dim1']['NN-NN'][133] = 1;
         $expected['birth-death']['interaspects']['dim1']['NN-NN'][339] = 1;
         //
-        $expected['birth-death']['age-dim1'][587] = 1;
-        $expected['birth-death']['age-dim1'][13] = 1;
+        $expected['birth-death']['age']['dim1']['age-M'][587] = 1;
+        $expected['birth-death']['age']['dim1']['age-M'][13] = 1;
+        $expected['birth-death']['age']['dim1']['age-Y'][49] = 1;
+        $expected['birth-death']['age']['dim1']['age-Y'][1] = 1;
         
         $computed = Distribs::computeDistributions($f, self::DATE_NAMES, self::PLANET_CODES, self::DISTRIB_AGE_UNIT);
 //print_r($computed['birth']['aspects']['dim1']['SO-MO']); exit;
@@ -662,7 +671,8 @@ select * from planet where day in ('1922-01-09','1970-12-10','1969-03-29','1970-
         //
         $this->assertEquals($computed['birth-death']['interaspects']['dim1']['SO-SO'], $expected['birth-death']['interaspects']['dim1']['SO-SO']);
         $this->assertEquals($computed['birth-death']['interaspects']['dim1']['NN-NN'], $expected['birth-death']['interaspects']['dim1']['NN-NN']);
-        $this->assertEquals($computed['birth-death']['age-dim1'], $expected['birth-death']['age-dim1']);
+        $this->assertEquals($computed['birth-death']['age']['dim1']['age-M'], $expected['birth-death']['age']['dim1']['age-M']);
+        $this->assertEquals($computed['birth-death']['age']['dim1']['age-Y'], $expected['birth-death']['age']['dim1']['age-Y']);
     }
     
 }// end class

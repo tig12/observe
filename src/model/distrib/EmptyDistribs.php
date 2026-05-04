@@ -101,8 +101,9 @@ class EmptyDistribs {
     **/
     public static function emptySingleDistrib_dim1(array $codes, int $N = 360): array {
         $res = [];
+        $empty = array_fill(0, $N, 0);
         foreach($codes as $code){
-            $res[$code] = array_fill(0, $N, 0);
+            $res[$code] = $empty;
         }
         return $res;
     }

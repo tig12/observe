@@ -202,7 +202,7 @@ class Distribs {
     
     /**
         Loads the distributions of a study from csv files.
-        $baseDir is supposed to be structured wuth distributions of type distrib1 and distrib2 (no verification on the existence of the csv files).
+        $baseDir is supposed to be structured with distributions of type distrib1 and distrib2 (no verification on the existence of the csv files).
     **/
     public static function loadDistributions(string $baseDir, array $dateNames, array $planetNames): array {
         $res = EmptyDistribs::initializeDistributions($dateNames, $planetNames);

@@ -123,7 +123,7 @@ class control implements ICommand {
                     }
                 };
                 $newDistribs = Distribs::computeDistributions($f, $study->config['dates'], $study->config['planets']);
-                $distribs = AddDistribs::add($distribs, $newDistribs, $study->config['dates']);
+                $distribs = AddDistribs::add_dim1($distribs, $newDistribs, $study->config['dates']);
                 self::storeDistribsAndOffsetInTmpSqlite($sqlite_tmp, $controlName, $OFFSET, $distribs);
                 unset($newDistribs);
                 $OFFSET += $LIMIT;

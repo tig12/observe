@@ -38,42 +38,75 @@ class EmptyDistribsTest extends TestCase{
         $codes1 = ['a', 'b', 'c'];
         $codes2 = ['x', 'y', 'z'];
         $N = 3;
+        $empty = array_fill(0, $N, 0);
+        $this->assertEquals($empty, [0, 0, 0]);
         $this->assertEquals(EmptyDistribs::emptyDoubleDistrib_triangle_dim1($codes1, $codes2 , $N), [
-                'a-y' => [0, 0, 0],
-                'a-z' => [0, 0, 0],
-                'b-z' => [0, 0, 0],
+                'a-y' => $empty,
+                'a-z' => $empty,
+                'b-z' => $empty,
             ]
         );
     }
     
-    /* 
     public function testEmptyDoubleDistrib_triangle_dim2(){
         $codes1 = ['a', 'b', 'c'];
         $codes2 = ['x', 'y', 'z'];
-        $N = 3;
-        $this->assertEquals(EmptyDistribs::emptyDoubleDistrib_triangle_dim1($codes1, $codes2 , $N), [
-                'a-y' => [0, 0, 0],
-                'a-z' => [0, 0, 0],
-                'b-z' => [0, 0, 0],
+        $N = 5;
+        $empty = array_fill(0, $N, array_fill(0, $N, 0));
+        $this->assertEquals($empty, [
+            0 => [0, 0, 0, 0, 0],
+            1 => [0, 0, 0, 0, 0],
+            2 => [0, 0, 0, 0, 0],
+            3 => [0, 0, 0, 0, 0],
+            4 => [0, 0, 0, 0, 0],
+        ]);
+        $this->assertEquals(EmptyDistribs::emptyDoubleDistrib_triangle_dim2($codes1, $codes2 , $N), [
+                'a-y' => $empty,
+                'a-z' => $empty,
+                'b-z' => $empty,
             ]
         );
     }
-    */
     
     public function testEmptyDoubleDistrib_square_dim1(){
         $codes1 = ['a', 'b', 'c'];
         $codes2 = ['x', 'y', 'z'];
-        $N = 3;
+        $N = 4;
+        $empty = array_fill(0, $N, 0);
+        $this->assertEquals($empty, [0, 0, 0, 0]);
         $this->assertEquals(EmptyDistribs::emptyDoubleDistrib_square_dim1($codes1, $codes2 , $N), [
-                'a-x' => [0, 0, 0],
-                'a-y' => [0, 0, 0],
-                'a-z' => [0, 0, 0],
-                'b-x' => [0, 0, 0],
-                'b-y' => [0, 0, 0],
-                'b-z' => [0, 0, 0],
-                'c-x' => [0, 0, 0],
-                'c-y' => [0, 0, 0],
-                'c-z' => [0, 0, 0],
+                'a-x' => $empty,
+                'a-y' => $empty,
+                'a-z' => $empty,
+                'b-x' => $empty,
+                'b-y' => $empty,
+                'b-z' => $empty,
+                'c-x' => $empty,
+                'c-y' => $empty,
+                'c-z' => $empty,
+            ]
+        );
+    }
+    
+    public function testEmptyDoubleDistrib_square_dim2(){
+        $codes1 = ['a', 'b', 'c'];
+        $codes2 = ['x', 'y', 'z'];
+        $N = 2;
+        $empty = array_fill(0, $N, array_fill(0, $N, 0));
+        $this->assertEquals($empty, [
+            0 => [0, 0],
+            1 => [0, 0],
+        ]);
+        $this->assertEquals(EmptyDistribs::emptyDoubleDistrib_square_dim2($codes1, $codes2 , $N), [
+                'a-x' => $empty,
+                'a-y' => $empty,
+                'a-z' => $empty,
+                'b-x' => $empty,
+                'b-y' => $empty,
+                'b-z' => $empty,
+                'c-x' => $empty,
+                'c-y' => $empty,
+                'c-z' => $empty,
             ]
         );
     }
@@ -300,7 +333,12 @@ class EmptyDistribsTest extends TestCase{
                     'NN-NN' => $arr360,
                 ],
             ],
-            'age-dim1' => [],
+            'age' => [
+                'dim1' => [
+                    'age-M' => [],
+                    'age-Y' => [],                    
+                ],
+            ],
         ]);
     }
 }// end class

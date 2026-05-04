@@ -1,7 +1,7 @@
 <?php
 /******************************************************************************
     
-    Contains code tu move somewhere else
+    Contains code related to planet codes (SO, MO etc.).
     
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
     @copyright  Thierry Graff
@@ -11,7 +11,7 @@
 
 namespace observe\model;
 
-class Misc {
+class PlanetCode {
     
     /**
         Builds a code from two values of an array.

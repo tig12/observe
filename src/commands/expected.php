@@ -43,7 +43,7 @@ class expected implements ICommand {
         
         foreach($controlDirs as $controlDir){
             $controlDistrib = Distribs::loadDistributions($controlDir, $study->config['dates'], $study->config['planets']);
-            $allControlDistribs = AddDistribs::add($allControlDistribs, $controlDistrib, $study->config['dates']);
+            $allControlDistribs = AddDistribs::add_dim1($allControlDistribs, $controlDistrib, $study->config['dates']);
         }
         //
         // Compute expected distribs

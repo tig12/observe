@@ -1,6 +1,6 @@
 <?php
 /******************************************************************************
-
+    
     @copyright  Thierry Graff
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
     
@@ -12,8 +12,11 @@ namespace observe\model\distrib;
 use PHPUnit\Framework\TestCase;
 
 class AddDistribsTest extends TestCase{
-
-    public function testAdd(){
+    
+    /** 
+        This test is not based on real data.
+    **/
+    public function testAdd_dim1(){
         $dateNames = ['birth', 'death'];
         $d1 = [
             'birth' => [
@@ -59,10 +62,19 @@ class AddDistribsTest extends TestCase{
                 ],
             ],
             'birth-death' => [
-                'age-dim1' => [
-                    0 => 21,
-                    10 => 31,
-                    11 => 32,
+                'age' => [
+                    'dim1' => [
+                        'age-M' => [
+                            0 => 21,
+                            10 => 31,
+                            11 => 32,
+                        ],
+                        'age-Y' => [
+                            1 => 20,
+                            2 => 21,
+                            3 => 22,
+                        ],
+                    ],
                 ],
                 'interaspects' => [
                     'dim1' => [
@@ -117,10 +129,19 @@ class AddDistribsTest extends TestCase{
                 ],
             ],
             'birth-death' => [
-                'age-dim1' => [
-                    0 => 121,
-                    10 => 131,
-                    12 => 132,
+                'age' => [
+                    'dim1' => [
+                        'age-M' => [
+                            0 => 121,
+                            10 => 131,
+                            12 => 132,
+                        ],
+                        'age-Y' => [
+                            2 => 10,
+                            3 => 11,
+                            4 => 12,
+                        ],
+                    ],
                 ],
                 'interaspects' => [
                     'dim1' => [
@@ -176,11 +197,21 @@ class AddDistribsTest extends TestCase{
                 ],
             ],
             'birth-death' => [
-                'age-dim1' => [
-                    0 => 142,
-                    10 => 162,
-                    11 => 32,
-                    12 => 132,
+                'age' => [
+                    'dim1' => [
+                        'age-M' => [
+                            0 => 142,
+                            10 => 162,
+                            11 => 32,
+                            12 => 132,
+                        ],
+                        'age-Y' => [
+                            1 => 20,
+                            2 => 31,
+                            3 => 33,
+                            4 => 12,
+                        ],
+                    ],
                 ],
                 'interaspects' => [
                     'dim1' => [
@@ -191,7 +222,7 @@ class AddDistribsTest extends TestCase{
             ],
         ];
         
-        $this->assertEquals(AddDistribs::add($d1, $d2, $dateNames), $res);
+        $this->assertEquals(AddDistribs::add_dim1($d1, $d2, $dateNames), $res);
     }
     
 }// end class

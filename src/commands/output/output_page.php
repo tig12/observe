@@ -17,7 +17,7 @@ namespace observe\commands\output;
 
 use observe\model\IStudy;
 use observe\model\distrib\StatsDistrib;
-use observe\model\Misc;
+use observe\model\PlanetCode;
 use tiglib\filesystem\mkdir;
 use tiglib\filesystem\file_put_contents;
 use tigeph\model\IAA;
@@ -322,7 +322,7 @@ class output_page {
                         $V['planet-cells'][$planet1][$planet2][] = [];
                         continue;
                     }
-                    $code = Misc::pairCode($planet1, $planet2, $study->config['planets']);
+                    $code = PlanetCode::pairCode($planet1, $planet2, $study->config['planets']);
                     $label = "$planetName1 $dateName - $planetName2 $dateName";
                     $V['planet-cells'][$planet1][$planet2][] = [
                         'label'         => $label,

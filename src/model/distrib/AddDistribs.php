@@ -1,6 +1,6 @@
 <?php
 /******************************************************************************
-    Adds two distributions sharing the same structure
+    Adds two distributions sharing the structure of a study.
     
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
     @copyright  Thierry Graff
@@ -12,7 +12,7 @@ namespace observe\model\distrib;
 class AddDistribs {
     
     /**
-        Adds 2 distributions of a study.
+        Adds 2 distributions of type dim1 of a study.
         @param  $d1 and $d2 must have the same structure.
                 ex: [
                     'SO-SO' => [0 => 1230, ... 359 => 1342],
@@ -22,7 +22,7 @@ class AddDistribs {
         @param  $dateNames      ex: ['birth', 'death']
         @return Distribution containing the sum of $d1 and $d2, done element by element.
     **/
-    public static function add(array &$d1, array &$d2, array $dateNames): array {
+    public static function add_dim1(array &$d1, array &$d2, array $dateNames): array {
         $res = [];
         $nDates = count($dateNames);
         //
