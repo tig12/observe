@@ -22,8 +22,6 @@
     @history    2026-03-25 21:16:34+01:00, Thierry Graff : Creation
 ********************************************************************************/
 
-namespace observe\test\functional\studies\death_fr;
-
 use PHPUnit\Framework\TestCase;
 use observe\model\Observe;
 use observe\model\IStudy;
@@ -125,7 +123,6 @@ class controlTest extends TestCase{
                 $this->assertEquals($controlSum, $observedSum);
             }
         }
-return;
         //
         // Distributions of type distrib2
         //
@@ -146,7 +143,17 @@ return;
                         $this->assertEquals($controlSum, $observedSum);
                     }
                 }
-                // age
+                // age M
+                $observedFile = implode(DS, [$observedDir, $dateName, 'age', 'dim1', 'age-M.csv']);
+                $observedDistrib = CsvDistrib::csv2distrib_dim1($observedFile, Observe::CSV_SEP);
+                $observedSum = array_sum($observedDistrib);
+                foreach($controlDirs as $controlDir){
+                    $controlFile = implode(DS, [$controlDir, $dateName, 'age', 'dim1', 'age-M.csv']);
+                    $controlDistrib = CsvDistrib::csv2distrib_dim1($controlFile, Observe::CSV_SEP);
+                    $controlSum = array_sum($controlDistrib);
+                    $this->assertEquals($controlSum, $observedSum);
+                }
+                // age Y
                 $observedFile = implode(DS, [$observedDir, $dateName, 'age', 'dim1', 'age-Y.csv']);
                 $observedDistrib = CsvDistrib::csv2distrib_dim1($observedFile, Observe::CSV_SEP);
                 $observedSum = array_sum($observedDistrib);
@@ -165,13 +172,10 @@ return;
         They must be equal because control::otherPerson() keeps the birth date of the original person.
     **/
     public function testStudy1_birth_date(){
-return;
-        $observedDir = self::$study->getObservedDirectory(self::$study->config, 'full', '01--0-200years');
-        $controlDirs = glob(self::$study->getControlsDirectory(self::$study->config, 'full', '01--0-200years') . DS . '*');
-        
+        $observedDir = self::$study->getObservedDirectory();
+        $controlDirs = self::$study->getControlSubdirectories();
         $observed_days = CsvDistrib::csv2distrib_dim1(implode(DS, [$observedDir, 'birth', 'day.csv']), Observe::CSV_SEP);
         $observed_years = CsvDistrib::csv2distrib_dim1(implode(DS, [$observedDir, 'birth', 'year.csv']), Observe::CSV_SEP);
-        
         foreach($controlDirs as $controlDir){
             // day
             $filename = $controlDir . DS . 'birth' . DS . 'day.csv';

@@ -120,7 +120,7 @@ class observedTest extends TestCase{
     /** 
         Tests a subset of values for split full.
     **/
-    public function testStudy1_full_values(){
+    public function test_values(){
         //
         $arr360 = array_fill(0, 360, 0);
         $observedDir = self::$study->getObservedDirectory();
