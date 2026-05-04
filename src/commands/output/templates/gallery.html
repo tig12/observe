@@ -12,203 +12,87 @@
     
     @history    2026-05-02 02:17:02+02:00, Thierry Graff : Creation
 ********************************************************************************/
-
-use tigeph\model\IAA;
-use observe\model\Misc;
-
-//
-// Links, for table of contents.
-//
-$links = [];
-$labels = [];
-// same planets
-for($i=0; $i < count($V['dates']); $i++):
-    for($j=$i+1; $j < count($V['dates']); $j++):
-        $dateName1 = $V['dates'][$i];
-        $dateName2 = $V['dates'][$j];
-        $dateName = "$dateName1-$dateName2"; // ex: birth-death
-        $links[] = "same-planets-$dateName";
-        $labels[] = "Same planets, $dateName";
-    endfor;
-endfor;
-// planets
-foreach($V['planets'] as $planet):
-    $planetName = IAA::PLANET_NAMES[$planet];
-    $links[] = "#planet-$planet";
-    $labels[] = $planetName;
-endforeach;
 ?>
 
 <!-- Table of contents -->
-<ul class="simple">
-<?php for($i=0; $i < count($links); $i++): ?>
-    <li><a href="<?= $links[$i] ?>"><?= $labels[$i] ?></a></li>
-<?php endfor; ?>
-</ul>
-
-
-<?php 
-for($i=0; $i < count($V['dates']); $i++):
-    for($j=$i+1; $j < count($V['dates']); $j++):
-        $dateName1 = $V['dates'][$i];
-        $dateName2 = $V['dates'][$j];
-        $dateName = "$dateName1-$dateName2"; // ex: birth-death
-?>
-<!-- ********************************************************************************* -->
-<h2 id="<?= "same-planets-$dateName" ?>">Same planets, <?= $dateName ?></h2>
-<?php
-        foreach($V['planets'] as $planet):
-            $planetName = IAA::PLANET_NAMES[$planet];
-            $code = "$planet-$planet";
-            $label = "$planetName $dateName1 - $planetName $dateName2";
-            $img_url = "img/$dateName/interaspects/dim2/$code.png";
-            $details_url = "$dateName.html#relations-planets-$code";
-            $alt = "Positions of $label";
-?>
-
-<div class="float-left">
-    <figure>
-        <figcaption class="center"><a href="<?= $details_url ?>"><?= $label ?></a></figcaption>
-        <a href="<?= $img_url ?>">
-            <img
-                    class="border margin "
-                    width="250"
-                    height="250"
-                    src="<?= $img_url ?>"
-                    alt="<?= $alt ?>"
-            >
-        </a>
-    </figure>
+<style>
+    .toc{
+        line-height:200%;
+        font-size:1.3rem;
+    }
+</style>
+<div class="toc">
+    <ul class="naked">
+        <?php foreach($V['toc-same'] as $entry): ?>
+            <li><a href="<?= $entry['url'] ?>"><?= $entry['label'] ?></a></li>
+        <?php endforeach; ?>
+        <li>
+            <?php foreach($V['toc-planets'] as $entry): ?>
+                <span class="padding-right2"><a href="<?= $entry['url'] ?>"><?= $entry['label'] ?></a></span>
+            <?php endforeach; ?>
+        </li>
+    </ul>
 </div>
-<?php
-        endforeach;
-    endfor;
-endfor;
-?>
 
-<br class="clear-left">
 
-<?php
-foreach($V['planets'] as $planet1):
-    $planetName1 = IAA::PLANET_NAMES[$planet1];
-?>
-    <!-- ********************************************************************************* -->
-    <h2 id="planet-<?= $planet1 ?>"><?= $planetName1 ?></h2>
-    
-    <!-- Aspects of $planet1, birth-birth and death-death -->
-    
-    <?php foreach($V['dates'] as $dateName): ?><!-- ex: birth -->
+<!-- Same planets -->
+<?php foreach($V['same'] as $dateName => $same): ?>
+    <h2 id="<?= $same['h2-id'] ?>"><?= $same['h2-label'] ?></h2>
+    <?php foreach($same['contents'] as $contents): ?>
         <div class="float-left">
-            <!-- ************************************* -->
-            <h3 class="center">Aspects at <?= $dateName ?></h3>
-            <?php 
-            foreach($V['planets'] as $planet2):
-                if($planet1 == $planet2){
-                    continue;
-                }
-                $planetName2 = IAA::PLANET_NAMES[$planet2];
-                $code = Misc::pairCode($planet1, $planet2, $V['planets']);
-                $label = "$planetName1 $dateName - $planetName2 $dateName";
-                $img_url = "img/$dateName/aspects/dim2/$code.png";
-                $details_url = "$dateName.html#aspect-$code";
-                $alt = "Positions of $label";
-            ?>
-                <figure>
-                        <figcaption class="center"><a href="<?= $details_url ?>"><?= $label ?></a></figcaption>
-                    <a href="<?= $img_url ?>">
-                        <img
-                                class="border margin "
-                                width="250"
-                                height="250"
-                                src="<?= $img_url ?>"
-                                alt="<?= $alt ?>"
-                        >
-                    </a>
-                </figure>
-            <?php endforeach; ?><!-- end loop on $planet2 -->
+            <figure>
+                <a href="<?= $contents['img-url'] ?>">
+                    <img
+                        class="border margin "
+                        width="250"
+                        height="250"
+                        src="<?= $contents['img-url'] ?>"
+                        alt="<?= $contents['img-alt'] ?>"
+                    >
+                </a>
+                <figcaption class="center"><a href="<?= $contents['details-url'] ?>"><?= $contents['label'] ?></a></figcaption>
+            </figure>
         </div>
-    <?php endforeach; ?><!-- end loop on $dateName -->
-        
-    
-    <!-- Interaspects birth - death -->
-    
-    <?php
-    for($i=0; $i < count($V['dates']); $i++):
-        $dateName1 = $V['dates'][$i];
-        for($j=$i+1; $j < count($V['dates']); $j++):
-            $dateName2 = $V['dates'][$j];
-            $dateName = "$dateName1-$dateName2"; // ex: birth-death
-    ?>
-            <div class="float-left">
-                <!-- ************************************* -->
-                <h3 class="center">Interaspects <?= $dateName ?></h3>
-                <?php 
-                foreach($V['planets'] as $planet2):
-                    $planetName2 = IAA::PLANET_NAMES[$planet2];
-                    $code = "$planet1-$planet2";
-                    $label = "$planetName1 $dateName1 - $planetName2 $dateName2";
-                    $img_url = "img/$dateName/interaspects/dim2/$code.png";
-                    $details_url = "$dateName.html#relations-planets-$code";
-                    $alt = "Positions of $label";
-                ?>
-                    <figure>
-                        <figcaption class="center"><a href="<?= $details_url ?>"><?= $label ?></a></figcaption>
-                        <a href="<?= $img_url ?>">
-                            <img
-                                    class="border margin inline"
-                                    width="250"
-                                    height="250"
-                                    src="<?= $img_url ?>"
-                                    alt="<?= $alt ?>"
-                            >
-                        </a>
-                    </figure>
-                <?php endforeach; ?><!-- end loop on $planet2 -->
-            </div>
-        <?php endfor; ?><!-- end loop on $dateName2 -->
-    <?php endfor; ?><!-- end loop on $dateName1 -->
-    
-    <!-- Interaspects death - birth -->
-    
-    <?php
-    for($i=0; $i < count($V['dates']); $i++):
-        $dateName1 = $V['dates'][$i];
-        for($j=$i+1; $j < count($V['dates']); $j++):
-            $dateName2 = $V['dates'][$j];
-            $dateName = "$dateName1-$dateName2"; // ex: birth-death
-    ?>
-            <div class="float-left">
-                <!-- ************************************* -->
-                <h3 class="center">Interaspects <?= $dateName ?></h3>
-                <?php 
-                foreach($V['planets'] as $planet2):
-                    $planetName2 = IAA::PLANET_NAMES[$planet2];
-                    $code = "$planet2-$planet1";        // here, inversion
-                    $label = "$planetName1 $dateName2 - $planetName2 $dateName1";
-                    $img_url = "img/$dateName/interaspects/dim2/$code.png";
-                    $details_url = "$dateName.html#relations-planets-$code";
-                    $alt = "Positions of $label";
-                ?>
-                    <figure>
-                        <figcaption class="center"><a href="<?= $details_url ?>"><?= $label ?></a></figcaption>
-                        <a href="<?= $img_url ?>">
-                            <img
-                                    class="border margin inline"
-                                    width="250"
-                                    height="250"
-                                    src="<?= $img_url ?>"
-                                    alt="<?= $alt ?>"
-                            >
-                        </a>
-                    </figure>
-                <?php endforeach; ?><!-- end loop on $planet2 -->
-            </div>
-        <?php endfor; ?><!-- end loop on $dateName2 -->
-    <?php endfor; ?><!-- end loop on $dateName1 -->
-    
-    <br class="clear-left">
-    
-<?php endforeach; ?><!-- end loop on $planet1 -->
-
+    <?php endforeach; ?>
+<?php endforeach; ?>
 
 <br class="clear-left">
+
+<!-- Planet details -->
+
+<?php foreach($V['planet-names'] as $planetCode1 => $planetName1): ?>
+    <h2 id="<?= $V['planet-h2'][$planetCode1]['id'] ?>"><?= $V['planet-h2'][$planetCode1]['label'] ?></h2>
+    <table class="">
+        <tr>
+            <?php foreach($V['planet-titles'] as $title): ?>
+                <th colspan="2"><?= $title ?></th>
+            <?php endforeach; ?>
+        </tr>
+        <?php foreach($V['planet-names'] as $planetCode2 => $planetName2): ?>
+            <?php foreach($V['planet-cells'][$planetCode1][$planetCode2] as $cell): ?>
+<?php
+echo "===================================\n";
+echo "$planetCode1\n";
+echo "$planetCode2\n";
+print_r($cell); exit;
+?>
+                <tr>
+                    <td>
+                        <figure>
+                            <a href="<?= $cell['img-url'] ?>">
+                                <img
+                                    class="border margin "
+                                    width="250"
+                                    height="250"
+                                    src="<?= $cell['img-url'] ?>"
+                                    alt="<?= $cell['img-alt'] ?>"
+                                >
+                            </a>
+                            <figcaption class="center"><a href="<?= $cell['details-url'] ?>"><?= $cell['label'] ?></a></figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        <?php endforeach; ?>
+    </table>
+<?php endforeach; ?>

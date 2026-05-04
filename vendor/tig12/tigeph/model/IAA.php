@@ -90,4 +90,17 @@ class IAA {
         return array_values(array_intersect_key(IAA::IAA_TIGEPH, array_flip($iaaCodes)));
     }
     
+    
+    /**
+        Returs an associative array planet code => planet name for a subset of self::PLANETS
+        @param  $codes subset of self::PLANETS
+    **/
+    public static function getNames(array $codes) {
+        $res = [];
+        foreach($codes as $code){
+            $res[$code] = self::PLANET_NAMES[$code];
+        }
+        return $res;
+    }
+    
 } // end class

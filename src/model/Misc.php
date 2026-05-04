@@ -35,7 +35,7 @@ class Misc {
                 $found1 = true;
             }
         }
-        return ''; // Normally never reached    
+        return $res; // Normally never reached    
     }
     
 } // end class

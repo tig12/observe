@@ -23,33 +23,6 @@ $statsObs =& $V['stats-obs'];
 ?>
 
 <!-- 
-    Diagonal
--->
-<?php 
-for($i=0; $i < count($V['dates']); $i++):
-    for($j=$i+1; $j < count($V['dates']); $j++):
-        $dateName = $V['dates'][$i] . '-' . $V['dates'][$j]; // ex: birth-death
-        $k = 0;
-        foreach($V['planets'] as $p):
-            $code = "$p-$p";
-?>
-
-<img
-    class="float-left"
-    width="250"
-    height="250"
-    src="img/<?= $dateName ?>/interaspects/dim2/<?= $code ?>.png"
-    alt="<?= $code ?>"
->
-<?php
-        endforeach;
-    endfor;
-endfor;
-?>
-<br class="clear-left">
-
-
-<!-- 
     Distributions of type distrib1
 -->
 <?php foreach($V['dates'] as $dateName): ?>
