@@ -309,14 +309,13 @@ class output_page {
                 'label' => $planetName1,
             ];
             $V['planet-cells'][$planet1] = [];
+            foreach($study->config['planets'] as $planet2){
+                $V['planet-cells'][$planet1][$planet2] = [];
+            }
             // aspects - ex birth - birth and death - death
-echo "planet1 = $planet1\n";
             for($i=0; $i < count($study->config['dates']); $i++){
                 $dateName = $study->config['dates'][$i];
-echo "dateNane = $dateName\n";
-//                $V['planet-cells'][$planet1][$planet2] = [];
                 foreach($study->config['planets'] as $planet2){
-echo "    planet2 = $planet2\n";
                     $planetName2 = IAA::PLANET_NAMES[$planet2];
                     if($planet1 == $planet2){
                         // no aspect between a planet and itself - but a void cell
@@ -324,41 +323,40 @@ echo "    planet2 = $planet2\n";
                         continue;
                     }
                     $code = Misc::pairCode($planet1, $planet2, $study->config['planets']);
+                    $label = "$planetName1 $dateName - $planetName2 $dateName";
                     $V['planet-cells'][$planet1][$planet2][] = [
-                        'label'         => "$planetName1 $dateName - $planetName2 $dateName",
+                        'label'         => $label,
                         'img-url'       => "img/$dateName/aspects/dim2/$code.png",
                         'img-alt'       => "Distribution of aspects $label",
                         'details-url'   => "$dateName.html#aspect-$code",
                     ];
                 }
             }
-//exit;
-echo "========================\n";
-echo "planet1 = $planet1\n";
-print_r($V['planet-cells']);
-exit;
             // interaspects
             for($i=0; $i < count($study->config['dates']); $i++){
                 $dateName1 = $study->config['dates'][$i];
                 for($j=$i+1; $j < count($study->config['dates']); $j++){
                     $dateName2 = $study->config['dates'][$j];
                     $dateName = "$dateName1-$dateName2"; // ex: birth-death
+                    // Respect the date order - ex birth-death
                     foreach($study->config['planets'] as $planet2){
                         $planetName2 = IAA::PLANET_NAMES[$planet2];
                         $code = "$planet1-$planet2";
+                        $label = "$planetName1 $dateName1 - $planetName2 $dateName2";
                         $V['planet-cells'][$planet1][$planet2][] = [
-                            'label'         => "$planetName1 $dateName1 - $planetName2 $dateName2",
+                            'label'         => $label,
                             'img-url'       => "img/$dateName/interaspects/dim2/$code.png",
                             'img-alt'       => "Positions of $label",
                             'details-url'   => "$dateName.html#relations-planets-$code",
                         ];
                     }
-                    $dateName = "$dateName2-$dateName1"; // ex: death-birth
+                    // Invert the date order - ex death-birth
                     foreach($study->config['planets'] as $planet2){
                         $planetName2 = IAA::PLANET_NAMES[$planet2];
-                        $code = "$planet2-$planet1"; // here, inversion
+                        $code = "$planet2-$planet1"; // here inversion
+                        $label = "$planetName1 $dateName2 - $planetName2 $dateName1"; // here inversion
                         $V['planet-cells'][$planet1][$planet2][] = [
-                            'label'         => "$planetName1 $dateName2 - $planetName2 $dateName1",
+                            'label'         => $label,
                             'img-url'       => "img/$dateName/interaspects/dim2/$code.png",
                             'img-alt'       => "Positions of $label",
                             'details-url'   => "$dateName.html#relations-planets-$code",
@@ -367,7 +365,6 @@ exit;
                 }
             }
         } // end loop on planet1
-print_r($V['planet-cells']); exit;
         //
         $res .= self::template('gallery.html', $V);
         //

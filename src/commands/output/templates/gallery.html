@@ -24,23 +24,26 @@
 <div class="toc">
     <ul class="naked">
         <?php foreach($V['toc-same'] as $entry): ?>
-            <li><a href="<?= $entry['url'] ?>"><?= $entry['label'] ?></a></li>
+            <li><a href="#<?= $entry['url'] ?>"><?= $entry['label'] ?></a></li>
         <?php endforeach; ?>
         <li>
             <?php foreach($V['toc-planets'] as $entry): ?>
-                <span class="padding-right2"><a href="<?= $entry['url'] ?>"><?= $entry['label'] ?></a></span>
+                <span class="padding-right2"><a href="#<?= $entry['url'] ?>"><?= $entry['label'] ?></a></span>
             <?php endforeach; ?>
         </li>
     </ul>
 </div>
 
+<div class="margin-top">
+    (click on the images to display full size - click on the links to go to the details of a distribution)
+</div>
 
 <!-- Same planets -->
 <?php foreach($V['same'] as $dateName => $same): ?>
     <h2 id="<?= $same['h2-id'] ?>"><?= $same['h2-label'] ?></h2>
     <?php foreach($same['contents'] as $contents): ?>
         <div class="float-left">
-            <figure>
+            <figure class="margin-bottom">
                 <a href="<?= $contents['img-url'] ?>">
                     <img
                         class="border margin "
@@ -65,34 +68,30 @@
     <table class="">
         <tr>
             <?php foreach($V['planet-titles'] as $title): ?>
-                <th colspan="2"><?= $title ?></th>
+                <th><?= $title ?></th>
             <?php endforeach; ?>
         </tr>
         <?php foreach($V['planet-names'] as $planetCode2 => $planetName2): ?>
-            <?php foreach($V['planet-cells'][$planetCode1][$planetCode2] as $cell): ?>
-<?php
-echo "===================================\n";
-echo "$planetCode1\n";
-echo "$planetCode2\n";
-print_r($cell); exit;
-?>
-                <tr>
+            <tr>
+                <?php foreach($V['planet-cells'][$planetCode1][$planetCode2] as $cell): ?>
                     <td>
-                        <figure>
-                            <a href="<?= $cell['img-url'] ?>">
-                                <img
-                                    class="border margin "
-                                    width="250"
-                                    height="250"
-                                    src="<?= $cell['img-url'] ?>"
-                                    alt="<?= $cell['img-alt'] ?>"
-                                >
-                            </a>
-                            <figcaption class="center"><a href="<?= $cell['details-url'] ?>"><?= $cell['label'] ?></a></figcaption>
-                        </figure>
+                        <?php if(count($cell) != 0): // empty cell = aspect of a planet to itself then empty td ?>
+                            <figure class="margin-bottom">
+                                <a href="<?= $cell['img-url'] ?>">
+                                    <img
+                                        class="border margin "
+                                        width="250"
+                                        height="250"
+                                        src="<?= $cell['img-url'] ?>"
+                                        alt="<?= $cell['img-alt'] ?>"
+                                    >
+                                </a>
+                                <figcaption class="center"><a href="<?= $cell['details-url'] ?>"><?= $cell['label'] ?></a></figcaption>
+                            </figure>
+                        <?php endif; ?>
                     </td>
-                </tr>
-            <?php endforeach; ?>
+                <?php endforeach; ?>
+            </tr>
         <?php endforeach; ?>
     </table>
 <?php endforeach; ?>
