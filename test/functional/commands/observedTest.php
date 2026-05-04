@@ -2,7 +2,13 @@
 /******************************************************************************
     
     Functional test for src/commands/observed.php
-    Uses the "deaths in France" study with config file config/test/study1.yml
+    
+    Uses study1 - see config/test/study1-README 
+    
+    @pre        This test needs that step import is performed:
+                phpunit test/functional/studies/death_fr/importTest.php
+                or
+                php run-observe.php study1 import
     
     @copyright  Thierry Graff
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
@@ -17,6 +23,7 @@ use observe\model\distrib\EmptyDistribs;
 use observe\model\distrib\CsvDistrib;
 use observe\studies\death_fr\Death_fr;
 use observe\commands\observed;
+//use observe\studies\death_fr\import;
 
 class observedTest extends TestCase{
     
@@ -24,6 +31,7 @@ class observedTest extends TestCase{
 
     public static function setUpBeforeClass(): void {
         self::$study = new Death_fr('study1');
+        //import::execute(self::$study, []);
         observed::execute(self::$study, []);
     }
     
@@ -95,8 +103,13 @@ class observedTest extends TestCase{
                         $this->assertEquals($sum_got, $sum_wanted);
                     }
                 }
-                // age
-                $observedFile = implode(DS, [$observedDir, $dateName, 'age-dim1.csv']);
+                // age-Y
+                $observedFile = implode(DS, [$observedDir, $dateName, 'age', 'dim1', 'age-Y.csv']);
+                $observedDistrib = CsvDistrib::csv2distrib_dim1($observedFile, Observe::CSV_SEP);
+                $sum_got = array_sum($observedDistrib);
+                $this->assertEquals($sum_got, $sum_wanted);
+                // age-M
+                $observedFile = implode(DS, [$observedDir, $dateName, 'age', 'dim1', 'age-M.csv']);
                 $observedDistrib = CsvDistrib::csv2distrib_dim1($observedFile, Observe::CSV_SEP);
                 $sum_got = array_sum($observedDistrib);
                 $this->assertEquals($sum_got, $sum_wanted);

@@ -1,7 +1,9 @@
 <?php
 /******************************************************************************
 
-    Functional test for src/studies/death_fr/split.php
+    Functional test for src/studies/death_fr/import.php
+    
+    Uses study1 - see config/test/study1-README 
     
     usage: phpunit src/commands/death_fr/importTest.php 
     
@@ -22,7 +24,7 @@ use observe\studies\death_fr\import;
 class importTest extends TestCase {
     
     private static IStudy $study;
-
+    
     public static function setUpBeforeClass(): void {
         self::$study = new Death_fr('study1');
         import::execute(self::$study, []);

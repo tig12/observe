@@ -15,7 +15,7 @@ namespace tiglib\filesystem;
 class rrmdir {
     
    public static function execute($dir) {
-        $files = array_diff(scandir($dir), array('.','..'));
+        $files = array_diff(scandir($dir), ['.','..']);
         foreach ($files as $file) {
             (is_dir("$dir/$file")) ? self::execute("$dir/$file") : unlink("$dir/$file"); // recursive here
         }

@@ -19,6 +19,7 @@ class init implements ICommand {
     
     /** 
         Called by Run::runCommand()
+        
         @param $params empty array
         @return Empty string, echoes its output
     **/
