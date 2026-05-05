@@ -3,6 +3,8 @@
     Contains informations shared by several commands of this package.    
 
     @license    GPL
+    @copyright  Thierry Graff
+    
     @history    2026-02-21 18:17:03+01:00, Thierry Graff : Creation
 ********************************************************************************/
 

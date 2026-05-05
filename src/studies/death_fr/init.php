@@ -5,6 +5,8 @@
     filled during execution of very long commands
     
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
+    @copyright  Thierry Graff
+    
     @history    2026-02-26 09:09:06+01:00, Thierry Graff : creation
 ********************************************************************************/
 

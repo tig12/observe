@@ -5,6 +5,7 @@
     
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
     @copyright  Thierry Graff
+    
     @history    2026-03-11 17:47:41+01:00, Thierry Graff : Creation
 ********************************************************************************/
 
@@ -14,7 +15,6 @@ use observe\model\Observe;
 use observe\app\ICommand;
 use observe\model\IStudy;
 use observe\model\Studies;
-use tiglib\time\diff;
 use tiglib\time\seconds2HHMMSS;
 use tiglib\filesystem\mkdir;
 

@@ -3,6 +3,7 @@
 
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
     @copyright  Thierry Graff
+    
     @history    2026-03-11 17:48:18+01:00, Thierry Graff : Creation
 ********************************************************************************/
 
