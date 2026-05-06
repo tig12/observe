@@ -30,8 +30,8 @@ class A00 extends Study implements IStudy {
         }
         if(!is_file($this->config['raw-file-path'])){
             throw new ObserveException(
-                "Unexisting file {$this->config['raw-file-path']}\n"
-                "Check entry 'raw-file-path' in file {$this->config['__study-file__']}"
+                "Unexisting file: {$this->config['raw-file-path']}\n"
+                . "Check entry 'raw-file-path' in file {$this->config['__study-file__']}"
             );
         }
     }

@@ -35,8 +35,8 @@ class Distribs {
             $days .= ":d$i,";
         }
         $days = substr($days, 0, -1);
-        // select SO,MO,ME,VE,MA,JU,SA,UR,NE,PL,NN from planet where day in(:d0,:d1)
-        self::$stmt_planets = self::$sqlite_planets->prepare("select $planets from planet where day in($days)");
+        // ex: select day,SO,MO,ME,VE,MA,JU,SA,UR,NE,PL,NN from planet where day in(:d0,:d1)
+        self::$stmt_planets = self::$sqlite_planets->prepare("select day,$planets from planet where day in($days)");
         self::$codePlanets = $planetCodes;
         self::$nPlanets = count(self::$codePlanets);
         self::$initOK = true;
@@ -67,16 +67,30 @@ class Distribs {
         for($i=0; $i < $nDates; $i++){
             $execArray[":d$i"] = $dates[$i];
         }
+        // Note: we must select the day from database and perform this loop
+        // because some dates can be equal, and sql returns less planets than dates
         self::$stmt_planets->execute($execArray);
-        $planets = self::$stmt_planets->fetchAll(\PDO::FETCH_ASSOC);
-        if(count($planets) == 1){
-            // particular case: death day = birth day
-            $planets[1] = $planets[0];
+        $rows = self::$stmt_planets->fetchAll(\PDO::FETCH_ASSOC);
+        $planets = [];
+        for($i=0; $i < $nDates; $i++){
+            if($dates[$i] == ''){ // missing date
+                $planets[] = [];
+                continue;
+            }
+            foreach($rows as $row){
+                if($row['day'] == $dates[$i]){
+                    $planets[] = array_slice($row, 1, preserve_keys:true);
+                    break;
+                }
+            }
         }
         //
         // distributions of type distrib1
         //
         for($i=0; $i < $nDates; $i++){
+            if($dates[$i] == ''){
+                continue; // missing date
+            }
             $dateName = $dateNames[$i]; // "birth", "death", "mother", "father" etc.
             // day
             $res[$dateName]['day'][substr($dates[$i], 5)]++;
@@ -105,7 +119,13 @@ class Distribs {
         // distributions of type distrib2
         //
         for($i=0; $i < $nDates; $i++){
+            if($dates[$i] == ''){
+                continue; // missing date
+            }
             for($j=$i+1; $j < $nDates; $j++){
+                if($dates[$j] == ''){
+                    continue; // missing date
+                }
                 $dateName = $dateNames[$i] . '-' . $dateNames[$j]; // birth-death, mother-father etc.
                 // age
                 $diff = diff::compute_all(new \DateTime($dates[$i]), new \DateTime($dates[$j]));

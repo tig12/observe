@@ -14,7 +14,6 @@ namespace observe\studies\death_fr;
 use observe\model\Observe;
 use observe\app\ICommand;
 use observe\model\IStudy;
-use observe\model\Studies;
 use tiglib\time\seconds2HHMMSS;
 use tiglib\filesystem\mkdir;
 

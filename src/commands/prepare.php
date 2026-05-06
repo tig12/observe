@@ -97,7 +97,7 @@ class prepare{
         $sqlite_exists = is_file($sqlite_path);
         $sqlite = new \PDO('sqlite:' . $sqlite_path);
         if(!$sqlite_exists){
-            // create table planet(day character(10),SO real,MO real,ME real,VE real,MA real,JU real,SA real,UR real,NE real,PL real,NN real)
+            // ex: create table planet(day character(10),SO real,MO real,ME real,VE real,MA real,JU real,SA real,UR real,NE real,PL real,NN real)
             $sql1 = 'create table planet(day character(10),' . implode(' real,', $planets) . ' real)';
             $sql2 = 'create unique index idx_day on planet(day)';
             $sqlite->exec($sql1);

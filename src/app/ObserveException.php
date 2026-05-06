@@ -1,8 +1,9 @@
 <?php
 /******************************************************************************
 
-    @license    GPL
-    @history    , Thierry Graff : Creation
+    @license    GPL - conforms to file LICENCE located in root directory of current repository.
+    @copyright  Thierry Graff
+    
 ********************************************************************************/
 namespace observe\app;
 

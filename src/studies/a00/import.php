@@ -18,6 +18,8 @@ use observe\model\Studies;
 use tiglib\time\seconds2HHMMSS;
 use tiglib\filesystem\mkdir;
 
+use tiglib\filesystem\yieldFile;
+
 class import implements ICommand {
     
     /** 
@@ -32,36 +34,35 @@ class import implements ICommand {
             return "INVALID PARAMETER: \"{$params[0]}\". This command must be called without parameter\n";
         }
         //
-        // Prepare
-        //
-        $outdir = $study->getWorkingDirectory();
-        //
         // Execute
         //
         $t1 = microtime(true);
+        $inFilename = $study->config['raw-file-path'];
         $outFilename = $study->getDatafile();
         $bz2 = bzopen($outFilename, 'w');
-        //
-        // Main loop
-        //
-        $OFFSET = 0;
-        $nWritten = 0; // for output only
-        while($OFFSET < $MAXROWID){
-            $stmt_many_persons->execute([':offset' => $OFFSET, ':limit' => $LIMIT]);
-            foreach($stmt_many_persons->fetchAll(\PDO::FETCH_ASSOC) as $person){
-                bzwrite($bz2, $person['bday'] . Observe::CSV_SEP . $person['dday'] . "\n");
-                $nWritten++;
+        $loop = 0;
+        foreach(yieldFile::loop($inFilename) as $line){
+            // jnais00;mnais00;anais00;JNAISM;MNAISM;ANAISM;JNAISP;MNAISP;ANAISP;JMAR;MMAR;AMAR;rangmar00;cnaism;cnaisp;d00;j00;dp;jp;dm;jm;dma;jma;id;id2
+            $loop++;
+            if($loop == 1){
+                continue; // line containing names of csv fields
             }
-            $OFFSET += $LIMIT;
-            if($nWritten % 100000 == 0){
-                echo ($nWritten / 1000) . " k\n";
+            $fields = explode(';', $line);
+            $C = $fields[2] . '-' . $fields[1] . '-' . $fields[0]; // child
+            $M = $fields[5] . '-' . $fields[4] . '-' . $fields[3]; // mother
+            $F = $fields[8] . '-' . $fields[7] . '-' . $fields[6]; // father
+            $W = '';
+            if($fields[11] != '0000'){
+                $W = $fields[11] . '-' . $fields[10] . '-' . $fields[9]; // wedding
             }
+            $outLine = implode(Observe::CSV_SEP, [$M, $F, $C, $W]);
+            bzwrite($bz2, $outLine . "\n");
         }
         //
         // Store result
         //
         bzclose($bz2);
-        echo "Generated $nWritten lines in $outFilename\n";
+        echo "Generated $loop lines in $outFilename\n";
         $t2 = microtime(true);
         $dt = round($t2 - $t1, 3);
         $dth = seconds2HHMMSS::compute($dt);

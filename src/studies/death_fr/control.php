@@ -10,8 +10,8 @@
 namespace observe\studies\death_fr;
 
 use observe\app\ICommand;
+use observe\app\Params;
 use observe\model\IStudy;
-use observe\model\Studies;
 use observe\model\distrib\Distribs;
 use observe\model\distrib\AddDistribs;
 use tiglib\filesystem\mkdir;
@@ -35,8 +35,8 @@ class control implements ICommand {
         $usage = "Usage of this command: php run-observe death-fr control <controls>\n"
             . "<controls> can be a number (ex: \"2\") or a range (ex: \"2-4\")\n"
             . "Examples of use:\n"
-            . "    php run-observe death-fr control 5          # build control-005\n"
-            . "    php run-observe death-fr control 5-10       # build control-005 ... control-010\n"
+            . "    php run-observe death-fr control 5          # builds control-005\n"
+            . "    php run-observe death-fr control 5-10       # builds control-005 ... control-010\n"
             ;
         if(count($params) == 0){
             return "MISSING PARAMETER control.\n$usage";
@@ -45,22 +45,9 @@ class control implements ICommand {
             return "INVALID CALL.\n$usage";
         }
         // control range
-        $p_one = '/^\d+$/';
-        $p_range = '/^\d+-\d+$/';
-        $controls = [];
-        preg_match($p_one, $params[0], $m);
-        if(count($m) == 1){
-            $controls[] = $m[0];
-        }
-        else {
-            preg_match($p_range, $params[0], $m);
-            if(count($m) == 1){
-                [$from, $to] = explode('-', $m[0]);
-                $controls = range($from, $to); // if $to > $from, range() returns $controls from $to to $from
-            }
-            else {
-                return "INVALID PARAMETER: \"{$params[0]}\"\n$usage";
-            }
+        ['controls' => $controls, 'msg' => $msg] = Params::computeControls($params[0]);
+        if($msg != ''){
+            return "$msg\n$usage";
         }
         //
         // Prepare
@@ -153,6 +140,7 @@ class control implements ICommand {
                 bday comes from original $person.
                 dday comes from the other person.
     **/
+    //////////// NOT USED ANYMORE //////////////////
     private static function otherPerson1(array $person): array {
         $other = [];
         $nTry = 0;

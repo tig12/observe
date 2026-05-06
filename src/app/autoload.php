@@ -4,6 +4,9 @@
     Contains PSR-4 autoload for namespace "observe"
     and inclusion of autoload for vendor code.
     
+    @license    GPL - conforms to file LICENCE located in root directory of current repository.
+    @copyright  Thierry Graff
+    
     @history    2020-12-15 21:39:47+01:00, Thierry Graff : Creation 
 **/
 

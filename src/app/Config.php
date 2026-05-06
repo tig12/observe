@@ -6,6 +6,7 @@
     
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
     @copyright  Thierry Graff
+    
     @history    2020-12-15 21:21:43+01:00, Thierry Graff : Creation
 ********************************************************************************/
 namespace observe\app;
@@ -34,4 +35,4 @@ class Config{
         // TODO Check the validity of config.yml
     }
     
-}// end class
+} // end class

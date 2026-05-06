@@ -21,10 +21,5 @@ interface ICommand {
     **/
     public static function execute(IStudy $study, array $params): string;
     
-    /**
-        Returns a short text describing what the command is doing
-    **/
-//    public static function getDescription(): string;
-    
 } // end class
 

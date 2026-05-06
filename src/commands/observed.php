@@ -13,7 +13,6 @@ namespace observe\commands;
 use observe\model\Observe;
 use observe\app\ICommand;
 use observe\model\IStudy;
-use observe\model\Studies;
 use observe\model\distrib\Distribs;
 use tiglib\time\seconds2HHMMSS;
 
@@ -42,7 +41,7 @@ class observed implements ICommand {
         //
         $f = function() use ($filename) {
             $count = 0;
-            if (!$fileHandle = fopen($filename, 'r')) {
+            if(!$fileHandle = fopen($filename, 'r')) {
                 return false;
             }
             while(false !== $line = fgets($fileHandle)){
