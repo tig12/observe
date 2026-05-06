@@ -99,7 +99,7 @@ class control implements ICommand {
                 foreach(self::$allRows as $row){
                     yield self::otherRow($row);
                     $count++;
-                    if($count % 10 == 0){
+                    if($count % 100000 == 0){
                         echo $logTrace . ($count / 1000) . " k\n";
                         echo "$count\n";
                     }
