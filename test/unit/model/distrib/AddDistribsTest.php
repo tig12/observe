@@ -225,4 +225,4 @@ class AddDistribsTest extends TestCase{
         $this->assertEquals(AddDistribs::add_dim1($d1, $d2, $dateNames), $res);
     }
     
-}// end class
+} // end class

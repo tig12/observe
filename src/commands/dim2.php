@@ -71,6 +71,9 @@ class dim2 implements ICommand {
             $loop = 0;
             foreach(yieldFile::loop($inFile) as $line){
                 $fields = explode(Observe::CSV_SEP, trim($line));
+                if($fields[$i] == ''){
+                    continue; // empty date
+                }
                 // here a convention is used: the dates in data.csv.bz2 are stored in the same order as in $study->config['dates']
                 $planets = SqlitePlanets::getPlanets_1day($sqlite_planets, $fields[$i]);
                 for($j=0; $j < $nPlanets; $j++){
@@ -103,6 +106,9 @@ class dim2 implements ICommand {
                 $loop = 0;
                 foreach(yieldFile::loop($inFile) as $line){
                     $fields = explode(Observe::CSV_SEP, trim($line));
+                    if($fields[$i] == '' || $fields[$j] == ''){
+                        continue; // empty date
+                    }
                     // here a convention is used: the dates in data.csv.bz2 are stored in the same order as in $study->config['dates']
                     [$planets1, $planets2] = SqlitePlanets::getPlanets_2days($sqlite_planets, $fields[$i], $fields[$j]);
                     foreach($planets1 as $planet1 => $lg1){
@@ -114,8 +120,7 @@ class dim2 implements ICommand {
                 }
                 $outDir = $baseOutDir . DS . $dateName . DS . 'interaspects' . DS . 'dim2'; // ex: var/studies/death-fr/observed/birth-death/interaspects/dim2
                 mkdir::execute($outDir);
-                // ex: $k = 'SO-SO' and $v = 2-dim array 360 x 360
-                foreach($res as $k => $v){
+                foreach($res as $k => $v){ // ex: $k = 'SO-SO' and $v = 2-dim array 360 x 360
                     $outFile = $outDir . DS . $k . '.csv'; // ex: var/studies/death-fr/observed/birth-death/interaspects/dim2/SO-SO.csv
                     $csv = CsvDistrib::distrib2csv_dim2($v);
                     file_put_contents::execute($outFile, $csv, false);

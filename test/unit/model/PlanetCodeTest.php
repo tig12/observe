@@ -23,4 +23,4 @@ class PlanetCodeTest extends TestCase {
         $this->assertEquals('MO-ME', PlanetCode::pairCode('ME', 'MO', $values));
     }
     
-}// end class
+} // end class

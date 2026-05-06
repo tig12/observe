@@ -72,4 +72,4 @@ class importTest extends TestCase {
         $this->assertEquals($deaths_bz2, $deaths_wanted);
     }
     
-}// end class
+} // end class

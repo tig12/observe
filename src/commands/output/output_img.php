@@ -180,7 +180,7 @@ class output_img {
                 }
             }
         } // end loop on dates
-        echo "Images generated for distributions of type distrib1\n";
+        echo "Images generated for distributions of type distrib1, dim1\n";
     }
     
     /**
@@ -235,8 +235,8 @@ class output_img {
                         $inFilename_exp = $inDir_exp_date . DS . 'interaspects' . DS . 'dim1' . DS . $code . '.csv';     // ex: var/studies/death-fr/expected/birth-death/interaspects/dim1/SO-SO.csv
                         $distrib_obs = CsvDistrib::csv2distrib_dim1($inFilename_obs);
                         $distrib_exp = CsvDistrib::csv2distrib_dim1($inFilename_exp);
-                        $title = 'Inter-aspects between ' . strtolower(IAA::PLANET_NAMES[$study->config['planets'][$k]]) . ' (' . $study->config['dates'][0] . ')'
-                             . ' and ' . strtolower(IAA::PLANET_NAMES[$study->config['planets'][$l]]) . ' (' . $study->config['dates'][1] . ')';
+                        $title = 'Inter-aspects between ' . strtolower(IAA::PLANET_NAMES[$study->config['planets'][$k]]) . ' (' . $study->config['dates'][$i] . ')'
+                             . ' and ' . strtolower(IAA::PLANET_NAMES[$study->config['planets'][$l]]) . ' (' . $study->config['dates'][$j] . ')';
                         $stats = $stats_obs[$dateName]['interaspects'][$code];
                         $svg = barCurve::svg(
                             data_bar:       $distrib_obs,
@@ -252,7 +252,7 @@ class output_img {
                 } // end loop on $k
             } // end loop on $j
         } // end loop on $i
-        echo "Images generated for distributions of type distrib2\n";
+        echo "Images generated for distributions of type distrib2, dim1\n";
     }
     
     /**
@@ -264,7 +264,7 @@ class output_img {
         $inDir_base = $study->getObservedDirectory();   // ex: var/studies/death-fr/observed
         $nPlanets = count($study->config['planets']);
         
-        $df = 129599; // degree of freedom = 360 * 360 - 1
+        $df = 128881; // degree of freedom = 359 * 359
         //
         // aspects
         //
@@ -314,8 +314,8 @@ class output_img {
                         $inFilename = $inDir_date . DS . $code . '.csv';     // ex: var/studies/death-fr/observed/birth-death/interaspects/dim2/SO-SO.csv
                         $distrib = CsvDistrib::csv2distrib_dim2($inFilename);
                         $stats = chi2Table::compute($distrib);
-                        $title = 'Positions of ' . strtolower(IAA::PLANET_NAMES[$study->config['planets'][$k]]) . ' (' . $study->config['dates'][0] . ')'
-                             . ' and ' . strtolower(IAA::PLANET_NAMES[$study->config['planets'][$l]]) . ' (' . $study->config['dates'][1] . ')';
+                        $title = 'Positions of ' . strtolower(IAA::PLANET_NAMES[$study->config['planets'][$k]]) . ' (' . $study->config['dates'][$i] . ')'
+                             . ' and ' . strtolower(IAA::PLANET_NAMES[$study->config['planets'][$l]]) . ' (' . $study->config['dates'][$j] . ')';
                         $pValue = chi2::chi2Proba($stats['chi2'], $df);
                         $img = table::image(
                             data: $stats['diff_percent'],

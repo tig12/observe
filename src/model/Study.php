@@ -100,6 +100,7 @@ abstract class Study implements IStudy {
         $res = [
             '../../index.html'  => 'Observe home',
             'index.html'        => $this->config['output']['title'],
+            'gallery.html'      => 'Gallery',
         ];
         foreach($this->config['dates'] as $date){
             $res["$date.html"] = ucfirst($date);
@@ -111,7 +112,6 @@ abstract class Study implements IStudy {
                 $res ["$code.html"] =  $label;
             }
         }
-        $res['gallery.html'] = 'Gallery';
         return $res;
     }
     

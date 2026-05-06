@@ -89,7 +89,6 @@ class control implements ICommand {
                     return '';
                 }
             }
-            mkdir::execute($controlDir);
             //
             // function passed to computeDistributions()
             //
@@ -101,12 +100,12 @@ class control implements ICommand {
                     $count++;
                     if($count % 100000 == 0){
                         echo $logTrace . ($count / 1000) . " k\n";
-                        echo "$count\n";
                     }
                 }
             };
             // ex: $distribs = ['birth' => 'aspects => ['SO-SO=>[0 ... 359], ...], 'death' => [...], 'birth-death' => [...]]
             $distribs = Distribs::computeDistributions($f, $study->config['dates'], $study->config['planets']);
+            mkdir::execute($controlDir);
             Distribs::storeDistributions($controlDir, $distribs, $study->config['dates']);
             
             $t2 = microtime(true);

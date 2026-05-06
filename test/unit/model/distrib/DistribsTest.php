@@ -675,4 +675,4 @@ select * from planet where day in ('1922-01-09','1970-12-10','1969-03-29','1970-
         $this->assertEquals($computed['birth-death']['age']['dim1']['age-Y'], $expected['birth-death']['age']['dim1']['age-Y']);
     }
     
-}// end class
+} // end class

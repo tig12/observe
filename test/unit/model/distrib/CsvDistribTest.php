@@ -75,4 +75,4 @@ WANTED;
         $this->assertEquals(self::WANTED_DIM2, CsvDistrib::distrib2csv_dim2($a));
     }
     
-}// end class
+} // end class
