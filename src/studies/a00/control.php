@@ -93,12 +93,14 @@ class control implements ICommand {
             //
             // function passed to computeDistributions()
             //
-            $f = function(){
+            $logTrace = $study->config['slug'] . ' ' . $controlName . ' ';
+            $f = function() use($logTrace) {
                 $count = 0;
                 foreach(self::$allRows as $row){
                     yield self::otherRow($row);
                     $count++;
-                    if($count % 100000 == 0){
+                    if($count % 10 == 0){
+                        echo $logTrace . ($count / 1000) . " k\n";
                         echo "$count\n";
                     }
                 }

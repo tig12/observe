@@ -100,7 +100,7 @@ class control implements ICommand {
             // ex: $distribs = ['birth' => 'aspects => ['SO-SO=>[0 ... 359], ...], 'death' => [...], 'birth-death' => [...]]
             [$distribs, $OFFSET] = self::getLastDistribsAndOffsetFromTmpSqlite($sqlite_tmp, $controlName);
             while($OFFSET < self::$maxRowid){
-                echo $controlName . ' ' . ($OFFSET / 1000) . " k\n";
+                echo $study->config['slug'] . ' ' . $controlName . ' ' . ($OFFSET / 1000) . " k\n";
                 //
                 // function passed to computeDistributions()
                 //
