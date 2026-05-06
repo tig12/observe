@@ -36,16 +36,21 @@ class observed implements ICommand {
         $t1 = microtime(true);
         
         $filename = 'compress.bzip2://' . $study->getDatafile();
-        echo "=== Processing $filename ===\n";
+        echo "Processing $filename\n";
         //
         // function passed to computeDistributions()
         //
         $f = function() use ($filename) {
+            $count = 0;
             if (!$fileHandle = fopen($filename, 'r')) {
                 return false;
             }
             while(false !== $line = fgets($fileHandle)){
                 yield explode(Observe::CSV_SEP, trim($line));
+                $count++;
+                if($count % 100000 == 0){
+                    echo "$count\n";
+                }
             }
             fclose($fileHandle);
         };

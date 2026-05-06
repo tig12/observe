@@ -33,7 +33,7 @@ p-value-limit: 0.05
 expected-precision: 2
 
 output:
-  title: Deaths in France 1970 - 2025
+  title: Deaths in France 1970 - 2025 (filtered)
   subtitle: 28 528 843 { birth, death }
   description: Statistical analysis of persons who died in France between 1970 and 2025.
   intro: |

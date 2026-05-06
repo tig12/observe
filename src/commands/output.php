@@ -23,6 +23,7 @@ class output implements ICommand {
     const array POSSIBLE_ACTIONS = [
         'page'          => 'Generate html page(s) of the output',
         'img'           => 'Generate images included in html pages',
+        'csv'           => 'Generate zip files containing the csv distributions',
         'clean'         => 'Delete all content of the output',
     ];
     
@@ -44,6 +45,10 @@ class output implements ICommand {
         }
         $usage .= "    If <action> = \"img\", <object> can be:\n";
         foreach(output_img::POSSIBLE_WHAT as $k => $v){
+            $usage .= str_pad("        $k:", 24) . "$v\n";
+        }
+        $usage .= "    If <action> = \"csv\", <object> can be:\n";
+        foreach(output_csv::POSSIBLE_WHAT as $k => $v){
             $usage .= str_pad("        $k:", 24) . "$v\n";
         }
         $usage .= "    If <action> = \"clean\", <object> can be:\n";

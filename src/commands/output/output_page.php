@@ -121,7 +121,7 @@ class output_page {
         ];
         $res .= self::template('index.html', $V);
         //
-        $V = [];
+        $V = ['text' => self::FOOTER];
         $res .= self::footer($V);
         //
         $outDir = $study->getOutputDirectory();
