@@ -4,8 +4,6 @@
     Image gallery
     
     Called with a variable $V, associative array containing the keys:
-        - dates         ex: ['birth', 'death']
-        - planets       List of IAA codes.
         
     @license    GPL
     @copyright  Thierry Graff
@@ -20,27 +18,35 @@
         line-height:200%;
         font-size:1.3rem;
     }
+    .toc .entry{
+        padding-left:2rem;
+        padding-right:1rem;
+    }
 </style>
 <div class="toc">
-    <ul class="naked">
-        <?php foreach($V['toc-same'] as $entry): ?>
-            <li><a href="#<?= $entry['url'] ?>"><?= $entry['label'] ?></a></li>
+    <a href="#same-planets" class="bold block">Interaspects between same planets</a>
+    <?php foreach($V['toc-same'] as $entry): ?>
+        <span class="entry"><a href="#<?= $entry['url'] ?>"><?= $entry['label'] ?></a></span>
+    <?php endforeach; ?>
+    <a href="#all-distributions" class="bold block">All distributions</a>
+    <?php foreach($V['toc-all-no-planets'] as $entry): ?>
+        <span class="entry"><a href="#<?= $entry['url'] ?>"><?= $entry['label'] ?></a></span>
+    <?php endforeach; ?>
+    <div>
+        <?php foreach($V['toc-all-planets'] as $entry): ?>
+            <span class="entry"><a href="#<?= $entry['url'] ?>"><?= $entry['label'] ?></a></span>
         <?php endforeach; ?>
-        <li>
-            <?php foreach($V['toc-planets'] as $entry): ?>
-                <span class="padding-right2"><a href="#<?= $entry['url'] ?>"><?= $entry['label'] ?></a></span>
-            <?php endforeach; ?>
-        </li>
-    </ul>
+    </div>
 </div>
 
 <div class="margin-top">
     (click on the images to display full size - click on the links to go to the details of a distribution)
 </div>
 
+<h2 id="same-planets">Interaspects between same planets</h2>
 <!-- Same planets -->
 <?php foreach($V['same'] as $dateName => $same): ?>
-    <h2 id="<?= $same['h2-id'] ?>"><?= $same['h2-label'] ?></h2>
+    <h3 id="<?= $same['h3-id'] ?>"><?= $same['h3-label'] ?></h3>
     <?php foreach($same['contents'] as $contents): ?>
         <div class="float-left">
             <figure class="margin-bottom">
@@ -61,19 +67,97 @@
 <?php endforeach; ?>
 
 
-<!-- Planet details -->
+<h2 id="all-distributions">All distributions</h2>
+<!-- All distributions of day -->
+<h3 id="<?= $V['toc-all-no-planets']['day']['url'] ?>"><?= $V['toc-all-no-planets']['day']['label'] ?></h3>
+<table>
+    <tr>
+        <?php foreach($V['date-names'] as $dateName): ?>
+            <td>
+                <figure class="margin-bottom">
+                    <a href="img/<?= $dateName ?>/day.svg">
+                        <img
+                            class="border margin "
+                            height="100"
+                            src="img/<?= $dateName ?>/day.svg"
+                            alt="<?= $dateName . ' - Distribution of days' ?>"
+                        >
+                    </a>
+                    <figcaption class="center"><a href="<?= $dateName ?>.html#day"><?= ucFirst($dateName) ?> - days</a></figcaption>
+                </figure>
+            </td>
+        <?php endforeach; ?>
+    </tr>
+</table>
+
+<!-- All distributions of year -->
+<h3 id="<?= $V['toc-all-no-planets']['year']['url'] ?>"><?= $V['toc-all-no-planets']['year']['label'] ?></h3>
+<table>
+    <tr>
+        <?php foreach($V['date-names'] as $dateName): ?>
+            <td>
+                <figure class="margin-bottom">
+                    <a href="img/<?= $dateName ?>/year.svg">
+                        <img
+                            class="border margin "
+                            height="100"
+                            src="img/<?= $dateName ?>/year.svg"
+                            alt="<?= $dateName . ' - Distribution of years' ?>"
+                        >
+                    </a>
+                    <figcaption class="center"><a href="<?= $dateName ?>.html#year"><?= ucFirst($dateName) ?> - years</a></figcaption>
+                </figure>
+            </td>
+        <?php endforeach; ?>
+    </tr>
+</table>
+
+
+<!-- All distributions of age -->
+<h3 id="<?= $V['toc-all-no-planets']['age']['url'] ?>"><?= $V['toc-all-no-planets']['age']['label'] ?></h3>
+<table>
+    <tr>
+        <?php 
+        for($i=0; $i < count($V['date-names']); $i++):
+            for($j=$i+1; $j < count($V['date-names']); $j++):
+                $dateName = $V['date-names'][$i] . '-' . $V['date-names'][$j];
+                $dateNameLabel = ucFirst($V['date-names'][$i]) . ' - ' . ucFirst($V['date-names'][$j]);
+                $img_url = "img/$dateName/age/dim1/age-Y.svg";
+        ?>
+                <td>
+                    <figure class="margin-bottom">
+                        <a href="<?= $img_url ?>">
+                            <img
+                                class="border margin "
+                                height="100"
+                                src="<?= $img_url ?>"
+                                alt="<?= $dateNameLabel . ' - Distribution of age' ?>"
+                            >
+                        </a>
+                        <figcaption class="center"><a href="<?= $dateName ?>.html#age"><?= 'Age ' . $dateNameLabel?></a></figcaption>
+                    </figure>
+                </td>
+            <?php endfor; ?>
+        <?php endfor; ?>
+    </tr>
+</table>
+
+
+<!-- All distributions of planets -->
 
 <?php foreach($V['planet-names'] as $planetCode1 => $planetName1): ?>
-    <h2 id="<?= $V['planet-h2'][$planetCode1]['id'] ?>"><?= $V['planet-h2'][$planetCode1]['label'] ?></h2>
-    <table class="">
+    <h3 id="<?= $V['all-planets-h3'][$planetCode1]['id'] ?>"><?= $V['all-planets-h3'][$planetCode1]['label'] ?></h3>
+    <table>
         <tr>
-            <?php foreach($V['planet-titles'] as $title): ?>
+            <th></th>
+            <?php foreach($V['all-planets-titles'] as $title): ?>
                 <th><?= $title ?></th>
             <?php endforeach; ?>
         </tr>
         <?php foreach($V['planet-names'] as $planetCode2 => $planetName2): ?>
             <tr>
-                <?php foreach($V['planet-cells'][$planetCode1][$planetCode2] as $cell): ?>
+                <th><?= $planetCode1 ?><br><?= $planetCode2 ?></th>
+                <?php foreach($V['all-planets-cells'][$planetCode1][$planetCode2] as $cell): ?>
                     <td>
                         <?php if(count($cell) != 0): // empty cell = aspect of a planet to itself then empty td ?>
                             <figure class="margin-bottom">

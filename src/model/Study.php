@@ -98,7 +98,7 @@ abstract class Study implements IStudy {
     **/
     public function getNavigationArray(): array {
         $res = [
-            '../../index.html'  => 'Observe home',
+            // '../../index.html'  => 'Observe output home',
             'index.html'        => $this->config['output']['title'],
             'gallery.html'      => 'Gallery',
         ];

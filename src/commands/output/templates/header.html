@@ -45,10 +45,12 @@
             <img src="<?= $V['path-to-root'] ?>/static/img/menu.png" class="border" style="border-radius:10px;">
         </a>
         <div class="dropdown-content">
+            <a href="../../index.html">Observe output home</a> 
+            <center><hr width="80%"></center>
             <?php foreach($V['navigation'] as $href => $label): ?>
                 <?= $href == '' ? "$label" : "<a href=\"$href\">$label</a>\n" ?>
             <?php endforeach; ?>
-            <hr>
+            <center><hr width="80%"></center>
             <a href="<?= $V['path-to-root'] ?>/help.html">Help to read this page</a>
         </div>
       </li>

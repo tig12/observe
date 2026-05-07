@@ -25,12 +25,16 @@ Observe
 
 <div class="intro">
 This software is used to perform statistical tests on astrology.
-<br>It is organized around the notions of <b>studies</b>, <b>commands</b> and <b>outputs</b>.
+<br><b>It is at a draft stage</b>, one of the purpose of this development is to learn to perform statistical tests on astrology.
+<br>It computes and represents distributions and generates statistical indicators. To have an idea, you can have a look at the <a href="https://observe.tig12.net/output/index.html">output</a>, in particular the summary pages of the studies:
+<ul class="simple">
+    <li><a href="https://observe.tig12.net/output/studies/death-fr/gallery.html">Deaths in France 1970 - 2025 (full)</a></li>
+    <li><a href="https://observe.tig12.net/output/studies/death-fr2/gallery.html">Deaths in France 1970 - 2025 (filtered)</a></li>
+    <li><a href="https://observe.tig12.net/output/studies/a00/gallery.html">Births in France in 2000</a></li>
+</ul>
+Current questions are to look for errors, complete the analysis and find out how meaningful information can be extracted from these results...
 
 <br><br>Note: here, "planet" is used in its etymological meaning (= "moving body"), so the sun and the moon are also called planets.
-<!--
--->
-<br><br>*** Draft under construction ***
 </div>
 
 </header>
@@ -49,7 +53,15 @@ This software is used to perform statistical tests on astrology.
             <a href="#3-distributions">Distributions</a>
         </li>
         <li>
-            <a href="#4-control-groups-and-expected-ditributions">Control groups and expected ditributions</a>
+            <a href="#4-expected-distributions">Expected distributions</a>
+            <ul>
+                <li>
+                    <a href="#4-1-control-groups">Control groups</a>
+                </li>
+                <li>
+                    <a href="#4-2-average-values">Average values</a>
+                </li>
+            </ul>
         </li>
         <li>
             <a href="#5-statistical-tests">Statistical tests</a>
@@ -206,30 +218,26 @@ For example, we take each planet separately and represent their positions in a s
 </figure>
 <br class="clear-left">
 
-<!-- 
-<div class="float-left">
-Distributions are stored in csv files with two columns:
-<ul class="naled margin0">
-    <li>The first column contains a key to identify the value (birth year in example 3).</li>
-    <li>The second column contains the number of times the value occurs in the dataset.</li>
-</ul>
-</div>
-<div class="float-left margin-left2" style="position:relative; top:-2rem;">
-        <img height="250px" src="static/img/year-csv.jpg" alt="Distribution: example of csv file">
-</div>
-<br class="clear-left">
--->
+The program hadles two types of distributions: <a href="intro/distrib-single-date.html">Single date distributions</a> and <a href="intro/distrib-several-dates.html">Several dates distributions</a>.
 
 <!-- ********************************************************************************* -->
-<h2 id="4-control-groups-and-expected-ditributions">Control groups and expected ditributions</h2>
-The distributions computed to represent our original dataset are called the <b>observed distributions</b>.
-<br>To see if these distributions show anomalies, we must compare them to the <b>expected distributions</b>.
-<br>We build <b>control groups</b> by randomly shuffling the data and compute their distributions.
+<h2 id="4-expected-distributions">Expected distributions</h2>
+The distributions computed to represent the original data are called the <b>observed distributions</b>.
+<br>To see if these distributions show anomalies, we need to compare them to the <b>expected distributions</b>, the distributions that we should observe "in theory".
+<br>This program uses two different ways.
 
-<img class="margin margin-top2" src="static/img/expected.svg" alt="Observed distributions, control groups, expected distributions">
+<!-- ************************************* -->
+<h3 id="4-1-control-groups">Control groups</h3>
+Control groups are fictional groups obtained by randomly shuffling the data.
 
-<br>Several control groups are built, and the mean (average) distributions are computed.
+<img class="margin margin-top2 margin-bottom2" src="static/img/expected.svg" alt="Observed distributions, control groups, expected distributions">
+
+Several control groups are built, and the mean (average) distributions are computed.
 <br>This is supposed to produce what we should observe in theory.
+
+<!-- ************************************* -->
+<h3 id="4-2-average-values">Average values</h3>
+This method can be used for tabular data without computing control groups, detailed in page <a href="intro/expected.html">Expected distributions</a>
 
 
 <!-- ********************************************************************************* -->
@@ -244,11 +252,12 @@ Once the expected distributions are computed, it is possible to use statistical 
 <h2 id="6-about">About</h2>
 Observe is a CLI (Command Line Interface), a tool used in a terminal (console) which pemits to issue commands to work on the data.
 <br>For example:
-<pre>php run-observe.php death-fr stats</pre>
-Means: "for study <code>death-fr</code>, compute statistical informations".
+<pre>php run-observe.php death-fr control 1-100</pre>
+Means: "for study <code>death-fr</code>, compute control groups, from 1 to 100".
+<br>See page <a href="usage.html">Usage</a>
 
-<br><br>Program started in december 2020 by Thierry Graff to compute <a href="studies/a00.html">a00 distributions</a> for Nick Kollerstrom, who studied if these data show statistical anomalies.
-<br>Rewrite in 2026 to test <a href="studies/death-fr.html">Deaths in France since 1970</a>.
+<br><br>Program started in december 2020 by Thierry Graff to compute <a href="studies/a00.html">Births in France in 2000</a> distributions for Nick Kollerstrom.
+<br>Rewritten in 2026 to study <a href="studies/death-fr.html">Deaths in France since 1970</a>.
 
 <br><br>Program developed and tested under Linux (Debian 13) with php 8.5. A priori, it should also work under Windows and Macintosh.
 
@@ -296,11 +305,11 @@ TODO
                 <a href="./studies/death-fr.html">Deaths in France 1970 - 2025</a>
                 <div class="small8 padding-left padding-bottom05">28 803 832 { birth, death }</div>
             </li>
-            <!-- 
             <li>
-                <a href="./studies/a00.html">a00 - birth in France in 2000</a>
+                <a href="./studies/a00.html">Births in France in 2000</a>
                 <div class="small8 padding-left padding-bottom05">591 936 { mother, father, child, wedding }</div>
             </li>
+            <!-- 
             <li>
                 <a href="./studies/gauquelin.html">Gauquelin heredity data</a>
                 <div class="small8 padding-left">20 916 { mother, father, child }</div>

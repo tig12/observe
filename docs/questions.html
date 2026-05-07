@@ -24,9 +24,6 @@ Questions
 </h1>
 
 <div class="intro">
-This software is at a draft stage, I use this development to learn to perform statistical tests on astrology. I'd like to perform rigourous and valid tests.
-<br>But my knowledge and understanding of statistics is quite limited.
-<br>So I listed here the main questions raised by this development.
 </div>
 </header>
 
@@ -34,10 +31,11 @@ This software is at a draft stage, I use this development to learn to perform st
 
 <!-- ********************************************************************************* -->
 <h2>Cleaning the data</h2>
-The <a href="studies/death-fr.html">the deaths in France study</a> is based on data. The import process permits eliminate 0.14 % of erroneous dates (113 677 out of 28 917 511).
+In the <a href="studies/death-fr.html">the deaths in France study</a>, the import process permits to eliminate 0.14 % of erroneous dates (113 677 out of 28 917 511).
 <br>But the <a href="">day of birth distribution</a> shows a clearly suspect excess of births on January 1st.
 <br>How can I fix this ? Should I compute the mean value between December 31th and January 2nd and randomly suppress records to reach this mean ?
 
+<br><br>More generally, the quality of this dataset seems to be poor. Are there any precautions one should take to work with such data ?
 
 <!-- ********************************************************************************* -->
 <h2>Control groups</h2>
@@ -48,7 +46,7 @@ Control groups are computed to build the "expected" data, the data we should the
 <br>But the method described by Didier Castille in his article "<a href="http://cura.free.fr/xx/18cas3en.html">A Link between Birth and Death</a>" ("<a href="http://cura.free.fr/xx/18cas3fr.html">Un Lien entre la Naissance et le Décès</a>") permits to compute theoretical data without control groups.
 <br>So can we perform valid tests without control groups ?
 
-<br><br>But another consideration leads to pose the opposite question: is the method without control groups appropriate for these tests ? This question comes from an observation: all the distributions involving venus show a pattern of 5 occurences (see for example <a href="https://observe.tig12.net/output/studies/a00/gallery.html#planet-VE">the distributions of venus in the "Births in France in 2000" study</a>).
+<br><br>But another consideration leads to pose the opposite question: is the method without control groups appropriate for these tests ? This question comes from an observation: most distributions involving venus show a pattern of 5 occurences (see for example <a href="https://observe.tig12.net/output/studies/a00/gallery.html#planet-VE">the distributions of venus in the "Births in France in 2000" study</a>).
 <br>This is possibly related to the astronomical movement of venus seen from the earth (see for example <a href="https://github.com/dannyjenn/venus-the-dance-of-the-planets/tree/main">here</a>).
 <br>This is logical: due to its apparent movement, venus is more often located at certain positions. And computing the theoretical value of a cell with the formula:
 <br>"<code>mean of the line x mean of the column / total of the table</code>" erases the irregularity of the movement and then produces a high value for chi square.
@@ -99,11 +97,11 @@ Current method just loops on birth dates, and randomly selects another person to
                 <a href="./studies/death-fr.html">Deaths in France 1970 - 2025</a>
                 <div class="small8 padding-left padding-bottom05">28 803 832 { birth, death }</div>
             </li>
-            <!-- 
             <li>
-                <a href="./studies/a00.html">a00 - birth in France in 2000</a>
+                <a href="./studies/a00.html">Births in France in 2000</a>
                 <div class="small8 padding-left padding-bottom05">591 936 { mother, father, child, wedding }</div>
             </li>
+            <!-- 
             <li>
                 <a href="./studies/gauquelin.html">Gauquelin heredity data</a>
                 <div class="small8 padding-left">20 916 { mother, father, child }</div>

@@ -64,7 +64,7 @@ for($i=0; $i < count($V['planets']); $i++){
         $alt1 = "Aspects $planetName1 $dateName1 - $planetName2 $dateName2";
         $alt2 = "Positions of $planetName1 $dateName1 and $planetName2 $dateName2";
 ?>
-        <h2 id="<?= 'relations-planets-' . $code ?>"><?= "$planetName1 $dateName1 - $planetName2 $dateName2" ?></h2>
+        <h2 id="<?= 'relations-planets-' . $code ?>"><?= ucFirst("$planetName1 $dateName1 - $planetName2 $dateName2") ?></h2>
         
         <img loading="lazy" class="svg" src="img/<?= $dateName ?>/interaspects/dim1/<?= $code ?>.svg" alt="<?= $alt1 ?>">
         <?= statsOneDistrib::html($statsObs['interaspects'][$code], $statsExp['interaspects'][$code]) ?>

@@ -35,17 +35,19 @@ p-value-limit: 0.05
 expected-precision: 2
 
 output:
-  title: Births in France in 2000 (full)
+  title: Births in France in 2000
   subtitle: 591 936 { mother, father, child, wedding }
   description: Statistical analysis of the persons born in France in 2000.
   intro: |
     This study concerns persons born in France in 2000.
     <br>The dataset contains 591 936 lines with { mother, father, child } out of which 321 838 contain also wedding dates.
     <br>The data were sent by Didier Castille, who agreed to make them publicly available online but asked to accompany the data with this notice:
-    <div class="margin-left2"><cite>
-    These files are not INSEE files, they are INSEE files adapted by D. Castille.
-    <br>These files are neither official nor scientifically valid because they depend on the good faith of D. Castille. 
-    </cite></div>
+    <div class="margin-left2">
+      <cite>
+        These files are not INSEE files, they are INSEE files adapted by D. Castille.
+        <br>These files are neither official nor scientifically valid because they depend on the good faith of D. Castille. 
+      </cite>
+    </div>
     See <a href="https://tig12.github.io/observe/studies/a00.html">tig12.github.io/observe/studies/a00.html</a> for more details.
     <br>Expected values were computed using 100 control groups.
 

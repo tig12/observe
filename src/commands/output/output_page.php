@@ -238,15 +238,17 @@ class output_page {
         //
         $V = [];
         $V['planet-names'] = IAA::getNames($study->config['planets']);
+        $V['date-names'] = $study->config['dates'];
         // table of contents
         $V['toc-same'] = [];
-        $V['toc-planets'] = [];
+        $V['toc-all-no-planets'] = [];
+        $V['toc-all-planets'] = [];
         // Paragraphs "same planets"
         $V['same'] = [];
-        // Paragraphs "planet details"
-        $V['planet-h2'] = [];
-        $V['planet-titles'] = [];   // th of the table
-        $V['planet-cells'] = [];    // td
+        // Paragraphs "all distributions of planets"
+        $V['all-planets-h3'] = [];      // id of h3 = local href in toc
+        $V['all-planets-titles'] = [];  // horizontal th of the table
+        $V['all-planets-cells'] = [];   // td
         //
         // Same planets
         //
@@ -255,15 +257,15 @@ class output_page {
                 $dateName1 = $study->config['dates'][$i];
                 $dateName2 = $study->config['dates'][$j];
                 $dateName = "$dateName1-$dateName2"; // ex: birth-death
-                $label = "Same planets, $dateName1 - $dateName2";
-                $h2_id = "same-planets-$dateName";
+                $label = ucFirst($dateName1) . ' - ' . ucFirst($dateName2);
+                $h3_id = "same-planets-$dateName";
                 $V['toc-same'][] = [
-                    'url' => $h2_id,
+                    'url' => $h3_id,
                     'label' => $label,
                 ];
                 $V['same'][$dateName] = [
-                    'h2-id' => $h2_id,
-                    'h2-label' => $label,
+                    'h3-id' => $h3_id,
+                    'h3-label' => $label,
                     'contents' => [],
                 ];
                 foreach($study->config['planets'] as $planet){
@@ -280,37 +282,52 @@ class output_page {
             }
         }
         //
-        // Planet details
+        // All distributions of age, day, year
+        //
+        $V['toc-all-no-planets']['day'] = [
+            'url' => 'all-day',
+            'label' => 'Day',
+        ];
+        $V['toc-all-no-planets']['year'] = [
+            'url' => 'all-year',
+            'label' => 'Year',
+        ];
+        $V['toc-all-no-planets']['age'] = [
+            'url' => 'all-age',
+            'label' => 'Age',
+        ];
+        //
+        // All distributions of planets
         //
         // column titles
         for($i=0; $i < count($study->config['dates']); $i++){
-            $V['planet-titles'][] = 'Aspects ' . $study->config['dates'][$i];
+            $V['all-planets-titles'][] = 'Aspects ' . $study->config['dates'][$i];
         }
         for($i=0; $i < count($study->config['dates']); $i++){
             $dateName1 = $study->config['dates'][$i];
             for($j=$i+1; $j < count($study->config['dates']); $j++){
                 $dateName2 = $study->config['dates'][$j];
                 $dateName = "$dateName1-$dateName2"; // ex: birth-death
-                $V['planet-titles'][] = "Interaspects $dateName1 - $dateName2";
-                $V['planet-titles'][] = "Interaspects $dateName2 - $dateName1";
+                $V['all-planets-titles'][] = "Interaspects $dateName1 - $dateName2";
+                $V['all-planets-titles'][] = "Interaspects $dateName2 - $dateName1";
             }
         }
         // cells
         foreach($study->config['planets'] as $planet1){
             $planetName1 = IAA::PLANET_NAMES[$planet1];
             $label = "Same planets, $dateName1 - $dateName2";
-            $h2_id = "planet-$planet1";
-            $V['toc-planets'][] = [
-                'url' => $h2_id,
+            $h3_id = "all-planets-$planet1";
+            $V['toc-all-planets'][] = [
+                'url' => $h3_id,
                 'label' => $planetName1,
             ];
-            $V['planet-h2'][$planet1] = [
-                'id' => $h2_id,
+            $V['all-planets-h3'][$planet1] = [
+                'id' => $h3_id,
                 'label' => $planetName1,
             ];
-            $V['planet-cells'][$planet1] = [];
+            $V['all-planets-cells'][$planet1] = [];
             foreach($study->config['planets'] as $planet2){
-                $V['planet-cells'][$planet1][$planet2] = [];
+                $V['all-planets-cells'][$planet1][$planet2] = [];
             }
             // aspects - ex birth - birth and death - death
             for($i=0; $i < count($study->config['dates']); $i++){
@@ -319,12 +336,12 @@ class output_page {
                     $planetName2 = IAA::PLANET_NAMES[$planet2];
                     if($planet1 == $planet2){
                         // no aspect between a planet and itself - but a void cell
-                        $V['planet-cells'][$planet1][$planet2][] = [];
+                        $V['all-planets-cells'][$planet1][$planet2][] = [];
                         continue;
                     }
                     $code = PlanetCode::pairCode($planet1, $planet2, $study->config['planets']);
                     $label = "$planetName1 $dateName - $planetName2 $dateName";
-                    $V['planet-cells'][$planet1][$planet2][] = [
+                    $V['all-planets-cells'][$planet1][$planet2][] = [
                         'label'         => $label,
                         'img-url'       => "img/$dateName/aspects/dim2/$code.png",
                         'img-alt'       => "Distribution of aspects $label",
@@ -343,7 +360,7 @@ class output_page {
                         $planetName2 = IAA::PLANET_NAMES[$planet2];
                         $code = "$planet1-$planet2";
                         $label = "$planetName1 $dateName1 - $planetName2 $dateName2";
-                        $V['planet-cells'][$planet1][$planet2][] = [
+                        $V['all-planets-cells'][$planet1][$planet2][] = [
                             'label'         => $label,
                             'img-url'       => "img/$dateName/interaspects/dim2/$code.png",
                             'img-alt'       => "Positions of $label",
@@ -355,7 +372,7 @@ class output_page {
                         $planetName2 = IAA::PLANET_NAMES[$planet2];
                         $code = "$planet2-$planet1"; // here inversion
                         $label = "$planetName1 $dateName2 - $planetName2 $dateName1"; // here inversion
-                        $V['planet-cells'][$planet1][$planet2][] = [
+                        $V['all-planets-cells'][$planet1][$planet2][] = [
                             'label'         => $label,
                             'img-url'       => "img/$dateName/interaspects/dim2/$code.png",
                             'img-alt'       => "Positions of $label",

@@ -54,8 +54,9 @@ class xlegend {
     /** 
         Returns elements for the min and max keys of a distribution
         + one element for each key multiple of $step.
+        @param  $antiOverlap If true, the keys "too close" to min and max are not displayed.
     **/
-    public static function minmax_step(array &$distrib, $step): array {
+    public static function minmax_step(array &$distrib, $step, $antiOverlap=true): array {
         $res = [];
         $keys = array_keys($distrib);
         $min = min($keys);
@@ -64,7 +65,9 @@ class xlegend {
         $res[$max] = $max;
         foreach($keys as $key){
             if($key % $step == 0){
-                $res[$key] = $key;
+                if( !( $antiOverlap && (abs($key-$min) < $step || abs($key-$max) < $step) ) ){
+                    $res[$key] = $key;
+                }
             }
         }
         return $res;

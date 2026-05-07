@@ -29,8 +29,14 @@ class barCurve {
                                 (Changes the markup of the header)
         **/
         bool    $svg_separate = true,
-        /** $drawArea           in px - height of the draw area. **/
-        int     $drawArea = 250,
+        /** $drawAreaH          in px - height of the draw area. **/
+        int     $drawAreaH = 250,
+        /**
+            $minImgW            in px - Minimal width of the image.
+                                Introduced as a security because images with very few x values
+                                were not large enough to contain the title.
+        **/
+        int     $minImgW = 600,
         /** $hGap               in px - horizontal (left and right) gap of the image. **/
         int     $hGap = 25,
         /** $vGap               in px - vertical (top and bottom) gap of the image. **/
@@ -221,9 +227,6 @@ SVG;
         $min = min($min_bar, $min_curve);
         $max = max($max_bar, $max_curve);
         $maxMin = $max - $min;
-        if($maxMin ==0){
-            return '';
-        }
         //
         $N = count($data_bar); // common to bar and curve
         //
@@ -235,11 +238,13 @@ SVG;
         $yBegin = $vGap + $titleH + $titleBottomGap;
         $drawAreaW = $N * $barW + ($N-1) * $barGap;
         $xEnd = $xBegin + $drawAreaW;
-        $yEnd = $yBegin + $drawArea;
+        $yEnd = $yBegin + $drawAreaH;
         //
         $deltaY = $yEnd - $yBegin;
+        //
         // $h, $w = size of the image
-        $w = $xEnd + $hGap;
+        //
+        $w = max($xEnd + $hGap, $minImgW);
         $h = $yEnd + $xlegendsTopGap + $xlegendsH + $vGap;
         //
         $barDelta = $barW + $barGap; 
@@ -263,70 +268,81 @@ SVG;
         //
         // axis
         //
-        if($xAxis){
-            [$x1, $y1] = [$xBegin, $yEnd];
-            [$x2, $y2] = [$xEnd, $yEnd];
-            $svg .= "<line x1=\"$x1\" y1=\"$y1\" x2=\"$x2\" y2=\"$y2\" class=\"xAxis\" />\n";
-        }
-        if($yAxis){
-            [$x1, $y1] = [$xBegin, $yBegin];
-            [$x2, $y2] = [$xBegin, $yEnd];
-            $svg .= "<line x1=\"$x1\" y1=\"$y1\" x2=\"$x2\" y2=\"$y2\" class=\"yAxis\" />\n";
-        }
-        //
-        // bar and curve drawing
-        //
-        $i = 0;
-        $xlegendKeys = array_keys($xlegends);
-        foreach($dataKeys as $key){
-            
-            $x = $xBegin + $i * $barGap + ($i + 0.5) * $barW;
-            
-            //
-            // bar
-            //
-            if(count($data_bar) != 0){
-                $val_bar = $data_bar[$key];
-                $x1 = $x;
-                $x2 = $x;
-                $y1 = $yEnd;
-                $y2 = $yEnd - round(($val_bar - $min) * $deltaY / $maxMin, 1);
-                if($barHover === true){
-                    $svg .= "<g><title>$key: $val_bar</title>";
-                }
-                $svg .= "<line x1=\"$x1\" y1=\"$y1\" x2=\"$x2\" y2=\"$y2\" class=\"bl\" />";
-                if($barHover === true){
-                    $svg .= '</g>';
-                }
-                $svg .= "\n";
+        if($maxMin != 0){
+            if($xAxis){
+                [$x1, $y1] = [$xBegin, $yEnd];
+                [$x2, $y2] = [$xEnd, $yEnd];
+                $svg .= "<line x1=\"$x1\" y1=\"$y1\" x2=\"$x2\" y2=\"$y2\" class=\"xAxis\" />\n";
+            }
+            if($yAxis){
+                [$x1, $y1] = [$xBegin, $yBegin];
+                [$x2, $y2] = [$xBegin, $yEnd];
+                $svg .= "<line x1=\"$x1\" y1=\"$y1\" x2=\"$x2\" y2=\"$y2\" class=\"yAxis\" />\n";
             }
             //
-            // curve
+            // bar and curve drawing
             //
-            if(count($data_curve) != 0){
-                $val_curve = $data_curve[$key];
-                // x1 and y1 are the same as bar
-                $y = $yEnd - round(($val_curve - $min) * $deltaY / $maxMin, 1);
-                if($i != 0){
-                    $svg .= "<line x1=\"$x_prev\" y1=\"$y_prev\" x2=\"$x\" y2=\"$y\" class=\"cl\" />";
-                }
-                [$x_prev, $y_prev] = [$x, $y];
-                $svg .= "\n";
-            }
-            $i++;
-            //
-            // x legends
-            //
-            // xlegends handled in this loop to take profit of $x computation
-            if(in_array($key, $xlegendKeys)){
-                $y = $yEnd + $xlegendsTopGap + $xlegendsH;
-                $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">" . $xlegends[$key] . "</text>\n";
+            $i = 0;
+            $xlegendKeys = array_keys($xlegends);
+            foreach($dataKeys as $key){
+                
+                $x = $xBegin + $i * $barGap + ($i + 0.5) * $barW;
+                
                 //
-                $y1 = $yEnd;
-                $y2 = $yEnd + 5;
-                $svg .= "<line x1=\"$x\" y1=\"$y1\" x2=\"$x\" y2=\"$y2\" class=\"xLegendsMark\" />\n";
-            }
+                // bar
+                //
+                if(count($data_bar) != 0){
+                    $val_bar = $data_bar[$key];
+                    $x1 = $x;
+                    $x2 = $x;
+                    $y1 = $yEnd;
+                    $y2 = $yEnd - round(($val_bar - $min) * $deltaY / $maxMin, 1);
+                    if($barHover === true){
+                        $svg .= "<g><title>$key: $val_bar</title>";
+                    }
+                    $svg .= "<line x1=\"$x1\" y1=\"$y1\" x2=\"$x2\" y2=\"$y2\" class=\"bl\" />";
+                    if($barHover === true){
+                        $svg .= '</g>';
+                    }
+                    $svg .= "\n";
+                }
+                //
+                // curve
+                //
+                if(count($data_curve) != 0){
+                    $val_curve = $data_curve[$key];
+                    // x1 and y1 are the same as bar
+                    $y = $yEnd - round(($val_curve - $min) * $deltaY / $maxMin, 1);
+                    if($i != 0){
+                        $svg .= "<line x1=\"$x_prev\" y1=\"$y_prev\" x2=\"$x\" y2=\"$y\" class=\"cl\" />";
+                    }
+                    [$x_prev, $y_prev] = [$x, $y];
+                    $svg .= "\n";
+                }
+                $i++;
+                //
+                // x legends
+                //
+                // xlegends handled in this loop to take profit of $x computation
+                if(in_array($key, $xlegendKeys)){
+                    $y = $yEnd + $xlegendsTopGap + $xlegendsH;
+                    $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">" . $xlegends[$key] . "</text>\n";
+                    //
+                    $y1 = $yEnd;
+                    $y2 = $yEnd + 5;
+                    $svg .= "<line x1=\"$x\" y1=\"$y1\" x2=\"$x\" y2=\"$y2\" class=\"xLegendsMark\" />\n";
+                }
+            } // end foreach($dataKeys as $key)
         }
+        else{
+            // $maxMin = 0
+            $x = $xBegin;
+            $y = $yBegin + $drawAreaH / 2;
+            $svg .= "<text x=\"$x\" y=\"$y\" class=\"title\">Empty image because min = max</text>\n";
+            $svg .= "</svg>\n";
+            return $svg;
+        }
+
         //
         // y legend
         //
