@@ -67,56 +67,64 @@ Distributions handled by this program can be stored and studied using two kinds 
 <h2 id="1-one-dimensional-arrays-dim1">One-dimensional arrays - dim1</h2>
 
 These are simple arrays which permit to store ordered sets of values.
-<br>These arrays can be simple <b>regular arrays</b>, where the keys to access to values are integers starting with 0, or <b>associative arrays</b>(also called maps or hash tables), where the keys can be strings.
-<br> This kind of array is abbreviated <b>dim1</b>
+<br>These arrays can be simple <b>regular arrays</b>, where the keys to access to values are integers starting with 0, or <b>associative arrays</b> (also called maps or hash tables), where the keys can be strings.
+<br>This kind of array is abbreviated <b>dim1</b>
 
-<br><br>Here are the distributions stored in dim1 arrays:
+<br><br>Here are examples of distributions stored in dim1 arrays:
 
-<!-- ************************************* -->
-<h3 id="1-1-distributions-by-year">Distributions by year</h3>
-<pre>
+<br>
+<div class="float-left margin-top margin-left2">
+    <div class="bold">Distributions by year</div>
+    <pre class="margin-left0">
 +------------+-------------+------------+-------------+
 |    1891    |     1892    |     ...    |     2025    |
 +------------+-------------+------------+-------------+
 |   177283   |   187633    |     ...    |    20302    |
 +------------+-------------+------------+-------------+
 </pre>
-Means that there are 177283 dates in 1891, 187633 in 1892 etc.
+    Means that there are 177283 dates in 1891, 187633 in 1892 etc.
+</div>
 
-<!-- ************************************* -->
-<h3 id="1-2-distributions-by-day">Distributions by day</h3>
-<pre>
+<div class="float-left margin-top margin-left2">
+    <div class="bold">Distributions by day</div>
+    <pre class="margin-left0">
 +------------+-------------+------------+-------------+
 |    01-01   |    01-02    |     ...    |     12-31   |
 +------------+-------------+------------+-------------+
 |   183547   |   187633    |     ...    |   182667    |
 +------------+-------------+------------+-------------+
 </pre>
-This is an example of associative array.
+    This is an example of associative array.
+</div>
 
-<!-- ************************************* -->
-<h3 id="1-3-planetary-positions">Planetary positions</h3>
-We have one such distribution per planet:
-<pre>
+<div class="float-left margin-top margin-left2">
+    <div class="bold">Planetary positions</div>
+    <pre class="margin-left0">
 +------------+-------------+------------+-------------+
 |      0     |      1      |     ...    |     359     |
 +------------+-------------+------------+-------------+
 |   145265   |   143657    |     ...    |   148775    |
 +------------+-------------+------------+-------------+
 </pre>
+    We have one such distribution per planet.
+</div>
 
-<!-- ************************************* -->
-<h3 id="1-4-aspects">Aspects</h3>
-We have one such distribution per couple of planets:
-<pre>
+<div class="float-left margin-top margin-left2">
+<div class="bold">Aspects</div>
+    <pre class="margin-left0">
 +------------+-------------+------------+-------------+
 |      0     |      1      |     ...    |     359     |
 +------------+-------------+------------+-------------+
 |   159843   |   155412    |     ...    |   149553    |
 +------------+-------------+------------+-------------+
 </pre>
-Means that there are 159843 dates with the angle between the two planets is between 0 and 1° etc.
-<br>This distribution involves two quantities (the longitudes of planet 1 and planet 2). As shown below, this can be represented with more details by a table.
+    We have one such distribution per couple of planets.
+    <br>Means that there are 159843 dates with the angle between the two planets is between 0 and 1° etc.
+    <br>This distribution involves two quantities (the longitudes of planet 1 and planet 2).
+    <br>As shown below, this can be represented with more details by a table.
+</div>
+
+<br class="clear-left">
 
 <!-- ********************************************************************************* -->
 <h2 id="2-two-dimensional-arrays-dim2">Two-dimensional arrays - dim2</h2>

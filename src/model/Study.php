@@ -98,7 +98,7 @@ abstract class Study implements IStudy {
     **/
     public function getNavigationArray(): array {
         $res = [
-            // '../../index.html'  => 'Observe output home',
+            // link to 'Observe output home' is hard-coded in src/commands/output/templates/header.html
             'index.html'        => $this->config['output']['title'],
             'gallery.html'      => 'Gallery',
         ];

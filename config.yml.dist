@@ -3,7 +3,7 @@
 swetest:
   # executable file
   bin: /path/to/swetest-binary
-  # directory containing data files (like seas_00.se1)
+  # directory containing data files (like sepl_18.se1)
   dir:  /path/to/sweph
 
 # Parameters related to the planetary positions, pre-computed in a sqlite database,
