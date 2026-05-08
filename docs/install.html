@@ -29,6 +29,22 @@ Install
 
 <article>
 
+<nav class="pagetoc" aria-label="Table of contents">
+    <ul>
+        <li>
+            <a href="#1-directory-structure">Directory structure</a>
+        </li>
+        <li>
+            <a href="#2-configuration">Configuration</a>
+            <ul>
+                <li>
+                    <a href="#2-1-swiss-ephemeris">Swiss ephemeris</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</nav>
+
 <ol class="spaced">
     <li>
         Open a terminal and clone the repository on your local machine :
@@ -42,13 +58,13 @@ Install
 <pre>
 sudo apt install php8.5
 sudo apt install sqlite3
-sudo apt install php8.5-{yaml,bz2,sqlite3}
+sudo apt install php8.5-{yaml,sqlite3,bz2,zip,gd}
 </pre>
     </li>
 </ol>   
 
 <!-- ********************************************************************************* -->
-<h2>Directory structure</h2>
+<h2 id="1-directory-structure">Directory structure</h2>
 
 <pre>
 observe/
@@ -79,7 +95,7 @@ If you use the default values, you need to create directories <code>output</code
 (these directories can be changed in the study files of <code>config/</code>)
 
 <!-- ********************************************************************************* -->
-<h2>Configuration</h2>
+<h2 id="2-configuration">Configuration</h2>
 
 Create a file <code>config.yml</code> by copying <code>config.yml.dist</code> :
 <pre>cp config.yml.dist config.yml</pre>
@@ -90,7 +106,7 @@ Create a file <code>config.yml</code> by copying <code>config.yml.dist</code> :
 
 
 <!-- ************************************* -->
-<h3>Swiss ephemeris</h3>
+<h3 id="2-1-swiss-ephemeris">Swiss ephemeris</h3>
 Swiss ephemeris is configured in section <code>swetest</code> of <code>config.yml</code>.
 <br>The binary can be downloaded from <a href="https://github.com/aloistr/swisseph/blob/master/bin/swetest">https://github.com/aloistr/swisseph/blob/master/bin/swetest</a>
 <br>Under Windows, the binary can probably be downloaded from <a href="https://github.com/aloistr/swisseph/blob/master/windows/sweph.zip">https://github.com/aloistr/swisseph/blob/master/windows/sweph.zip</a>, and inside the zip in <code>bin/swetest.exe</code> (not tested).

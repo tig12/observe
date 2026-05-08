@@ -31,34 +31,12 @@ Distributions handled by this program can be stored and studied using two kinds 
     <ul>
         <li>
             <a href="#1-one-dimensional-arrays-dim1">One-dimensional arrays - dim1</a>
-            <ul>
-                <li>
-                    <a href="#1-1-distributions-by-year">Distributions by year</a>
-                </li>
-                <li>
-                    <a href="#1-2-distributions-by-day">Distributions by day</a>
-                </li>
-                <li>
-                    <a href="#1-3-planetary-positions">Planetary positions</a>
-                </li>
-                <li>
-                    <a href="#1-4-aspects">Aspects</a>
-                </li>
-            </ul>
         </li>
         <li>
             <a href="#2-two-dimensional-arrays-dim2">Two-dimensional arrays - dim2</a>
-            <ul>
-                <li>
-                    <a href="#2-1-example">Example</a>
-                </li>
-            </ul>
         </li>
         <li>
-            <a href="#3-two-views-for-the-same-distribution">Two views for the same distribution</a>
-        </li>
-        <li>
-            <a href="#4-file-hierarchy">File hierarchy</a>
+            <a href="#3-hierarchy">Hierarchy</a>
         </li>
     </ul>
 </nav>
@@ -129,7 +107,7 @@ These are simple arrays which permit to store ordered sets of values.
 <!-- ********************************************************************************* -->
 <h2 id="2-two-dimensional-arrays-dim2">Two-dimensional arrays - dim2</h2>
 
-As soon as a distribution represents the interaction of two quantities, it can be also represented by a table or a two-dimensional array.
+As soon as a distribution represents two quantities, it can be also represented by a table or a two-dimensional array.
 <br>This gives a more detailed representation of the distribution.
 <br>Taking the example of aspects, it can also be represented like that:
 
@@ -151,17 +129,39 @@ It means that there are:
 <br>
 <br>This kind of array is abbreviated <b>dim2</b>.
 
-<!-- 
-<br>These arrays could be associative arrays, but currently the program only handles regular arrays (indexed 0, 1, ...). 
--->
-
 <!-- ********************************************************************************* -->
-<!-- 
-<h2 id="4-file-hierarchy">File hierarchy</h2>
+<h2 id="3-hierarchy">Hierarchy</h2>
 
-The distributions are stored in csv files.
-<br>To each study corresponds a hierarchy of distributions, with one hierarchy of type <i>distrib1</i> per date, and one hierarchy of type <i>distrib2</i> per couple of date.
--->
+Distributions of type <b>distrib1</b> (single date) and <b>distrib2</b> (several dates) use both dim1 and dim2 arrays for their storage.
+<br>Each distribution is stored in a csv file.
+
+
+<br><br>The program is not (yet?) able to generate distributions expressing the relations between three or more dates.
+<br>If the dataset contains more than two dates, the program only generates distributions for dates taken 2 by 2.
+<br>For example, for a dataset containing mother, father and child birth dates + wedding dates, the main directories will be:
+<pre class="tree">
+distributions
+    <span class="distrib1">├── child</span>
+    <span class="distrib2">├── child-wedding</span>
+    <span class="distrib1">├── father</span>
+    <span class="distrib2">├── father-child</span>
+    <span class="distrib2">├── father-wedding</span>
+    <span class="distrib1">├── mother</span>
+    <span class="distrib2">├── mother-child</span>
+    <span class="distrib2">├── mother-father</span>
+    <span class="distrib2">├── mother-wedding</span>
+    <span class="distrib1">└── wedding</span>
+</pre>
+
+<span class="distrib1">Distributions of type distrib1 (single date) are in green</span>.
+<br><span class="distrib2">Distributions of type distrib2 (two dates) are in yellow</span>.
+
+<br>This hierarchy is the hierarchy of observed distributions, and is repeated in expected distributions and in each control group. 
+
+
+<br><br>Many other distributions can be imagined, involving relations between three or more dates, but the program is currently limited to these distributions.
+
+
 
 
 <div class="prevnext">Next: <a href="expected.html">Expected distributions</a></div>

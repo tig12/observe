@@ -77,15 +77,20 @@ Here, precautions are needed: for example, the birth date of the newly created r
 </ul>
 Answering these questions affect the way the control groups are computed.
 
-<div class="question">
-    Can it affect the results of the satistical tests ?
-    <br>More rigorous statistical knowledge is needed to build correct control groups and avoid unintentional bias due to arbitrary choices.
-</div>
+<!-- ************************************* -->
+<h3>Usage</h3>
+In this program, control groups are used only for distributions expressed by one-dimensional arrays (called <code>dim1</code>).
+<br>For distributions expressed by two-dimensional arrays (<code>dim2</code>), the expected distributions use the average method, described below.
+<br>The only reason is to save up computation time and memory: a 360 x 360 table has 129 600 cells. For interaspects with 11 planets, this represents 360 x 360 x 11 x 11 ~ 15 millions of values.
 
-<div class="question">
-    Another information is missing: how many control groups must be computed ?
-</div>
+<!-- ********************************************************************************* -->
+<h2>Average method</h2>
+This is the method described by Didier Castille in his article "<a href="http://cura.free.fr/xx/18cas3en.html">A Link between Birth and Death</a>" ("<a href="http://cura.free.fr/xx/18cas3fr.html">Un Lien entre la Naissance et le Décès</a>"), also explained on <a href="https://en.wikipedia.org/wiki/Chi-squared_test#Chi-squared_test_for_variance_in_a_normal_population">en.wikipedia.org/wiki/Chi-squared_test</a>.
+<br>For a two-dimensional array, the formula is :
 
+<div class="margin"><code class="padding">expected value of a cell = mean of the line x mean of the column / total of the table</code></div>
+
+See a <a href="../questions.html#2-1-are-control-groups-necessary">related question</a>. This method might be abandoned and replaced by control groups for dim2 arrays.
 
 
 <!-- ********************************************************************************* -->

@@ -29,8 +29,33 @@ Questions
 
 <article>
 
+<nav class="pagetoc" aria-label="Table of contents">
+    <ul>
+        <li>
+            <a href="#1-cleaning-the-data">Cleaning the data</a>
+        </li>
+        <li>
+            <a href="#2-control-groups">Control groups</a>
+            <ul>
+                <li>
+                    <a href="#2-1-are-control-groups-necessary">Are control groups necessary ?</a>
+                </li>
+                <li>
+                    <a href="#2-2-how-many-control-groups-should-be-computed">How many control groups should be computed ?</a>
+                </li>
+                <li>
+                    <a href="#2-3-how-to-compute-control-groups">How to compute control groups ?</a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="#3-statistical-tests">Statistical tests</a>
+        </li>
+    </ul>
+</nav>
+
 <!-- ********************************************************************************* -->
-<h2>Cleaning the data</h2>
+<h2 id="1-cleaning-the-data">Cleaning the data</h2>
 In the <a href="studies/death-fr.html">the deaths in France study</a>, the import process permits to eliminate 0.14 % of erroneous dates (113 677 out of 28 917 511).
 <br>But the <a href="">day of birth distribution</a> shows a clearly suspect excess of births on January 1st.
 <br>How can I fix this ? Should I compute the mean value between December 31th and January 2nd and randomly suppress records to reach this mean ?
@@ -38,11 +63,11 @@ In the <a href="studies/death-fr.html">the deaths in France study</a>, the impor
 <br><br>More generally, the quality of this dataset seems to be poor. Are there any precautions one should take to work with such data ?
 
 <!-- ********************************************************************************* -->
-<h2>Control groups</h2>
+<h2 id="2-control-groups">Expected values</h2>
 
 <!-- ************************************* -->
-<h3>Are control groups necessary ?</h3>
-Control groups are computed to build the "expected" data, the data we should theoretically observe.
+<h3 id="2-1-are-control-groups-necessary">Are control groups necessary ?</h3>
+Control groups are computed to build the "expected" data that we should theoretically observe.
 <br>But the method described by Didier Castille in his article "<a href="http://cura.free.fr/xx/18cas3en.html">A Link between Birth and Death</a>" ("<a href="http://cura.free.fr/xx/18cas3fr.html">Un Lien entre la Naissance et le Décès</a>") permits to compute theoretical data without control groups.
 <br>So can we perform valid tests without control groups ?
 
@@ -53,16 +78,17 @@ Control groups are computed to build the "expected" data, the data we should the
 <br>If this is true, it means that this computation of theoretical values is not able to eliminate astronomical irregularities.
 
 <!-- ************************************* -->
-<h3>How many control groups should be computed ?</h3>
+<h3 id="2-2-how-many-control-groups-should-be-computed">How many control groups should be computed ?</h3>
 Is there a rule or a formula to know the number of control groups to compute ?
 
 <!-- ************************************* -->
-<h3>How to compute control groups ?</h3>
-Current method just loops on birth dates, and randomly selects another person to take his / her death date. The choice of a computation method is arbitrary, and it affects the resulting control groups, which may affect the results of statistical tests. So this question seems very important to correctly perform an analysis.
+<h3 id="2-3-how-to-compute-control-groups">How to compute control groups ?</h3>
+Inthe "Death in France" study, current code just loops on birth dates, and randomly selects another person to take his / her death date. The choice of a computation method is arbitrary, and it affects the resulting control groups, which may affect the results of statistical tests. So this question seems very important to correctly perform an analysis.
 
 <!-- ********************************************************************************* -->
-<h2>Statistical tests</h2>
+<h2 id="3-statistical-tests">Statistical tests</h2>
 
+The computation of p-value needs to be checked. Unit tests were written using data found on the web, but this is not very solid. So if someone can send me test data and the corresponding p-value, this would be great.
 
 
 </article>

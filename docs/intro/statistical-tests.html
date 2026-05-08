@@ -63,7 +63,7 @@ Chi square, or chi 2, or &chi;<sup>2</sup>, permits to compare two distributions
 <br>The formula is simple to implement:
 <img style="background:white; padding:.2rem; margin:1rem;" src="img/chi2.svg" alt="Chi square formula">
 <ul class="simple">
-    <li>&Sigma; (sigma) means sum, from i = 0 to i = n</li>
+    <li>&Sigma; (sigma) means sum, from i = 1 to i = n</li>
     <li><i>O<sub>i</sub></i> are the observed values</li>
     <li><i>E<sub>i</sub></i> are the expected values</li>
 </ul>
@@ -106,10 +106,6 @@ Once the chi square is computed, it is possible to compute the associated probab
     Applied to planetary positions, the computation of p-value is the main result to see if an anomaly (eventually related to astrology) is observed.
 </div>
 
-<div class="question">Q: What does <i>independant </i> mean ?</div>
-
-
-
 <!-- ************************************* -->
 <h3 id="2-1-degree-of-freedom">Degree of freedom</h3>
 The computation of p-value needs the "degree of freedom" (often noted <code>df</code>).
@@ -120,23 +116,19 @@ The computation of p-value needs the "degree of freedom" (often noted <code>df</
 
 <br><br>In the case of the distributions handled by this program, the degree of freedom is the number of bins minus 1.
 <br>In the chi square example, <code>df = 3 - 1 = 2</code>.
-<br>In a distribution observed on 360 ° (with one bin per degree), <code>df = 360 - 1 = 359</code>.
+<br>In a dim1 distribution of 360 bins (one bin per degree), <code>df = 360 - 1 = 359</code>.
+<br>In a dim2 distribution of 360 x 360 cells, <code>df = 359 x 359 = 128 881</code>.
 
 <br><br>The details of the p-value computation is too complicated to be explained here.
 
 <!-- ********************************************************************************* -->
 <h2 id="3-size-effect">Size effect</h2>
-
-<!-- ********************************************************************************* -->
-<h2 id="4-variance">Variance</h2>
-
+Not implemented yet
 
 <!-- 
-Standard deviation
-(écart type)
+Variance
+Standard deviation (écart type)
 -->
-
-
 
 <div class="prevnext">Next: <a href="studies.html">Studies</a></div>
 

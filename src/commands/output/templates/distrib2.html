@@ -47,7 +47,14 @@ $dateName =& $V['date-name']; // ex: birth-death
 <!-- 
     Age
 -->
-<img id="age" loading="lazy" class="svg" src="img/<?= $dateName ?>/age/dim1/age-Y.svg" alt="Distribution of age">
+<br>
+<div class="float-left">
+    <img id="age" loading="lazy" class="svg" src="img/<?= $dateName ?>/age/dim1/age-Y.svg" alt="Distribution of age (years)">
+</div>
+<div class="float-left margin-top">
+    See also <a href="img/<?= $dateName ?>/age/dim1/age-M.svg">Distribution in months</a>
+</div>
+<br class="clear-left">
 <?= statsOneDistrib::html($statsObs['age'], $statsExp['age']) ?>
 
 <!-- 

@@ -30,6 +30,20 @@ Observe is a CLI (Command Line Interface), a tool used in a terminal (console).
 
 <article>
 
+<nav class="pagetoc" aria-label="Table of contents">
+    <ul>
+        <li>
+            <a href="#1-generate-planet-database">Generate planet database</a>
+        </li>
+        <li>
+            <a href="#2-work-on-a-study">Work on a study</a>
+        </li>
+        <li>
+            <a href="#3-adding-a-new-study">Adding a new study</a>
+        </li>
+    </ul>
+</nav>
+
 To see if the program is operationnal, just type:
 <pre>php run-observe.php</pre>
 If a message starting with
@@ -43,7 +57,7 @@ is displayed, the program is ready to work.
 <br><br>Except for command prepare, the first parameter is always the slug of the study, the second is the name of the command, and some commands need supplementary arguments.
 
 <!-- ********************************************************************************* -->
-<h2>Generate planet database</h2>
+<h2 id="1-generate-planet-database">Generate planet database</h2>
 
 The first step, when working on studies containing dates without time, is to build the sqlite database with planetary coordinates.
 <pre>php run-observe.php prepare planets</pre>
@@ -51,11 +65,11 @@ The first step, when working on studies containing dates without time, is to bui
 </article>
 
 <!-- ********************************************************************************* -->
-<h2>Work on a study</h2>
+<h2 id="2-work-on-a-study">Work on a study</h2>
 Apart from step <code>prepare</code>,
 
 <!-- ********************************************************************************* -->
-<h2>Adding a new study</h2>
+<h2 id="3-adding-a-new-study">Adding a new study</h2>
 
 </div><!-- end class="main" -->
 

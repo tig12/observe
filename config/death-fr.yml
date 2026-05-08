@@ -17,10 +17,14 @@ working-dir:  var/studies/death-fr
 # Path relative to observe root directory, or absolute path
 out-dir: output/studies/death-fr
 
-# list of planets involved in this study (IAA codes)
+# List of planets involved in this study (IAA codes)
 planets: [SO, MO, ME, VE, MA, JU, SA, UR, NE, PL, NN]
 
-# Description of the dates contained in data.csv.bz2
+# Precision of the dates
+# Can be "day" (if the dates of the dataset don't include time) or "time"
+date-precision: day
+
+# Names of the dates contained in data.csv.bz2
 # The order of this array must correspond to the order of the columns in data.csv.bz2
 dates:
   - birth

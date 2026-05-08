@@ -42,9 +42,6 @@ Several dates distributions
         <li>
             <a href="#3-hierarchy-distrib2">Hierarchy "distrib2"</a>
         </li>
-        <li>
-            <a href="#4-relations-between-more-than-two-dates">Relations between more than two dates</a>
-        </li>
     </ul>
 </nav>
 
@@ -84,11 +81,10 @@ As explained in <a href="distributions.html">the page about distributions</a>,
     <li>A distribution involving two quantities (here planetary aspects) can be represented either by a 1-dimensional array or by a 2-dimensional array (abbreviated <b>dim2</b>).</li>
 </ul>
 The distributions used to describe the relations between two dates are then organized in this hierarchy:
-<pre>
+<pre class="padding-right">
 distrib2
     ├── age
     │   └── dim1
-    │       ├── age-D
     │       ├── age-M
     │       └── age-Y
     └── interaspects
@@ -103,31 +99,6 @@ distrib2
 </pre>
 
 This hierarchy is called <b>distrib2</b>.
-
-
-<!-- ********************************************************************************* -->
-<h2 id="4-relations-between-more-than-two-dates">Relations between more than two dates</h2>
-The program is not (yet?) able to generate distributions expressing the relations between three or more dates.
-<br>If the data set contains more than two dates, the program only generates distributions for dates taken 2 by 2.
-<br>For example, for a dataset containing mother, father and child birth dates + wedding dates, the main directories will be:
-<pre class="tree">
-distributions
-    <span class="distrib1">├── child</span>
-    <span class="distrib2">├── child-wedding</span>
-    <span class="distrib1">├── father</span>
-    <span class="distrib2">├── father-child</span>
-    <span class="distrib2">├── father-wedding</span>
-    <span class="distrib1">├── mother</span>
-    <span class="distrib2">├── mother-child</span>
-    <span class="distrib2">├── mother-father</span>
-    <span class="distrib2">├── mother-wedding</span>
-    <span class="distrib1">└── wedding</span>
-</pre>
-
-<span class="distrib1">Distributions of type distrib1 (single date) are in green</span>.
-<br><span class="distrib2">Distributions of type distrib2 (two dates) are in yellow</span>.
-
-<br><br>Many other distributions can be imagined, involving relations between three or more dates, but the program is currently limited to these distributions.
 
 <div class="prevnext">Next: <a href="distributions.html">Distributions</a></div>
 

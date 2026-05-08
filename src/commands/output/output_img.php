@@ -203,7 +203,7 @@ class output_img {
                 $outDir_date = $outDir_base . DS . $dateName;           // ex: output/studies/death-fr/img/birth-death
                 mkdir::execute($outDir_date);
                 //
-                // age
+                // age - years
                 //
                 $inFilename_obs = $inDir_obs_date . DS . 'age' . DS . 'dim1' . DS . 'age-Y.csv';     // ex: var/studies/death-fr/observed/birth-death/age/dim1/age-Y.csv
                 // no expected distribution for age (observed and expected can have different size)
@@ -222,6 +222,27 @@ class output_img {
                 $outDir = $outDir_date . DS . 'age' . DS . 'dim1'; // ex: output/studies/death-fr/img/birth-death/age/dim1
                 mkdir::execute($outDir);
                 $outFilename = $outDir . DS . 'age-Y.svg';    // ex: output/studies/death-fr/img/birth-death/age/dim1/age-Y.svg
+                file_put_contents::execute($outFilename, $svg, echoMessage: $echoMessage);
+                //
+                // age - months
+                //
+                $inFilename_obs = $inDir_obs_date . DS . 'age' . DS . 'dim1' . DS . 'age-M.csv';     // ex: var/studies/death-fr/observed/birth-death/age/dim1/age-M.csv
+                // no expected distribution for age (observed and expected can have different size)
+                $distrib_obs = CsvDistrib::csv2distrib_dim1($inFilename_obs);
+                $title = 'Age between ' . $study->config['dates'][$i] . ' and ' . $study->config['dates'][$j] . ' (months)';
+                $stats = $stats_obs[$dateName]['age'];
+                $svg = barCurve::svg(
+                    data_bar:       $distrib_obs,
+                    title:          $title,
+                    barW:           2,
+                    xlegends:       xlegend::minmax_step($distrib_obs, 12),
+                    ylegends:       ['min', 'max', 'mean'],
+                    meanLine:       true,
+                    stats:          $stats,
+                );
+                $outDir = $outDir_date . DS . 'age' . DS . 'dim1'; // ex: output/studies/death-fr/img/birth-death/age/dim1
+                mkdir::execute($outDir);
+                $outFilename = $outDir . DS . 'age-M.svg';    // ex: output/studies/death-fr/img/birth-death/age/dim1/age-M.svg
                 file_put_contents::execute($outFilename, $svg, echoMessage: $echoMessage);
                 //
                 // Interaspects
