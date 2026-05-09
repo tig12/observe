@@ -26,7 +26,7 @@ class Studies {
         Returns the slugs of all available studies.
     **/
     public static function getAllStudySlugs(): array {
-        self::computeStudyConfigs();
+        self::computeAllStudyConfigs();
         return array_keys(self::$studyConfigs);
     }
     
@@ -34,7 +34,7 @@ class Studies {
         Returns the contents of a yaml study file.
     **/
     public static function getStudyConfig(string $studySlug): array {
-        self::computeStudyConfigs();
+        self::computeAllStudyConfigs();
         return self::$studyConfigs[$studySlug];
     }
 
@@ -43,7 +43,7 @@ class Studies {
         Completes each element of self::$studyConfigs with a key "__study-file__".
         The slugs come from yaml files stored in study file, in config/
     **/
-    private static function computeStudyConfigs(): void {
+    private static function computeAllStudyConfigs(): void {
         if(count(self::$studyConfigs) != 0){
             return; // already computed
         }

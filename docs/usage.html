@@ -37,6 +37,11 @@ Observe is a CLI (Command Line Interface), a tool used in a terminal (console).
         </li>
         <li>
             <a href="#2-work-on-a-study">Work on a study</a>
+            <ul>
+                <li>
+                    <a href="#2-1-init">init</a>
+                </li>
+            </ul>
         </li>
         <li>
             <a href="#3-adding-a-new-study">Adding a new study</a>
@@ -44,7 +49,7 @@ Observe is a CLI (Command Line Interface), a tool used in a terminal (console).
     </ul>
 </nav>
 
-To see if the program is operationnal, just type:
+<br>To see if the program is operationnal, just type:
 <pre>php run-observe.php</pre>
 If a message starting with
 <pre>
@@ -53,24 +58,81 @@ Usage: php run-observe.php &lt;study> &lt;commmand> [args]
    or: php run-observe.php prepare planets
 </pre>
 is displayed, the program is ready to work.
-
-<br><br>Except for command prepare, the first parameter is always the slug of the study, the second is the name of the command, and some commands need supplementary arguments.
+<br>Except for command prepare, the first parameter is always the slug of the study, the second is the name of the command, and some commands need supplementary arguments.
 
 <!-- ********************************************************************************* -->
 <h2 id="1-generate-planet-database">Generate planet database</h2>
 
-The first step, when working on studies containing dates without time, is to build the sqlite database with planetary coordinates.
-<pre>php run-observe.php prepare planets</pre>
+The first step, when working on studies containing dates without time, is to build the sqlite database with planetary coordinates, for example:
+<pre>php run-observe.php prepare planets 1800-2040</pre>
 
-</article>
+This generates a sqlite database located in a file specified in <code>config.yml</code>, in section <code>one-day-ephemeris</code>, key <code>sqlite-planets</code>.
 
 <!-- ********************************************************************************* -->
 <h2 id="2-work-on-a-study">Work on a study</h2>
-Apart from step <code>prepare</code>,
+
+The complete list of steps to go from original data to distributions and html pages is listed on page <a href="intro/studies.html#2-computation-steps">Studies</a>.
+
+<br>In terms of commands, using the example of <a href="studies/death-fr.html">Deaths in France 1970 - 2025</a>, this gives:
+
+<pre>
+php run-observe.php death-fr init
+php run-observe.php death-fr import
+php run-observe.php death-fr observed
+php run-observe.php death-fr control
+php run-observe.php death-fr expected
+php run-observe.php death-fr stats
+php run-observe.php death-fr dim2
+php run-observe.php death-fr output img all
+php run-observe.php death-fr output csv all
+php run-observe.php death-fr output page all
+</pre>
+
+Depending on the size of the dataset, some steps can be long to execute, in particular <code>import</code>, <code>control</code> and <code>dim2</code>.
+<br>For example, on an old machine (2014) with Intel Core i7, 2.30GHz × 4:
+
+<table class="wikitable margin">
+    <tr><th>step</th><th>time (hours)</th></tr>
+    <tr>
+        <td>import</td>
+        <td>04:15</td>
+    </tr>
+    <tr>
+        <td>control</td>
+        <td>04:30 per control</td>
+    </tr>
+    <tr>
+        <td>dim2</td>
+        <td>01:57</td>
+    </tr>
+</table>
+
+<!-- ************************************* -->
+<h3 id="2-1-init">init</h3>
+Depending on the study, this step can be ignored. It was useful for the <a href="../studies/death-fr.html">Deaths in France</a> study (to initialize an intermediate sqlite database), but useless for the <a href="./studies/a00.html">Births in France in 2000</a> study.
+
+<!-- ************************************* -->
+<h3>import</h3>
+This step converts the raw dataset to a normalized file, <code>data.csv.bz2</code>, which is used by following steps.
+<br>It can be avoided if a file <code>data.csv.bz2</code> is built by a human or another program, and copied at the root of the study's working directory.
+<br>But it must respect the format of <code>data.csv.bz2</code>: this file must contain only dates, the order of the dates must correspond to the order of the entry <code>dates</code> defined in the study config file, and the csv separator must be ";".
+
+<!-- ************************************* -->
+<h3>control</h3>
+To save up space, the dates randomly generated during this step are not saved on disk, the program only stores the resulting distributions.
+
+<!-- ************************************* -->
+<h3>output</h3>
+The program handles the generation of the html pages of the studies, but not the home page (like <a href="https://observe.tig12.net/output/index.html">observe.tig12.net/output/index.html</a>) and the css. That'a a lack that sould be fixed.
+
 
 <!-- ********************************************************************************* -->
 <h2 id="3-adding-a-new-study">Adding a new study</h2>
+If a new study can be handled by existing code, it can be handled by the program without coding anything, adding a new configuration file and providing a <code>data.csv.bz2</code> file will be enough.
 
+<br><br>At this draft stage, configuration files are versioned with the program, but other users want to use the program, this can change.
+
+</article>
 </div><!-- end class="main" -->
 
 

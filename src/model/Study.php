@@ -58,6 +58,7 @@ abstract class Study implements IStudy {
         if(!isset($this->config['slug'])){
             $msg .= "Missing entry \"slug\"\n";
         }
+// TODO check $this->config['slug'] preg_match 'a-z0-9-'
         //
         if(!isset($this->config['working-dir'])){
             $msg .= "Missing entry \"working-dir\"\n";
@@ -77,6 +78,7 @@ abstract class Study implements IStudy {
             $msg .= "Missing entry \"planets\"\n";
         }
         //
+// TODO check $this->config['dates'] preg_match 'a-z0-9-'
         if(!isset($this->config['dates'])){
             $msg .= "Missing entry \"dates\"\n";
         }
@@ -91,14 +93,44 @@ abstract class Study implements IStudy {
     }
     
     /**
+        Computes an associative array
+            key = study slug
+            value = study title
+        with studies different from current instance.
+        @param  $includeTestStudies If true, sudies with an entry "is-test-study: true" are also returned
+    **/
+    public function getOtherStudiesTitles(bool $includeTestStudies = false): array {
+        $allSlugs = Studies::getAllStudySlugs();
+        $res = [];
+        foreach($allSlugs as $slug){
+            if($slug == $this->config['slug']){
+                continue;
+            }
+            $studyConfig = Studies::getStudyConfig($slug);
+            if($includeTestStudies === false){
+                $isTest = $studyConfig['is-test-study'] ?? false;
+                if($isTest){
+                    continue;
+                }
+            }
+            $res[$slug] = $studyConfig['output']['title'];
+        }
+        return $res;
+    }
+    
+    /**
         Returns the array passed to header.html to build the navigation menu in output pages.
         The format is an associative array: [
             'href' => 'label',
         ]
+        If a key starts by "__SEP__", the template interprets it as a separator and does not echo a link,
+        but just copies the value.
     **/
     public function getNavigationArray(): array {
         $res = [
-            // link to 'Observe output home' is hard-coded in src/commands/output/templates/header.html
+            '../../index.html'  => 'Observe output home',
+            '../../help.html'   => 'Help to read this page',
+            '__SEP__1'          => '<center><hr width="80%"></center>',
             'index.html'        => $this->config['output']['title'],
             'gallery.html'      => 'Gallery',
         ];
@@ -109,8 +141,12 @@ abstract class Study implements IStudy {
             for($j=$i+1; $j < count($this->config['dates']); $j++){
                 $code = $this->config['dates'][$i] . '-' . $this->config['dates'][$j];
                 $label = ucfirst($this->config['dates'][$i]) . ' - ' . ucfirst($this->config['dates'][$j]);
-                $res ["$code.html"] =  $label;
+                $res["$code.html"] =  $label;
             }
+        }
+        $res['__SEP__2'] = '<center><hr width="80%"></center>';
+        foreach($this->getOtherStudiesTitles() as $slug => $title){
+            $res["../$slug/index.html"] = $title;
         }
         return $res;
     }

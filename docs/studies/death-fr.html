@@ -27,7 +27,6 @@ Deaths in France 1970 - 2025
 </h1>
 <div class="intro">
     This study is based on data coming from <a href="https://www.data.gouv.fr/datasets/fichier-des-personnes-decedees">data.gouv.fr/datasets/fichier-des-personnes-decedees</a>, which contains nominative data of persons deceased in France since 1970 (with birth day and death day, days without time).
-    <br>This study concerns persons who died in France between 1970 and 2025, with <span class="bold big2">57 835 022</span> dates.
 </div>
 </header>
 
@@ -64,9 +63,11 @@ data.gouv.fr
             └── deces-2025.txt
 </pre>
 Each file contains one line per personne, a total of <b>28 917 511 lines</b>.
+<!-- 
+<span class="bold big2">57 835 022</span> dates
+-->
 
-
-, here are the first lines of <code>deces-1970.txt</code>
+<br>Here are the first lines of <code>deces-1970.txt</code>
 <pre>
 DUCRET*MARIE ANTOINETTE/                                                        21922010901004AMBERIEU-EN-BUGEY                                           19701210014216                              
 GRANGEON*ERIC JEAN REMY/                                                        11969032901004AMBERIEU-EN-BUGEY                                           19700425693831059                           
@@ -124,7 +125,12 @@ ERR_EXCEPTION:  2 exception
 => skipped      113 677 lines because of date problem
 </pre>
 
-This shows that the files of data.gouv.fr (1970 - 2025) contain 28 917 511 dates but around 113 677 lines (0.4 %) are incorrect.
+This shows that the files of data.gouv.fr (1970 - 2025) contain 28 917 511 dates but 113 677 lines (0.4 %) are incorrect.
+
+<!-- ************************************* -->
+<h3>Cleaning the data</h3>
+For this first try, the elimination of error
+
 
 </article>
 </div><!-- end class="main" -->

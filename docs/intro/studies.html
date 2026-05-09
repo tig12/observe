@@ -32,35 +32,30 @@ Studies
 
 <article>
 
-<!-- ********************************************************************************* -->
-<h2>Configuration file</h2>
-The characteristics of a study are described in a YAML configuration file, located in directory <code>config/</code>.
-<br>See the comments in the sample configurations versioned with the program.
-
-<ul class="spaced">
-    <li>
-        <div class="bold">slug</div>
-        Configuration files can be organized in subdirectories, but <b>each study must have a unique slug</b>. Two different studies cannot have the same slug.
-        <br>A slug must be composed of lowercase lettres, digits and hyphen ("-").
-    </li>
-    <li>
-        <div class="bold">fqcn</div>
-        While most computations are common to all studies, some steps (<code>init</code>, <code>import</code> and <code>control</code>, see below) need specific implementation because they depend on the dataset.
-        <br>For example, control group computation for the <a href="../studies/death-fr.html">Deaths in France</a> study queries a local database, while for the <a href="../studies/a00.html">Births in France in 2000</a>, the dataset is small enough to have all the data loaded in memory without needing a database.
-        <br>This setting permits to specify the php class handling theses specific steps.
-    </li>
-    <li>
-        <div class="bold">date-precision</div>
-        Currently, only "day" is implemented.
-    </li>
-    <li>
-        <div class="bold">dates</div>
-        Like slug, date names must be composed of lowercase lettres, digits and hyphen ("-").
-    </li>
-</ul>
+<nav class="pagetoc" aria-label="Table of contents">
+    <ul>
+        <li>
+            <a href="#1-computation-steps">Computation steps</a>
+        </li>
+        <li>
+            <a href="#2-configuration-file">Configuration file</a>
+            <ul>
+                <li>
+                    <a href="#2-1-specific-configurations">Specific configurations</a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="#3-the-working-directory">The working directory</a>
+        </li>
+        <li>
+            <a href="#4-variants-of-a-study">Variants of a study</a>
+        </li>
+    </ul>
+</nav>
 
 <!-- ********************************************************************************* -->
-<h2>Computation steps</h2>
+<h2 id="1-computation-steps">Computation steps</h2>
 <style>
     .green{color:olive;}
     .orange{color:orange;}
@@ -92,7 +87,40 @@ The characteristics of a study are described in a YAML configuration file, locat
 
 
 <!-- ********************************************************************************* -->
-<h2 id="1-the-working-directory">The working directory</h2>
+<h2 id="2-configuration-file">Configuration file</h2>
+The characteristics of a study are described in a YAML configuration file, located in directory <code>config/</code>.
+<br>See the comments in the sample configurations versioned with the program.
+
+<ul class="spaced">
+    <li>
+        <div class="bold">slug</div>
+        Configuration files can be organized in subdirectories, but <b>each study must have a unique slug</b>. Two different studies cannot have the same slug.
+        <br>A slug must be composed of lowercase lettres, digits and hyphen ("-").
+    </li>
+    <li>
+        <div class="bold">fqcn</div>
+        While most computations are common to all studies, some steps (<code>init</code>, <code>import</code> and <code>control</code>, see below) need specific implementation because they depend on the dataset.
+        <br>For example, control group computation for the <a href="../studies/death-fr.html">Deaths in France</a> study queries a local database, while for the <a href="../studies/a00.html">Births in France in 2000</a>, the dataset is small enough to have all the data loaded in memory without needing a database.
+        <br>This setting permits to specify the php class handling theses specific steps.
+    </li>
+    <li>
+        <div class="bold">date-precision</div>
+        Currently, only "day" is implemented.
+    </li>
+    <li>
+        <div class="bold">dates</div>
+        Like slug, date names must be composed of lowercase lettres, digits and hyphen ("-").
+    </li>
+</ul>
+
+<!-- ************************************* -->
+<h3 id="2-1-specific-configurations">Specific configurations</h3>
+
+As each study can have custom steps, some configurations can be added, for example to specify the path to a raw file, or the characteristics of an intermediate database.
+
+
+<!-- ********************************************************************************* -->
+<h2 id="3-the-working-directory">The working directory</h2>
 This directory (specified in entry <code>working-dir</code> of the study configuration) contains all the intermediate files (mainly csv files containing distributions).
 <br>Taking the example of the "Deaths in France" study, the main subdirectores are:
 <pre class="tree">
@@ -120,37 +148,18 @@ var/studies/death-fr
     └── data.csv.bz2
 </pre>
 
-<span class="distrib1">In green</span>, distributions of type <code>distrib1</code> (single date distributions).
-<br><span class="distrib2">In yellow</span>, distributions of type <code>distrib2</code> (two dates distributions).
+<span class="distrib1">In green</span>, distributions of type <code>distrib1</code> (<a href="distrib-single-date.html">single date distributions</a>).
+<br><span class="distrib2">In yellow</span>, distributions of type <code>distrib2</code> (<a href="distrib-several-dates.html">two dates distributions</a>).
 
 <br><br>As you can see, each subdirectory of <code>controls/</code>, <code>observed/</code> and <code>expected/</code> all share the same structure.
 
 
+<!-- ********************************************************************************* -->
+<h2 id="4-variants-of-a-study">Variants of a study</h2>
+A common need is to analyze different variants of a dataset.
+<br>For example, in the <a href="../studies/death-fr.html">Deaths in France</a> study, two variants were computed: the whole dataset and data without children born before their first birthday.
+<br>Current version of the program does not handle this notion, this is done by defining a new study. If the structure of the data doesn't change, this doesn't involve new code.
 
-
-<!-- 
-A study is always related to a data set, but a data set can be used for several studies.
-<br>Studies are defined in <i>study files</i>, which permit to specify the commands to run.
-<br>The commands to run vary from a study to another, but it's globally always the same process :
-<ol class="spaced">
-    <li>Compute the planetary positions</li>
-    <li>Build sub-groups, called <i>splits</i>. In general, there is at least one split containing the whole data set.</li>
-    <li>For each split, compute the distributions of planetary positions</li>
-    <li>Compute control groups and build expected distributions for each split</li>
-    <li>Apply statistical tests to compare observed and expected distributions</li>
-    <li>Generate outputs to present the results of the study</li>
-</ol>
-
-<h2 id="3-command-files">Command files</h2>
-Program usage is based on <b>command files</b>
-<br>They are created by users ; they are used to describe what the program should do.
-<br>They are located in directory <code>commands/</code>.
-<br>They are written using YAML syntax.
-
-<br><br>Each command file contains description of commands.
-<br>One run of the program permits to execute one command ; usage of the program is then
-<pre>php run-observe.php &lt;command file> &lt;command></pre>
--->
 
 </article>
 </div><!-- end class="main" -->

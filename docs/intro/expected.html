@@ -41,10 +41,16 @@ The distributions computed from the original data set are called the <b>observed
                 <li>
                     <a href="#1-1-warning">Warning</a>
                 </li>
+                <li>
+                    <a href="#1-2-usage">Usage</a>
+                </li>
             </ul>
         </li>
         <li>
-            <a href="#2-file-hierarchy">File hierarchy</a>
+            <a href="#2-average-method">Average method</a>
+        </li>
+        <li>
+            <a href="#3-file-hierarchy">File hierarchy</a>
         </li>
     </ul>
 </nav>
@@ -78,13 +84,13 @@ Here, precautions are needed: for example, the birth date of the newly created r
 Answering these questions affect the way the control groups are computed.
 
 <!-- ************************************* -->
-<h3>Usage</h3>
+<h3 id="1-2-usage">Usage</h3>
 In this program, control groups are used only for distributions expressed by one-dimensional arrays (called <code>dim1</code>).
 <br>For distributions expressed by two-dimensional arrays (<code>dim2</code>), the expected distributions use the average method, described below.
 <br>The only reason is to save up computation time and memory: a 360 x 360 table has 129 600 cells. For interaspects with 11 planets, this represents 360 x 360 x 11 x 11 ~ 15 millions of values.
 
 <!-- ********************************************************************************* -->
-<h2>Average method</h2>
+<h2 id="2-average-method">Average method</h2>
 This is the method described by Didier Castille in his article "<a href="http://cura.free.fr/xx/18cas3en.html">A Link between Birth and Death</a>" ("<a href="http://cura.free.fr/xx/18cas3fr.html">Un Lien entre la Naissance et le Décès</a>"), also explained on <a href="https://en.wikipedia.org/wiki/Chi-squared_test#Chi-squared_test_for_variance_in_a_normal_population">en.wikipedia.org/wiki/Chi-squared_test</a>.
 <br>For a two-dimensional array, the formula is :
 
@@ -94,7 +100,7 @@ See a <a href="../questions.html#2-1-are-control-groups-necessary">related quest
 
 
 <!-- ********************************************************************************* -->
-<h2 id="2-file-hierarchy">File hierarchy</h2>
+<h2 id="3-file-hierarchy">File hierarchy</h2>
 For each control, the full hierarchy of the observed distributions is reproduced.
 
 <br>In the example of a group containing birth and death dates:
