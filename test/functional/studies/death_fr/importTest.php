@@ -5,15 +5,13 @@
     
     Uses study1 - see config/test/study1-README 
     
-    usage: phpunit src/commands/death_fr/importTest.php 
+    usage: phpunit test/functional/studies/death_fr/importTest.php 
     
     @copyright  Thierry Graff
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
     
     @history    2026-03-25 21:16:34+01:00, Thierry Graff : Creation
 ********************************************************************************/
-
-namespace observe\test\functional\studies\death_fr;
 
 use PHPUnit\Framework\TestCase;
 use observe\model\Observe;

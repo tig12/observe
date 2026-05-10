@@ -2,6 +2,8 @@
 /******************************************************************************
     
     Functional test for src/command/dim2.php
+    
+    usage: phpunit test/functional/commands/dim2Test.php
 
     Uses study1 - see config/test/study1-README
     
@@ -22,7 +24,6 @@ use PHPUnit\Framework\TestCase;
 use observe\model\Observe;
 use observe\model\IStudy;
 use observe\model\distrib\CsvDistrib;
-use observe\model\distrib\EmptyDistribs;
 use observe\studies\death_fr\Death_fr;
 //use observe\commands\observed;
 use observe\commands\dim2;

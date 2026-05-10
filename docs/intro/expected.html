@@ -87,7 +87,12 @@ Answering these questions affect the way the control groups are computed.
 <h3 id="1-2-usage">Usage</h3>
 In this program, control groups are used only for distributions expressed by one-dimensional arrays (called <code>dim1</code>).
 <br>For distributions expressed by two-dimensional arrays (<code>dim2</code>), the expected distributions use the average method, described below.
-<br>The only reason is to save up computation time and memory: a 360 x 360 table has 129 600 cells. For interaspects with 11 planets, this represents 360 x 360 x 11 x 11 ~ 15 millions of values.
+<br>The only reason is to save up computation time and memory: a 360 x 360 table has 129 600 cells. Computations for N planets imply to compute N x N tables for interaspects, and N x (N + 1) / 2 for aspects.
+
+
+
+
+with 11 planets, this represents 360 x 360 x 11 x 11 ~ 15 millions of values.
 
 <!-- ********************************************************************************* -->
 <h2 id="2-average-method">Average method</h2>

@@ -68,7 +68,7 @@ In the <a href="studies/death-fr.html">the deaths in France study</a>, the impor
 <!-- ************************************* -->
 <h3>Is the "average method" appropriate ?</h3>
 
-The <a href="intro/expected.html#2-average-method">"average method"</a> is currently used to compute the expected values of distributions of <a href="intro/distributions.html#2-two-dimensional-arrays-dim2">two-dimensional arrays</a>, and this seems to lead meaningless high chi square values.
+The <a href="intro/expected.html#2-average-method">"average method"</a> is currently used to compute the expected values of distributions of <a href="intro/distributions.html#2-two-dimensional-arrays-dim2">two-dimensional arrays</a>, and this seems to lead to meaningless high chi square values.
 <br>This is visible on mercury or venus distributions, but might be the cause of several very high values of chi square (another plausible cause is a bug).
 
 <!-- 
@@ -85,7 +85,7 @@ Is there a rule or a formula to know the number of control groups to compute ?
 
 <!-- ************************************* -->
 <h3 id="2-3-how-to-compute-control-groups">How to compute control groups ?</h3>
-Inthe "Death in France" study, current code just loops on birth dates, and randomly selects another person to take his / her death date. The choice of a computation method is arbitrary, and it affects the resulting control groups, which may affect the results of statistical tests. So this question seems very important to correctly perform an analysis.
+In the "Death in France" study, current code just loops on birth dates, and randomly selects another person to take his / her death date. The choice of a computation method is arbitrary, and it affects the resulting control groups, which may affect the results of statistical tests. So this question seems very important to correctly perform an analysis.
 
 <!-- ********************************************************************************* -->
 <h2 id="3-statistical-tests">Statistical tests</h2>

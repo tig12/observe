@@ -118,7 +118,7 @@ class observedTest extends TestCase{
     }
     
     /** 
-        Tests a subset of values for split full.
+        Tests a subset of observed values.
     **/
     public function test_values(){
         //

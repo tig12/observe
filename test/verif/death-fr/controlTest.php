@@ -1,64 +1,34 @@
 <?php
 /******************************************************************************
 
-    Functional test for src/studies/death_fr/control.php
+    For all distributions, test that the sums of the frequencies in control distributions
+    are equal to the sum of observed frequencies.
     
-    Uses study1 - see config/test/study1-README 
+    The distributions of death-fr study must have been computed before executing this test.
     
-    @pre        This test needs that steps init, import and observed are performed:
-                php run-observe.php study1 init
-                phpunit test/functional/studies/death_fr/importTest.php
-                phpunit test/functional/commands/observedTest.php
-                or
-                php run-observe.php study1 init
-                php run-observe.php study1 import
-                php run-observe.php study1 observed
+    Same as testSums() in test/functional/commands/dim2Test.php, but tests the result of real computations.
     
-    @todo       tests on tmp database
+    usage: phpunit test/verif/death_fr/dim1dim2Test.php 
+    
     
     @copyright  Thierry Graff
     @license    GPL - conforms to file LICENCE located in root directory of current repository.
     
-    @history    2026-03-25 21:16:34+01:00, Thierry Graff : Creation
+    @history    2026-05-10 23:05:44+02:00, Thierry Graff : Creation
 ********************************************************************************/
 
 use PHPUnit\Framework\TestCase;
 use observe\model\Observe;
 use observe\model\IStudy;
 use observe\model\distrib\CsvDistrib;
-use tiglib\filesystem\rrmdir;
 use observe\studies\death_fr\Death_fr;
-use observe\studies\death_fr\init;
-//use observe\commands\observed;
-use observe\studies\death_fr\control;
 
 class controlTest extends TestCase{
     
     private static IStudy $study;
     
     public static function setUpBeforeClass(): void {
-        
-        self::$study = new Death_fr('study1');
-        
-        // Step init must always be done to flush tmp.sqlite3
-        // because used by control to load the initial distributions => modifies array_sum() and breaks the test.
-        // rm var/studies/study1/tmp.sqlite3 to avoid answering y/n during init
-        // WARNING: dangerous if config/test/study1.yml is not correctly set
-        $file = self::$study->config['sqlite-tmp'];
-        if(is_file($file)){
-            unlink($file);
-        }
-        init::execute(self::$study, []);
-
-        // uncomment next line to include previous step in this test
-        // observed::execute(self::$study, []);
-        
-        // rm -fr var/studies/study1/controls to avoid answering y/n during control creation
-        // WARNING: dangerous if config/test/study1.yml is not correctly set
-        if(is_dir(self::$study->getControlsDirectory())){
-            rrmdir::execute(self::$study->getControlsDirectory());
-        }
-        control::execute(self::$study, ['1-3']);
+        self::$study = new Death_fr('death-fr');
     }
     
     public function test_sums(){
@@ -162,27 +132,5 @@ class controlTest extends TestCase{
             } // end loop on $j
         } // end loop on $i
     }
-    
-    /** 
-        Test that distributions of birth days and years in controls are identical to the observed distributions.
-        They must be equal because control::otherPerson() keeps the birth date of the original person.
-    **/
-    public function test_birth_date(){
-        $observedDir = self::$study->getObservedDirectory();
-        $controlDirs = self::$study->getControlSubdirectories();
-        $observed_days = CsvDistrib::csv2distrib_dim1(implode(DS, [$observedDir, 'birth', 'day.csv']), Observe::CSV_SEP);
-        $observed_years = CsvDistrib::csv2distrib_dim1(implode(DS, [$observedDir, 'birth', 'year.csv']), Observe::CSV_SEP);
-        foreach($controlDirs as $controlDir){
-            // day
-            $filename = $controlDir . DS . 'birth' . DS . 'day.csv';
-            $controlValues = CsvDistrib::csv2distrib_dim1($filename, Observe::CSV_SEP);
-            $this->assertEquals($observed_days, $controlValues);
-            // year
-            $filename = $controlDir . DS . 'birth' . DS . 'year.csv';
-            $controlValues = CsvDistrib::csv2distrib_dim1($filename, Observe::CSV_SEP);
-            $this->assertEquals($observed_years, $controlValues);
-        }
-    }
-    
     
 } // end class
