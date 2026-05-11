@@ -66,10 +66,7 @@ Births in France in 2000
             <a href="#1-the-raw-data">The raw data</a>
         </li>
         <li>
-            <a href="#2-obsolete-doc-2020">Obsolete doc (2020)</a>
-        </li>
-        <li>
-            <a href="#3-command-file">Command file</a>
+            <a href="#2-execution">Execution</a>
         </li>
     </ul>
 </nav>
@@ -125,95 +122,13 @@ Births in France in 2000
 </table>
 
 <!-- ********************************************************************************* -->
-<!-- ********************************************************************************* -->
-<!-- ********************************************************************************* -->
-<!-- 
-<hr class="margin-top4">
-<hr>
-<h2 id="2-obsolete-doc-2020">Obsolete doc (2020)</h2>
-<hr>
-<hr>
-<a href="https://tig12.github.io/g5/anon-castille.html">https://tig12.github.io/g5/anon-castille.html</a>
-Each line contains untimed birth days of mother, father and child ; 321 838 lines contain wedding dates (54.37 %).
-<br>Generated graphics are in <a href="https://g5.tig12.net/observe/insee/a00/">https://g5.tig12.net/observe/insee/a00/</a>
+<h2 id="2-execution">Execution</h2>
 
-Commands to execute all steps :
-<pre>
-php run-observe.php insee/a00 convert
-php run-observe.php insee/a00 planets
-php run-observe.php insee/a00 aspects
-php run-observe.php insee/a00 group
-php run-observe.php insee/a00 view
-</pre>
-
-<h2 id="3-command-file">Command file</h2>
-The command file is <code>commands/insee/a00.yml</code>
-
-<pre>
-convert:
-  command: convertFile
-  input-file: data/a00.csv
-  actions:
-    - ymd2iso anais00 mnais00 jnais00 -> C
-    - ymd2iso ANAISM MNAISM JNAISM    -> M
-    - ymd2iso ANAISP MNAISP JNAISP    -> F
-  output-file: tmp/a00-ymd.csv
-
-planets:
-  command: computeAstro
-  input-file: tmp/a00/a00-ymd.csv
-  actions:
-    - planets C SO MO ME VE MA JU SA UR NE PL NN
-    - planets M SO MO ME VE MA JU SA UR NE PL NN
-    - planets F SO MO ME VE MA JU SA UR NE PL NN
-  output-file: tmp/a00/a00-coords.csv
-
-aspects:
-  command: aspects
-  input-file: tmp/a00/a00-coords.csv
-  actions:
-    - C-* M-*
-    - C-* F-*
-    - M-* F-*
-  output-file: tmp/a00/a00-aspects.csv
-
-group:
-  command: groupByNumber
-  input-file: tmp/a00/a00-aspects.csv
-  cols: '*'
-  range: 360
-  output-dir: tmp/a00/a00-aspects
-
-view:
-    command: view\pages
-    input-dir: tmp/a00/a00-aspects
-    output-dir: tmp/a00/a00-html
-    view:
-      command: view\bar
-      assoc: false
-      col: 1
-    pages:
-      -
-        title: a00 Mother Child aspects
-        input-files: C-*--M-*.csv
-        #subtitle-template: '{IAA($1)} child - {IAA($2)} mother'
-        output-file: mother-child.html
-      -
-        title: a00 Father Child aspects
-        input-files: C-*--F-*.csv
-        #subtitle-template: '{IAA($1)} child - {IAA($2)} father'
-        output-file: father-child.html
-      -
-        title: a00 Mother Father aspects
-        input-files: M-*--F-*.csv
-        #subtitle-template: '{IAA($1)} mother - {IAA($2)} father'
-        output-file: mother-father.html
-</pre>
--->
+For this dataset, <code>data.csv.bz2</code> can be loaded in memory. The computation of control groups doesn't use an auxiliary database.
+<br>To build a control group, the program loops on mother birth dates, randomly selects a father, then a child (a test is done to be sure that the child is born after the father and the mother), then a wedding date (a test is done to ensure that the wedding occurs after mother and father birth).
 
 </article>
 </div><!-- end class="main" -->
-
 
 <!-- ************************************* -->
 <aside class="left">
