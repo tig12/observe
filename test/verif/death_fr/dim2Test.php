@@ -5,9 +5,9 @@
     
     The distributions of death-fr study must have been computed before executing this test.
     
-    Same as testSums() in test/functional/commands/controlTest.php, but tests the result of real computations.
+    Same as testSums() in test/functional/commands/dim2Test.php, but tests the result of real computations.
     
-    usage: phpunit test/verif/death_fr/dim2Test.php 
+    usage: phpunit test/verif/death_fr/dim2Test.php
     
     @copyright  Thierry Graff
     @license    GPL - conforms to file LICENCE located in root directory of current repository.

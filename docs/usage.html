@@ -41,6 +41,15 @@ Observe is a CLI (Command Line Interface), a tool used in a terminal (console).
                 <li>
                     <a href="#2-1-init">init</a>
                 </li>
+                <li>
+                    <a href="#2-2-import">import</a>
+                </li>
+                <li>
+                    <a href="#2-3-control">control</a>
+                </li>
+                <li>
+                    <a href="#2-4-output">output</a>
+                </li>
             </ul>
         </li>
         <li>
@@ -112,17 +121,17 @@ Depending on the size of the dataset, some steps can be long to execute, in part
 Depending on the study, this step can be ignored. It was useful for the <a href="../studies/death-fr.html">Deaths in France</a> study (to initialize an intermediate sqlite database), but useless for the <a href="./studies/a00.html">Births in France in 2000</a> study.
 
 <!-- ************************************* -->
-<h3>import</h3>
+<h3 id="2-2-import">import</h3>
 This step converts the raw dataset to a normalized file, <code>data.csv.bz2</code>, which is used by following steps.
 <br>It can be avoided if a file <code>data.csv.bz2</code> is built by a human or another program, and copied at the root of the study's working directory.
 <br>But it must respect the format of <code>data.csv.bz2</code>: this file must contain only dates, the order of the dates must correspond to the order of the entry <code>dates</code> defined in the study config file, and the csv separator must be ";".
 
 <!-- ************************************* -->
-<h3>control</h3>
+<h3 id="2-3-control">control</h3>
 To save up space, the dates randomly generated during this step are not saved on disk, the program only stores the resulting distributions.
 
 <!-- ************************************* -->
-<h3>output</h3>
+<h3 id="2-4-output">output</h3>
 The program handles the generation of the html pages of the studies, but not the home page (like <a href="https://observe.tig12.net/output/index.html">observe.tig12.net/output/index.html</a>) and the css. That'a a lack that sould be fixed.
 
 
@@ -177,23 +186,11 @@ If a new study can be handled by existing code, it can be handled by the program
         </ul>
     </li>
     
-    <!-- 
-    <li>
-        <div class="title padding-top05">Commands</div>
-        <ul>
-            <li><a href="./commands/convertFile.html">convertFile</a></li>
-            <li><a href="./commands/computeAstro.html">computeAstro</a></li>
-            <li><a href="./commands/aspects.html">aspects</a></li>
-            <li><a href="./commands/groupByNumber.html">groupByNumber</a></li>
-        </ul>
-    </li>
-    -->
-    
     <li class="title"><a href="./questions.html">Questions</a></li>
     
     <li class="title"><a href="https://larzac.info/observe/output">Output</a></li>
     
-    <li class="title"><a href="https://github.com/tig12/observe">Code repository</a></li>
+    <li class="title"><a href="https://codeberg.org/tig12/observe">Code repository</a></li>
 </ul>
 </aside>
 

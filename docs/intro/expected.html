@@ -88,11 +88,7 @@ Answering these questions affect the way the control groups are computed.
 In this program, control groups are used only for distributions expressed by one-dimensional arrays (called <code>dim1</code>).
 <br>For distributions expressed by two-dimensional arrays (<code>dim2</code>), the expected distributions use the average method, described below.
 <br>The only reason is to save up computation time and memory: a 360 x 360 table has 129 600 cells. Computations for N planets imply to compute N x N tables for interaspects, and N x (N + 1) / 2 for aspects.
-
-
-
-
-with 11 planets, this represents 360 x 360 x 11 x 11 ~ 15 millions of values.
+With 11 planets, this represents 360 x 360 x 11 x 11 ~ 15 millions of values.
 
 <!-- ********************************************************************************* -->
 <h2 id="2-average-method">Average method</h2>
@@ -101,7 +97,7 @@ This is the method described by Didier Castille in his article "<a href="http://
 
 <div class="margin"><code class="padding">expected value of a cell = mean of the line x mean of the column / total of the table</code></div>
 
-See a <a href="../questions.html#2-1-are-control-groups-necessary">related question</a>. This method might be abandoned and replaced by control groups for dim2 arrays.
+See a <a href="../questions.html#3-1-is-the-average-method-appropriate">related question</a>. This method might be abandoned and replaced by control groups for dim2 arrays.
 
 
 <!-- ********************************************************************************* -->
@@ -112,34 +108,9 @@ For each control, the full hierarchy of the observed distributions is reproduced
 
 <pre class="tree">
 observed
-    <span class="distrib1">├── birth
-    │   ├── aspects
-    │   │   ├── JU-NE.csv
-    │   │   ├── ...
-    │   │   └── VE-UR.csv
-    │   ├── planets
-    │   │   ├── JU.csv
-    │   │   ├── ...
-    │   │   └── UR.csv
-    │   ├── day.csv
-    │   └── year.csv</span>
-    <span class="distrib2">├── birth-death
-    │   ├── interaspects
-    │   │   ├── JU-JU.csv
-    │   │   ├── ...
-    │   │   └── VE-VE.csv
-    │   └── age.csv</span>
-    <span class="distrib1">└── death
-        ├── aspects
-        │   ├── JU-NE.csv
-        │   ├── ...
-        │   └── VE-UR.csv
-        ├── planets
-        │   ├── JU.csv
-        │   ├── ...
-        │   └── UR.csv
-        ├── day.csv
-        └── year.csv</span>
+    <span class="distrib1">├── birth</span>
+    <span class="distrib2">├── birth-death</span>
+    <span class="distrib1">└── death</span>
 </pre>
 <!-- 
 If we call <b>distrib1</b> the single date distributions (in green)
@@ -168,6 +139,8 @@ expected
     <span class="distrib2">├── birth-death</span>
     <span class="distrib1">└── death</span>
 </pre>
+<span class="distrib1">Distributions of type distrib1 (single date) are in green</span>.
+<br><span class="distrib2">Distributions of type distrib2 (two dates) are in yellow</span>.
 
 <div class="prevnext">Next: <a href="statistical-tests.html">Statistical tests</a></div>
 
@@ -217,23 +190,11 @@ expected
         </ul>
     </li>
     
-    <!-- 
-    <li>
-        <div class="title padding-top05">Commands</div>
-        <ul>
-            <li><a href="../commands/convertFile.html">convertFile</a></li>
-            <li><a href="../commands/computeAstro.html">computeAstro</a></li>
-            <li><a href="../commands/aspects.html">aspects</a></li>
-            <li><a href="../commands/groupByNumber.html">groupByNumber</a></li>
-        </ul>
-    </li>
-    -->
-    
     <li class="title"><a href="../questions.html">Questions</a></li>
     
     <li class="title"><a href="https://larzac.info/observe/output">Output</a></li>
     
-    <li class="title"><a href="https://github.com/tig12/observe">Code repository</a></li>
+    <li class="title"><a href="https://codeberg.org/tig12/observe">Code repository</a></li>
 </ul>
 </aside>
 

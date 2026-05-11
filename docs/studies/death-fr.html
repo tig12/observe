@@ -65,6 +65,20 @@ Deaths in France 1970 - 2025
                 <li>
                     <a href="#1-2-death-fr-sqlite3">death-fr.sqlite3</a>
                 </li>
+                <li>
+                    <a href="#1-3-cleaning-the-data">Cleaning the data</a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="#2-two-variants">Two variants</a>
+            <ul>
+                <li>
+                    <a href="#2-1-full-dataset">Full dataset</a>
+                </li>
+                <li>
+                    <a href="#2-2-filtered-dataset">Filtered dataset</a>
+                </li>
             </ul>
         </li>
     </ul>
@@ -126,7 +140,7 @@ create index idx_dday ON person(dday);
 </pre>
 
 <code>death-fr.sqlite3</code> is built by another program called g5, <a href="https://github.com/tig12/g5">github.com/tig12/g5</a>.
-<br>The build process is decribed on <a href="https://github.com/tig12/g5/tree/main/src/commands/enrich/deathfr">github.com/tig12/g5/tree/main/src/commands/enrich/deathfr</a>.
+<br>The build process is described on <a href="https://github.com/tig12/g5/tree/main/src/commands/enrich/deathfr">github.com/tig12/g5/tree/main/src/commands/enrich/deathfr</a>.
 
 <pre>
 php run-g5.php enrich deathfr raw2sqlite 1970-2025 > data/tmp/enrich/death-fr/sqlite-build-report.log
@@ -149,7 +163,7 @@ ERR_EXCEPTION:  2 exception
 This shows that the files of data.gouv.fr (1970 - 2025) contain 28 917 511 dates but 113 677 lines (0.4 %) are incorrect.
 
 <!-- ************************************* -->
-<h3>Cleaning the data</h3>
+<h3 id="1-3-cleaning-the-data">Cleaning the data</h3>
 For this first try, the elimination of rows containing errors is incomplete:
 <ul>
     <li>
@@ -160,19 +174,19 @@ For this first try, the elimination of rows containing errors is incomplete:
     </li>
 </ul>
 
-This should be fixed, see the <a href="../questions.html#1-cleaning-the-data">related question</a>.
+This should be fixed, see the <a href="../questions.html#2-cleaning-the-data">related question</a>.
 
 
 <!-- ********************************************************************************* -->
-<h2>Two variants</h2>
+<h2 id="2-two-variants">Two variants</h2>
 
 <!-- ************************************* -->
-<h3>Full dataset</h3>
+<h3 id="2-1-full-dataset">Full dataset</h3>
 When looking at the <a href="https://observe.tig12.net/output/studies/death-fr/gallery.html#same-planets">interaspects between same planets</a> the distributions of the full dataset, an anomaly is visible for all planets: a significant excess of their position at birth are the same as their positions at death.
 <br>But the <a href="https://observe.tig12.net/output/studies/death-fr/birth-death.html#age">distribution of age at death</a> shows a peak of death just after birth, which could explain this anomaly.
 
 <!-- ************************************* -->
-<h3>Filtered dataset</h3>
+<h3 id="2-2-filtered-dataset">Filtered dataset</h3>
 That's why distributions were computed for a second variant, where all persons deceased before their first birthday were removed. In this case, <a href="https://observe.tig12.net/output/studies/death-fr2/gallery.html#same-planets">the interaspects between same planets</a> don't show anomalies, which permits to conclude that the effect was due to demography.
 
 
@@ -222,23 +236,11 @@ That's why distributions were computed for a second variant, where all persons d
         </ul>
     </li>
     
-    <!-- 
-    <li>
-        <div class="title padding-top05">Commands</div>
-        <ul>
-            <li><a href="../commands/convertFile.html">convertFile</a></li>
-            <li><a href="../commands/computeAstro.html">computeAstro</a></li>
-            <li><a href="../commands/aspects.html">aspects</a></li>
-            <li><a href="../commands/groupByNumber.html">groupByNumber</a></li>
-        </ul>
-    </li>
-    -->
-    
     <li class="title"><a href="../questions.html">Questions</a></li>
     
     <li class="title"><a href="https://larzac.info/observe/output">Output</a></li>
     
-    <li class="title"><a href="https://github.com/tig12/observe">Code repository</a></li>
+    <li class="title"><a href="https://codeberg.org/tig12/observe">Code repository</a></li>
 </ul>
 </aside>
 

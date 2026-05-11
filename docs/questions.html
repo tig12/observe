@@ -32,30 +32,125 @@ Questions
 <nav class="pagetoc" aria-label="Table of contents">
     <ul>
         <li>
-            <a href="#1-cleaning-the-data">Cleaning the data</a>
+            <a href="#1-recapitulation">Recapitulation</a>
         </li>
         <li>
-            <a href="#2-expected-values">Expected values</a>
+            <a href="#2-cleaning-the-data">Cleaning the data</a>
+        </li>
+        <li>
+            <a href="#3-expected-values">Expected values</a>
             <ul>
                 <li>
-                    <a href="#2-1-are-control-groups-necessary">Are control groups necessary ?</a>
+                    <a href="#3-1-is-the-average-method-appropriate">Is the "average method" appropriate ?</a>
                 </li>
                 <li>
-                    <a href="#2-2-how-many-control-groups-should-be-computed">How many control groups should be computed ?</a>
+                    <a href="#3-2-how-many-control-groups-should-be-computed">How many control groups should be computed ?</a>
                 </li>
                 <li>
-                    <a href="#2-3-how-to-compute-control-groups">How to compute control groups ?</a>
+                    <a href="#3-3-how-to-compute-control-groups">How to compute control groups ?</a>
                 </li>
             </ul>
         </li>
         <li>
-            <a href="#3-statistical-tests">Statistical tests</a>
+            <a href="#4-statistical-tests">Statistical tests</a>
         </li>
     </ul>
 </nav>
 
 <!-- ********************************************************************************* -->
-<h2 id="1-cleaning-the-data">Cleaning the data</h2>
+<h2 id="1-recapitulation">Recapitulation</h2>
+This program was used so far to study two datasets: <a href="studies/death-fr.html">Deaths in France 1970 - 2025</a> (abbreviated <code>death-fr</code> and <code>death-fr2</code>) and <a href="./studies/a00.html">Births in France in 2000</a> (abbreviated <code>a00</code>).
+<br>The question is now to see if the methodology is correct and if the computations don't contain bugs. Unit tests (tests for each functions), functional tests (tests for each step of the computation) and verification tests (tests on the results of real computations) were written and confirm that the code is ok. But this can give a false impression of security, because the tests themselves can be bugged or not designed correctly, leading for example to test the code only partially. So the existence of bugs should be considered as possible.
+
+<br><br>To form an opinion on the output, have in mind that the expected values for one-dimensional arrays were computed using <a href="intro/expected.html#1-control-groups">control groups</a>, and for two-dimensional, the <a href="intro/expected.html#2-average-method">average method</a> was used. This method might not be appropriate and lead to meaningless high chi-square values (see below).
+
+<ul class="spaced">
+    <li>
+        The <a href="https://larzac.info/observe/output">Output of the program</a> shows coherent results for most single dates: comparisons between observed and expected distributions give a low chi-square and a p-value = 1. This is normal because control groups are built by looping on one date (birth date for <code>death-fr</code> and mother date for <code>a00</code>) and randomly select the other dates.
+        <br>But some distributions need explanations : why do some single dates show high chi-square values ? This is the case for <a href="https://observe.tig12.net/output/studies/death-fr/death.html">death date</a> in <code>death-fr</code> and <a href="https://observe.tig12.net/output/studies/a00/wedding.html">wedding date</a> in <code>a00</code>.
+    </li>
+    
+    <li>
+        Several distributions give high values of chi-square because the observed curve fits approximately the expected distribution, but not exactly, for example 
+        <a href="https://observe.tig12.net/output/studies/a00/mother-father.html#relations-planets-JU-VE">
+            <img
+                loading="lazy"
+                class="border margin"
+                height="250"
+                src="https://observe.tig12.net/output/studies/a00/img/mother-father/interaspects/dim1/JU-VE.svg"
+                alt="Interaspects between mother's mars and father's neptune"
+            >
+        </a>
+        etc.
+    </li>
+</ul>
+
+Some results deserve particular attention, as they could show potential "real" anomalies (or real bugs!):
+
+<ul class="spaced">
+    <li>
+        The <a href="https://observe.tig12.net/output/studies/death-fr2/birth-death.html#relations-planets-SO-SO">Sun at birth - sun at death distribution</a>. As explained in <a href="studies/death-fr.html#2-two-variants">the page about death-fr study</a>, when the persons deceased before their first birthday are removed, most of the "<a href="https://observe.tig12.net/output/studies/death-fr/gallery.html#same-planets">same planet excesses</a>" disappear.
+        <br>The excess remains for sun - sun distribution, which seems to confirm the observations of Didier Castille described in his article "<a href="http://cura.free.fr/xx/18cas3en.html">A Link between Birth and Death</a>". Curiously, this is visible on the one-dimensional view, but not clearly(?) in the two-dimensional view. It might be interesting to convert the 360 ditributions to bins of 10 or 30° to have a better view.
+    </li>
+    
+    <li>
+        The <a href="https://observe.tig12.net/output/studies/a00/gallery.html#same-planets-mother-father">interaspects between same planets of mother and father</a> in the <code>a00</code> study.
+        <br>The sun - sun distribution seems to confirm the results of Didier Castille and Gunter Sachs. But other anomalies can be observed for other planets except for the moon and mercury. The question is to find out if these are "real" anomalies, or meaningless results that can be eliminated.
+    </li>
+    
+    <li>
+        Several curves show a clear difference with the expected distributions, for example
+        <a href="https://observe.tig12.net/output/studies/a00/mother-father.html#relations-planets-MA-JU">
+            <img
+                loading="lazy"
+                class="border margin"
+                height="250"
+                src="https://observe.tig12.net/output/studies/a00/img/mother-father/interaspects/dim1/MA-JU.svg"
+                alt="Interaspects between mother's mars and father's jupiter"
+            >
+        </a>
+        <a href="https://observe.tig12.net/output/studies/a00/mother-father.html#relations-planets-MA-SA">
+            <img
+                loading="lazy"
+                class="border margin"
+                height="250"
+                src="https://observe.tig12.net/output/studies/a00/img/mother-father/interaspects/dim1/MA-SA.svg"
+                alt="Interaspects between mother's mars and father's saturn"
+            >
+        </a>
+        <a href="https://observe.tig12.net/output/studies/a00/mother-father.html#relations-planets-JU-SA">
+            <img
+                loading="lazy"
+                class="border margin"
+                height="250"
+                src="https://observe.tig12.net/output/studies/a00/img/mother-father/interaspects/dim1/JU-SA.svg"
+                alt="Interaspects between mother's jupiter and father's saturn"
+            >
+        </a>
+        <a href="https://observe.tig12.net/output/studies/a00/mother-father.html#relations-planets-SA-MA">
+            <img
+                loading="lazy"
+                class="border margin"
+                height="250"
+                src="https://observe.tig12.net/output/studies/a00/img/mother-father/interaspects/dim1/SA-MA.svg"
+                alt="Interaspects between mother's saturn and father's mars"
+            >
+        </a>
+        etc.
+    </li>
+    
+    <li>
+        And a funny fact, an excess of persons who get married around their birthday. This can be observed in the distributions of <a href="https://observe.tig12.net/output/studies/a00/mother-wedding.html#relations-planets-SO-SO">Sun mother - sun wedding</a> and 
+        <a href="https://observe.tig12.net/output/studies/a00/father-wedding.html#relations-planets-SO-SO">sun father - sun wedding</a>.
+    </li>
+    
+</ul>
+
+Finally, one point deserves attention: the program is at a draft stage and the methodology needs to be checked and probably completed. So it's too early to know if meaningful anomalies can be observed or not.
+
+
+<!-- ********************************************************************************* -->
+<h2 id="2-cleaning-the-data">Cleaning the data</h2>
 In the <a href="studies/death-fr.html">the deaths in France study</a>, the import process permits to eliminate 0.14 % of erroneous dates (113 677 out of 28 917 511).
 <br>But the <a href="">day of birth distribution</a> shows a clearly suspect excess of births on January 1st.
 <br>How can I fix this ? Should I compute the mean value between December 31th and January 2nd and randomly suppress records to reach this mean ?
@@ -63,32 +158,118 @@ In the <a href="studies/death-fr.html">the deaths in France study</a>, the impor
 <br><br>More generally, when the quality of a dataset seems to be uncertain, what are the precautions that one should take ?
 
 <!-- ********************************************************************************* -->
-<h2 id="2-expected-values">Expected values</h2>
+<h2 id="3-expected-values">Expected values</h2>
 
 <!-- ************************************* -->
-<h3>Is the "average method" appropriate ?</h3>
+<h3 id="3-1-is-the-average-method-appropriate">Is the "average method" appropriate ?</h3>
 
-The <a href="intro/expected.html#2-average-method">"average method"</a> is currently used to compute the expected values of distributions of <a href="intro/distributions.html#2-two-dimensional-arrays-dim2">two-dimensional arrays</a>, and this seems to lead to meaningless high chi square values.
-<br>This is visible on mercury or venus distributions, but might be the cause of several very high values of chi square (another plausible cause is a bug).
+The <a href="intro/expected.html#2-average-method">"average method"</a> is currently used to compute the expected values of distributions of <a href="intro/distributions.html#2-two-dimensional-arrays-dim2">two-dimensional arrays</a>, and this seems to lead to meaningless high chi-square values.
+<br>This is particulary visible on mercury or venus distributions, like this one:
+<br>
+<figure class="margin-bottom">
+    <a href="https://observe.tig12.net/output/studies/death-fr2/death.html#aspect-SO-VE">
+        <img
+            loading="lazy"
+            class="border margin"
+            width="250"
+            height="250"
+            src="https://observe.tig12.net/output/studies/death-fr2/img/death/aspects/dim2/SO-VE.png"
+            alt="Aspects between sun and venus at death"
+        >
+    </a>
+    <figcaption class="center">Aspects between sun and venus at death</figcaption>
+</figure>
+<br class="clear-left">
 
-<!-- 
-<br><br>But another consideration leads to pose the opposite question: is the method without control groups appropriate for these tests ? This question comes from an observation: most distributions involving venus show a pattern of 5 occurences (see for example <a href="https://observe.tig12.net/output/studies/a00/gallery.html#planet-VE">the distributions of venus in the "Births in France in 2000" study</a>).
-<br>This is possibly related to the astronomical movement of venus seen from the earth (see for example <a href="https://github.com/dannyjenn/venus-the-dance-of-the-planets/tree/main">here</a>).
-<br>This is logical: due to its apparent movement, venus is more often located at certain positions. And computing the theoretical value of a cell with the formula:
-<br>"<code>mean of the line x mean of the column / total of the table</code>" erases the irregularity of the movement and then produces a high value for chi square.
-<br>If this is true, it means that this computation of theoretical values is not able to eliminate astronomical irregularities.
--->
+It might also explain stange patterns observed in many distributions:
+<br>
+<figure class="margin-bottom">
+    <a href="https://observe.tig12.net/output/studies/death-fr2/death.html#aspect-SO-MA">
+        <img
+            loading="lazy"
+            class="border margin"
+            width="250"
+            height="250"
+            src="https://observe.tig12.net/output/studies/death-fr2/img/death/aspects/dim2/SO-MA.png"
+            alt="Aspects between sun and venus at death"
+        >
+    </a>
+    <figcaption class="center">Aspects between sun and mars at death</figcaption>
+</figure>
+<figure class="margin-bottom">
+    <a href="https://observe.tig12.net/output/studies/death-fr2/birth-death.html#relations-planets-SO-JU">
+        <img
+            loading="lazy"
+            class="border margin"
+            width="250"
+            height="250"
+            src="https://observe.tig12.net/output/studies/death-fr/img/birth-death/interaspects/dim2/SO-JU.png"
+            alt="Aspects between sun at birth and jupiter at death"
+        >
+    </a>
+    <figcaption class="center">Aspects between sun at birth and jupiter at death</figcaption>
+</figure>
+<figure class="margin-bottom">
+    <a href="https://observe.tig12.net/output/studies/death-fr2/birth-death.html#relations-planets-JU-VE">
+        <img
+            loading="lazy"
+            class="border margin"
+            width="250"
+            height="250"
+            src="https://observe.tig12.net/output/studies/death-fr/img/birth-death/interaspects/dim2/JU-VE.png"
+            alt="Aspects between jupiter at birth and venus at death"
+        >
+    </a>
+    <figcaption class="center">Aspects between jupiter at birth and venus at death</figcaption>
+</figure>
+
+<br class="clear-left">
+
+In particular, most distributions involving venus show a pattern of 5 occurences. This can be related to the astronomical movement of venus seen from the earth (see for example <a href="https://github.com/dannyjenn/venus-the-dance-of-the-planets/tree/main">here</a>), also showing 5 occurences.
+
+<br><br>These observations lead to think that the average method does not eliminate anomalies due to astronomical movements.
+<br>This can be understood with a the example of venus. Venus, like mercury, is an "inner planet" (between the sun and the earth). So, seen from earth, venus is always close to the sun (max 47°).
+<br>If we take a simplified example of 100 births and look at the angles between sun and venus and divide the 360° in 5 bins of 72°, we might observe something like this:
+
+<style>
+table.ex-venus td.sum{
+    font-weight:bold;
+    background:darkblue;
+}
+</style>
+<table class="wikitable margin ex-venus">
+    <tr><th></th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>Sums</th></tr>
+    <tr><th>1</th><td>24</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="sum">24</td></tr>
+    <tr><th>2</th><td>0</td><td>18</td><td>0</td><td>0</td><td>0</td><td class="sum">18</td></tr>
+    <tr><th>3</th><td>0</td><td>0</td><td>20</td><td>0</td><td>0</td><td class="sum">20</td></tr>
+    <tr><th>4</th><td>0</td><td>0</td><td>0</td><td>19</td><td>0</td><td class="sum">19</td></tr>
+    <tr><th>5</th><td>0</td><td>0</td><td>0</td><td>0</td><td>19</td><td class="sum">19</td></tr>
+    <tr><th>Sums</th><td class="sum">24</td><td class="sum">18</td><td class="sum">20</td><td class="sum">0</td><td class="sum">19</td><td class="sum">100</td></tr>
+</table>
+
+And the classical formula to compute the expected values: "<code>mean of the line x mean of the column / total of the table</code>" will produce this table:
+<table class="wikitable margin ex-venus">
+    <tr><th></th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr>
+    <tr><th>1</th><td>5.76</td><td>4.32</td><td>4.8</td><td>4.56</td><td>4.56</td>
+    <tr><th>2</th><td>4.32</td><td>3.24</td><td>3.6</td><td>3.42</td><td>3.42</td>
+    <tr><th>3</th><td>4.8</td><td>3.6</td><td>4</td><td>3.8</td><td>3.61</td>
+    <tr><th>4</th><td>4.56</td><td>3.42</td><td>3.8</td><td>3.61</td><td>3.61</td>
+    <tr><th>5</th><td>4.56</td><td>3.42</td><td>3.61</td><td>3.61</td><td>3.61</td>
+</table>
+
+This formula has erased the astronomical irregularities and lead to meaningless high chi-square values.
+<br>If this is correct, it means that this formula should be abandoned and replaced by control groups for two-dimensional arrays.
 
 <!-- ************************************* -->
-<h3 id="2-2-how-many-control-groups-should-be-computed">How many control groups should be computed ?</h3>
+<h3 id="3-2-how-many-control-groups-should-be-computed">How many control groups should be computed ?</h3>
 Is there a rule or a formula to know the number of control groups to compute ?
 
 <!-- ************************************* -->
-<h3 id="2-3-how-to-compute-control-groups">How to compute control groups ?</h3>
+<h3 id="3-3-how-to-compute-control-groups">How to compute control groups ?</h3>
 In the "Death in France" study, current code just loops on birth dates, and randomly selects another person to take his / her death date. The choice of a computation method is arbitrary, and it affects the resulting control groups, which may affect the results of statistical tests. So this question seems very important to correctly perform an analysis.
 
 <!-- ********************************************************************************* -->
-<h2 id="3-statistical-tests">Statistical tests</h2>
+<h2 id="4-statistical-tests">Statistical tests</h2>
 
 The computation of p-value needs to be checked. Unit tests were written using data found on the web, but this is not very solid. So if someone can send me test data and the corresponding p-value, this would be great.
 
@@ -138,23 +319,11 @@ The computation of p-value needs to be checked. Unit tests were written using da
         </ul>
     </li>
     
-    <!-- 
-    <li>
-        <div class="title padding-top05">Commands</div>
-        <ul>
-            <li><a href="./commands/convertFile.html">convertFile</a></li>
-            <li><a href="./commands/computeAstro.html">computeAstro</a></li>
-            <li><a href="./commands/aspects.html">aspects</a></li>
-            <li><a href="./commands/groupByNumber.html">groupByNumber</a></li>
-        </ul>
-    </li>
-    -->
-    
     <li class="title"><a href="./questions.html">Questions</a></li>
     
     <li class="title"><a href="https://larzac.info/observe/output">Output</a></li>
     
-    <li class="title"><a href="https://github.com/tig12/observe">Code repository</a></li>
+    <li class="title"><a href="https://codeberg.org/tig12/observe">Code repository</a></li>
 </ul>
 </aside>
 
