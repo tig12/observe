@@ -25,9 +25,9 @@ Expected distributions
 
 <div class="intro">
 The distributions computed from the original data set are called the <b>observed distributions</b>.
-<br>The next step is to build the <b>expected distributions</b>, which is what we should observe in "theory".
-<br>The comparison between observed and expected distribution will permit to see if the observed distributions show anomalies.
-<br>In this program, the expected distributions are built with <b>control groups</b>.
+<br>The next step is to build the <b>expected distributions</b>, which is what we should observe "in theory".
+<br>The comparison between observed and expected distribution will permit to apply statistcal tests and see if the observed distributions show anomalies.
+<br>In this program, the expected distributions are built either using <b>control groups</b>, or with the <b>average method</b>.
 </div>
 </header>
 
@@ -88,7 +88,25 @@ Answering these questions affect the way the control groups are computed.
 In this program, control groups are used only for distributions expressed by one-dimensional arrays (called <code>dim1</code>).
 <br>For distributions expressed by two-dimensional arrays (<code>dim2</code>), the expected distributions use the average method, described below.
 <br>The only reason is to save up computation time and memory: a 360 x 360 table has 129 600 cells. Computations for N planets imply to compute N x N tables for interaspects, and N x (N + 1) / 2 for aspects.
-With 11 planets, this represents 360 x 360 x 11 x 11 ~ 15 millions of values.
+
+<table class="wikitable margin">
+    <tr><th>Nb of planets</th><th>Nb of tables</th><th>Nb of cells</th></tr>
+    <tr>
+        <td>11</td>
+        <td>187</td>
+        <td>24 235 200</td>
+    </tr>
+    <tr>
+        <td>15</td>
+        <td>345</td>
+        <td>44 712 000</td>
+    </tr>
+    <tr>
+        <td>16</td>
+        <td>392</td>
+        <td>50 803 200</td>
+    </tr>
+</table>
 
 <!-- ********************************************************************************* -->
 <h2 id="2-average-method">Average method</h2>
