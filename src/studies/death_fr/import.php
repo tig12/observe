@@ -13,6 +13,7 @@ namespace observe\studies\death_fr;
 
 use observe\model\Observe;
 use observe\app\ICommand;
+use observe\app\Params;
 use observe\model\IStudy;
 use tiglib\time\seconds2HHMMSS;
 use tiglib\filesystem\mkdir;
@@ -31,6 +32,14 @@ class import implements ICommand {
             return "INVALID PARAMETER: \"{$params[0]}\". This command must be called without parameter\n";
         }
         //
+        $outFilename = $study->getDatafile();
+        if(is_file($outFilename)) {
+            $answer = Params::answerYN("WARNING: File $outFilename already exists.\nThis operation will delete it permanently.\n");
+            if($answer !== true) {
+                return '';
+            }
+        }
+        //
         // Prepare
         //
         // sqlite database containing data coming from data.gouv.fr
@@ -45,7 +54,6 @@ class import implements ICommand {
         // Execute
         //
         $t1 = microtime(true);
-        $outFilename = $study->getDatafile();
         $bz2 = bzopen($outFilename, 'w');
         //
         // Main loop

@@ -15,6 +15,7 @@
 namespace observe\commands\output;
 
 use observe\model\IStudy;
+use observe\app\Params;
 use tiglib\filesystem\rrmdir;
 
 class output_clean {
@@ -38,15 +39,8 @@ class output_clean {
         $what = $params[1];
         
         $dir = $study->getOutputDirectory();
-        $answer = readline("WARNING: This operation will permanently delete contents in $dir.\n"
-            . "Are you sure (y/n)? ");
-        if(strtolower($answer) != 'y') {
-            if(strtolower($answer) != 'n') {
-                echo "WRONG ANSWER - respond with 'y' or 'n'. Nothing was modified\n";
-            }
-            else {
-                echo "OK, nothing was modified\n";
-            }
+        $answer = Params::answerYN("WARNING: This operation will permanently delete contents of $dir.\n");
+        if($answer !== true) {
             return '';
         }
         

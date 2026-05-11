@@ -42,7 +42,7 @@ class control implements ICommand {
             . "    php run-observe death-fr control 5-10       # builds control-005 ... control-010\n"
             ;
         if(count($params) == 0){
-            return "MISSING PARAMETER control.\n$usage";
+            return "MISSING PARAMETER <controls>.\n$usage";
         }
         if(count($params) != 1){
             return "INVALID CALL.\n$usage";
@@ -77,15 +77,8 @@ class control implements ICommand {
                 // If a control is generated through multiple executions, the intermediate results are stored in tmp sqlite db.
                 // The final results are written on disk only when the computation is complete.
                 // So if the directory is not empty, it means that the computation was already done.
-                $answer = readline("WARNING: Directory $controlDir is not empty.\n"
-                        . "This operation will override its content. Are you sure (y/n)? ");
-                if(strtolower($answer) != 'y') {
-                    if(strtolower($answer) != 'n') {
-                        echo "WRONG ANSWER - respond with 'y' or 'n'. Nothing was modified\n";
-                    }
-                    else {
-                        echo "OK, nothing was modified\n";
-                    }
+                $answer = Params::answerYN("WARNING: Directory $controlDir is not empty.\nThis operation will override its content. ");
+                if($answer !== true) {
                     return '';
                 }
             }

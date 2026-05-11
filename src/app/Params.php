@@ -41,4 +41,25 @@ class Params {
         return $res;
     }
     
+    /**
+        Returns true if the user answers "y" or "Y", false otherwise
+    **/
+    public static function answerYN(string $msg): bool {
+        $answer = readline($msg . "Are you sure (y/n)? ");
+        if(strtolower($answer) == 'y') {
+            return true;
+        }
+        else{
+            if(strtolower($answer) == 'n') {
+                echo "OK, nothing was modified\n";
+                return false;
+            }
+            else {
+                echo "WRONG ANSWER - respond with 'y' or 'n'.\nNothing was modified\n";
+                return false;
+            }
+            return true;
+        }
+    }
+    
 } // end class

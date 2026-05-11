@@ -13,6 +13,7 @@
 namespace observe\studies\death_fr;
 
 use observe\app\ICommand;
+use observe\app\Params;
 use observe\model\IStudy;
 use observe\model\distrib\EmptyDistribs;
 use tiglib\filesystem\mkdir;
@@ -34,14 +35,8 @@ class init implements ICommand {
         }
         $path_sqlite = $study->config['sqlite-tmp'];
         if(is_file($path_sqlite)) {
-            $answer = readline("WARNING: File $path_sqlite already exists.\nThis operation will delete it permanently. Are you sure (y/n)? ");
-            if(strtolower($answer) != 'y') {
-                if(strtolower($answer) != 'n') {
-                    echo "WRONG ANSWER - respond with 'y' or 'n'. Nothing was modified\n";
-                }
-                else {
-                    echo "OK, nothing was modified\n";
-                }
+            $answer = Params::answerYN("WARNING: File $path_sqlite already exists.\nThis operation will delete it permanently.\n");
+            if($answer !== true) {
                 return '';
             }
             unlink($path_sqlite);
