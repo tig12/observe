@@ -129,6 +129,7 @@ This step converts the raw dataset to a normalized file, <code>data.csv.bz2</cod
 <!-- ************************************* -->
 <h3 id="2-3-control">control</h3>
 To save up space, the dates randomly generated during this step are not saved on disk, the program only stores the resulting distributions.
+<br>This step can't be generic (common to all studies) because when a random row is computed, some tests depending on the data must be done. For example, test that birth is anterior to death, or that the wedding date is posterior to mother and father birth.
 
 <!-- ************************************* -->
 <h3 id="2-4-output">output</h3>

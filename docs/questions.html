@@ -64,14 +64,16 @@ This program was used so far to study two datasets: <a href="studies/death-fr.ht
 
 <br><br>To form an opinion on the output, have in mind that the expected values for one-dimensional arrays were computed using <a href="intro/expected.html#1-control-groups">control groups</a>, and for two-dimensional arrays, the <a href="intro/expected.html#2-average-method">average method</a> was used. This method might not be appropriate and lead to meaningless high chi-square values (see <a href="#3-1-is-the-average-method-appropriate">below</a>).
 
+<br><br>Some results look suspicious:
+
 <ul class="spaced">
     <li>
         The <a href="https://larzac.info/observe/output">Output of the program</a> shows coherent results for most single dates: comparisons between observed and expected distributions give a low chi-square and a p-value = 1. This is normal because control groups are built by looping on one date (birth date for <code>death-fr</code> and mother date for <code>a00</code>) and randomly select the other dates.
-        <br>But some distributions need explanations : why do some single dates show high chi-square values ? This is the case for <a href="https://observe.tig12.net/output/studies/death-fr/death.html">death date</a> in <code>death-fr</code> and <a href="https://observe.tig12.net/output/studies/a00/wedding.html">wedding date</a> in <code>a00</code>.
+        <br>But some distributions need explanations : why do some distributions of planetary positions of single dates show high chi-square values ? This is the case for <a href="https://observe.tig12.net/output/studies/death-fr/death.html">death date</a> in <code>death-fr</code> and <a href="https://observe.tig12.net/output/studies/a00/wedding.html">wedding date</a> in <code>a00</code>.
     </li>
     
     <li>
-        Several distributions give high values of chi-square because the observed curve fits approximately the expected distribution, but not exactly, for example 
+        Several distributions give high values of chi-square because the observed curve fits approximately the expected distribution, but not exactly, for example:
         <a href="https://observe.tig12.net/output/studies/a00/mother-father.html#relations-planets-JU-VE">
             <img
                 loading="lazy"
@@ -81,7 +83,7 @@ This program was used so far to study two datasets: <a href="studies/death-fr.ht
                 alt="Interaspects between mother's mars and father's neptune"
             >
         </a>
-        etc.
+        This kind of curve gives a very low p-value, but can it be considered as an anomaly, is there a methodology to identify these cases ?
     </li>
 </ul>
 
