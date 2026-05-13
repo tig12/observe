@@ -1,0 +1,36 @@
+<?php
+/******************************************************************************
+    
+    @license    GPL - conforms to file LICENCE located in root directory of current repository.
+    @copyright  Thierry Graff
+    
+    @history    2026-04-09 22:40:12+01:00, Thierry Graff : Add to tiglib (not implemented)
+    @history    2021-02-01 03:32:45+01:00, Thierry Graff : Creation
+********************************************************************************/
+
+/* 
+    Graham Douglas: Cohen's calculation of Effect Size is simple once p is known, w = SQRT(Chi-Squared/N).
+    
+    T-test
+    Input, to compare two sets of data.
+    question: are they significantly different?
+    
+    N1  and N2 the two sample sizes.
+    M1 and M2 the two mean values
+    S1 and S2  the two standard deviations
+    
+    Step 1    N1xS1xS1  = W      Step 2  N2xS2xS2  = X      Step 3    N1+N2-2 = Y
+    Step 3   (X+Y) / Z     = Z
+    Step 4   Sqrt {Z x (1/N1  + 1/N2)}    = t
+*/
+namespace tiglib\stats;
+
+
+class effectSize {
+    
+    /** 
+    **/
+    public static function cohen(){
+    }
+    
+}// end class

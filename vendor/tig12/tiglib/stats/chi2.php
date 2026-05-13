@@ -40,22 +40,6 @@ class chi2 {
     public static function chi2(array $O, array $E): int|float{
         $res = 0;
         $N = count($O);
-/*
-        if(count($O) != count($E)){
-            echo 'observed = '; print_r($O);
-            echo 'expected = '; print_r($E);
-            exit;
-        }
-*/        
-        /* 
-        $valuesE = array_values($E);
-        $valuesO = array_values($O);
-        for($i=0; $i < $N; $i++){
-            if($valuesE[$i] != 0){
-                $res += pow($valuesO[$i] - $valuesO[$i], 2) / $valuesE[$i];
-            }
-        }
-        */
         $keysE = array_keys($E);
         $keysO = array_keys($O);
         for($i=0; $i < $N; $i++){
@@ -169,4 +153,3 @@ assert_close(hcephes_chdtr(4, 5), 0.7127025048163542);
     }
     
 }// end class
-
