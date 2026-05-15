@@ -47,17 +47,20 @@ class import implements ICommand {
         // ex: insert into date(mother,father,child,wedding) values(:mother,:father,:child,:wedding)
         $sql = 'insert into date(' . implode(',', $study->config['dates']) .') values(:' . implode(',:', $study->config['dates']) . ')';
         $stmt_insert = $outSqlite->prepare($sql);
-        $outdir = $study->getWorkingDirectory();
+        // note: the 2 pragma don't change execution speed - but begin transaction really does
+        $outSqlite->query('pragma synchronous = off');
+        $outSqlite->query('pragma journal_mode = memory');
+        $outSqlite->query('begin transaction');
         //
         // Execute
         //
         $t1 = microtime(true);
-        
+        $outdir = $study->getWorkingDirectory();
         $loop = 0;
         $inFilename = $study->config['raw-file-path'];
         foreach(yieldFile::loop($inFilename) as $line){
             // jnais00;mnais00;anais00;JNAISM;MNAISM;ANAISM;JNAISP;MNAISP;ANAISP;JMAR;MMAR;AMAR;rangmar00;cnaism;cnaisp;d00;j00;dp;jp;dm;jm;dma;jma;id;id2
-            if($loop % 10000 == 0){
+            if($loop % 100000 == 0){
                 echo "$loop\n";
             }
             $loop++;
@@ -79,7 +82,8 @@ class import implements ICommand {
                 ':wedding' => $W,
             ]);
         }
-        echo "Generated $nWritten lines in database $outSqliteFile\n";
+        $outSqlite->query('end transaction');
+        echo "Inserted $loop lines in database $outSqliteFile\n";
         $t2 = microtime(true);
         $dt = round($t2 - $t1, 3);
         $dth = seconds2HHMMSS::compute($dt);

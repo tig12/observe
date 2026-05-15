@@ -6,10 +6,6 @@
 # Unique id of this study
 slug: study1
 
-# Is it a test study ?
-# (used by the output, to avoid listing it)
-is-test-study: true
-
 # fqcn = fully qualified class name of the class handling this study
 fqcn: observe\studies\death_fr\Death_fr
 
@@ -44,6 +40,9 @@ output:
     This study concerns persons who died in France between 1970 and 2025.
     <br>The data come from <a href="https://www.data.gouv.fr/datasets/fichier-des-personnes-decedees">data.gouv.fr/datasets/fichier-des-personnes-decedees</a>
     <br>See <a href="https://tig12.github.io/observe/studies/death-fr.html">tig12.github.io/observe/studies/death-fr.html</a> for more details.
+  # Should it be listed in the generated pages ?
+  show-in-lists: false
+
 
 #
 # 2 - Parameters specific to this study

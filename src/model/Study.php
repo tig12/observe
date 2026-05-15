@@ -90,6 +90,10 @@ abstract class Study implements IStudy {
             $msg .= $msg1;
         }
         //
+        if(!isset($this->config['output']['show-in-lists'])){
+            $msg .= "Missing entry \"output.show-in-lists\"\n";
+        }
+        //
         if($msg != ''){
             $msg = "INVALID STUDY FILE {$this->config['__study-file__']}\n" . trim($msg);
             throw new ObserveException($msg);
@@ -101,9 +105,8 @@ abstract class Study implements IStudy {
             key = study slug
             value = study title
         with studies different from current instance.
-        @param  $includeTestStudies If true, sudies with an entry "is-test-study: true" are also returned
     **/
-    public function getOtherStudiesTitles(bool $includeTestStudies = false): array {
+    public function getOtherStudiesTitles(): array {
         $allSlugs = Studies::getAllStudySlugs();
         $res = [];
         foreach($allSlugs as $slug){
@@ -111,11 +114,8 @@ abstract class Study implements IStudy {
                 continue;
             }
             $studyConfig = Studies::getStudyConfig($slug);
-            if($includeTestStudies === false){
-                $isTest = $studyConfig['is-test-study'] ?? false;
-                if($isTest){
-                    continue;
-                }
+            if(!$studyConfig['output']['show-in-lists']){
+                continue;
             }
             $res[$slug] = $studyConfig['output']['title'];
         }

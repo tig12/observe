@@ -6,10 +6,6 @@
 # Unique id of this study
 slug: study2
 
-# Is it a test study ?
-# (used by the output, to avoid listing it)
-is-test-study: true
-
 # fqcn = fully qualified class name of the class handling this study
 fqcn: observe\studies\a00\A00
 
@@ -46,6 +42,8 @@ output:
     This study concerns persons born in France in 2000.
     <br>Contains 591 936 lines with { mother, father, child } out of which 321 838 contain also wedding dates.
     <br>See <a href="https://tig12.github.io/observe/studies/a00.html">tig12.github.io/observe/studies/a00.html</a> for more details.
+  # Should it be listed in the generated pages ?
+  show-in-lists: false
 
 #
 # 2 - Parameters specific to this study

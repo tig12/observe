@@ -54,6 +54,8 @@ output:
     </div>
     See <a href="https://tig12.github.io/observe/studies/a00.html">tig12.github.io/observe/studies/a00.html</a> for more details.
     <br>Expected values were computed using 100 control groups.
+  # Should it be listed in the generated pages ?
+  show-in-lists: true
 
 #
 # 2 - Parameters specific to this study

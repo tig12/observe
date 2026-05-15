@@ -46,6 +46,8 @@ output:
     <br>The data come from <a href="https://www.data.gouv.fr/datasets/fichier-des-personnes-decedees">data.gouv.fr/datasets/fichier-des-personnes-decedees</a>
     <br>See <a href="https://tig12.github.io/observe/studies/death-fr.html">tig12.github.io/observe/studies/death-fr.html</a> for more details.
     <br>Expected values were computed using 30 control groups.
+  # Should it be listed in the generated pages ?
+  show-in-lists: true
 
 #
 # 2 - Parameters specific to this study
