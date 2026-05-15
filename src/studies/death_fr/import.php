@@ -16,7 +16,6 @@ use observe\app\ICommand;
 use observe\app\Params;
 use observe\model\IStudy;
 use tiglib\time\seconds2HHMMSS;
-use tiglib\filesystem\mkdir;
 
 class import implements ICommand {
     
@@ -48,7 +47,6 @@ class import implements ICommand {
         $LIMIT = $study->config['import-limit'];
         $stmt = $sqlite_persons->query('select max(rowid) from person'); // = select count(*)
         $MAXROWID = $stmt->fetch(\PDO::FETCH_ASSOC)['max(rowid)']; // = select count(*) from person
-        // $baseOutdir = directory of the split, containing the sub-directories of each subgroup
         $outdir = $study->getWorkingDirectory();
         //
         // Execute

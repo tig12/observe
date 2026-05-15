@@ -8,14 +8,14 @@
     @history    2026-05-12 18:25:50+02:00, Thierry Graff : Creation
 ********************************************************************************/
 
-namespace observe\studies\death_fr3;
+namespace observe\studies\a002;
 
 use observe\model\Study;
 use observe\model\IStudy;
 use observe\model\Studies;
 use observe\app\ObserveException;
 
-class Death_fr3 extends Study implements IStudy {
+class A002 extends Study implements IStudy {
     
     private static string $SQLITE_PERSON_PATH;
     
@@ -29,30 +29,44 @@ class Death_fr3 extends Study implements IStudy {
         
         parent::__construct($studySlug);
         
-        if(!isset($this->config['sqlite-death-fr'])){
-            throw new ObserveException("Missing entry 'sqlite-death-fr' in file {$this->config['__study-file__']}");
+        if(!isset($this->config['raw-file-path'])){
+            throw new ObserveException("Missing entry 'raw-file-path' in file {$this->config['__study-file__']}");
         }
-        self::$SQLITE_PERSON_PATH = $this->config['sqlite-death-fr'];
-        //
-        if(!isset($this->config['sqlite-tmp'])){
-            throw new ObserveException("Missing entry 'sqlite-tmp' in file {$this->config['__study-file__']}");
+        if(!is_file($this->config['raw-file-path'])){
+            throw new ObserveException(
+                "Unexisting file: {$this->config['raw-file-path']}\n"
+                . "Check entry 'raw-file-path' in file {$this->config['__study-file__']}"
+            );
         }
-        self::$SQLITE_TMP_PATH = $this->config['sqlite-tmp'];
     }
     
     public function init($params = []): string {
-        return init::execute($this, $params);
+        return ''; // do nothing
     }
     public function import($params = []): string {
         return import::execute($this, $params);
     }
+    public function observed($params = []): string {
+        return observed::execute($this, $params);
+    }
     public function control($params = []): string {
         return control::execute($this, $params);
     }
-    
-    //
-    // Code that should go in Study.php if data.sqlite3 replaces data.csv.bz2
-    //
+    public function expected($params = []): string {
+        return expected::execute($this, $params);
+    }
+    public function stats($params = []): string {
+        return stats::execute($this, $params);
+    }
+    public function dim2($params = []): string {
+        return dim2::execute($this, $params);
+    }
+    public function output($params = []): string {
+        return output::execute($this, $params);
+    }
+    public function dev($params = []): string {
+        return dev::execute($this, $params);
+    }
     
     /** Returns a PDO link to death-fr.sqlite3 **/
     public static function getPersonSqlite(): \PDO {

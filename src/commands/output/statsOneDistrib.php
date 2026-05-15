@@ -17,7 +17,13 @@ class statsOneDistrib {
                 Associative arrays structured as described in observe\model\distrib\StatsDistrib::STATS_CSV_FIELDS
                 (keys are 'MIN' 'MAX' etc.)
     **/
-    public static function html(array $statObs, array $statExp): string{
+    public static function html(array $statObs, array $statExp = null): string{
+        if(is_null($statExp)){
+            // for distrib1 year and distrib2 age
+            return output_page::template('stats-one-distrib-no-expected.html', [
+                'obs' => $statObs,
+            ]);
+        }
         return output_page::template('stats-one-distrib.html', [
             'obs' => $statObs,
             'exp' => $statExp,

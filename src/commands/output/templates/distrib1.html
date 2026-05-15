@@ -49,28 +49,57 @@ $statsExp =& $V['stats-exp'];
 <!-- 
     Days
 -->
-<img id="day" loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/day.svg" alt="Distribution of days">
+<div class="float-left">
+    <img id="day" loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/day.svg" alt="Distribution of days">
+</div>
+<div class="float-left margin-top">
+    <div>Download CSV:</div>
+    <ul class="download">
+        <li><a href="csv/observed/<?= $V['date-name'] ?>/day.csv.zip">Observed distribution</a></li>
+        <li><a href="csv/expected/<?= $V['date-name'] ?>/day.csv.zip">Expected distribution</a></li>
+    </ul>
+</div>
+<br class="clear-left">
 <?= statsOneDistrib::html($statsObs['day'], $statsExp['day']) ?>
 
 <!-- 
     Years
 -->
-<img id="year" loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/year.svg" alt="Distribution of years">
-<?= statsOneDistrib::html($statsObs['year'], $statsExp['year']) ?>
+<div class="float-left">
+    <img id="year" loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/year.svg" alt="Distribution of years">
+</div>
+<div class="float-left margin-top">
+    <div>Download CSV:</div>
+    <ul class="download">
+        <li><a href="csv/observed/<?= $V['date-name'] ?>/year.csv.zip">Observed distribution</a></li>
+        <li><a href="csv/expected/<?= $V['date-name'] ?>/year.csv.zip">Expected distribution</a></li>
+    </ul>
+</div>
+<br class="clear-left">
+<?= statsOneDistrib::html($statsObs['year']) /* No expected distribution for years */ ?>
 
 <!-- 
     Planet positions
 -->
 <h2 id="planet-positions">Planet positions</h2>
 <?php foreach($V['planets'] as $planet): ?>
-    <img id="<?= 'position-' . $planet ?>" loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/positions/<?= $planet ?>.svg" alt="Distribution of <?= IAA::PLANET_NAMES[$planet] ?>">
+    <div class="float-left">
+        <img id="<?= 'position-' . $planet ?>" loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/positions/<?= $planet ?>.svg" alt="Distribution of <?= IAA::PLANET_NAMES[$planet] ?>">
+    </div>
+    <div class="float-left margin-top">
+        <div>Download CSV:</div>
+        <ul class="download">
+            <li><a href="csv/observed/<?= $V['date-name'] ?>/positions/<?= $planet ?>.csv.zip">Observed distribution</a></li>
+            <li><a href="csv/expected/<?= $V['date-name'] ?>/positions/<?= $planet ?>.csv.zip">Expected distribution</a></li>
+        </ul>
+    </div>
+    <br class="clear-left">
     <?= statsOneDistrib::html($statsObs['positions'][$planet], $statsExp['positions'][$planet]) ?>
 <?php endforeach; ?>
 
 <!-- 
     Aspects
 -->
-<h2 id="aspects">Aspects</h2>
 <?php 
 for($i=0; $i < count($V['planets']); $i++){
     for($j=$i+1; $j < count($V['planets']); $j++){
@@ -82,13 +111,26 @@ for($i=0; $i < count($V['planets']); $i++){
         $alt2 = "Positions of $planetName1 ($dateLabel) and $planetName2 ($dateLabel)";
 ?>
         <h2 id="<?= 'aspect-' . $code ?>">Aspects <?= $planetName1 ?> - <?= $planetName2 ?></h2>
-        <img loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/aspects/dim1/<?= $code ?>.svg" alt="<?= $alt1 ?>">
+        <div class="float-left">
+            <img loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/aspects/dim1/<?= $code ?>.svg" alt="<?= $alt1 ?>">
+        </div>
+        <div class="float-left margin-top margin-left">
+            <div>Download CSV:</div>
+            <ul class="download">
+                <li><a href="csv/observed/<?= $V['date-name'] ?>/aspects/dim1/<?= $code ?>.csv.zip">Observed distribution</a></li>
+                <li><a href="csv/expected/<?= $V['date-name'] ?>/aspects/dim1/<?= $code ?>.csv.zip">Expected distribution</a></li>
+            </ul>
+        </div>
+        <br class="clear-left">
         <?= statsOneDistrib::html($statsObs['aspects'][$code], $statsExp['aspects'][$code]) ?>
         <div class="float-left">
             <img loading="lazy" class="svg" src="img/<?= $V['date-name'] ?>/aspects/dim2/<?= $code ?>.png" alt="<?= $alt2 ?>">
         </div>
         <div class="float-left margin-top margin-left">
-            <a href="csv/<?= $V['date-name'] ?>/aspects/dim2/<?= $code ?>.csv.zip">Download CSV file</a>
+            <div>Download CSV:</div>
+            <ul class="download">
+                <li><a href="csv/observed/<?= $V['date-name'] ?>/aspects/dim2/<?= $code ?>.csv.zip">Observed distribution</a></li>
+            </ul>
         </div>
         <br class="clear-left">
         

@@ -53,9 +53,16 @@ $dateName =& $V['date-name']; // ex: birth-death
 </div>
 <div class="float-left margin-top">
     See also <a href="img/<?= $dateName ?>/age/dim1/age-M.svg">Distribution in months</a>
+    <div class="margin-top05">Download CSV:</div>
+    <ul class="download">
+        <li><a href="csv/observed/<?= $V['date-name'] ?>/age/dim1/age-Y.csv.zip">Observed distribution (years)</a></li>
+        <li><a href="csv/expected/<?= $V['date-name'] ?>/age/dim1/age-Y.csv.zip">Expected distribution (years)</a></li>
+        <li><a href="csv/observed/<?= $V['date-name'] ?>/age/dim1/age-M.csv.zip">Observed distribution (months)</a></li>
+        <li><a href="csv/expected/<?= $V['date-name'] ?>/age/dim1/age-M.csv.zip">Expected distribution (months)</a></li>
+    </ul>
 </div>
 <br class="clear-left">
-<?= statsOneDistrib::html($statsObs['age'], $statsExp['age']) ?>
+<?= statsOneDistrib::html($statsObs['age']) /* No expected distribution for age */ ?>
 
 <!-- 
     Relations between planets
@@ -73,14 +80,27 @@ for($i=0; $i < count($V['planets']); $i++){
 ?>
         <h2 id="<?= 'relations-planets-' . $code ?>"><?= ucFirst("$planetName1 $dateName1 - $planetName2 $dateName2") ?></h2>
         
-        <img loading="lazy" class="svg" src="img/<?= $dateName ?>/interaspects/dim1/<?= $code ?>.svg" alt="<?= $alt1 ?>">
-        <?= statsOneDistrib::html($statsObs['interaspects'][$code], $statsExp['interaspects'][$code]) ?>
+        <div class="float-left">
+            <img loading="lazy" class="svg" src="img/<?= $dateName ?>/interaspects/dim1/<?= $code ?>.svg" alt="<?= $alt1 ?>">
+            <?= statsOneDistrib::html($statsObs['interaspects'][$code], $statsExp['interaspects'][$code]) ?>
+        </div>
+        <div class="float-left margin-top margin-left">
+            <div>Download CSV:</div>
+            <ul class="download">
+                <li><a href="csv/observed/<?= $V['date-name'] ?>/interaspects/dim1/<?= $code ?>.csv.zip">Observed distribution</a></li>
+                <li><a href="csv/expected/<?= $V['date-name'] ?>/interaspects/dim1/<?= $code ?>.csv.zip">Expected distribution</a></li>
+            </ul>
+        </div>
+        <br class="clear-left">
         
         <div class="float-left">
             <img loading="lazy" class="margin border" src="img/<?= $dateName ?>/interaspects/dim2/<?= $code ?>.png" alt="<?= $alt2 ?>">
         </div>
         <div class="float-left margin-top margin-left">
-            <a href="csv/<?= $V['date-name'] ?>/interaspects/dim2/<?= $code ?>.csv.zip">Download CSV file</a>
+            <div>Download CSV:</div>
+            <ul class="download">
+                <li><a href="csv/observed/<?= $V['date-name'] ?>/interaspects/dim2/<?= $code ?>.csv.zip">Observed distribution</a></li>
+            </ul>
         </div>
         <br class="clear-left">
 <?php 

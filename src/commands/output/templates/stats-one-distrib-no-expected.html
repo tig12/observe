@@ -1,0 +1,41 @@
+<?php
+/******************************************************************************
+    
+    Called with a variable $V, associative array with one key: 'obs'
+    $V['obs'] and $V['exp'] contain an associative array structured as described in observe\model\distrib\StatsDistrib::STATS_CSV_FIELDS
+    (keys are 'MIN' 'MAX' etc.)
+    
+    Template used for distrib1 years and distrib2 age:
+    displaying expected values is meaningless because observed and expected distributions may be of different size.
+
+    @license    GPL
+    @copyright  Thierry Graff
+    
+    @history    2026-05-15 15:51:09+02:00, Thierry Graff : Creation
+********************************************************************************/
+?>
+<div class="float-left">
+    <table class="table-stats">
+        <tr>
+            <th></th><th>Observed</th>
+        </tr>
+        <tr>
+            <td>min</td>
+            <td><?= $V['obs']['MIN'] ?></td>
+        </tr>
+        <tr>
+            <td>max</td>
+            <td><?= $V['obs']['MAX'] ?></td>
+        </tr>
+        <tr>
+            <td>mean</td>
+            <td><?= $V['obs']['MEAN'] ?></td>
+        </tr>
+        <tr>
+            <td>&sigma;</td>
+            <td><?= $V['obs']['SIGMA'] ?></td>
+        </tr>
+    </table>
+</div>
+
+<br class="clear-left">

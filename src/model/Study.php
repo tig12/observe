@@ -63,15 +63,19 @@ abstract class Study implements IStudy {
         if(!isset($this->config['working-dir'])){
             $msg .= "Missing entry \"working-dir\"\n";
         }
-        if(!is_dir($this->config['working-dir'])){
-            mkdir::execute($this->config['working-dir']);
+        else{
+            if(!is_dir($this->config['working-dir'])){
+                mkdir::execute($this->config['working-dir']);
+            }
         }
         //
         if(!isset($this->config['out-dir'])){
             $msg .= "Missing entry \"out-dir\"\n";
         }
-        if(!is_dir($this->config['out-dir'])){
-            mkdir::execute($this->config['out-dir']);
+        else{
+            if(!is_dir($this->config['out-dir'])){
+                mkdir::execute($this->config['out-dir']);
+            }
         }
         //
         if(!isset($this->config['planets'])){
@@ -173,7 +177,7 @@ abstract class Study implements IStudy {
     }
     
     /**
-        Returns the working directory containing the observed distributions of a study.
+        Returns the path to data.csv.bz2.
     **/
     public function getDatafile(): string {
         return $this->config['working-dir'] . DS . 'data.csv.bz2';
@@ -214,30 +218,36 @@ abstract class Study implements IStudy {
         return glob($this->getControlsDirectory() . DS . 'control-*');
     }
     
-    /**
-        Returns an array containing the dates of a study, different from $dateName.
-        @param      $dateName String like 'birth', 'death', 'mother' etc.
-    **/
-///////////// NOT USED YET /////////////////
-    public function otherDates1(string $dateName): array {
-        $res = [];
-        foreach($this->config['dates'] as $date){
-            if($date != $dateName){
-                $res[] = $date;
-            }
-        }
-        return $res;
-    }
+    //
+    //
+    // Experimental code used only by package commands\a002
+    // (to see if it would be pertinent to replace data.csv.bz2 by data.sqlite3)
+    //
+    //
     
     /**
-        Returns an array containing the possible combinations of 2 dates of a study, different from $dateName.
-        @param  $dateName String like 'mother-father'
-        @return     Ex: ['child-father', 'child-mother', 'child-wedding', 'mother-wedding', 'father-wedding']
+        Returns the path to data.sqlite3.
     **/
-///////////// NOT USED YET /////////////////
-    public function otherDates2(string $dateName) {
-        // TODO Implement
-        return [];
+    public function getSqliteDataPath(): string {
+        return $this->config['working-dir'] . DS . 'data.sqlite3';
     }
+    
+    /** 
+        Initializes data.sqlite3
+        One table "date", with one field per date listed in current study's configuration file.
+    **/
+    public function initalizeSqliteData(): \PDO {
+        $sqlite_path = $this->getSqliteDataPath();
+        if(is_file($sqlite_path)){
+            unlink($sqlite_path);
+        }
+        $sqlite = new \PDO('sqlite:' . $sqlite_path);
+        // ex: create table date(mother character(10),father character(10),child character(10),wedding character(10))
+        $sql = 'create table date(' . implode(' character(10),', $this->config['dates']) . ' character(10))';
+        $sqlite->exec($sql);
+        echo "Initialized $sqlite_path\n";
+        return $sqlite;
+    }
+
     
 } // end class
